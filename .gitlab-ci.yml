@@ -73,4 +73,7 @@ doc:
   script: "CI/ci-doc.sh"
   tags:
     - Linux
+  artifacts:
+      paths:
+        - build-release/Build/share/OpenVolumeMesh/Doc/html
 

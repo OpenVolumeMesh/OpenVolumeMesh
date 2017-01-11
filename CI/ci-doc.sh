@@ -3,11 +3,11 @@
 #########################################
 
 # Make release build folder
-if [ ! -d build-release-$BUILDPATH ]; then
-  mkdir build-release-$BUILDPATH
+if [ ! -d build-release ]; then
+  mkdir build-release
 fi
 
-cd build-release-$BUILDPATH
+cd build-release
 
 cmake -DCMAKE_BUILD_TYPE=Release ../
 
