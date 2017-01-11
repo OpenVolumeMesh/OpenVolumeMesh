@@ -68,3 +68,9 @@ VS2013-32-bit:
   script: "CI\\Windows.bat"
   tags:
     - VS2013
+
+doc:
+  script: "CI/ci-doc.sh"
+  tags:
+    - Linux
+
