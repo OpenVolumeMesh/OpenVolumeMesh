@@ -58,5 +58,5 @@ if(GTEST_FOUND)
     acg_copy_after_build(unittests ${CMAKE_CURRENT_SOURCE_DIR}/TestFiles ${CMAKE_BINARY_DIR}/Unittests/)
 
 else(GTEST_FOUND)
-    message("Google testing framework was not found!")
+    message(STATUS "Google testing framework was not found!")
 endif(GTEST_FOUND)
