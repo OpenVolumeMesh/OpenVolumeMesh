@@ -30,6 +30,6 @@ if(Boost_FOUND)
 
 else()
 
-  message("Boost not found. Disabling file_converter.")
+  message(STATUS "Boost not found. Disabling file_converter.")
 
 endif()
