@@ -1454,16 +1454,16 @@ void TopologyKernel::swap_cells(CellHandle _h1, CellHandle _h2)
     for (unsigned int i = 0; i < hfhs1.size(); ++i)
     {
         HalfFaceHandle hfh = hfhs1[i];
-        if (incident_cell_per_hf_[hfh.idx()] == id1)
-            incident_cell_per_hf_[hfh.idx()] = id2;
+        if (incident_cell_per_hf_[hfh.idx()] == _h1)
+            incident_cell_per_hf_[hfh.idx()] = _h2;
     }
 
     std::vector<HalfFaceHandle> hfhs2 = c2.halffaces();
     for (unsigned int i = 0; i < hfhs2.size(); ++i)
     {
         HalfFaceHandle hfh = hfhs2[i];
-        if (incident_cell_per_hf_[hfh.idx()] == id2)
-            incident_cell_per_hf_[hfh.idx()] = id1;
+        if (incident_cell_per_hf_[hfh.idx()] == _h2)
+            incident_cell_per_hf_[hfh.idx()] = _h1;
     }
 
     // swap vector entries

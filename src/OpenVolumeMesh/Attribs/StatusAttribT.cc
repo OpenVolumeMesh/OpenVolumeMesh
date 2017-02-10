@@ -337,7 +337,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
 
                     bool validEdge = false;
                     for(; voh_it.valid(); ++voh_it) {
-                        if(!e_status_[kernel_.edge_handle(voh_it->idx())].deleted()) {
+                        if(!e_status_[kernel_.edge_handle(*voh_it)].deleted()) {
                             validEdge = true;
                             break;
                         }

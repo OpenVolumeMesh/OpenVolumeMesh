@@ -493,45 +493,45 @@ TEST_F(PolyhedralMeshBase, VolumeMeshConnectivity) {
 
     // Add invalid cell
     std::vector<HalfFaceHandle> hfaces;
-    hfaces.push_back(1); hfaces.push_back(5);
-    hfaces.push_back(7); hfaces.push_back(9);
-    hfaces.push_back(10); hfaces.push_back(21);
+    hfaces.push_back(HalfFaceHandle(1)); hfaces.push_back(HalfFaceHandle(5));
+    hfaces.push_back(HalfFaceHandle(7)); hfaces.push_back(HalfFaceHandle(9));
+    hfaces.push_back(HalfFaceHandle(10)); hfaces.push_back(HalfFaceHandle(21));
     CellHandle i_cell = mesh_.add_cell(hfaces, true);
 
     EXPECT_EQ(PolyhedralMesh::InvalidCellHandle, i_cell);
 
-    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(1));
-    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(2));
-    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(5));
-    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(7));
-    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(9));
-    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(10));
+    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(HalfFaceHandle(1)));
+    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(HalfFaceHandle(2)));
+    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(HalfFaceHandle(5)));
+    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(HalfFaceHandle(7)));
+    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(HalfFaceHandle(9)));
+    EXPECT_EQ(CellHandle(0), mesh_.incident_cell(HalfFaceHandle(10)));
 
-    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(3));
-    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(12));
-    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(15));
-    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(17));
-    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(19));
-    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(20));
+    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(3)));
+    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(12)));
+    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(15)));
+    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(17)));
+    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(19)));
+    EXPECT_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(20)));
 
     // Test adjacency function
-    HalfFaceHandle ad_hf1 = mesh_.adjacent_halfface_in_cell(1, 3);
+    HalfFaceHandle ad_hf1 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(1), HalfEdgeHandle(3));
     // Should be halfface 5
     EXPECT_EQ(HalfFaceHandle(5), ad_hf1);
 
-    HalfFaceHandle ad_hf2 = mesh_.adjacent_halfface_in_cell(1, 7);
+    HalfFaceHandle ad_hf2 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(1), HalfEdgeHandle(7));
     // Should be halfface 7
     EXPECT_EQ(HalfFaceHandle(7), ad_hf2);
 
-    HalfFaceHandle ad_hf3 = mesh_.adjacent_halfface_in_cell(5, 24);
+    HalfFaceHandle ad_hf3 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(5), HalfEdgeHandle(24));
     // Should be invalid
     EXPECT_EQ(PolyhedralMesh::InvalidHalfFaceHandle, ad_hf3);
 
-    HalfFaceHandle ad_hf4 = mesh_.adjacent_halfface_in_cell(12, 24);
+    HalfFaceHandle ad_hf4 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(12), HalfEdgeHandle(24));
     // Should be invalid
     EXPECT_EQ(HalfFaceHandle(20), ad_hf4);
 
-    HalfFaceHandle ad_hf5 = mesh_.adjacent_halfface_in_cell(0, 0);
+    HalfFaceHandle ad_hf5 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(0), HalfEdgeHandle(0));
     // Should be invalid
     EXPECT_EQ(PolyhedralMesh::InvalidHalfFaceHandle, ad_hf5);
 
@@ -1212,12 +1212,12 @@ TEST_F(HexahedralMeshBase, SimpleHexMeshNavigation) {
     EXPECT_EQ(HalfFaceHandle(21), mesh_.adjacent_halfface_on_sheet(
             HalfFaceHandle(8), HalfEdgeHandle(12)));
 
-    HexahedralMesh::CellSheetCellIter csc_it = mesh_.csc_iter(0, HexahedralMesh::YF);
+    HexahedralMesh::CellSheetCellIter csc_it = mesh_.csc_iter(CellHandle(0), HexahedralMesh::YF);
     EXPECT_EQ(CellHandle(1), *csc_it);
 
-    HexahedralMesh::HalfFaceSheetHalfFaceIter hfshf_it = mesh_.hfshf_iter(5);
+    HexahedralMesh::HalfFaceSheetHalfFaceIter hfshf_it = mesh_.hfshf_iter(HalfFaceHandle(5));
     EXPECT_EQ(HalfFaceHandle(15), *hfshf_it);
-    hfshf_it = mesh_.hfshf_iter(6);
+    hfshf_it = mesh_.hfshf_iter(HalfFaceHandle(6));
     EXPECT_EQ(HalfFaceHandle(16), *hfshf_it);
 }
 
