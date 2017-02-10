@@ -1159,7 +1159,7 @@ public:
     typedef BaseIterator<FaceHandle> BaseIter;
 
 
-    BoundaryFaceIter(const TopologyKernel* _mesh);
+    explicit BoundaryFaceIter(const TopologyKernel* _mesh);
 
     // Post increment/decrement operator
     BoundaryFaceIter operator++(int) {

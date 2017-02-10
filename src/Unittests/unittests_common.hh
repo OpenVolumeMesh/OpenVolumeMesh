@@ -127,7 +127,7 @@ protected:
 // Printer class (for STL compliance test)
 class Print {
 public:
-  Print(bool _mute = false) : mute_(_mute) {}
+  explicit Print(bool _mute = false) : mute_(_mute) {}
   void mute(bool _mute) { mute_ = _mute; }
   bool mute() const { return mute_; }
   void operator()(const OpenVolumeMesh::OpenVolumeMeshHandle& _h) const {

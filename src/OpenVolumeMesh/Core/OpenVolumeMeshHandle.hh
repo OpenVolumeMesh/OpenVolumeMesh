@@ -95,19 +95,19 @@ private:
 
 // Default entity handles
 
-class VertexHandle   : public OpenVolumeMeshHandle { public: VertexHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class EdgeHandle     : public OpenVolumeMeshHandle { public: EdgeHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class FaceHandle     : public OpenVolumeMeshHandle { public: FaceHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class CellHandle     : public OpenVolumeMeshHandle { public: CellHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class HalfEdgeHandle : public OpenVolumeMeshHandle { public: HalfEdgeHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
-class HalfFaceHandle : public OpenVolumeMeshHandle { public: HalfFaceHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
+class VertexHandle   : public OpenVolumeMeshHandle { public: explicit VertexHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
+class EdgeHandle     : public OpenVolumeMeshHandle { public: explicit EdgeHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class FaceHandle     : public OpenVolumeMeshHandle { public: explicit FaceHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class CellHandle     : public OpenVolumeMeshHandle { public: explicit CellHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class HalfEdgeHandle : public OpenVolumeMeshHandle { public: explicit HalfEdgeHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
+class HalfFaceHandle : public OpenVolumeMeshHandle { public: explicit HalfFaceHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
 
 // Helper class that is used to decrease all handles
 // exceeding a certain threshold
 
 class VHandleCorrection {
 public:
-    VHandleCorrection(VertexHandle _thld) : thld_(_thld) {}
+    explicit VHandleCorrection(VertexHandle _thld) : thld_(_thld) {}
     void correctValue(VertexHandle& _h) {
         if(_h > thld_) _h.idx(_h.idx() - 1);
     }
@@ -116,7 +116,7 @@ private:
 };
 class HEHandleCorrection {
 public:
-    HEHandleCorrection(HalfEdgeHandle _thld) : thld_(_thld) {}
+    explicit HEHandleCorrection(HalfEdgeHandle _thld) : thld_(_thld) {}
     void correctVecValue(std::vector<HalfEdgeHandle>& _vec) {
 #if defined(__clang_major__) && (__clang_major__ >= 5)
         for(std::vector<HalfEdgeHandle>::iterator it = _vec.begin(), end = _vec.end(); it != end; ++it) {
@@ -134,7 +134,7 @@ private:
 };
 class HFHandleCorrection {
 public:
-    HFHandleCorrection(HalfFaceHandle _thld) : thld_(_thld) {}
+    explicit HFHandleCorrection(HalfFaceHandle _thld) : thld_(_thld) {}
     void correctVecValue(std::vector<HalfFaceHandle>& _vec) {
 #if defined(__clang_major__) && (__clang_major__ >= 5)
         for(std::vector<HalfFaceHandle>::iterator it = _vec.begin(), end = _vec.end(); it != end; ++it) {
@@ -152,7 +152,7 @@ private:
 };
 class CHandleCorrection {
 public:
-    CHandleCorrection(CellHandle _thld) : thld_(_thld) {}
+    explicit CHandleCorrection(CellHandle _thld) : thld_(_thld) {}
     void correctValue(CellHandle& _h) {
         if(_h > thld_) _h.idx(_h.idx() - 1);
     }

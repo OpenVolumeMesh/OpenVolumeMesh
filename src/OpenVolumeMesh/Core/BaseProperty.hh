@@ -55,7 +55,7 @@ class BaseProperty {
 public:
     friend class ResourceManager;
 
-    BaseProperty(ResourceManager& _resMan) : resMan_(_resMan), lock_(false) {}
+    explicit BaseProperty(ResourceManager& _resMan) : resMan_(_resMan), lock_(false) {}
 
     BaseProperty(const BaseProperty& _cpy) : resMan_(_cpy.resMan_), lock_(_cpy.lock_) {}
 

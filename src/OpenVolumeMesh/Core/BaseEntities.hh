@@ -90,7 +90,7 @@ std::ostream& operator<<(std::ostream& _os, const OpenVolumeMeshEdge& _edge);
 class OpenVolumeMeshFace {
 friend class TopologyKernel;
 public:
-    OpenVolumeMeshFace(const std::vector<HalfEdgeHandle>& _halfedges) :
+    explicit OpenVolumeMeshFace(const std::vector<HalfEdgeHandle>& _halfedges) :
         halfedges_(_halfedges) {
     }
 
@@ -119,7 +119,7 @@ std::ostream& operator<<(std::ostream& _os, const OpenVolumeMeshFace& _face);
 class OpenVolumeMeshCell {
 friend class TopologyKernel;
 public:
-    OpenVolumeMeshCell(const std::vector<HalfFaceHandle>& _halffaces) :
+    explicit OpenVolumeMeshCell(const std::vector<HalfFaceHandle>& _halffaces) :
         halffaces_(_halffaces) {
     }
 

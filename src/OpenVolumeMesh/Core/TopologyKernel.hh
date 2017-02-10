@@ -542,7 +542,7 @@ protected:
 
     class EdgeCorrector {
     public:
-        EdgeCorrector(const std::vector<int>& _newIndices) :
+        explicit EdgeCorrector(const std::vector<int>& _newIndices) :
             newIndices_(_newIndices) {}
 
         void operator()(Edge& _edge) {
@@ -555,7 +555,7 @@ protected:
 
     class FaceCorrector {
     public:
-        FaceCorrector(const std::vector<int>& _newIndices) :
+        explicit FaceCorrector(const std::vector<int>& _newIndices) :
             newIndices_(_newIndices) {}
 
         void operator()(Face& _face) {
@@ -575,7 +575,7 @@ protected:
 
     class CellCorrector {
     public:
-        CellCorrector(const std::vector<int>& _newIndices) :
+        explicit CellCorrector(const std::vector<int>& _newIndices) :
             newIndices_(_newIndices) {}
 
         void operator()(Cell& _cell) {
