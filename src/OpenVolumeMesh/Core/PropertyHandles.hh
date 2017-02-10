@@ -48,13 +48,13 @@
 namespace OpenVolumeMesh {
 
 // Defines for property handles
-class VertexPropHandle      : public OpenVolumeMeshHandle { public: explicit VertexPropHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class EdgePropHandle        : public OpenVolumeMeshHandle { public: explicit EdgePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class HalfEdgePropHandle    : public OpenVolumeMeshHandle { public: explicit HalfEdgePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class FacePropHandle        : public OpenVolumeMeshHandle { public: explicit FacePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class HalfFacePropHandle    : public OpenVolumeMeshHandle { public: explicit HalfFacePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class CellPropHandle        : public OpenVolumeMeshHandle { public: explicit CellPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class MeshPropHandle        : public OpenVolumeMeshHandle { public: explicit MeshPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
+class VertexPropHandle      : public OpenVolumeMeshHandle { public: VertexPropHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class EdgePropHandle        : public OpenVolumeMeshHandle { public: EdgePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
+class HalfEdgePropHandle    : public OpenVolumeMeshHandle { public: HalfEdgePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
+class FacePropHandle        : public OpenVolumeMeshHandle { public: FacePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
+class HalfFacePropHandle    : public OpenVolumeMeshHandle { public: HalfFacePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
+class CellPropHandle        : public OpenVolumeMeshHandle { public: CellPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
+class MeshPropHandle        : public OpenVolumeMeshHandle { public: MeshPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
 
 } // Namespace OpenVolumeMesh
 
