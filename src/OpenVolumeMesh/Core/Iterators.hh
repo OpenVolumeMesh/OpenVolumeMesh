@@ -69,7 +69,7 @@ public:
     BaseIterator(const TopologyKernel* _mesh, const OH& _ch) :
         valid_(true), cur_handle_(_ch), mesh_(_mesh) {}
 
-    BaseIterator(const TopologyKernel* _mesh) :
+    explicit BaseIterator(const TopologyKernel* _mesh) :
         valid_(true), mesh_(_mesh) {}
 
     // STL compliance (needs to have default constructor)
