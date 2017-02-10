@@ -95,12 +95,12 @@ private:
 
 // Default entity handles
 
-class VertexHandle   : public OpenVolumeMeshHandle { public: explicit VertexHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class EdgeHandle     : public OpenVolumeMeshHandle { public: explicit EdgeHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class FaceHandle     : public OpenVolumeMeshHandle { public: explicit FaceHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class CellHandle     : public OpenVolumeMeshHandle { public: explicit CellHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class HalfEdgeHandle : public OpenVolumeMeshHandle { public: explicit HalfEdgeHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
-class HalfFaceHandle : public OpenVolumeMeshHandle { public: explicit HalfFaceHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
+class VertexHandle   : public OpenVolumeMeshHandle { public: VertexHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
+class EdgeHandle     : public OpenVolumeMeshHandle { public: EdgeHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class FaceHandle     : public OpenVolumeMeshHandle { public: FaceHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class CellHandle     : public OpenVolumeMeshHandle { public: CellHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
+class HalfEdgeHandle : public OpenVolumeMeshHandle { public: HalfEdgeHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
+class HalfFaceHandle : public OpenVolumeMeshHandle { public: HalfFaceHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
 
 // Helper class that is used to decrease all handles
 // exceeding a certain threshold
