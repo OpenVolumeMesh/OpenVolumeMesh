@@ -27,7 +27,7 @@ void print() {
 template <typename Iterator>
 class netgen_grammar : public qi::grammar<Iterator/*, qi::space_type*/> {
 public:
-    netgen_grammar(MeshGenerator& _generator) :
+    explicit netgen_grammar(MeshGenerator& _generator) :
         netgen_grammar::base_type(content),
         generator_(_generator) {
 

@@ -71,7 +71,7 @@ public:
 
 public:
 
-	OpenVolumeMeshBaseProperty(const std::string& _name = "<unknown>") :
+	explicit OpenVolumeMeshBaseProperty(const std::string& _name = "<unknown>") :
 		name_(_name), persistent_(false), handle_(-1) {
 	}
 

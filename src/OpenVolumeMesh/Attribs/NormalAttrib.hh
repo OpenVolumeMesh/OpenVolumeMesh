@@ -55,7 +55,7 @@ template <class GeomKernelT>
 class NormalAttrib {
 public:
 
-    NormalAttrib(GeomKernelT& _kernel);
+    explicit NormalAttrib(GeomKernelT& _kernel);
     virtual ~NormalAttrib();
 
     /** \brief A simple heuristic to estimate the vertex normals

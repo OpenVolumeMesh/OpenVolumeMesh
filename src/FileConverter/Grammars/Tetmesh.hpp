@@ -22,7 +22,7 @@ namespace spirit = boost::spirit;
 template <typename Iterator>
 class tetmesh_grammar : public qi::grammar<Iterator, qi::space_type> {
 public:
-    tetmesh_grammar(MeshGenerator& _generator) :
+    explicit tetmesh_grammar(MeshGenerator& _generator) :
         tetmesh_grammar::base_type(content),
         generator_(_generator) {
 

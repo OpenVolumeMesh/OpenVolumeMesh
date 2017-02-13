@@ -18,7 +18,7 @@ echo -e "${NC}"
 echo "Please Wait ..."
 
 # Run cppcheck and output into file
-cppcheck --enable=all . -I src -i Doc/ --force --suppress=unusedFunction --suppress=missingIncludeSystem --quiet -Umin -Umax -UBMPOSTFIX -DOPENVOLUMEMESHDLLEXPORT="" &> cppcheck.log
+cppcheck --enable=all . -I src -i Doc/ --force --suppress=missingIncludeSystem --quiet -Umin -Umax -UBMPOSTFIX -DOPENVOLUMEMESHDLLEXPORT="" &> cppcheck.log
 
 echo -e "${OUTPUT}"
 echo "=============================================================================="
@@ -38,7 +38,7 @@ echo "CPPCHECK Summary"
 echo "=============================================================================="
 echo -e "${NC}"
 
-if [ $COUNT -gt 0 ]; then
+if [ $COUNT -gt 5 ]; then
   echo -e ${WARNING}
   echo "Total CPPCHECK error Count is $COUNT, which is too High! CPPCHECK Run failed";
   echo -e "${NC}"

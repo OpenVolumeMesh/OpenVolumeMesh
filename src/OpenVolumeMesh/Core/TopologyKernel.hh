@@ -542,7 +542,7 @@ protected:
 
     class EdgeCorrector {
     public:
-        EdgeCorrector(const std::vector<int>& _newIndices) :
+        explicit EdgeCorrector(const std::vector<int>& _newIndices) :
             newIndices_(_newIndices) {}
 
         void operator()(Edge& _edge) {
@@ -555,7 +555,7 @@ protected:
 
     class FaceCorrector {
     public:
-        FaceCorrector(const std::vector<int>& _newIndices) :
+        explicit FaceCorrector(const std::vector<int>& _newIndices) :
             newIndices_(_newIndices) {}
 
         void operator()(Face& _face) {
@@ -565,7 +565,7 @@ protected:
 
                 EdgeHandle eh = edge_handle(*he_it);
                 unsigned char opp = (he_it->idx() - halfedge_handle(eh, 0).idx());
-                *he_it = halfedge_handle(newIndices_[eh.idx()], opp);
+                *he_it = halfedge_handle(EdgeHandle(newIndices_[eh.idx()]), opp);
             }
             _face.set_halfedges(hes);
         }
@@ -575,7 +575,7 @@ protected:
 
     class CellCorrector {
     public:
-        CellCorrector(const std::vector<int>& _newIndices) :
+        explicit CellCorrector(const std::vector<int>& _newIndices) :
             newIndices_(_newIndices) {}
 
         void operator()(Cell& _cell) {
@@ -585,7 +585,7 @@ protected:
 
                 FaceHandle fh = face_handle(*hf_it);
                 unsigned char opp = (hf_it->idx() - halfface_handle(fh, 0).idx());
-                *hf_it = halfface_handle(newIndices_[fh.idx()], opp);
+                *hf_it = halfface_handle(FaceHandle(newIndices_[fh.idx()]), opp);
             }
             _cell.set_halffaces(hfs);
         }
