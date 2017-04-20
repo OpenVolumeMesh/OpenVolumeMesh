@@ -131,7 +131,7 @@ private:
 };
 
 
-#if __cplusplus >= 201103L || _MSC_VER >= 1900 // an older MSVC version might be sufficient, didn't test
+#if __cplusplus >= 201103L || _MSC_VER >= 1800 // an older MSVC version might be sufficient, didn't test
 
 #include <type_traits>
 
