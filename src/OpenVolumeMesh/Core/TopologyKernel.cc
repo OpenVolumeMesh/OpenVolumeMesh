@@ -2074,7 +2074,7 @@ OpenVolumeMeshFace TopologyKernel::halfface(const HalfFaceHandle& _halfFaceHandl
     assert((size_t)_halfFaceHandle.idx() < (faces_.size() * 2));
     assert(_halfFaceHandle.idx() >= 0);
 
-    // In case the handle is not even, just return the corresponding face
+    // In case the handle is even, just return the corresponding face
     // Otherwise return the opposite halfface via opposite()
     if(_halfFaceHandle.idx() % 2 == 0)
         return faces_[(int)(_halfFaceHandle.idx() / 2)];
