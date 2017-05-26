@@ -330,7 +330,11 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
                 cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
 
                 if(cur_hf != InvalidHalfFaceHandle)
+                {
+                    if (is_deleted(incident_cell(cur_hf)))
+                      break; // pretend we ran into a boundary
                     cur_hf = opposite_halfface_handle(cur_hf);
+                }
 
                 // End when we're through
                 if(cur_hf == start_hf) break;
@@ -1230,6 +1234,8 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
                     std::remove(incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].begin(),
                                 incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].end(),
                                 halfface_handle(h, 1)), incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].end());
+
+            reorder_incident_halffaces(edge_handle(*he_it));
         }
     }
 
@@ -1390,6 +1396,15 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
             if (incident_cell_per_hf_[hf_it->idx()] == h)
                 incident_cell_per_hf_[hf_it->idx()] = InvalidCellHandle;
         }
+        std::set<EdgeHandle> edges;
+        for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin(),
+                hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
+          const auto& hf = halfface(*hf_it);
+          for (const auto&  heh : hf.halfedges())
+            edges.insert(edge_handle(heh));
+        }
+        for (auto eh : edges)
+          reorder_incident_halffaces(eh);
     }
 
     if (deferred_deletion_enabled())
