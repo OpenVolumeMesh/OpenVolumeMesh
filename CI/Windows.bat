@@ -11,37 +11,37 @@ IF "%ARCHITECTURE%" == "x64" (
 )
 
 IF "%BUILD_PLATFORM%" == "VS2013" (
-    set LIBPATH=C:\libs\VS2013
+    set LIBPATH=E:\libs\VS2013
     set GTESTVERSION=gtest-1.6.0
     set GENERATOR=Visual Studio 12%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"
     set QT_VERSION=
     IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=C:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=C:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
+      set QT_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
+      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
     )
 
     IF "%ARCHITECTURE%" == "x32" (
-      set QT_INSTALL_PATH=C:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=C:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
+      set QT_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
+      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
     )
 ) 
 
 IF "%BUILD_PLATFORM%" == "VS2015" (
-    set LIBPATH=C:\libs\VS2015
+    set LIBPATH=E:\libs\VS2015
     set GTESTVERSION=gtest-1.7.0
     set GENERATOR=Visual Studio 14%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"
 
     set QT_VERSION=
     IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=C:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=C:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
+      set QT_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
+      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
     )
 
     IF "%ARCHITECTURE%" == "x32" (
-      set QT_INSTALL_PATH=C:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=C:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
+      set QT_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
+      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
     )
 
 ) 
