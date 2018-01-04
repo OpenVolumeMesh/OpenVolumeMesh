@@ -72,6 +72,7 @@ template <> const std::string typeName<bool>();
 template <> const std::string typeName<float>();
 template <> const std::string typeName<double>();
 template <> const std::string typeName<std::string>();
+template <> const std::string typeName<std::map<HalfEdgeHandle, int> >();
 
 /// Property classes for the different entity types
 template<class T>

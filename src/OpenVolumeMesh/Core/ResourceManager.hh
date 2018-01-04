@@ -256,9 +256,18 @@ private:
         }
 
         PropIterT it = _begin;
-        for(; it != _end; ++it) {
-            if((*it)->name() == _name && dynamic_cast<FullPropT*>(*it) != NULL) {
-                return true;
+        for(; it != _end; ++it)
+        {
+            if((*it)->name() == _name )
+            {
+#if OVM_FORCE_STATIC_CAST
+            return true;
+#else
+            if(dynamic_cast<FullPropT*>(*it) != NULL)
+            {
+            return true;
+            }
+#endif
             }
         }
         return false;

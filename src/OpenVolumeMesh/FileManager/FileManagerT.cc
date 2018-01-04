@@ -326,6 +326,8 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     name = line;
     extractQuotedText(name);
 
+    std::cerr << "OVM read property " << name << " of type " << prop_t << std::endl;
+
     if(prop_t == typeName<int>()) generateGenericProperty<int, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<unsigned int>()) generateGenericProperty<unsigned int, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<short>()) generateGenericProperty<short, MeshT>(entity_t, name, _iff, _mesh);
@@ -337,6 +339,7 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     else if(prop_t == typeName<float>()) generateGenericProperty<float, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<double>()) generateGenericProperty<double, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<std::string>()) generateGenericProperty<std::string, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::map<HalfEdgeHandle, int> >()) generateGenericProperty<std::map<HalfEdgeHandle, int>, MeshT>(entity_t, name, _iff, _mesh);
 
     else if(prop_t == typeName<Vec2f>()) generateGenericProperty<Vec2f, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<Vec2d>()) generateGenericProperty<Vec2d, MeshT>(entity_t, name, _iff, _mesh);
