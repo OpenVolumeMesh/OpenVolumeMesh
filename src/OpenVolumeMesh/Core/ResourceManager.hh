@@ -76,6 +76,7 @@ class PropertyPtr;
 class ResourceManager {
 public:
     ResourceManager();
+    ResourceManager(const ResourceManager &other);
     virtual ~ResourceManager();
 
     template <class PropT, class HandleT> friend class PropertyPtr;

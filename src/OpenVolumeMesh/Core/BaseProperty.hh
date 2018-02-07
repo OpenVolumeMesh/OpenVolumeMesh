@@ -65,6 +65,8 @@ public:
 
     virtual const std::string& name() const = 0;
 
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const = 0;
+
     virtual void delete_element(size_t _idx) = 0;
 
     virtual void swap_elements(size_t _idx0, size_t _idx1) = 0;
