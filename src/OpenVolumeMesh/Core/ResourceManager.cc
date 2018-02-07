@@ -47,6 +47,22 @@ namespace OpenVolumeMesh {
 ResourceManager::ResourceManager() {
 }
 
+ResourceManager::ResourceManager(const ResourceManager &other) {
+    auto cloneProps = [this](const Properties &src, Properties &dest) {
+        dest.reserve(src.size());
+        for (BaseProperty *bp: src) {
+            dest.push_back(bp->clone(*this, bp->handle()));
+        }
+    };
+    cloneProps(other.vertex_props_,   vertex_props_);
+    cloneProps(other.edge_props_,     edge_props_);
+    cloneProps(other.halfedge_props_, halfedge_props_);
+    cloneProps(other.face_props_,     face_props_);
+    cloneProps(other.halfface_props_, halfface_props_);
+    cloneProps(other.cell_props_,     cell_props_);
+    cloneProps(other.mesh_props_,     mesh_props_);
+}
+
 ResourceManager::~ResourceManager() {
 
     // Delete persistent props
