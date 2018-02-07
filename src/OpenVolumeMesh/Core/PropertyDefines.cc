@@ -55,5 +55,6 @@ template <> const std::string typeName<bool>() { return "bool"; }
 template <> const std::string typeName<float>() { return "float"; }
 template <> const std::string typeName<double>() { return "double"; }
 template <> const std::string typeName<std::string>() { return "string"; }
+template <> const std::string typeName<std::map<HalfEdgeHandle, int> >(){ return "map_he_int"; }
 
 } // Namespace OpenVolumeMesh

@@ -76,7 +76,7 @@ public:
         return vtexcoord_prop_[_h.idx()];
     }
 
-    bool vertex_texcoords_available()   { return vertex_texcoords_available_;   }
+    bool vertex_texcoords_available() const  { return vertex_texcoords_available_;   }
 
     void clear_vertex_texcoords();
 
