@@ -916,7 +916,7 @@ VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
     {
         VertexHandle last_undeleted_vertex = VertexHandle((int)n_vertices()-1);
         assert(!vertex_deleted_[last_undeleted_vertex.idx()]);
-        swap_vertices(h, last_undeleted_vertex);
+        swap_vertex_indices(h, last_undeleted_vertex);
         h = last_undeleted_vertex;
     }
 
@@ -1022,7 +1022,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
     {
         EdgeHandle last_edge = EdgeHandle((int)edges_.size()-1);
         assert(!edge_deleted_[last_edge.idx()]);
-        swap_edges(h, last_edge);
+        swap_edge_indices(h, last_edge);
         h = last_edge;
     }
 
@@ -1207,7 +1207,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
     {
         FaceHandle last_face = FaceHandle((int)faces_.size()-1);
         assert(!face_deleted_[last_face.idx()]);
-        swap_faces(h, last_face);
+        swap_face_indices(h, last_face);
         h = last_face;
     }
 
@@ -1376,7 +1376,7 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
     {
         CellHandle last_undeleted_cell = CellHandle((int)cells_.size()-1);
         assert(!cell_deleted_[last_undeleted_cell.idx()]);
-        swap_cells(h, last_undeleted_cell);
+        swap_cell_indices(h, last_undeleted_cell);
         h = last_undeleted_cell;
     }
 
@@ -1435,7 +1435,7 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
     }
 }
 
-void TopologyKernel::swap_cells(CellHandle _h1, CellHandle _h2)
+void TopologyKernel::swap_cell_indices(CellHandle _h1, CellHandle _h2)
 {
     assert(_h1.idx() >= 0 && _h1.idx() < (int)cells_.size());
     assert(_h2.idx() >= 0 && _h2.idx() < (int)cells_.size());
@@ -1474,7 +1474,7 @@ void TopologyKernel::swap_cells(CellHandle _h1, CellHandle _h2)
     swap_cell_properties(_h1, _h2);
 }
 
-void TopologyKernel::swap_faces(FaceHandle _h1, FaceHandle _h2)
+void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
 {
     assert(_h1.idx() >= 0 && _h1.idx() < (int)faces_.size());
     assert(_h2.idx() >= 0 && _h2.idx() < (int)faces_.size());
@@ -1615,7 +1615,7 @@ void TopologyKernel::swap_faces(FaceHandle _h1, FaceHandle _h2)
 
 }
 
-void TopologyKernel::swap_edges(EdgeHandle _h1, EdgeHandle _h2)
+void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 {
     assert(_h1.idx() >= 0 && _h1.idx() < (int)edges_.size());
     assert(_h2.idx() >= 0 && _h2.idx() < (int)edges_.size());
@@ -1753,7 +1753,7 @@ void TopologyKernel::swap_edges(EdgeHandle _h1, EdgeHandle _h2)
 
 }
 
-void TopologyKernel::swap_vertices(VertexHandle _h1, VertexHandle _h2)
+void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
 {
     assert(_h1.idx() >= 0 && _h1.idx() < (int)n_vertices_);
     assert(_h2.idx() >= 0 && _h2.idx() < (int)n_vertices_);

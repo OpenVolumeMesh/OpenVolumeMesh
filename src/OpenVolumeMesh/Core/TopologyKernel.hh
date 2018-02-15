@@ -522,15 +522,21 @@ private:
 
     CellIter delete_cell_core(const CellHandle& _h);
 
+public:
+
+    /// Exchanges the indices of two cells while keeping the mesh otherwise unaffected.
+    virtual void swap_cell_indices(CellHandle _h1, CellHandle _h2);
+
+    /// Exchanges the indices of two faces while keeping the mesh otherwise unaffected.
+    virtual void swap_face_indices(FaceHandle _h1, FaceHandle _h2);
+
+    /// Exchanges the indices of two edges while keeping the mesh otherwise unaffected.
+    virtual void swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2);
+
+    /// Exchanges the indices of two vertices while keeping the mesh otherwise unaffected.
+    virtual void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2);
+
 protected:
-
-    virtual void swap_cells(CellHandle _h1, CellHandle _h2);
-
-    virtual void swap_faces(FaceHandle _h1, FaceHandle _h2);
-
-    virtual void swap_edges(EdgeHandle _h1, EdgeHandle _h2);
-
-    virtual void swap_vertices(VertexHandle _h1, VertexHandle _h2);
 
     virtual void delete_multiple_vertices(const std::vector<bool>& _tag);
 

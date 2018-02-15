@@ -124,7 +124,7 @@ public:
 
     }
 
-    virtual void swap_vertices(VertexHandle _h1, VertexHandle _h2)
+    virtual void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     {
         assert(_h1.idx() >= 0 && _h1.idx() < (int)vertices_.size());
         assert(_h2.idx() >= 0 && _h2.idx() < (int)vertices_.size());
@@ -134,7 +134,7 @@ public:
 
         std::swap(vertices_[_h1.idx()], vertices_[_h2.idx()]);
 
-        TopologyKernelT::swap_vertices(_h1, _h2);
+        TopologyKernelT::swap_vertex_indices(_h1, _h2);
     }
 
 protected:
