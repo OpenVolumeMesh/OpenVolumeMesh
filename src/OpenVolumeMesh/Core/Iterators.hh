@@ -371,7 +371,7 @@ public:
 			HalfFaceHandle> BaseIter;
 
 
-    HalfEdgeHalfFaceIter(const HalfEdgeHandle& _heIdx, const TopologyKernel* _mesh, int _max_laps);
+    HalfEdgeHalfFaceIter(const HalfEdgeHandle& _heIdx, const TopologyKernel* _mesh, int _max_laps = 1);
 
 	// Post increment/decrement operator
 	HalfEdgeHalfFaceIter operator++(int) {
