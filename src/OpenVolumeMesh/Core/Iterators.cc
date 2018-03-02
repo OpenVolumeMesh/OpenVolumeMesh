@@ -805,68 +805,6 @@ BoundaryHalfFaceHalfFaceIter& BoundaryHalfFaceHalfFaceIter::operator++() {
 }
 
 ////================================================================================================
-//// BoundaryFaceIter
-////================================================================================================
-
-
-BoundaryFaceIter::BoundaryFaceIter(const TopologyKernel* _mesh) :
-BaseIter(_mesh),
-bf_it_(_mesh->faces_begin()) {
-
-	if(!_mesh->has_face_bottom_up_incidences()) {
-#ifndef NDEBUG
-        std::cerr << "This iterator needs bottom-up incidences!" << std::endl;
-#endif
-        BaseIter::valid(false);
-        return;
-    }
-
-	while(bf_it_ != BaseIter::mesh()->faces_end() &&
-            !BaseIter::mesh()->is_boundary(*bf_it_) &&
-            BaseIter::mesh()->is_deleted(bf_it_.cur_handle())){
-	    ++bf_it_;
-	}
-	BaseIter::valid(bf_it_ != BaseIter::mesh()->faces_end());
-	if(BaseIter::valid()) {
-		BaseIter::cur_handle(*bf_it_);
-	}
-}
-
-
-BoundaryFaceIter& BoundaryFaceIter::operator--() {
-
-    --bf_it_;
-    while(bf_it_ >= BaseIter::mesh()->faces_begin() &&
-            !BaseIter::mesh()->is_boundary(*bf_it_) &&
-            BaseIter::mesh()->is_deleted(bf_it_.cur_handle())){
-        --bf_it_;
-    }
-	if(bf_it_ >= BaseIter::mesh()->faces_begin()) {
-		BaseIter::cur_handle(*bf_it_);
-	} else {
-		BaseIter::valid(false);
-	}
-	return *this;
-}
-
-
-BoundaryFaceIter& BoundaryFaceIter::operator++() {
-
-	++bf_it_;
-	while(bf_it_ != BaseIter::mesh()->faces_end() &&
-            !BaseIter::mesh()->is_boundary(*bf_it_) &&
-            BaseIter::mesh()->is_deleted(bf_it_.cur_handle())){
-        ++bf_it_;
-    }
-	if(bf_it_ != BaseIter::mesh()->faces_end()) {
-		BaseIter::cur_handle(*bf_it_);
-	} else {
-		BaseIter::valid(false);
-	}
-	return *this;
-}
-
-////================================================================================================
 //// VertexIter
 ////================================================================================================
 
@@ -1123,5 +1061,72 @@ CellIter& CellIter::operator++() {
     BaseIter::cur_handle(CellHandle(cur_index_));
     return *this;
 }
+
+////================================================================================================
+//// BoundaryItemIter
+////================================================================================================
+
+
+template <>
+size_t BoundaryItemIter<VertexIter, VertexHandle>::n_items() const {
+    return BaseIter::mesh()->n_vertices();
+}
+
+template <>
+size_t BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>::n_items() const {
+    return BaseIter::mesh()->n_halfedges();
+}
+
+template <>
+size_t BoundaryItemIter<EdgeIter, EdgeHandle>::n_items() const {
+    return BaseIter::mesh()->n_edges();
+}
+
+template <>
+size_t BoundaryItemIter<HalfFaceIter, HalfFaceHandle>::n_items() const {
+    return BaseIter::mesh()->n_halffaces();
+}
+
+template <>
+size_t BoundaryItemIter<FaceIter, FaceHandle>::n_items() const {
+    return BaseIter::mesh()->n_faces();
+}
+
+template <>
+size_t BoundaryItemIter<CellIter, CellHandle>::n_items() const {
+    return BaseIter::mesh()->n_cells();
+}
+
+template <>
+bool BoundaryItemIter<VertexIter, VertexHandle>::has_incidences() const {
+    return BaseIter::mesh()->has_full_bottom_up_incidences();
+}
+
+template <>
+bool BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>::has_incidences() const {
+    const TopologyKernel *mesh = BaseIter::mesh();
+    return mesh->has_edge_bottom_up_incidences() && mesh->has_face_bottom_up_incidences();
+}
+
+template <>
+bool BoundaryItemIter<EdgeIter, EdgeHandle>::has_incidences() const {
+    const TopologyKernel *mesh = BaseIter::mesh();
+    return mesh->has_edge_bottom_up_incidences() && mesh->has_face_bottom_up_incidences();
+}
+
+template <>
+bool BoundaryItemIter<HalfFaceIter, HalfFaceHandle>::has_incidences() const {
+    return BaseIter::mesh()->has_face_bottom_up_incidences();
+}
+
+template <>
+bool BoundaryItemIter<FaceIter, FaceHandle>::has_incidences() const {
+    return BaseIter::mesh()->has_face_bottom_up_incidences();
+}
+
+//template <>
+//bool BoundaryItemIter<CellIter, CellHandle>::has_incidences() const {
+//    return true; // TODO
+//}
 
 } // Namespace OpenVolumeMesh

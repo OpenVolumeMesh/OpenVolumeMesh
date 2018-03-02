@@ -94,7 +94,6 @@ public:
     friend class CellCellIter;
     friend class HalfFaceVertexIter;
     friend class BoundaryHalfFaceHalfFaceIter;
-    friend class BoundaryFaceIter;
     friend class VertexIter;
     friend class EdgeIter;
     friend class HalfEdgeIter;
@@ -214,9 +213,29 @@ public:
      * Iterators
      */
 
+    BoundaryVertexIter bv_iter() const {
+        return BoundaryVertexIter(this);
+    }
+
+    BoundaryHalfEdgeIter bhe_iter() const {
+        return BoundaryHalfEdgeIter(this);
+    }
+
+    BoundaryEdgeIter be_iter() const {
+        return BoundaryEdgeIter(this);
+    }
+
+    BoundaryHalfFaceIter bhf_iter() const {
+        return BoundaryHalfFaceIter(this);
+    }
+
     BoundaryFaceIter bf_iter() const {
         return BoundaryFaceIter(this);
     }
+
+//    BoundaryCellIter bc_iter() const {
+//        return BoundaryCellIter(this);
+//    }
 
     VertexIter v_iter() const {
         return VertexIter(this);

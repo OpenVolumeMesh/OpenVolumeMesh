@@ -1154,57 +1154,117 @@ private:
 
 //===========================================================================
 
-class BoundaryFaceIter : public BaseIterator<FaceHandle> {
+template <class Iter, class Handle>
+class BoundaryItemIter : public BaseIterator<Handle> {
 public:
-    typedef BaseIterator<FaceHandle> BaseIter;
+    typedef BaseIterator<Handle> BaseIter;
 
 
-    explicit BoundaryFaceIter(const TopologyKernel* _mesh);
+    explicit BoundaryItemIter(const TopologyKernel* _mesh) :
+    BaseIter(_mesh),
+    it_(_mesh, Handle(0)),
+    it_begin_(_mesh, Handle(0)),
+    it_end_(_mesh, Handle((int)n_items())) {
+
+        if(!has_incidences()) {
+    #ifndef NDEBUG
+            std::cerr << "This iterator needs bottom-up incidences!" << std::endl;
+    #endif
+            BaseIter::valid(false);
+            return;
+        }
+
+        while(it_ != it_end_ && !BaseIter::mesh()->is_boundary(*it_)){
+            ++it_;
+        }
+        BaseIter::valid(it_ != it_end_);
+        if(BaseIter::valid()) {
+            BaseIter::cur_handle(*it_);
+        }
+    }
 
     // Post increment/decrement operator
-    BoundaryFaceIter operator++(int) {
-        BoundaryFaceIter cpy = *this;
+    BoundaryItemIter operator++(int) {
+        BoundaryItemIter cpy = *this;
         ++(*this);
         return cpy;
     }
-    BoundaryFaceIter operator--(int) {
-        BoundaryFaceIter cpy = *this;
+    BoundaryItemIter operator--(int) {
+        BoundaryItemIter cpy = *this;
         --(*this);
         return cpy;
     }
-    BoundaryFaceIter operator+(int _n) {
-        BoundaryFaceIter cpy = *this;
+    BoundaryItemIter operator+(int _n) {
+        BoundaryItemIter cpy = *this;
         for(int i = 0; i < _n; ++i) {
             ++cpy;
         }
         return cpy;
     }
-    BoundaryFaceIter operator-(int _n) {
-        BoundaryFaceIter cpy = *this;
+    BoundaryItemIter operator-(int _n) {
+        BoundaryItemIter cpy = *this;
         for(int i = 0; i < _n; ++i) {
             --cpy;
         }
         return cpy;
     }
-    BoundaryFaceIter& operator+=(int _n) {
+    BoundaryItemIter& operator+=(int _n) {
         for(int i = 0; i < _n; ++i) {
             ++(*this);
         }
         return *this;
     }
-    BoundaryFaceIter& operator-=(int _n) {
+    BoundaryItemIter& operator-=(int _n) {
         for(int i = 0; i < _n; ++i) {
             --(*this);
         }
         return *this;
     }
 
-    BoundaryFaceIter& operator++();
-    BoundaryFaceIter& operator--();
+    BoundaryItemIter& operator--() {
+        --it_;
+        while(it_ >= it_begin_ && !BaseIter::mesh()->is_boundary(*it_)){
+            --it_;
+        }
+        if(it_ >= it_begin_) {
+            BaseIter::cur_handle(*it_);
+        } else {
+            BaseIter::valid(false);
+        }
+        return *this;
+    }
+
+    BoundaryItemIter& operator++() {
+        ++it_;
+        while(it_ != it_end_ && !BaseIter::mesh()->is_boundary(*it_)){
+            ++it_;
+        }
+        if(it_ != it_end_) {
+            BaseIter::cur_handle(*it_);
+        } else {
+            BaseIter::valid(false);
+        }
+        return *this;
+    }
 
 private:
-    FaceIter bf_it_;
+    size_t n_items() const;
+    bool has_incidences() const;
+
+private:
+    Iter it_;
+    const Iter it_begin_;
+    const Iter it_end_;
 };
+
+//===========================================================================
+
+typedef BoundaryItemIter<VertexIter, VertexHandle> BoundaryVertexIter;
+typedef BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle> BoundaryHalfEdgeIter;
+typedef BoundaryItemIter<EdgeIter, EdgeHandle> BoundaryEdgeIter;
+typedef BoundaryItemIter<HalfFaceIter, HalfFaceHandle> BoundaryHalfFaceIter;
+typedef BoundaryItemIter<FaceIter, FaceHandle> BoundaryFaceIter;
+//typedef BoundaryItemIter<CellIter, CellHandle> BoundaryCellIter;
 
 //===========================================================================
 
