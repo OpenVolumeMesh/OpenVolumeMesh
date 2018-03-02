@@ -41,9 +41,6 @@
 \*===========================================================================*/
 
 #include <algorithm>
-#ifndef NDEBUG
-#include <iostream>
-#endif
 #include <set>
 
 #include "Iterators.hh"

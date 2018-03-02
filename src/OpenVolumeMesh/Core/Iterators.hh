@@ -47,6 +47,10 @@
 #include <set>
 #include <vector>
 
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
 #include "OpenVolumeMeshHandle.hh"
 
 namespace OpenVolumeMesh {
