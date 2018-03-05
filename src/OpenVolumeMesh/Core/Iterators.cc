@@ -1059,6 +1059,100 @@ CellIter& CellIter::operator++() {
     return *this;
 }
 
+namespace Internal {
+
+////================================================================================================
+//// CellHalfFaceIterImpl
+////================================================================================================
+
+
+CellHalfFaceIterImpl::CellHalfFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    BaseIter(_mesh, _ref_h, _max_laps),
+    hf_iter_(BaseIter::mesh()->cell(_ref_h).halffaces().begin())
+{
+    BaseIter::valid(hf_iter_ != BaseIter::mesh()->cell(_ref_h).halffaces().end());
+    if (BaseIter::valid()) {
+        BaseIter::cur_handle(*hf_iter_);
+    }
+}
+
+CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator--() {
+    const std::vector<HalfFaceHandle>& halffaces =
+        BaseIter::mesh()->cell(ref_handle_).halffaces();
+    if (hf_iter_ == halffaces.begin()) {
+        hf_iter_ == halffaces.end();
+        --lap_;
+        if (lap_ < 0)
+            BaseIter::valid(false);
+    }
+    else {
+        --hf_iter_;
+    }
+    BaseIter::cur_handle(*hf_iter_);
+    return *this;
+}
+
+CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator++() {
+    ++hf_iter_;
+    const std::vector<HalfFaceHandle>& halffaces =
+        BaseIter::mesh()->cell(ref_handle_).halffaces();
+    if (hf_iter_ == halffaces.end()) {
+        hf_iter_ = halffaces.begin();
+        ++lap_;
+        if (lap_ >= max_laps_)
+            BaseIter::valid(false);
+    }
+    BaseIter::cur_handle(*hf_iter_);
+    return *this;
+}
+
+////================================================================================================
+//// CellFaceIterImpl
+////================================================================================================
+
+
+CellFaceIterImpl::CellFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    BaseIter(_mesh, _ref_h, _max_laps),
+    hf_iter_(BaseIter::mesh()->cell(_ref_h).halffaces().begin())
+{
+    BaseIter::valid(hf_iter_ != BaseIter::mesh()->cell(_ref_h).halffaces().end());
+    if (BaseIter::valid()) {
+        BaseIter::cur_handle(BaseIter::mesh()->face_handle(*hf_iter_));
+    }
+}
+
+CellFaceIterImpl& CellFaceIterImpl::operator--() {
+    const std::vector<HalfFaceHandle>& halffaces =
+        BaseIter::mesh()->cell(ref_handle_).halffaces();
+    if (hf_iter_ == halffaces.begin()) {
+        hf_iter_ == halffaces.end();
+        --lap_;
+        if (lap_ < 0)
+            BaseIter::valid(false);
+    }
+    else {
+        --hf_iter_;
+    }
+    BaseIter::cur_handle(BaseIter::mesh()->face_handle(*hf_iter_));
+    return *this;
+}
+
+CellFaceIterImpl& CellFaceIterImpl::operator++() {
+    ++hf_iter_;
+    const std::vector<HalfFaceHandle>& halffaces =
+        BaseIter::mesh()->cell(ref_handle_).halffaces();
+    if (hf_iter_ == halffaces.end()) {
+        hf_iter_ = halffaces.begin();
+        ++lap_;
+        if (lap_ >= max_laps_)
+            BaseIter::valid(false);
+    }
+    BaseIter::cur_handle(BaseIter::mesh()->face_handle(*hf_iter_));
+    return *this;
+}
+
+}
+
 ////================================================================================================
 //// BoundaryItemIter
 ////================================================================================================

@@ -1158,6 +1158,110 @@ private:
 
 //===========================================================================
 
+namespace Internal {
+
+//===========================================================================
+
+class CellHalfFaceIterImpl : public BaseCirculator<CellHandle, HalfFaceHandle> {
+public:
+
+    typedef BaseCirculator<CellHandle, HalfFaceHandle> BaseIter;
+
+    CellHalfFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    CellHalfFaceIterImpl& operator++();
+    CellHalfFaceIterImpl& operator--();
+
+private:
+    std::vector<HalfFaceHandle>::const_iterator hf_iter_;
+};
+
+//===========================================================================
+
+class CellFaceIterImpl : public BaseCirculator<CellHandle, FaceHandle> {
+public:
+
+    typedef BaseCirculator<CellHandle, FaceHandle> BaseIter;
+
+    CellFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    CellFaceIterImpl& operator++();
+    CellFaceIterImpl& operator--();
+
+private:
+    std::vector<HalfFaceHandle>::const_iterator hf_iter_;
+};
+
+//===========================================================================
+
+} // Namespace Internal
+
+//===========================================================================
+
+template <class CirculatorImpl>
+class GenericCirculator : public CirculatorImpl {
+public:
+
+    GenericCirculator(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1) :
+        CirculatorImpl(_ref_h, _mesh, _max_laps) {}
+
+    GenericCirculator& operator++() {
+        CirculatorImpl::operator++();
+        return *this;
+    }
+
+    GenericCirculator& operator--() {
+        CirculatorImpl::operator--();
+        return *this;
+    }
+
+    // Post increment/decrement operator
+    GenericCirculator operator++(int) {
+        GenericCirculator cpy = *this;
+        ++(*this);
+        return cpy;
+    }
+    GenericCirculator operator--(int) {
+        GenericCirculator cpy = *this;
+        --(*this);
+        return cpy;
+    }
+    GenericCirculator operator+(int _n) {
+        GenericCirculator cpy = *this;
+        for(int i = 0; i < _n; ++i) {
+            ++cpy;
+        }
+        return cpy;
+    }
+    GenericCirculator operator-(int _n) {
+        GenericCirculator cpy = *this;
+        for(int i = 0; i < _n; ++i) {
+            --cpy;
+        }
+        return cpy;
+    }
+    GenericCirculator& operator+=(int _n) {
+        for(int i = 0; i < _n; ++i) {
+            ++(*this);
+        }
+        return *this;
+    }
+    GenericCirculator& operator-=(int _n) {
+        for(int i = 0; i < _n; ++i) {
+            --(*this);
+        }
+        return *this;
+    }
+
+};
+
+//===========================================================================
+
+typedef GenericCirculator<Internal::CellHalfFaceIterImpl> CellHalfFaceIter;
+typedef GenericCirculator<Internal::CellFaceIterImpl> CellFaceIter;
+
+//===========================================================================
+
 template <class Iter, class Handle>
 class BoundaryItemIter : public BaseIterator<Handle> {
 public:

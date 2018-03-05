@@ -182,6 +182,24 @@ public:
         return std::make_pair(begin, make_end_circulator(begin));
     }
 
+    CellHalfFaceIter chf_iter(const CellHandle& _h, int _max_laps = 1) const {
+        return CellHalfFaceIter(_h, this, _max_laps);
+    }
+
+    std::pair<CellHalfFaceIter, CellHalfFaceIter> cell_halffaces(const CellHandle& _h, int _max_laps = 1) const {
+        CellHalfFaceIter begin = chf_iter(_h, _max_laps);
+        return std::make_pair(begin, make_end_circulator(begin));
+    }
+
+    CellFaceIter cf_iter(const CellHandle& _h, int _max_laps = 1) const {
+        return CellFaceIter(_h, this, _max_laps);
+    }
+
+    std::pair<CellFaceIter, CellFaceIter> cell_faces(const CellHandle& _h, int _max_laps = 1) const {
+        CellFaceIter begin = cf_iter(_h, _max_laps);
+        return std::make_pair(begin, make_end_circulator(begin));
+    }
+
     CellCellIter cc_iter(const CellHandle& _h, int _max_laps = 1) const {
         return CellCellIter(_h, this, _max_laps);
     }
