@@ -1215,9 +1215,9 @@ bool BoundaryItemIter<FaceIter, FaceHandle>::has_incidences() const {
     return BaseIter::mesh()->has_face_bottom_up_incidences();
 }
 
-//template <>
-//bool BoundaryItemIter<CellIter, CellHandle>::has_incidences() const {
-//    return true; // TODO
-//}
+template <>
+bool BoundaryItemIter<CellIter, CellHandle>::has_incidences() const {
+    return true;
+}
 
 } // Namespace OpenVolumeMesh

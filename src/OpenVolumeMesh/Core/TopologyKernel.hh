@@ -251,9 +251,9 @@ public:
         return BoundaryFaceIter(this);
     }
 
-//    BoundaryCellIter bc_iter() const {
-//        return BoundaryCellIter(this);
-//    }
+    BoundaryCellIter bc_iter() const {
+        return BoundaryCellIter(this);
+    }
 
     VertexIter v_iter() const {
         return VertexIter(this);
@@ -887,6 +887,15 @@ public:
 
         for(VertexOHalfEdgeIter voh_it = voh_iter(_vertexHandle); voh_it.valid(); ++voh_it) {
             if(is_boundary(*voh_it)) return true;
+        }
+        return false;
+    }
+
+    bool is_boundary(const CellHandle& _cellHandle) const {
+        assert(_cellHandle.is_valid() && (size_t)_cellHandle.idx() < n_cells());
+
+        for(CellFaceIter cf_it = cf_iter(_cellHandle); cf_it.valid(); ++cf_it) {
+            if(is_boundary(*cf_it)) return true;
         }
         return false;
     }

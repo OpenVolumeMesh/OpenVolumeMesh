@@ -1372,7 +1372,7 @@ typedef BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle> BoundaryHalfEdgeIter;
 typedef BoundaryItemIter<EdgeIter, EdgeHandle> BoundaryEdgeIter;
 typedef BoundaryItemIter<HalfFaceIter, HalfFaceHandle> BoundaryHalfFaceIter;
 typedef BoundaryItemIter<FaceIter, FaceHandle> BoundaryFaceIter;
-//typedef BoundaryItemIter<CellIter, CellHandle> BoundaryCellIter;
+typedef BoundaryItemIter<CellIter, CellHandle> BoundaryCellIter;
 
 //===========================================================================
 
