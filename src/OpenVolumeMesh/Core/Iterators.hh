@@ -1162,10 +1162,101 @@ namespace Internal {
 
 //===========================================================================
 
+class HalfFaceHalfEdgeIterImpl : public BaseCirculator<HalfFaceHandle, HalfEdgeHandle> {
+public:
+
+    typedef BaseCirculator<HalfFaceHandle, HalfEdgeHandle> BaseIter;
+    typedef HalfFaceHandle CenterEntityHandle;
+
+    HalfFaceHalfEdgeIterImpl(const HalfFaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    HalfFaceHalfEdgeIterImpl& operator++();
+    HalfFaceHalfEdgeIterImpl& operator--();
+
+private:
+    size_t cur_index_;
+};
+
+//===========================================================================
+
+class HalfFaceEdgeIterImpl : public BaseCirculator<HalfFaceHandle, EdgeHandle> {
+public:
+
+    typedef BaseCirculator<HalfFaceHandle, EdgeHandle> BaseIter;
+    typedef HalfFaceHandle CenterEntityHandle;
+
+    HalfFaceEdgeIterImpl(const HalfFaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    HalfFaceEdgeIterImpl& operator++();
+    HalfFaceEdgeIterImpl& operator--();
+
+private:
+    size_t cur_index_;
+};
+
+//===========================================================================
+
+class FaceHalfEdgeIterImpl : public HalfFaceHalfEdgeIterImpl {
+public:
+
+    typedef FaceHandle CenterEntityHandle;
+    FaceHalfEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+};
+
+//===========================================================================
+
+class FaceEdgeIterImpl : public HalfFaceEdgeIterImpl {
+public:
+
+    typedef FaceHandle CenterEntityHandle;
+    FaceEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+};
+
+//===========================================================================
+
+class CellHalfEdgeIterImpl : public BaseCirculator<CellHandle, HalfEdgeHandle> {
+public:
+
+    typedef BaseCirculator<CellHandle, HalfEdgeHandle> BaseIter;
+    typedef CellHandle CenterEntityHandle;
+
+    CellHalfEdgeIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    CellHalfEdgeIterImpl& operator++();
+    CellHalfEdgeIterImpl& operator--();
+
+private:
+    std::vector<HalfEdgeHandle> halfedges_;
+    size_t cur_index_;
+};
+
+//===========================================================================
+
+class CellEdgeIterImpl : public BaseCirculator<CellHandle, EdgeHandle> {
+public:
+
+    typedef BaseCirculator<CellHandle, EdgeHandle> BaseIter;
+    typedef CellHandle CenterEntityHandle;
+
+    CellEdgeIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    CellEdgeIterImpl& operator++();
+    CellEdgeIterImpl& operator--();
+
+private:
+    std::vector<EdgeHandle> edges_;
+    size_t cur_index_;
+};
+
+//===========================================================================
+
 class CellHalfFaceIterImpl : public BaseCirculator<CellHandle, HalfFaceHandle> {
 public:
 
     typedef BaseCirculator<CellHandle, HalfFaceHandle> BaseIter;
+    typedef CellHandle CenterEntityHandle;
 
     CellHalfFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
 
@@ -1182,6 +1273,7 @@ class CellFaceIterImpl : public BaseCirculator<CellHandle, FaceHandle> {
 public:
 
     typedef BaseCirculator<CellHandle, FaceHandle> BaseIter;
+    typedef CellHandle CenterEntityHandle;
 
     CellFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
 
@@ -1202,7 +1294,7 @@ template <class CirculatorImpl>
 class GenericCirculator : public CirculatorImpl {
 public:
 
-    GenericCirculator(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1) :
+    GenericCirculator(const typename CirculatorImpl::CenterEntityHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1) :
         CirculatorImpl(_ref_h, _mesh, _max_laps) {}
 
     GenericCirculator& operator++() {
@@ -1257,6 +1349,14 @@ public:
 
 //===========================================================================
 
+typedef GenericCirculator<Internal::HalfFaceHalfEdgeIterImpl> HalfFaceHalfEdgeIter;
+typedef GenericCirculator<Internal::HalfFaceEdgeIterImpl> HalfFaceEdgeIter;
+
+typedef GenericCirculator<Internal::FaceHalfEdgeIterImpl> FaceHalfEdgeIter;
+typedef GenericCirculator<Internal::FaceEdgeIterImpl> FaceEdgeIter;
+
+typedef GenericCirculator<Internal::CellHalfEdgeIterImpl> CellHalfEdgeIter;
+typedef GenericCirculator<Internal::CellEdgeIterImpl> CellEdgeIter;
 typedef GenericCirculator<Internal::CellHalfFaceIterImpl> CellHalfFaceIter;
 typedef GenericCirculator<Internal::CellFaceIterImpl> CellFaceIter;
 

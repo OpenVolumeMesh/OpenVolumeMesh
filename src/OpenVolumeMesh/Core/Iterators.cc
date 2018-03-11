@@ -1062,9 +1062,209 @@ CellIter& CellIter::operator++() {
 namespace Internal {
 
 ////================================================================================================
-//// CellHalfFaceIterImpl
+//// HalfFaceHalfEdgeIterImpl
 ////================================================================================================
 
+HalfFaceHalfEdgeIterImpl::HalfFaceHalfEdgeIterImpl(const HalfFaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    BaseIter(_mesh, _ref_h, _max_laps),
+    cur_index_(0)
+{
+    BaseIter::valid(_ref_h.is_valid() && _mesh->halfface(_ref_h).halfedges().size() > 0);
+    if (BaseIter::valid()) {
+        BaseIter::cur_handle(_mesh->halfface(_ref_h).halfedges()[cur_index_]);
+    }
+}
+
+HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator--() {
+    const std::vector<HalfEdgeHandle> halfedges =
+        mesh()->halfface(ref_handle()).halfedges();
+    if (cur_index_ == 0) {
+        cur_index_ = halfedges.size() - 1;
+        --lap_;
+        if (lap_ < 0)
+            BaseIter::valid(false);
+    }
+    else {
+        --cur_index_;
+    }
+    BaseIter::cur_handle(halfedges[cur_index_]);
+    return *this;
+}
+
+HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator++() {
+    const std::vector<HalfEdgeHandle> halfedges =
+        mesh()->halfface(ref_handle()).halfedges();
+    ++cur_index_;
+    if (cur_index_ >= halfedges.size()) {
+        cur_index_ = 0;
+        ++lap_;
+        if (lap_ >= max_laps_)
+            BaseIter::valid(false);
+    }
+    BaseIter::cur_handle(halfedges[cur_index_]);
+    return *this;
+}
+
+
+////================================================================================================
+//// HalfFaceEdgeIterImpl
+////================================================================================================
+
+HalfFaceEdgeIterImpl::HalfFaceEdgeIterImpl(const HalfFaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    BaseIter(_mesh, _ref_h, _max_laps),
+    cur_index_(0)
+{
+    BaseIter::valid(_ref_h.is_valid() && _mesh->halfface(_ref_h).halfedges().size() > 0);
+    if (BaseIter::valid()) {
+        HalfEdgeHandle he = _mesh->halfface(_ref_h).halfedges()[cur_index_];
+        BaseIter::cur_handle(_mesh->edge_handle(he));
+    }
+}
+
+HalfFaceEdgeIterImpl& HalfFaceEdgeIterImpl::operator--() {
+    const std::vector<HalfEdgeHandle> halfedges =
+        mesh()->halfface(ref_handle()).halfedges();
+    if (cur_index_ == 0) {
+        cur_index_ = halfedges.size() - 1;
+        --lap_;
+        if (lap_ < 0)
+            BaseIter::valid(false);
+    }
+    else {
+        --cur_index_;
+    }
+    BaseIter::cur_handle(mesh()->edge_handle(halfedges[cur_index_]));
+    return *this;
+}
+
+HalfFaceEdgeIterImpl& HalfFaceEdgeIterImpl::operator++() {
+    const std::vector<HalfEdgeHandle> halfedges =
+        mesh()->halfface(ref_handle()).halfedges();
+    ++cur_index_;
+    if (cur_index_ >= halfedges.size()) {
+        cur_index_ = 0;
+        ++lap_;
+        if (lap_ >= max_laps_)
+            BaseIter::valid(false);
+    }
+    BaseIter::cur_handle(mesh()->edge_handle(halfedges[cur_index_]));
+    return *this;
+}
+
+////================================================================================================
+//// FaceHalfEdgeIterImpl
+////================================================================================================
+
+FaceHalfEdgeIterImpl::FaceHalfEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    HalfFaceHalfEdgeIterImpl(_mesh->halfface_handle(_ref_h, 0), _mesh, _max_laps) {}
+
+
+////================================================================================================
+//// FaceEdgeIterImpl
+////================================================================================================
+
+FaceEdgeIterImpl::FaceEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    HalfFaceEdgeIterImpl(_mesh->halfface_handle(_ref_h, 0), _mesh, _max_laps) {}
+
+
+////================================================================================================
+//// CellHalfEdgeIterImpl
+////================================================================================================
+
+CellHalfEdgeIterImpl::CellHalfEdgeIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    BaseIter(_mesh, _ref_h, _max_laps),
+    cur_index_(0)
+{
+    for (CellHalfFaceIter chf_iter =_mesh->chf_iter(_ref_h); chf_iter.valid(); ++chf_iter) {
+        for (HalfFaceHalfEdgeIter hfhe_iter =_mesh->hfhe_iter(*chf_iter); hfhe_iter.valid(); ++hfhe_iter) {
+            halfedges_.push_back(*hfhe_iter);
+        }
+    }
+    BaseIter::valid(halfedges_.size() > 0);
+    if (BaseIter::valid()) {
+        BaseIter::cur_handle(halfedges_[cur_index_]);
+    }
+}
+
+CellHalfEdgeIterImpl& CellHalfEdgeIterImpl::operator--() {
+    if (cur_index_ == 0) {
+        cur_index_ = halfedges_.size() - 1;
+        --lap_;
+        if (lap_ < 0)
+            BaseIter::valid(false);
+    }
+    else {
+        --cur_index_;
+    }
+    BaseIter::cur_handle(halfedges_[cur_index_]);
+    return *this;
+}
+
+CellHalfEdgeIterImpl& CellHalfEdgeIterImpl::operator++() {
+    ++cur_index_;
+    if (cur_index_ >= halfedges_.size()) {
+        cur_index_ = 0;
+        ++lap_;
+        if (lap_ >= max_laps_)
+            BaseIter::valid(false);
+    }
+    BaseIter::cur_handle(halfedges_[cur_index_]);
+    return *this;
+}
+
+
+////================================================================================================
+//// CellEdgeIterImpl
+////================================================================================================
+
+CellEdgeIterImpl::CellEdgeIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
+    BaseIter(_mesh, _ref_h, _max_laps),
+    cur_index_(0)
+{
+    for (CellHalfEdgeIter che_iter = _mesh->che_iter(_ref_h); che_iter.valid(); ++che_iter) {
+        edges_.push_back(_mesh->edge_handle(*che_iter));
+    }
+
+    // Remove all duplicate entries
+    std::sort(edges_.begin(), edges_.end());
+    edges_.resize(std::unique(edges_.begin(), edges_.end()) - edges_.begin());
+
+    BaseIter::valid(edges_.size() > 0);
+    if (BaseIter::valid()) {
+        BaseIter::cur_handle(edges_[cur_index_]);
+    }
+}
+
+CellEdgeIterImpl& CellEdgeIterImpl::operator--() {
+    if (cur_index_ == 0) {
+        cur_index_ = edges_.size() - 1;
+        --lap_;
+        if (lap_ < 0)
+            BaseIter::valid(false);
+    }
+    else {
+        --cur_index_;
+    }
+    BaseIter::cur_handle(edges_[cur_index_]);
+    return *this;
+}
+
+CellEdgeIterImpl& CellEdgeIterImpl::operator++() {
+    ++cur_index_;
+    if (cur_index_ >= edges_.size()) {
+        cur_index_ = 0;
+        ++lap_;
+        if (lap_ >= max_laps_)
+            BaseIter::valid(false);
+    }
+    BaseIter::cur_handle(edges_[cur_index_]);
+    return *this;
+}
+
+
+////================================================================================================
+//// CellHalfFaceIterImpl
+////================================================================================================
 
 CellHalfFaceIterImpl::CellHalfFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
     BaseIter(_mesh, _ref_h, _max_laps),
@@ -1106,10 +1306,10 @@ CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator++() {
     return *this;
 }
 
+
 ////================================================================================================
 //// CellFaceIterImpl
 ////================================================================================================
-
 
 CellFaceIterImpl::CellFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
     BaseIter(_mesh, _ref_h, _max_laps),
@@ -1153,10 +1353,10 @@ CellFaceIterImpl& CellFaceIterImpl::operator++() {
 
 }
 
+
 ////================================================================================================
 //// BoundaryItemIter
 ////================================================================================================
-
 
 template <>
 size_t BoundaryItemIter<VertexIter, VertexHandle>::n_items() const {
