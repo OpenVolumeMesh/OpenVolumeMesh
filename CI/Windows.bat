@@ -47,7 +47,7 @@ IF "%BUILD_PLATFORM%" == "VS2015" (
 ) 
 
 
-"C:\Program Files (x86)\CMake\bin\cmake.exe" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%"  -DCMAKE_BUILD_TYPE=Release %CMAKE_CONFIGURATION% ..
+"cmake" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%"  -DCMAKE_BUILD_TYPE=Release %CMAKE_CONFIGURATION% ..
 
 %VS_PATH% /Build "Release" OpenVolumeMesh.sln /Project "ALL_BUILD"
 
@@ -68,7 +68,7 @@ mkdir build-debug
 
 cd build-debug
 
-"C:\Program Files (x86)\CMake\bin\cmake.exe" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Debug %CMAKE_CONFIGURATION% ..
+"cmake" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Debug %CMAKE_CONFIGURATION% ..
 
 %VS_PATH% /Build "Debug" OpenVolumeMesh.sln /Project "ALL_BUILD"
 
