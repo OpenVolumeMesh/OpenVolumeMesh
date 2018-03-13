@@ -1162,6 +1162,24 @@ namespace Internal {
 
 //===========================================================================
 
+class HalfEdgeFaceIterImpl : public BaseCirculator<HalfEdgeHandle, FaceHandle> {
+public:
+
+    typedef BaseCirculator<HalfEdgeHandle, FaceHandle> BaseIter;
+    typedef HalfEdgeHandle CenterEntityHandle;
+
+    HalfEdgeFaceIterImpl(const HalfEdgeHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
+    HalfEdgeFaceIterImpl& operator++();
+    HalfEdgeFaceIterImpl& operator--();
+
+private:
+    std::vector<FaceHandle> faces_;
+    size_t cur_index_;
+};
+
+//===========================================================================
+
 class HalfFaceHalfEdgeIterImpl : public BaseCirculator<HalfFaceHandle, HalfEdgeHandle> {
 public:
 
@@ -1192,6 +1210,16 @@ public:
 
 private:
     size_t cur_index_;
+};
+
+//===========================================================================
+
+class FaceVertexIterImpl : public HalfFaceVertexIter {
+public:
+
+    typedef FaceHandle CenterEntityHandle;
+    FaceVertexIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+
 };
 
 //===========================================================================
@@ -1349,9 +1377,12 @@ public:
 
 //===========================================================================
 
+typedef GenericCirculator<Internal::HalfEdgeFaceIterImpl> HalfEdgeFaceIter;
+
 typedef GenericCirculator<Internal::HalfFaceHalfEdgeIterImpl> HalfFaceHalfEdgeIter;
 typedef GenericCirculator<Internal::HalfFaceEdgeIterImpl> HalfFaceEdgeIter;
 
+typedef GenericCirculator<Internal::FaceVertexIterImpl> FaceVertexIter;
 typedef GenericCirculator<Internal::FaceHalfEdgeIterImpl> FaceHalfEdgeIter;
 typedef GenericCirculator<Internal::FaceEdgeIterImpl> FaceEdgeIter;
 
