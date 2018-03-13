@@ -434,6 +434,10 @@ public:
         return res;
     }
 
+    std::vector<VertexHandle> edge_vertices(const EdgeHandle& _h) const {
+        return halfedge_vertices(halfedge_handle(_h, 0));
+    }
+
     std::vector<HalfEdgeHandle> edge_halfedges(const EdgeHandle& _h) const {
         std::vector<HalfEdgeHandle> res(2);
         res[0] = halfedge_handle(_h, 0);
