@@ -577,6 +577,23 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_halfface_vertices(H
     return vertices;
 }
 
+VertexHandle TetrahedralMeshTopologyKernel::halfface_opposite_vertex(HalfFaceHandle hfh) const
+{
+    if (is_boundary(hfh)) {
+        return InvalidVertexHandle;
+    }
+
+    const std::vector<VertexHandle> base = get_halfface_vertices(hfh);
+    for (CellVertexIter it = cv_iter(incident_cell(hfh)); it.valid(); ++it) {
+        const VertexHandle vh = *it;
+        if (vh != base[0] && vh != base[1] && vh != base[2]) {
+            return vh;
+        }
+    }
+
+    return InvalidVertexHandle;
+}
+
 
 //========================================================================================
 
