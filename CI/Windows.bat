@@ -64,6 +64,8 @@ IF "%BUILD_PLATFORM%" == "VS2017" (
 
 )
 
+ECHO "==============================================================="
+ECHO "==============================================================="
 ECHO "Building with :"
 ECHO "ARCHITECTURE        : %ARCHITECTURE%"
 ECHO "BUILD_PLATFORM      : %BUILD_PLATFORM%"
@@ -72,6 +74,8 @@ ECHO "GENERATOR           : %GENERATOR%"
 ECHO "CMAKE_CONFIGURATION : %CMAKE_CONFIGURATION%"
 ECHO "VS_PATH             : %VS_PATH%"
 ECHO "LIBPATH             : %LIBPATH%"
+ECHO "==============================================================="
+ECHO "==============================================================="
 
 
 
