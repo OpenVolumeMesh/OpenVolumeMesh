@@ -46,8 +46,40 @@ IF "%BUILD_PLATFORM%" == "VS2015" (
 
 ) 
 
+IF "%BUILD_PLATFORM%" == "VS2017" (
+    set LIBPATH=E:\libs\VS2017
+    set GTESTVERSION=gtest-1.7.0
+    set GENERATOR=Visual Studio 15%ARCH_VS%
+    set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\devenv.com"
 
-"cmake" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%"  -DCMAKE_BUILD_TYPE=Release %CMAKE_CONFIGURATION% ..
+    set QT_VERSION=
+    IF "%ARCHITECTURE%" == "x64" (
+      set QT_INSTALL_PATH=E:\Qt\Qt5.10.1\5.10.1\msvc2017_64
+      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.10.1\5.10.1\msvc2017_64
+    )
+
+    IF "%ARCHITECTURE%" == "x32" (
+      echo "No Qt Binaries for VS2017 i386 available! i can not set any Qt Install Path"
+    )
+
+)
+
+ECHO "==============================================================="
+ECHO "==============================================================="
+ECHO "Building with :"
+ECHO "ARCHITECTURE        : %ARCHITECTURE%"
+ECHO "BUILD_PLATFORM      : %BUILD_PLATFORM%"
+ECHO "GTESTVERSION        : %GTESTVERSION%"
+ECHO "GENERATOR           : %GENERATOR%"
+ECHO "CMAKE_CONFIGURATION : %CMAKE_CONFIGURATION%"
+ECHO "VS_PATH             : %VS_PATH%"
+ECHO "LIBPATH             : %LIBPATH%"
+ECHO "==============================================================="
+ECHO "==============================================================="
+
+
+
+"C:\Program Files\CMake\bin\cmake.exe" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%"  -DCMAKE_BUILD_TYPE=Release %CMAKE_CONFIGURATION% ..
 
 %VS_PATH% /Build "Release" OpenVolumeMesh.sln /Project "ALL_BUILD"
 
@@ -68,7 +100,7 @@ mkdir build-debug
 
 cd build-debug
 
-"cmake" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Debug %CMAKE_CONFIGURATION% ..
+"C:\Program Files\CMake\bin\cmake.exe" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Debug %CMAKE_CONFIGURATION% ..
 
 %VS_PATH% /Build "Debug" OpenVolumeMesh.sln /Project "ALL_BUILD"
 

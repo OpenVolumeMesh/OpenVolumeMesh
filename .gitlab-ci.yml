@@ -21,6 +21,22 @@ cppcheck:
     paths:
       - cppcheck.log
 
+VS2017-64-bit:
+  variables:
+    BUILD_PLATFORM: "VS2017"
+    ARCHITECTURE:   "x64"
+  script: "CI\\Windows.bat"
+  tags:
+    - VS2015
+
+VS2017-32-bit:
+  variables:
+    BUILD_PLATFORM: "VS2017"
+    ARCHITECTURE:   "x32"
+  script: "CI\\Windows.bat"
+  tags:
+    - VS2017
+
 VS2015-64-bit:
   variables:
     BUILD_PLATFORM: "VS2015"
