@@ -340,6 +340,10 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     else if(prop_t == typeName<double>()) generateGenericProperty<double, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<std::string>()) generateGenericProperty<std::string, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<std::map<HalfEdgeHandle, int> >()) generateGenericProperty<std::map<HalfEdgeHandle, int>, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::vector<double> >()) generateGenericProperty<std::vector<double> , MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::vector<VertexHandle> >()) generateGenericProperty<std::vector<VertexHandle> , MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::vector<HalfFaceHandle> >()) generateGenericProperty<std::vector<HalfFaceHandle> , MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::vector<std::vector<HalfFaceHandle> > >()) generateGenericProperty<std::vector<std::vector<HalfFaceHandle> > , MeshT>(entity_t, name, _iff, _mesh);
 
     else if(prop_t == typeName<Vec2f>()) generateGenericProperty<Vec2f, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<Vec2d>()) generateGenericProperty<Vec2d, MeshT>(entity_t, name, _iff, _mesh);
@@ -352,9 +356,9 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     else if(prop_t == typeName<Vec3ui>()) generateGenericProperty<Vec3ui, MeshT>(entity_t, name, _iff, _mesh);
 
     else if(prop_t == typeName<Vec4f>()) generateGenericProperty<Vec4f, MeshT>(entity_t, name, _iff, _mesh);
-	else if(prop_t == typeName<Vec4d>()) generateGenericProperty<Vec4d, MeshT>(entity_t, name, _iff, _mesh);
-	else if(prop_t == typeName<Vec4i>()) generateGenericProperty<Vec4i, MeshT>(entity_t, name, _iff, _mesh);
-	else if(prop_t == typeName<Vec4ui>()) generateGenericProperty<Vec4ui, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<Vec4d>()) generateGenericProperty<Vec4d, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<Vec4i>()) generateGenericProperty<Vec4i, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<Vec4ui>()) generateGenericProperty<Vec4ui, MeshT>(entity_t, name, _iff, _mesh);
 
 
 
