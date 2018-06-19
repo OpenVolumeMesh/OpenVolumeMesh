@@ -13,11 +13,15 @@ endif()
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set (CMAKE_DEBUG_POSTFIX "d")
 
+
 # Enable bigobj on MSVC Windows debug mode
 if ( MSVC )
    add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,$<$<CONFIG:DEBUG>:/bigobj>,>")
 endif()
 
+if (WIN32)
+  add_definitions( -D_USE_MATH_DEFINES -DNOMINMAX  )
+endif ()
 
 # include our cmake files
 include (ACGCommon)
@@ -26,11 +30,6 @@ acg_get_version ()
 
 include (ACGOutput)
 
-if (WIN32)
-  add_definitions(
-      -D_USE_MATH_DEFINES -DNOMINMAX
-  )
-endif ()
 
 # ========================================================================
 # Call the subdirectories with the projects
