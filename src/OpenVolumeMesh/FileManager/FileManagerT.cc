@@ -356,9 +356,9 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     else if(prop_t == typeName<Vec3ui>()) generateGenericProperty<Vec3ui, MeshT>(entity_t, name, _iff, _mesh);
 
     else if(prop_t == typeName<Vec4f>()) generateGenericProperty<Vec4f, MeshT>(entity_t, name, _iff, _mesh);
-	else if(prop_t == typeName<Vec4d>()) generateGenericProperty<Vec4d, MeshT>(entity_t, name, _iff, _mesh);
-	else if(prop_t == typeName<Vec4i>()) generateGenericProperty<Vec4i, MeshT>(entity_t, name, _iff, _mesh);
-	else if(prop_t == typeName<Vec4ui>()) generateGenericProperty<Vec4ui, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<Vec4d>()) generateGenericProperty<Vec4d, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<Vec4i>()) generateGenericProperty<Vec4i, MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<Vec4ui>()) generateGenericProperty<Vec4ui, MeshT>(entity_t, name, _iff, _mesh);
 
 
 
