@@ -2,11 +2,6 @@
 # Custom settings for compiler flags and similar
 ################################################################################
 
-if ( WIN32 )
-  # Support large obj files (only costs compatibility with <MSVC 2005 linkers)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
-endif( WIN32 )
-
 if (UNIX)
 
   set ( ADDITIONAL_CXX_DEBUG_FLAGS )
