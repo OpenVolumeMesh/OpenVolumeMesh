@@ -15,7 +15,7 @@ set (CMAKE_DEBUG_POSTFIX "d")
 
 # Enable bigobj on MSVC Windows debug mode
 if ( MSVC )
-   add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,$<$<CONFIG:DEBUG>:/bigobj>> >"
+   add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,$<$<CONFIG:DEBUG>:/bigobj>> >")
 endif()
 
 
