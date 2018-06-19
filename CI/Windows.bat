@@ -15,16 +15,6 @@ IF "%BUILD_PLATFORM%" == "VS2013" (
     set GTESTVERSION=gtest-1.6.0
     set GENERATOR=Visual Studio 12%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"
-    set QT_VERSION=
-    IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
-    )
-
-    IF "%ARCHITECTURE%" == "x32" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
-    )
 ) 
 
 IF "%BUILD_PLATFORM%" == "VS2015" (
@@ -33,17 +23,6 @@ IF "%BUILD_PLATFORM%" == "VS2015" (
     set GENERATOR=Visual Studio 14%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"
 
-    set QT_VERSION=
-    IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
-    )
-
-    IF "%ARCHITECTURE%" == "x32" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
-    )
-
 ) 
 
 IF "%BUILD_PLATFORM%" == "VS2017" (
@@ -51,17 +30,6 @@ IF "%BUILD_PLATFORM%" == "VS2017" (
     set GTESTVERSION=gtest-1.7.0
     set GENERATOR=Visual Studio 15%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\devenv.com"
-
-    set QT_VERSION=
-    IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.10.1\5.10.1\msvc2017_64
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.10.1\5.10.1\msvc2017_64
-    )
-
-    IF "%ARCHITECTURE%" == "x32" (
-      echo "No Qt Binaries for VS2017 i386 available! i can not set any Qt Install Path"
-    )
-
 )
 
 ECHO "==============================================================="
