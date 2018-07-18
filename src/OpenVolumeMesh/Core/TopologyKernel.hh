@@ -331,6 +331,19 @@ public:
     /// Get number of cells in mesh
     virtual size_t n_cells()      const { return cells_.size(); }
 
+    /// Get number of undeleted vertices in mesh
+    size_t n_logical_vertices()   const { return n_vertices_ - n_deleted_vertices_; }
+    /// Get number of undeleted edges in mesh
+    size_t n_logical_edges()      const { return edges_.size() - n_deleted_edges_; }
+    /// Get number of undeleted halfedges in mesh
+    size_t n_logical_halfedges()  const { return n_logical_edges() * 2u; }
+    /// Get number of undeleted faces in mesh
+    size_t n_logical_faces()      const { return faces_.size() - n_deleted_faces_; }
+    /// Get number of undeleted halffaces in mesh
+    size_t n_logical_halffaces()  const { return n_faces() * 2u; }
+    /// Get number of undeleted cells in mesh
+    size_t n_logical_cells()      const { return cells_.size() - n_deleted_cells_; }
+
     int genus() const {
 
         int g = (1 - (int)(n_vertices() -
@@ -952,7 +965,7 @@ public:
     }
 
     bool inline needs_garbage_collection() const {
-        return needs_garbage_collection_;
+        return n_deleted_vertices_ > 0 || n_deleted_edges_ > 0 || n_deleted_faces_ > 0 || n_deleted_cells_ > 0;
     }
 
 protected:
@@ -970,7 +983,12 @@ protected:
     std::vector<bool> edge_deleted_;
     std::vector<bool> face_deleted_;
     std::vector<bool> cell_deleted_;
-    bool needs_garbage_collection_;
+
+    // number of elements deleted, but not yet garbage collected
+    size_t n_deleted_vertices_ = 0;
+    size_t n_deleted_edges_ = 0;
+    size_t n_deleted_faces_ = 0;
+    size_t n_deleted_cells_ = 0;
 
 };
 
