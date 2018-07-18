@@ -63,18 +63,10 @@ using namespace OpenVolumeMesh::Geometry;
 
 //==================================================
 
-template <class MeshT>
-bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
-    bool _topologyCheck, bool _computeBottomUpIncidences) const {
-
-    std::ifstream iff(_filename.c_str(), std::ios::in);
-
-    if(!iff.good()) {
-        std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;
-        iff.close();
-        return false;
-    }
-
+template<class MeshT>
+bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
+    bool _topologyCheck, bool _computeBottomUpIncidences) const
+{
     std::stringstream sstr;
     std::string line;
     std::string s_tmp;
@@ -95,14 +87,14 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     bool header_found = true;
 
     // Get first line
-    getCleanLine(iff, line);
+    getCleanLine(_istream, line);
     sstr.str(line);
 
     // Check header
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "OVM") {
-        //iff.close();
+        //_istream.close();
         header_found = false;
         std::cerr << "The specified file might not be in OpenVolumeMesh format!" << std::endl;
         //return false;
@@ -112,7 +104,6 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp == "BINARY") {
-        iff.close();
         std::cerr << "Binary files are not supported at the moment!" << std::endl;
         return false;
     }
@@ -124,7 +115,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
         sstr.clear();
         sstr.str(line);
     } else {
-        getCleanLine(iff, line);
+        getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
     }
@@ -132,13 +123,12 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "VERTICES") {
-        iff.close();
         std::cerr << "No vertex section defined!" << std::endl;
         return false;
     } else {
 
         // Read in number of vertices
-        getCleanLine(iff, line);
+        getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
         sstr >> c;
@@ -146,7 +136,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
         // Read in vertices
         for(uint64_t i = 0u; i < c; ++i) {
 
-            getCleanLine(iff, line);
+            getCleanLine(_istream, line);
             sstr.clear();
             sstr.str(line);
             sstr >> v[0];
@@ -159,19 +149,18 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     /*
      * Edges
      */
-    getCleanLine(iff, line);
+    getCleanLine(_istream, line);
     sstr.clear();
     sstr.str(line);
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "EDGES") {
-        iff.close();
         std::cerr << "No edge section defined!" << std::endl;
         return false;
     } else {
 
         // Read in number of edges
-        getCleanLine(iff, line);
+        getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
         sstr >> c;
@@ -181,7 +170,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
 
             unsigned int v1 = 0;
             unsigned int v2 = 0;
-            getCleanLine(iff, line);
+            getCleanLine(_istream, line);
             sstr.clear();
             sstr.str(line);
             sstr >> v1;
@@ -193,19 +182,18 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     /*
      * Faces
      */
-    getCleanLine(iff, line);
+    getCleanLine(_istream, line);
     sstr.clear();
     sstr.str(line);
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "FACES") {
-        iff.close();
         std::cerr << "No face section defined!" << std::endl;
         return false;
     } else {
 
         // Read in number of faces
-        getCleanLine(iff, line);
+        getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
         sstr >> c;
@@ -213,7 +201,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
         // Read in faces
         for(uint64_t i = 0u; i < c; ++i) {
 
-            getCleanLine(iff, line);
+            getCleanLine(_istream, line);
             sstr.clear();
             sstr.str(line);
 
@@ -226,7 +214,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
             // Read half-edge indices
             for(unsigned int e = 0; e < val; ++e) {
 
-            	unsigned int v1 = 0;
+                unsigned int v1 = 0;
                 sstr >> v1;
                 hes.push_back(HalfEdgeHandle(v1));
             }
@@ -238,19 +226,18 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     /*
      * Cells
      */
-    getCleanLine(iff, line);
+    getCleanLine(_istream, line);
     sstr.clear();
     sstr.str(line);
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "POLYHEDRA") {
-        iff.close();
         std::cerr << "No polyhedra section defined!" << std::endl;
         return false;
     } else {
 
         // Read in number of cells
-        getCleanLine(iff, line);
+        getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
         sstr >> c;
@@ -258,7 +245,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
         // Read in cells
         for(uint64_t i = 0u; i < c; ++i) {
 
-            getCleanLine(iff, line);
+            getCleanLine(_istream, line);
             sstr.clear();
             sstr.str(line);
 
@@ -271,7 +258,7 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
             // Read half-face indices
             for(unsigned int f = 0; f < val; ++f) {
 
-            	unsigned int v1 = 0;
+                unsigned int v1 = 0;
                 sstr >> v1;
                 hfs.push_back(HalfFaceHandle(v1));
             }
@@ -280,15 +267,13 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
         }
     }
 
-    while(!iff.eof()) {
+    while(!_istream.eof()) {
         // "End of file reached while searching for input!"
         // is thrown here. \TODO Fix it!
 
         // Read property
-        readProperty(iff, _mesh);
+        readProperty(_istream, _mesh);
     }
-
-    iff.close();
 
     if(_computeBottomUpIncidences) {
         // Compute bottom-up incidences
@@ -303,6 +288,20 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     std::cerr << "######################################" << std::endl;
 
     return true;
+}
+
+template <class MeshT>
+bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
+    bool _topologyCheck, bool _computeBottomUpIncidences) const {
+
+    std::ifstream iff(_filename.c_str(), std::ios::in);
+
+    if(!iff.good()) {
+        std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;
+        iff.close();
+        return false;
+    }
+    return readStream(iff, _mesh, _topologyCheck,_computeBottomUpIncidences);
 }
 
 //==================================================
@@ -403,23 +402,16 @@ void FileManager::generateGenericProperty(const std::string& _entity_t, const st
 
 //==================================================
 
+
 template<class MeshT>
-bool FileManager::writeFile(const std::string& _filename, const MeshT& _mesh) const {
-
-    std::ofstream off(_filename.c_str(), std::ios::out);
-
-    if(!off.good()) {
-        std::cerr << "Error: Could not open file " << _filename << " for writing!" << std::endl;
-        off.close();
-        return false;
-    }
-
+void FileManager::writeStream(std::ostream &_ostream, const MeshT &_mesh) const
+{
     // Write header
-    off << "OVM ASCII" << std::endl;
+    _ostream << "OVM ASCII" << std::endl;
 
     uint64_t n_vertices(_mesh.n_vertices());
-    off << "Vertices" << std::endl;
-    off << n_vertices << std::endl;
+    _ostream << "Vertices" << std::endl;
+    _ostream << n_vertices << std::endl;
 
     typedef typename MeshT::PointT Point;
 
@@ -427,84 +419,93 @@ bool FileManager::writeFile(const std::string& _filename, const MeshT& _mesh) co
     for(VertexIter v_it = _mesh.v_iter(); v_it; ++v_it) {
 
         Point v = _mesh.vertex(*v_it);
-        off << v[0] << " " << v[1] << " " << v[2] << std::endl;
+        _ostream << v[0] << " " << v[1] << " " << v[2] << std::endl;
     }
 
     uint64_t n_edges(_mesh.n_edges());
-    off << "Edges" << std::endl;
-    off << n_edges << std::endl;
+    _ostream << "Edges" << std::endl;
+    _ostream << n_edges << std::endl;
 
     // write edges
     for(EdgeIter e_it = _mesh.e_iter(); e_it; ++e_it) {
 
         VertexHandle from_vertex = _mesh.edge(*e_it).from_vertex();
         VertexHandle to_vertex = _mesh.edge(*e_it).to_vertex();
-        off << from_vertex << " " << to_vertex << std::endl;
+        _ostream << from_vertex << " " << to_vertex << std::endl;
     }
 
     uint64_t n_faces(_mesh.n_faces());
-    off << "Faces" << std::endl;
-    off << n_faces << std::endl;
+    _ostream << "Faces" << std::endl;
+    _ostream << n_faces << std::endl;
 
     // write faces
     for(FaceIter f_it = _mesh.f_iter(); f_it; ++f_it) {
 
-        off << static_cast<uint64_t>(_mesh.face(*f_it).halfedges().size()) << " ";
+        _ostream << static_cast<uint64_t>(_mesh.face(*f_it).halfedges().size()) << " ";
 
         std::vector<HalfEdgeHandle> halfedges = _mesh.face(*f_it).halfedges();
 
         for(typename std::vector<HalfEdgeHandle>::const_iterator it = halfedges.begin(); it
-                != halfedges.end(); ++it) {
+                                                                                         != halfedges.end(); ++it) {
 
-            off << it->idx();
+            _ostream << it->idx();
 
             if((it + 1) != halfedges.end())
-                off << " ";
+                _ostream << " ";
         }
 
-        off << std::endl;
+        _ostream << std::endl;
     }
 
     uint64_t n_cells(_mesh.n_cells());
-    off << "Polyhedra" << std::endl;
-    off << n_cells << std::endl;
+    _ostream << "Polyhedra" << std::endl;
+    _ostream << n_cells << std::endl;
 
     for(CellIter c_it = _mesh.c_iter(); c_it; ++c_it) {
 
-        off << static_cast<uint64_t>(_mesh.cell(*c_it).halffaces().size()) << " ";
+        _ostream << static_cast<uint64_t>(_mesh.cell(*c_it).halffaces().size()) << " ";
 
         std::vector<HalfFaceHandle> halffaces = _mesh.cell(*c_it).halffaces();
 
         for(typename std::vector<HalfFaceHandle>::const_iterator it = halffaces.begin(); it
-                != halffaces.end(); ++it) {
+                                                                                         != halffaces.end(); ++it) {
 
-            off << it->idx();
+            _ostream << it->idx();
 
             if((it + 1) != halffaces.end())
-                off << " ";
+                _ostream << " ";
         }
 
-        off << std::endl;
+        _ostream << std::endl;
     }
 
     // write vertex props
-    writeProps(off, _mesh.vertex_props_begin(), _mesh.vertex_props_end());
+    writeProps(_ostream, _mesh.vertex_props_begin(), _mesh.vertex_props_end());
     // write edge props
-    writeProps(off, _mesh.edge_props_begin(), _mesh.edge_props_end());
+    writeProps(_ostream, _mesh.edge_props_begin(), _mesh.edge_props_end());
     // write halfedge props
-    writeProps(off, _mesh.halfedge_props_begin(), _mesh.halfedge_props_end());
+    writeProps(_ostream, _mesh.halfedge_props_begin(), _mesh.halfedge_props_end());
     // write face props
-    writeProps(off, _mesh.face_props_begin(), _mesh.face_props_end());
+    writeProps(_ostream, _mesh.face_props_begin(), _mesh.face_props_end());
     // write halfface props
-    writeProps(off, _mesh.halfface_props_begin(), _mesh.halfface_props_end());
+    writeProps(_ostream, _mesh.halfface_props_begin(), _mesh.halfface_props_end());
     // write cell props
-    writeProps(off, _mesh.cell_props_begin(), _mesh.cell_props_end());
+    writeProps(_ostream, _mesh.cell_props_begin(), _mesh.cell_props_end());
     // write mesh props
-    writeProps(off, _mesh.mesh_props_begin(), _mesh.mesh_props_end());
+    writeProps(_ostream, _mesh.mesh_props_begin(), _mesh.mesh_props_end());
+}
 
-    off.close();
+template<class MeshT>
+bool FileManager::writeFile(const std::string& _filename, const MeshT& _mesh) const {
 
-    return true;
+    std::ofstream off(_filename.c_str(), std::ios::out);
+
+    if(!off.good()) {
+        std::cerr << "Error: Could not open file " << _filename << " for writing!" << std::endl;
+        return false;
+    }
+    writeStream(off, _mesh);
+    return off.good();
 }
 
 //==================================================
