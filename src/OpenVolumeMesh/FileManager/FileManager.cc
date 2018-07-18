@@ -126,7 +126,9 @@ bool FileManager::getCleanLine(std::istream& _ifs, std::string& _string, bool _s
         }
 
         if(_ifs.eof()) {
-            std::cerr << "End of file reached while searching for input!" << std::endl;
+            if (verbosity_level_ >= 2) {
+                std::cerr << "End of file reached while searching for input!" << std::endl;
+            }
             return false;
         }
     }
@@ -141,7 +143,9 @@ bool FileManager::isHexahedralMesh(const std::string& _filename) const {
   std::ifstream iff(_filename.c_str(), std::ios::in);
 
   if(!iff.good()) {
-    std::cerr << "Could not open file " << _filename << " for reading!" << std::endl;
+    if (verbosity_level_ >= 1) {
+      std::cerr << "Could not open file " << _filename << " for reading!" << std::endl;
+    }
     iff.close();
     return false;
   }
@@ -185,7 +189,9 @@ bool FileManager::isTetrahedralMesh(const std::string& _filename) const {
   std::ifstream iff(_filename.c_str(), std::ios::in);
 
   if(!iff.good()) {
-    std::cerr << "Could not open file " << _filename << " for reading!" << std::endl;
+    if (verbosity_level_ >= 1) {
+      std::cerr << "Could not open file " << _filename << " for reading!" << std::endl;
+    }
     iff.close();
     return false;
   }

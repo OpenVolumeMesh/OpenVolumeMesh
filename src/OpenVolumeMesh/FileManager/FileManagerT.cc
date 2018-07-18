@@ -96,7 +96,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     if(s_tmp != "OVM") {
         //_istream.close();
         header_found = false;
-        std::cerr << "The specified file might not be in OpenVolumeMesh format!" << std::endl;
+        if (verbosity_level_ >= 1) {
+            std::cerr << "The specified file might not be in OpenVolumeMesh format!" << std::endl;
+        }
         //return false;
     }
 
@@ -104,7 +106,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp == "BINARY") {
-        std::cerr << "Binary files are not supported at the moment!" << std::endl;
+        if (verbosity_level_ >= 1) {
+            std::cerr << "Binary files are not supported at the moment!" << std::endl;
+        }
         return false;
     }
 
@@ -123,7 +127,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "VERTICES") {
-        std::cerr << "No vertex section defined!" << std::endl;
+        if (verbosity_level_ >= 1) {
+            std::cerr << "No vertex section defined!" << std::endl;
+        }
         return false;
     } else {
 
@@ -155,7 +161,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "EDGES") {
-        std::cerr << "No edge section defined!" << std::endl;
+        if (verbosity_level_ >= 2) {
+            std::cerr << "No edge section defined!" << std::endl;
+        }
         return false;
     } else {
 
@@ -188,7 +196,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "FACES") {
-        std::cerr << "No face section defined!" << std::endl;
+        if (verbosity_level_ >= 2) {
+            std::cerr << "No face section defined!" << std::endl;
+        }
         return false;
     } else {
 
@@ -232,7 +242,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "POLYHEDRA") {
-        std::cerr << "No polyhedra section defined!" << std::endl;
+        if (verbosity_level_ >= 2) {
+            std::cerr << "No polyhedra section defined!" << std::endl;
+        }
         return false;
     } else {
 
@@ -280,12 +292,14 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         _mesh.enable_bottom_up_incidences(true);
     }
 
-    std::cerr << "######## openvolumemesh info #########" << std::endl;
-    std::cerr << "#vertices: " << _mesh.n_vertices() << std::endl;
-    std::cerr << "#edges:    " << _mesh.n_edges() << std::endl;
-    std::cerr << "#faces:    " << _mesh.n_faces() << std::endl;
-    std::cerr << "#cells:    " << _mesh.n_cells() << std::endl;
-    std::cerr << "######################################" << std::endl;
+    if (verbosity_level_ >= 2) {
+        std::cerr << "######## openvolumemesh info #########" << std::endl;
+        std::cerr << "#vertices: " << _mesh.n_vertices() << std::endl;
+        std::cerr << "#edges:    " << _mesh.n_edges() << std::endl;
+        std::cerr << "#faces:    " << _mesh.n_faces() << std::endl;
+        std::cerr << "#cells:    " << _mesh.n_cells() << std::endl;
+        std::cerr << "######################################" << std::endl;
+    }
 
     return true;
 }
@@ -297,7 +311,9 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     std::ifstream iff(_filename.c_str(), std::ios::in);
 
     if(!iff.good()) {
-        std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;
+        if (verbosity_level_ >= 1) {
+            std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;
+        }
         iff.close();
         return false;
     }
@@ -325,7 +341,9 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     name = line;
     extractQuotedText(name);
 
-    std::cerr << "OVM read property " << name << " of type " << prop_t << std::endl;
+    if (verbosity_level_ >= 2) {
+        std::cerr << "OVM read property " << name << " of type " << prop_t << std::endl;
+    }
 
     if(prop_t == typeName<int>()) generateGenericProperty<int, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<unsigned int>()) generateGenericProperty<unsigned int, MeshT>(entity_t, name, _iff, _mesh);
@@ -501,7 +519,9 @@ bool FileManager::writeFile(const std::string& _filename, const MeshT& _mesh) co
     std::ofstream off(_filename.c_str(), std::ios::out);
 
     if(!off.good()) {
-        std::cerr << "Error: Could not open file " << _filename << " for writing!" << std::endl;
+        if (verbosity_level_ >= 1) {
+            std::cerr << "Error: Could not open file " << _filename << " for writing!" << std::endl;
+        }
         return false;
     }
     writeStream(off, _mesh);
@@ -518,7 +538,9 @@ void FileManager::writeProps(std::ostream& _ostr, const IteratorT& _begin, const
             p_it != _end; ++p_it) {
         if(!(*p_it)->persistent()) continue;
         if((*p_it)->anonymous()) {
-            std::cerr << "Serialization of anonymous properties is not supported!" << std::endl;
+            if (verbosity_level_ >= 2) {
+                std::cerr << "Serialization of anonymous properties is not supported!" << std::endl;
+            }
             continue;
         }
 
@@ -526,7 +548,9 @@ void FileManager::writeProps(std::ostream& _ostr, const IteratorT& _begin, const
         try {
             type_name = (*p_it)->typeNameWrapper();
         } catch (std::runtime_error &e) { // type not serializable
-            std::cerr << "Failed to save property, skipping: " << e.what() << std::endl;
+            if (verbosity_level_ >= 1) {
+                std::cerr << "Failed to save property " << (*p_it)->name() << " , skipping: " << e.what() << std::endl;
+            }
             continue;
         }
         _ostr << (*p_it)->entityType() << " ";

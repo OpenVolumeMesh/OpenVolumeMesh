@@ -68,6 +68,13 @@ public:
   /// Default destructor
   ~FileManager();
 
+
+  /**
+   * \brief set minimum level for errors that are printed to std::cerr
+   * @param _level 0: no output; 1: only errors; 2: warnings/info
+   */
+  void setVerbosityLevel(int _level) { verbosity_level_ = _level;}
+
   /**
     * \brief Read a mesh from an std::istream
     *
@@ -167,6 +174,9 @@ private:
 
   // Get a whole line from file
   bool getCleanLine(std::istream& ifs, std::string& _string, bool _skipEmptyLines = true) const;
+
+
+  int verbosity_level_ = 3;
 };
 
 } // Namespace IO
