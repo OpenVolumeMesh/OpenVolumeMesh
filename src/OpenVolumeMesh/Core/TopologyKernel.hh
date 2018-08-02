@@ -636,6 +636,10 @@ public:
         edge_deleted_.clear();
         face_deleted_.clear();
         cell_deleted_.clear();
+        n_deleted_vertices_ = 0;
+        n_deleted_edges_ = 0;
+        n_deleted_faces_ = 0;
+        n_deleted_cells_ = 0;
         outgoing_hes_per_vertex_.clear();
         incident_hfs_per_he_.clear();
         incident_cell_per_hf_.clear();
