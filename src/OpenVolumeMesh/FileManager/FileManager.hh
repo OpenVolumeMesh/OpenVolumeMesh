@@ -45,6 +45,8 @@
 
 #include <string>
 #include <fstream>
+#include <istream>
+#include <ostream>
 
 namespace OpenVolumeMesh {
 
@@ -66,6 +68,34 @@ public:
   /// Default destructor
   ~FileManager();
 
+
+  /**
+   * \brief set minimum level for errors that are printed to std::cerr
+   * @param _level 0: no output; 1: only errors; 2: warnings/info
+   */
+  void setVerbosityLevel(int _level) { verbosity_level_ = _level;}
+
+  /**
+    * \brief Read a mesh from an std::istream
+    *
+    *  Returns true if the file was successfully read. The mesh
+    *  is stored in parameter _mesh. If something goes wrong,
+    *  this function returns false.
+    *
+    * @param _istream        The stream to read the mesh from
+    * @param _mesh           A reference to an OpenVolumeMesh instance
+    * @param _topologyCheck  Pass true if you want to perform a topology check
+    *                        each time an entity is added (slower performance)
+    * @param _computeBottomUpIncidences Pass true if you want the file manager
+    *                                    to directly compute the bottom-up incidences
+    *                                    for the mesh. (Note: These are needed for
+    *                                    some iterators to work, see documentation)
+    */
+  template <class MeshT>
+  bool readStream(std::istream &_istream, MeshT& _mesh,
+      bool _topologyCheck = true,
+      bool _computeBottomUpIncidences = true) const;
+
   /**
    * \brief Read a mesh from a file
    *
@@ -86,6 +116,16 @@ public:
   bool readFile(const std::string& _filename, MeshT& _mesh,
       bool _topologyCheck = true,
       bool _computeBottomUpIncidences = true) const;
+
+
+  /**
+   * \brief Write a mesh to an std::ostream
+   *
+   * @param _ostream  The stream to write the mesh to
+   * @param _mesh     A const reference to an OpenVolumeMesh instance
+   */
+  template <class MeshT>
+  void writeStream(std::ostream &_ostream, const MeshT& _mesh) const;
 
   /**
    * \brief Write a mesh to a file
@@ -134,6 +174,9 @@ private:
 
   // Get a whole line from file
   bool getCleanLine(std::istream& ifs, std::string& _string, bool _skipEmptyLines = true) const;
+
+
+  int verbosity_level_ = 3;
 };
 
 } // Namespace IO
