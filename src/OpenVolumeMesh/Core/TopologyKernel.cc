@@ -64,8 +64,7 @@ TopologyKernel::TopologyKernel() :
     e_bottom_up_(true),
     f_bottom_up_(true),
     deferred_deletion(true),
-    fast_deletion(true),
-    needs_garbage_collection_(false)
+    fast_deletion(true)
 {
 }
 
@@ -720,42 +719,44 @@ CellIter TopologyKernel::delete_cell(const CellHandle& _h) {
  */
 void TopologyKernel::collect_garbage()
 {
-    if (!deferred_deletion_enabled() || !needs_garbage_collection_)
+    if (!deferred_deletion_enabled() || !needs_garbage_collection())
         return; // nothing todo
 
     deferred_deletion = false;
 
-    for (int i = (int)n_cells(); i > 0; --i)
-        if (is_deleted(CellHandle(i-1)))
-        {
-            cell_deleted_[i-1] = false;
-            delete_cell_core(CellHandle(i-1));
+    for (int i = (int)n_cells(); i > 0; --i) {
+        if (is_deleted(CellHandle(i - 1))) {
+            cell_deleted_[i - 1] = false;
+            delete_cell_core(CellHandle(i - 1));
         }
+    }
+    n_deleted_cells_ = 0;
 
-    for (int i = (int)n_faces(); i > 0; --i)
-        if (is_deleted(FaceHandle(i-1)))
-        {
-            face_deleted_[i-1] = false;
-            delete_face_core(FaceHandle(i-1));
+    for (int i = (int)n_faces(); i > 0; --i) {
+        if (is_deleted(FaceHandle(i - 1))) {
+            face_deleted_[i - 1] = false;
+            delete_face_core(FaceHandle(i - 1));
         }
+    }
+    n_deleted_faces_ = 0;
 
-    for (int i = (int)n_edges(); i > 0; --i)
-        if (is_deleted(EdgeHandle(i-1)))
-        {
-            edge_deleted_[i-1] = false;
-            delete_edge_core(EdgeHandle(i-1));
+    for (int i = (int)n_edges(); i > 0; --i) {
+        if (is_deleted(EdgeHandle(i - 1))) {
+            edge_deleted_[i - 1] = false;
+            delete_edge_core(EdgeHandle(i - 1));
         }
+    }
+    n_deleted_edges_ = 0;
 
-    for (int i = (int)n_vertices(); i > 0; --i)
-        if (is_deleted(VertexHandle(i-1)))
-        {
-            vertex_deleted_[i-1] = false;
-            delete_vertex_core(VertexHandle(i-1));
+    for (int i = (int)n_vertices(); i > 0; --i) {
+        if (is_deleted(VertexHandle(i - 1))) {
+            vertex_deleted_[i - 1] = false;
+            delete_vertex_core(VertexHandle(i - 1));
         }
-
+    }
+    n_deleted_vertices_ = 0;
 
     deferred_deletion = true;
-    needs_garbage_collection_ = false;
 
 }
 
@@ -922,7 +923,7 @@ VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
 
     if (deferred_deletion_enabled())
     {
-        needs_garbage_collection_ = true;
+        ++n_deleted_vertices_;
         vertex_deleted_[h.idx()] = true;
 //        deleted_vertices_.push_back(h);
 
@@ -1050,7 +1051,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 
     if (deferred_deletion_enabled())
     {
-        needs_garbage_collection_ = true;
+        ++n_deleted_edges_;
         edge_deleted_[h.idx()] = true;
 //        deleted_edges_.push_back(h);
 
@@ -1235,7 +1236,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
 
     if (deferred_deletion_enabled())
     {
-        needs_garbage_collection_ = true;
+        ++n_deleted_faces_;
         face_deleted_[h.idx()] = true;
 //        deleted_faces_.push_back(h);
 
@@ -1394,7 +1395,7 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
 
     if (deferred_deletion_enabled())
     {
-        needs_garbage_collection_ = true;
+        ++n_deleted_cells_;
         cell_deleted_[h.idx()] = true;
 //        deleted_cells_.push_back(h);
 //        deleted_cells_set.insert(h);
