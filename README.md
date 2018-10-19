@@ -64,7 +64,7 @@ system (redmine), which you find at
 
 <https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh>,
 
-or you can send them directly to my e-mail address which is
+or you can send them directly to the following e-mail address which is
 
 <moebius@cs.rwth-aachen.de>.
 
