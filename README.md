@@ -1,10 +1,8 @@
-===========================================================================
-                                                                           
+-----
                             OpenVolumeMesh                                 
-        Copyright (C) 2011 by Computer Graphics Group, RWTH Aachen         
-                        www.openvolumemesh.org                             
-                                                                           
----------------------------------------------------------------------------
+        Copyright (C) 2011-2018 by Computer Graphics Group, RWTH Aachen         
+                         www.openvolumemesh.org                             
+-----
                                                                            
   OpenVolumeMesh is free software: you can redistribute it and/or modify   
   it under the terms of the GNU Lesser General Public License as           
@@ -21,18 +19,17 @@
   License along with OpenVolumeMesh. If not,                              
   see <http://www.gnu.org/licenses/>.                                      
                                                                            
-=========================================================================== 
 
-Overview:
+
+# Overview:
 
 0. Introduction
 1. System Requirements
 2. Building OpenVolumeMesh
 3. License Information
 
-=========================================================================== 
 
-0. Introduction
+# 0. Introduction
 
 Thank you for downloading and using the OpenVolumeMesh library. OpenVolumeMesh
 is a generic data structure for the comfortable handling of arbitrary
@@ -67,18 +64,17 @@ system (redmine), which you find at
 
 <https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh>,
 
-or you can send them directly to my e-mail address which is
+or you can send them directly to the following e-mail address which is
 
 <moebius@cs.rwth-aachen.de>.
 
-=========================================================================== 
 
-1. System Requirements
+# 1. System Requirements
 
 OpenVolumeMesh is shipped as source project and can be built on all common
 architectures and operating systems including:
 
-- Windows XP/2000/Vista/7 with Visual Studio 2013 or higher
+- Windows 7/8/10 with Visual Studio 2013 or higher
 
 - MacOSX with latest XCode 
 
@@ -92,9 +88,8 @@ Note also that, in order to build the documentation, you will need to
 have Doxygen installed on your computer. Download Doxygen under
 <http://www.doxygen.org>. The use of Doxygen is not mandatory though.
 
-=========================================================================== 
 
-2. Building OpenVolumeMesh
+# 2. Building OpenVolumeMesh
 
 OpenVolumeMesh is equipped with a CMake build system <http://www.cmake.org>.
 Make sure that at least version 3.7 of CMake is installed on your computer.
@@ -121,9 +116,8 @@ click on "Generate". You will now find a Visual Studio project file
 in the specified build folder (which is "Build" per default). Open this
 file in Visual Studio and select "Build all".
 
-===========================================================================
 
-3. License Information
+# 3. License Information
 
 OpenVolumeMesh is free software licensed under the terms of the
 GNU Lesser General Public License Version 3 as published by the Free Software
