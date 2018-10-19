@@ -74,7 +74,7 @@ or you can send them directly to my e-mail address which is
 OpenVolumeMesh is shipped as source project and can be built on all common
 architectures and operating systems including:
 
-- Windows XP/2000/Vista/7 with Visual Studio 2013 or higher
+- Windows 7/8/10 with Visual Studio 2013 or higher
 
 - MacOSX with latest XCode 
 
