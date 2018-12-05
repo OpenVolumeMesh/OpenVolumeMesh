@@ -3,10 +3,10 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/${CMAKE_PROJECT_NAME}.cmake)
 endif ()
 
 # prevent build in source directory
-if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
-    message (SEND_ERROR "Building in the source directory is not supported.")
-    message (FATAL_ERROR "Please remove the created \"CMakeCache.txt\" file, the \"CMakeFiles\" directory and create a build directory and call \"${CMAKE_COMMAND} <path to the sources>\".")
-endif ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+  if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+      message (SEND_ERROR "Building in the source directory is not supported.")
+      message (FATAL_ERROR "Please remove the created \"CMakeCache.txt\" file, the \"CMakeFiles\" directory and create a build directory and call \"${CMAKE_COMMAND} <path to the sources>\".")
+  endif ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
 
 # allow only Debug and Release builds
 set (CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "")
@@ -132,7 +132,7 @@ macro (acg_set_target_props target)
         #BUILD_WITH_INSTALL_RPATH 1
         SKIP_BUILD_RPATH 0
       ) 
-    endif(NOT (CMAKE_MAJOR_VERSION  LESS 3))
+    endif(NOT (CMAKE_MAJOR_VERSION  LESS 3) )
   elseif (NOT APPLE)
 
     set_target_properties (
@@ -165,14 +165,14 @@ endmacro ()
 # test for OpenMP
 macro (acg_openmp)
   if (NOT OPENMP_NOTFOUND)
-    find_package(OpenMP)
-    if (OPENMP_FOUND)
-      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-      add_definitions(-DUSE_OPENMP)
+        find_package(OpenMP)
+      if (OPENMP_FOUND)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        add_definitions(-DUSE_OPENMP)
     else ()
       set (OPENMP_NOTFOUND 1)
-    endif ()
+    endif()
   endif ()
 endmacro ()
 
@@ -235,7 +235,7 @@ endmacro ()
 macro (acg_get_files_in_dir ret dir)
   file (GLOB_RECURSE __files RELATIVE "${dir}" "${dir}/*")
   foreach (_file ${__files})
-    if (NOT _file MATCHES ".*svn.*")
+    if ( (NOT _file MATCHES ".*svn.*") AND (NOT _file MATCHES ".DS_Store") )
       list (APPEND ${ret} "${_file}")
     endif ()
   endforeach ()
@@ -270,7 +270,7 @@ function (acg_add_executable _target)
 
   # set common target properties defined in common.cmake
   acg_set_target_props (${_target})
-
+  
   if (WIN32 OR (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE))
     add_custom_command (TARGET ${_target} POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E
@@ -326,7 +326,7 @@ function (acg_add_library _target _libtype)
                           copy_if_different
                             $<TARGET_FILE:${_target}>
                             ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}/$<TARGET_FILE_NAME:${_target}>)
-	  add_custom_command (TARGET ${_target} POST_BUILD
+    add_custom_command (TARGET ${_target} POST_BUILD
                           COMMAND ${CMAKE_COMMAND} -E
                           copy_if_different
                             $<TARGET_LINKER_FILE:${_target}>
@@ -341,22 +341,22 @@ function (acg_add_library _target _libtype)
                             $<TARGET_FILE:${_target}>
                             ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_PLUGINDIR}/$<TARGET_FILE_NAME:${_target}>)
     elseif (${_type} STREQUAL STATIC)
-	  add_custom_command (TARGET ${_target} POST_BUILD
+    add_custom_command (TARGET ${_target} POST_BUILD
                           COMMAND ${CMAKE_COMMAND} -E
                           copy_if_different
                             $<TARGET_FILE:${_target}>
                             ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}/$<TARGET_FILE_NAME:${_target}>)
-	endif()
-	
-	 
-	# make an extra copy for windows into the binary directory
+  endif()
+  
+   
+  # make an extra copy for windows into the binary directory
     if (${_type} STREQUAL SHARED AND WIN32)
       add_custom_command (TARGET ${_target} POST_BUILD
                           COMMAND ${CMAKE_COMMAND} -E
                           copy_if_different 
                             $<TARGET_FILE:${_target}>
                             ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_BINDIR}/$<TARGET_FILE_NAME:${_target}>)
-	endif () 
+  endif () 
     
   endif( (WIN32 AND MSVC) OR (APPLE AND NOT ACG_PROJECT_MACOS_BUNDLE))
   
@@ -389,3 +389,4 @@ function (acg_add_library _target _libtype)
   endif()
 
 endfunction ()
+
