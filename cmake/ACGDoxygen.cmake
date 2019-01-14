@@ -18,8 +18,9 @@
 # author Jan Woetzel 2004-2006
 # www.mip.informatik.uni-kiel.de/~jw
 
-
-FIND_PACKAGE(Doxygen)
+if ( NOT DOXYGEN_FOUND)
+  FIND_PACKAGE(Doxygen)
+endif()
 
 IF (DOXYGEN_FOUND)
 
