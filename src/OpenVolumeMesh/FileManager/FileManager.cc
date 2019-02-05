@@ -154,7 +154,7 @@ bool FileManager::isHexahedralMesh(const std::string& _filename) const {
   unsigned int n = 0u;
 
   // Skip until we find polyhedra section
-  while (true || !iff.eof()) {
+  while (iff.good()) {
     iff >> s;
     if (s == "Polyhedra") {
       break;
@@ -200,7 +200,7 @@ bool FileManager::isTetrahedralMesh(const std::string& _filename) const {
   unsigned int n = 0u;
 
   // Skip until we find polyhedra section
-  while (true || !iff.eof()) {
+  while (iff.good()) {
     iff >> s;
     if (s == "Polyhedra") {
       break;
