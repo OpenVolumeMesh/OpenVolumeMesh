@@ -48,6 +48,7 @@
 #include <vector>
 
 #include "../System/FunctionalInclude.hh"
+#include "../System/Deprecation.hh"
 
 namespace OpenVolumeMesh {
 
@@ -85,7 +86,8 @@ public:
 
 	void idx(const int& _idx) { idx_ = _idx; }
 
-	inline operator int() const { return idx_; }
+    OVM_DEPRECATED("use explicit .idx() instead")
+    inline operator int() const { return idx_; }
 
 	void reset() { idx_ = -1; }
 

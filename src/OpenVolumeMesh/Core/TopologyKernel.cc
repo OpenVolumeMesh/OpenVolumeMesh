@@ -562,13 +562,13 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
         for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin(),
                 hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
 
-            incident_cell_per_hf_[*hf_it] = InvalidCellHandle;
+            incident_cell_per_hf_[hf_it->idx()] = InvalidCellHandle;
         }
 
         for(std::vector<HalfFaceHandle>::const_iterator hf_it = _hfs.begin(),
                 hf_end = _hfs.end(); hf_it != hf_end; ++hf_it) {
 
-            incident_cell_per_hf_[*hf_it] = _ch;
+            incident_cell_per_hf_[hf_it->idx()] = _ch;
         }
     }
 
@@ -1503,7 +1503,7 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
             for (unsigned int j = 0; j < 2; ++j) // for both halffaces
             {
                 HalfFaceHandle hfh = HalfFaceHandle(2*id+j);
-                CellHandle ch = incident_cell_per_hf_[hfh];
+                CellHandle ch = incident_cell_per_hf_[hfh.idx()];
                 if (!ch.is_valid())
                     continue;
 
@@ -1570,7 +1570,7 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
 
     if (has_edge_bottom_up_incidences())
     {
-        std::set<unsigned int> processed_halfedges; // to ensure ids are only swapped once (in the case that a halfedge is incident to both swapped faces)
+        std::set<HalfEdgeHandle> processed_halfedges; // to ensure ids are only swapped once (in the case that a halfedge is incident to both swapped faces)
         for (unsigned int i = 0; i < 2; ++i) // For both swapped faces
         {
             unsigned int id = ids[i];
@@ -1583,7 +1583,7 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
                 {
                     HalfEdgeHandle heh = hf.halfedges()[k];
 
-                    if (processed_halfedges.find(heh.idx()) != processed_halfedges.end())
+                    if (processed_halfedges.find(heh) != processed_halfedges.end())
                         continue;
 
                     std::vector<HalfFaceHandle>& incident_halffaces = incident_hfs_per_he_[heh.idx()];
@@ -1713,7 +1713,7 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 
     if (has_vertex_bottom_up_incidences())
     {
-        std::set<int> processed_vertices;
+        std::set<VertexHandle> processed_vertices;
         for (unsigned int i = 0; i < 2; ++i) // For both swapped edges
         {
             Edge e = edge(EdgeHandle(ids[i]));
@@ -1723,7 +1723,7 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 
             for (unsigned int j = 0; j < 2; ++j) // for both incident vertices
             {
-                if (processed_vertices.find(vhs[j].idx()) != processed_vertices.end())
+                if (processed_vertices.find(vhs[j]) != processed_vertices.end())
                     continue;
 
                 std::vector<HalfEdgeHandle>& outgoing_hes = outgoing_hes_per_vertex_[vhs[j].idx()];
@@ -1782,14 +1782,14 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
                 if (processed_edges.find(e_id) == processed_edges.end())
                 {
                     Edge& e = edges_[e_id];
-                    if (e.from_vertex() == (int)ids[0])
+                    if (e.from_vertex().idx() == (int)ids[0])
                         e.set_from_vertex(VertexHandle(ids[1]));
-                    else if (e.from_vertex() == (int)ids[1])
+                    else if (e.from_vertex().idx() == (int)ids[1])
                         e.set_from_vertex(VertexHandle(ids[0]));
 
-                    if (e.to_vertex() == (int)ids[0])
+                    if (e.to_vertex().idx() == (int)ids[0])
                         e.set_to_vertex(VertexHandle(ids[1]));
-                    else if (e.to_vertex() == (int)ids[1])
+                    else if (e.to_vertex().idx() == (int)ids[1])
                         e.set_to_vertex(VertexHandle(ids[0]));
 
                     processed_edges.insert(e_id);
@@ -1805,14 +1805,14 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
         for (unsigned int i = 0; i < edges_.size(); ++i)
         {
             Edge& e = edges_[i];
-            if (e.from_vertex() == (int)ids[0])
+            if (e.from_vertex().idx() == (int)ids[0])
                 e.set_from_vertex(VertexHandle(ids[1]));
-            else if (e.from_vertex() == (int)ids[1])
+            else if (e.from_vertex().idx() == (int)ids[1])
                 e.set_from_vertex(VertexHandle(ids[0]));
 
-            if (e.to_vertex() == (int)ids[0])
+            if (e.to_vertex().idx() == (int)ids[0])
                 e.set_to_vertex(VertexHandle(ids[1]));
-            else if (e.to_vertex() == (int)ids[1])
+            else if (e.to_vertex().idx() == (int)ids[1])
                 e.set_to_vertex(VertexHandle(ids[0]));
         }
     }
