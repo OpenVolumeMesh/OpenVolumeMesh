@@ -48,6 +48,7 @@
 #include "BaseProperty.hh"
 #include "OpenVolumeMeshHandle.hh"
 #include "../System/MemoryInclude.hh"
+#include "../System/Deprecation.hh"
 
 namespace OpenVolumeMesh {
 
@@ -73,6 +74,8 @@ public:
     typedef typename PropT::reference                   reference;
     typedef typename PropT::const_reference             const_reference;
 
+    typedef typename HandleT::EntityHandleT             EntityHandleT;
+
     /// Constructor
     PropertyPtr(PropT* _ptr, ResourceManager& _resMan, HandleT _handle);
 
@@ -93,11 +96,13 @@ public:
     const_iterator end() const { return ptr::shared_ptr<PropT>::get()->end(); }
     iterator end() { return ptr::shared_ptr<PropT>::get()->end(); }
 
+    OVM_DEPRECATED("use handles to index properties")
     reference operator[](size_t _idx) { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
+    OVM_DEPRECATED("use handles to index properties")
     const_reference operator[](size_t _idx) const { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
 
-    reference operator[](const OpenVolumeMeshHandle& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
-    const_reference operator[](const OpenVolumeMeshHandle& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
+    reference operator[](const EntityHandleT& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
+    const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
 
     virtual OpenVolumeMeshHandle handle() const;
 
