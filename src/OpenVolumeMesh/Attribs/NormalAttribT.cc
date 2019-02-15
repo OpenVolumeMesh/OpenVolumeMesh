@@ -117,7 +117,7 @@ void NormalAttrib<GeomKernelT>::compute_vertex_normal(const VertexHandle& _vh) {
 
     normal.normalize();
 
-    v_normals_[_vh.idx()] = normal;
+    v_normals_[_vh] = normal;
 }
 
 template <class GeomKernelT>
@@ -139,7 +139,7 @@ void NormalAttrib<GeomKernelT>::compute_face_normal(const FaceHandle& _fh) {
     typename GeomKernelT::PointT n = (p2 - p1) % (p3 - p2);
     n.normalize();
 
-    f_normals_[_fh.idx()] = n;
+    f_normals_[_fh] = n;
 }
 
 } // Namespace OpenVolumeMesh

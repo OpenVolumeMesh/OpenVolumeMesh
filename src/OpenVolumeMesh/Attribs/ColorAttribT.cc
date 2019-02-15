@@ -74,48 +74,54 @@ ColorAttrib<ColT>::~ColorAttrib() {
 template <class ColT>
 void ColorAttrib<ColT>::clear_vertex_colors()
 {
-    for (VertexIter v_it = kernel_.vertices_begin(); v_it != kernel_.vertices_end(); ++v_it)
-        vcolor_prop_[v_it->idx()] = default_color_;
+    for (const auto vh: kernel_.vertices()) {
+        vcolor_prop_[vh] = default_color_;
+    }
     vertex_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_halfedge_colors()
 {
-    for (HalfEdgeIter he_it = kernel_.halfedges_begin(); he_it != kernel_.halfedges_end(); ++he_it)
-        hecolor_prop_[he_it->idx()] = default_color_;
+    for (const auto heh: kernel_.halfedges()) {
+        hecolor_prop_[heh] = default_color_;
+    }
     halfedge_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_edge_colors()
 {
-    for (EdgeIter e_it = kernel_.edges_begin(); e_it != kernel_.edges_end(); ++e_it)
-        ecolor_prop_[e_it->idx()] = default_color_;
+    for (const auto eh: kernel_.edges()) {
+        ecolor_prop_[eh] = default_color_;
+    }
     edge_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_halfface_colors()
 {
-    for (HalfFaceIter hf_it = kernel_.halffaces_begin(); hf_it != kernel_.halffaces_end(); ++hf_it)
-        hfcolor_prop_[hf_it->idx()] = default_color_;
+    for (const auto hfh: kernel_.halffaces()) {
+        hfcolor_prop_[hfh] = default_color_;
+    }
     halfface_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_face_colors()
 {
-    for (FaceIter f_it = kernel_.faces_begin(); f_it != kernel_.faces_end(); ++f_it)
-        fcolor_prop_[f_it->idx()] = default_color_;
+    for (const auto fh: kernel_.faces()) {
+        fcolor_prop_[fh] = default_color_;
+    }
     face_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_cell_colors()
 {
-    for (CellIter c_it = kernel_.cells_begin(); c_it != kernel_.cells_end(); ++c_it)
-        ccolor_prop_[c_it->idx()] = default_color_;
+    for (const auto ch: kernel_.cells()) {
+        ccolor_prop_[ch] = default_color_;
+    }
     cell_colors_available_   = false;
 }
 

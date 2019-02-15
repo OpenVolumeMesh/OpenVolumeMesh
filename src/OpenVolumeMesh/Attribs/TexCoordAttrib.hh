@@ -67,13 +67,13 @@ public:
     //==================
     const TexCoordT& operator[](const VertexHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_vertices());
-        return vtexcoord_prop_[_h.idx()];
+        return vtexcoord_prop_[_h];
     }
 
     TexCoordT& operator[](const VertexHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_vertices());
         vertex_texcoords_available_ = true;
-        return vtexcoord_prop_[_h.idx()];
+        return vtexcoord_prop_[_h];
     }
 
     bool vertex_texcoords_available() const  { return vertex_texcoords_available_;   }
