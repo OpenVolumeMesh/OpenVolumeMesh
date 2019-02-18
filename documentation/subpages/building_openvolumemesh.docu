@@ -23,38 +23,38 @@ git clone https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh
 It is recommended to build %OpenVolumeMesh out-of-source, so create a folder named e.g. "build" \e outside
 the %OpenVolumeMesh sources root folder. Change to the newly created build directory and just type
 
-\code
+\verbatim
 cmake /path/to/OpenVolumeMesh/sources
-\endcode
+\endverbatim
 
 Note that CMake configures the build such that it builds with debug symbols per default.
 If you want to build with release settings (with optimizations turned on), use the tool
 
-\code
+\verbatim
 ccmake .
-\endcode
+\endverbatim
 
 inside your build folder. Once everything is configured as desired, just type
 
-\code
+\verbatim
 make
-\endcode
+\endverbatim
 
 inside the build folder. The built libraries can be found in the sub-folder
 \c Build/lib. %OpenVolumeMesh will be built as a static as well as a dynamic library.
 If you want to build %OpenVolumeMesh's documentation, simply type
 
-\code
+\verbatim
 make doc
-\endcode
+\endverbatim
 inside the build folder. The generated doxygen documentation files can then be found in
 \c Build/share/Doc/html.
 
 If you want to install the library as well as its header files, type:
 
-\code
+\verbatim
 sudo make install
-\endcode
+\endverbatim
 
 This installs the requested files into the \c lib and \c include folders in \c /usr/local (this is the default
 value that can easily be changed using \c ccmake).
@@ -64,9 +64,9 @@ This example has its own target defined in the CMake configuration file found in
 This target is excluded from target \c all and has to be built explicitly.
 You can easily build it by typing:
 
-\code
+\verbatim
 make simple_mesh
-\endcode
+\endverbatim
 
 The binary can then be found in \c Build/Examples, or whatever you have specified in the CMake configuration.
 
