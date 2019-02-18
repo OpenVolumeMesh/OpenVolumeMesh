@@ -9,7 +9,7 @@ make compiling the library on any platform pretty simple. Make sure you have at 
 installed on your machine. Get the latest CMake sources or binaries at http://www.cmake.org.
 
 If you are interested in contributing to %OpenVolumeMesh by developing on its
-code base, we highly recommend to install the Google testing framework which can be found here: http://code.google.com/p/googletest.
+code base, we highly recommend to install the Google testing framework which can be found here: https://github.com/google/googletest
 This framework is needed in order to build and execute our included unit tests.
 
 \section config_and_build Configuring and building OpenVolumeMesh on Linux and MacOSX
