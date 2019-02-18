@@ -1,0 +1,7 @@
+.project
+.cproject
+CMakeLists.txt.user
+build*
+*.swp
+.settings
+
