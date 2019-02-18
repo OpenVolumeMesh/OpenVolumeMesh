@@ -17,7 +17,7 @@ This framework is needed in order to build and execute our included unit tests.
 Open a terminal and extract the %OpenVolumeMesh sources or check out the latest subversion revision:
 
 \verbatim
-svn co http://www.openvolumemesh.org/svnrepo/OpenVolumeMesh/trunk OpenVolumeMesh --username=anonymous --password=anonymous
+git clone https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh.git
 \endverbatim
 
 It is recommended to build %OpenVolumeMesh out-of-source, so create a folder named e.g. "build" \e outside
