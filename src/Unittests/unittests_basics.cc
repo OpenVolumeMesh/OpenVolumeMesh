@@ -796,7 +796,7 @@ TEST_F(PolyhedralMeshBase, DeleteFaceBUTest1) {
 
             if(mesh_.face_handle(hfh) == FaceHandle(0)) continue;
 
-            hfh.idx((hfh.idx() > mesh_.halfface_handle(FaceHandle(0), 1) ? hfh.idx() - 2 : hfh.idx()));
+            hfh.idx((hfh.idx() > mesh_.halfface_handle(FaceHandle(0), 1).idx() ? hfh.idx() - 2 : hfh.idx()));
 
             ihfs[i].push_back(hfh);
         }
@@ -834,13 +834,13 @@ TEST_F(PolyhedralMeshBase, DeleteEdgeBUTest1) {
     std::vector<HalfEdgeHandle> hes0;
     for(VertexOHalfEdgeIter voh_it = mesh_.voh_iter(vh0); voh_it.valid(); ++voh_it) {
         if(mesh_.edge_handle(*voh_it) == EdgeHandle(0)) continue;
-        hes0.push_back(HalfEdgeHandle(voh_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1) ? voh_it->idx() - 2 : voh_it->idx()));
+        hes0.push_back(HalfEdgeHandle(voh_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1).idx() ? voh_it->idx() - 2 : voh_it->idx()));
     }
 
     std::vector<HalfEdgeHandle> hes1;
     for(VertexOHalfEdgeIter voh_it = mesh_.voh_iter(vh1); voh_it.valid(); ++voh_it) {
         if(mesh_.edge_handle(*voh_it) == EdgeHandle(0)) continue;
-        hes1.push_back(HalfEdgeHandle(voh_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1) ? voh_it->idx() - 2 : voh_it->idx()));
+        hes1.push_back(HalfEdgeHandle(voh_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1).idx() ? voh_it->idx() - 2 : voh_it->idx()));
     }
 
     mesh_.delete_edge(EdgeHandle(0));
@@ -913,7 +913,7 @@ TEST_F(PolyhedralMeshBase, DeleteFaceBUTest1noBU) {
 
             if(mesh_.face_handle(hfh) == FaceHandle(0)) continue;
 
-            hfh.idx((hfh.idx() > mesh_.halfface_handle(FaceHandle(0), 1) ? hfh.idx() - 2 : hfh.idx()));
+            hfh.idx((hfh.idx() > mesh_.halfface_handle(FaceHandle(0), 1).idx() ? hfh.idx() - 2 : hfh.idx()));
 
             ihfs[i].push_back(hfh);
         }
@@ -968,7 +968,7 @@ TEST_F(PolyhedralMeshBase, DeleteEdgeBUTest1noBU) {
         if(mesh_.halfedge(*he_it).from_vertex() == vh0) {
 
             if(mesh_.edge_handle(*he_it) == EdgeHandle(0)) continue;
-            hes0.push_back(HalfEdgeHandle(he_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1) ? he_it->idx() - 2 : he_it->idx()));
+            hes0.push_back(HalfEdgeHandle(he_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1).idx() ? he_it->idx() - 2 : he_it->idx()));
         }
     }
 
@@ -978,7 +978,7 @@ TEST_F(PolyhedralMeshBase, DeleteEdgeBUTest1noBU) {
         if(mesh_.halfedge(*he_it).from_vertex() == vh1) {
 
             if(mesh_.edge_handle(*he_it) == EdgeHandle(0)) continue;
-            hes1.push_back(HalfEdgeHandle(he_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1) ? he_it->idx() - 2 : he_it->idx()));
+            hes1.push_back(HalfEdgeHandle(he_it->idx() > mesh_.halfedge_handle(EdgeHandle(0), 1).idx() ? he_it->idx() - 2 : he_it->idx()));
         }
     }
 
