@@ -682,20 +682,20 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
     EXPECT_TRUE(mesh_.vertex_property_exists<Vec3d>("VProp"));
 
     for(VertexIter v_it = mesh_.v_iter(); v_it.valid(); ++v_it) {
-        vp[v_it->idx()] = Vec3d(1.0, 0.0, 0.0);
+        vp[*v_it] = Vec3d(1.0, 0.0, 0.0);
     }
 
     for(VertexIter v_it = mesh_.v_iter(); v_it.valid(); ++v_it) {
         Vec3d t;
-        t = vp[v_it->idx()];
+        t = vp[*v_it];
         EXPECT_DOUBLE_EQ(1.0, t[0]);
         EXPECT_DOUBLE_EQ(0.0, t[1]);
         EXPECT_DOUBLE_EQ(0.0, t[2]);
     }
 
     VertexHandle vh = mesh_.add_vertex(Vec3d(3.0,3.0,3.0));
-    vp[vh.idx()] = Vec3d(0.0);
-    Vec3d p = vp[vh.idx()];
+    vp[vh] = Vec3d(0.0);
+    Vec3d p = vp[vh];
     EXPECT_DOUBLE_EQ(0.0, p[0]);
     EXPECT_DOUBLE_EQ(0.0, p[1]);
     EXPECT_DOUBLE_EQ(0.0, p[2]);
@@ -706,12 +706,12 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
 
     unsigned int i = 0;
     for(EdgeIter e_it = mesh_.e_iter(); e_it.valid(); ++e_it) {
-        ep[e_it->idx()] = i++;
+        ep[*e_it] = i++;
     }
 
     i = 0;
     for(EdgeIter e_it = mesh_.e_iter(); e_it.valid(); ++e_it) {
-        EXPECT_EQ(i++, ep[e_it->idx()]);
+        EXPECT_EQ(i++, ep[*e_it]);
     }
 
     HalfFacePropertyT<bool> hfp = mesh_.request_halfface_property<bool>("HFProp");
@@ -720,13 +720,13 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
 
     bool b = false;
     for(HalfFaceIter hf_it = mesh_.hf_iter(); hf_it.valid(); ++hf_it) {
-        hfp[hf_it->idx()] = b;
+        hfp[*hf_it] = b;
         b = !b;
     }
 
     b = false;
     for(HalfFaceIter hf_it = mesh_.hf_iter(); hf_it.valid(); ++hf_it) {
-        EXPECT_EQ(b, hfp[hf_it->idx()]);
+        EXPECT_EQ(b, hfp[*hf_it]);
         b = !b;
     }
 
@@ -736,11 +736,11 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
     EXPECT_TRUE(mesh_.cell_property_exists<std::string>("CProp"));
 
     for(CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
-        cp[c_it->idx()] = std::string("MyTestString");
+        cp[*c_it] = std::string("MyTestString");
     }
 
     for(CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
-        EXPECT_EQ(std::string("MyTestString"), cp[c_it->idx()]);
+        EXPECT_EQ(std::string("MyTestString"), cp[*c_it]);
     }
 
     EXPECT_FALSE(mesh_.halfedge_property_exists<unsigned char>("HEProp"));
@@ -1658,7 +1658,7 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTestProps1) {
 
     std::set<int> fprops_i;
     for(FaceIter f_it = mesh_.f_iter(); f_it.valid(); ++f_it) {
-        fprops_i.insert(fprop[f_it->idx()]);
+        fprops_i.insert(fprop[*f_it]);
     }
 
     EXPECT_EQ(0u, fprops_i.count(11));
@@ -1717,7 +1717,7 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTestProps2) {
 
     std::set<int> fprops_i;
     for(FaceIter f_it = mesh_.f_iter(); f_it.valid(); ++f_it) {
-        fprops_i.insert(fprop[f_it->idx()]);
+        fprops_i.insert(fprop[*f_it]);
     }
 
     EXPECT_EQ(0u, fprops_i.count(11));
