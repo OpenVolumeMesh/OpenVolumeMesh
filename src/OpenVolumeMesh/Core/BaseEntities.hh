@@ -97,8 +97,13 @@ public:
     virtual ~OpenVolumeMeshFace() {
     }
 
-    const std::vector<HalfEdgeHandle>& halfedges() const {
+    const std::vector<HalfEdgeHandle>& halfedges() const & {
         return halfedges_;
+    }
+
+    const std::vector<HalfEdgeHandle>& halfedges() const && = delete;
+    std::vector<HalfEdgeHandle> halfedges() && {
+        return std::move(halfedges_);
     }
 
 protected:
@@ -126,8 +131,13 @@ public:
     virtual ~OpenVolumeMeshCell() {
     }
 
-    const std::vector<HalfFaceHandle>& halffaces() const {
+    const std::vector<HalfFaceHandle>& halffaces() const & {
         return halffaces_;
+    }
+
+    const std::vector<HalfFaceHandle>& halffaces() const && = delete;
+    std::vector<HalfFaceHandle> halffaces() && {
+        return std::move(halffaces_);
     }
 
 protected:
