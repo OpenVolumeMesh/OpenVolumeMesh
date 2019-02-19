@@ -120,7 +120,7 @@ protected:
     {
         PropIterator p_iter =  _begin;
         for (; p_iter != _end; ++p_iter)
-            (*p_iter)->swap_elements(_h1, _h2);
+            (*p_iter)->swap_elements(_h1.idx(), _h2.idx());
     }
 
 

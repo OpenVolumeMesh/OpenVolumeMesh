@@ -66,7 +66,7 @@ template<class T>
 BaseProperty *VertexPropertyT<T>::clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new VertexPropertyT<T>(prop_clone, _resMan, VertexPropHandle(_handle));
+    return new VertexPropertyT<T>(prop_clone, _resMan, VertexPropHandle(_handle.idx()));
 }
 
 template<class T>
@@ -94,7 +94,7 @@ template<class T>
 BaseProperty *EdgePropertyT<T>::clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new EdgePropertyT<T>(prop_clone, _resMan, EdgePropHandle(_handle));
+    return new EdgePropertyT<T>(prop_clone, _resMan, EdgePropHandle(_handle.idx()));
 }
 
 template<class T>
@@ -122,7 +122,7 @@ template<class T>
 BaseProperty *HalfEdgePropertyT<T>::clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new HalfEdgePropertyT<T>(prop_clone, _resMan, HalfEdgePropHandle(_handle));
+    return new HalfEdgePropertyT<T>(prop_clone, _resMan, HalfEdgePropHandle(_handle.idx()));
 }
 
 template<class T>
@@ -150,7 +150,7 @@ template<class T>
 BaseProperty *FacePropertyT<T>::clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new FacePropertyT<T>(prop_clone, _resMan, FacePropHandle(_handle));
+    return new FacePropertyT<T>(prop_clone, _resMan, FacePropHandle(_handle.idx()));
 }
 
 template<class T>
@@ -178,7 +178,7 @@ template<class T>
 BaseProperty *HalfFacePropertyT<T>::clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new HalfFacePropertyT<T>(prop_clone, _resMan, HalfFacePropHandle(_handle));
+    return new HalfFacePropertyT<T>(prop_clone, _resMan, HalfFacePropHandle(_handle.idx()));
 }
 
 template<class T>
@@ -206,7 +206,7 @@ template<class T>
 BaseProperty *CellPropertyT<T>::clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new CellPropertyT<T>(prop_clone, _resMan, CellPropHandle(_handle));
+    return new CellPropertyT<T>(prop_clone, _resMan, CellPropHandle(_handle.idx()));
 }
 
 template<class T>
@@ -234,7 +234,7 @@ template<class T>
 BaseProperty *MeshPropertyT<T>::clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
-    return new MeshPropertyT<T>(prop_clone, _resMan, MeshPropHandle(_handle));
+    return new MeshPropertyT<T>(prop_clone, _resMan, MeshPropHandle(_handle.idx()));
 }
 
 template<class T>
