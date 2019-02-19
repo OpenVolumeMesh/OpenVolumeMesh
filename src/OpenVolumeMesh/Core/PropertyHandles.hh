@@ -48,13 +48,42 @@
 namespace OpenVolumeMesh {
 
 // Defines for property handles
-class VertexPropHandle      : public OpenVolumeMeshHandle { public: explicit VertexPropHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class EdgePropHandle        : public OpenVolumeMeshHandle { public: explicit EdgePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class HalfEdgePropHandle    : public OpenVolumeMeshHandle { public: explicit HalfEdgePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class FacePropHandle        : public OpenVolumeMeshHandle { public: explicit FacePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class HalfFacePropHandle    : public OpenVolumeMeshHandle { public: explicit HalfFacePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class CellPropHandle        : public OpenVolumeMeshHandle { public: explicit CellPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class MeshPropHandle        : public OpenVolumeMeshHandle { public: explicit MeshPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
+class VertexPropHandle      : public OpenVolumeMeshHandle {
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = VertexHandle;
+};
+class EdgePropHandle        : public OpenVolumeMeshHandle {
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = EdgeHandle;
+};
+class HalfEdgePropHandle    : public OpenVolumeMeshHandle {
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = HalfEdgeHandle;
+};
+class FacePropHandle        : public OpenVolumeMeshHandle {
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = FaceHandle;
+};
+class HalfFacePropHandle    : public OpenVolumeMeshHandle {
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = HalfFaceHandle;
+};
+class CellPropHandle        : public OpenVolumeMeshHandle {
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = CellHandle;
+};
+class MeshPropHandle        : public OpenVolumeMeshHandle
+{
+public:
+    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
+    using EntityHandleT = OpenVolumeMeshHandle;
+};
 
 } // Namespace OpenVolumeMesh
 

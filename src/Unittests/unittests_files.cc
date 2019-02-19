@@ -84,10 +84,10 @@ TEST_F(PolyhedralMeshBase, SaveFileWithProps) {
   VertexPropertyT<unsigned int> vprop = mesh_.request_vertex_property<unsigned int>("MyVertexProp");
 
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-      hfprop[i] = (float)i/2.0f;
+      hfprop[HalfFaceHandle(i)] = (float)i/2.0f;
   }
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-      vprop[i] = i;
+      vprop[VertexHandle(i)] = i;
   }
 
   mesh_.set_persistent(hfprop);
@@ -112,10 +112,10 @@ TEST_F(PolyhedralMeshBase, SaveFileWithProps) {
   VertexPropertyT<unsigned int> vprop2 = mesh_.request_vertex_property<unsigned int>("MyVertexProp");
 
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-      EXPECT_FLOAT_EQ((float)i/2.0f, hfprop2[i]);
+      EXPECT_FLOAT_EQ((float)i/2.0f, hfprop2[HalfFaceHandle(i)]);
   }
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-      EXPECT_EQ(i, vprop2[i]);
+      EXPECT_EQ(i, vprop2[VertexHandle(i)]);
   }
 }
 
@@ -135,10 +135,10 @@ TEST_F(PolyhedralMeshBase, SaveFileWithVectorProps) {
   VertexPropertyT<Vec2i> vprop = mesh_.request_vertex_property<Vec2i>("MyVertexProp");
 
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-      hfprop[i] = Vec3d((double)i/2.0, (double)i/2.0, (double)i/2.0);
+      hfprop[HalfFaceHandle(i)] = Vec3d((double)i/2.0, (double)i/2.0, (double)i/2.0);
   }
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-      vprop[i] = Vec2i(i, i);
+      vprop[VertexHandle(i)] = Vec2i(i, i);
   }
 
   mesh_.set_persistent(hfprop);
@@ -163,13 +163,15 @@ TEST_F(PolyhedralMeshBase, SaveFileWithVectorProps) {
   VertexPropertyT<Vec2i> vprop2 = mesh_.request_vertex_property<Vec2i>("MyVertexProp");
 
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop2[i][0]);
-      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop2[i][1]);
-      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop2[i][2]);
+      HalfFaceHandle hfh(i);
+      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop2[hfh][0]);
+      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop2[hfh][1]);
+      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop2[hfh][2]);
   }
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-      EXPECT_EQ((int)i, vprop2[i][0]);
-      EXPECT_EQ((int)i, vprop2[i][1]);
+      VertexHandle vh(i);
+      EXPECT_EQ((int)i, vprop2[vh][0]);
+      EXPECT_EQ((int)i, vprop2[vh][1]);
   }
 }
 
@@ -189,10 +191,12 @@ TEST_F(PolyhedralMeshBase, SerializeVectorValuedProperties) {
   VertexPropertyT<Vec2i> vprop = mesh_.request_vertex_property<Vec2i>("MyVertexProp");
 
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-      hfprop[i] = Vec3d((double)i/2.0, (double)i/2.0, (double)i/2.0);
+      HalfFaceHandle hfh(i);
+      hfprop[hfh] = Vec3d((double)i/2.0, (double)i/2.0, (double)i/2.0);
   }
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-      vprop[i] = Vec2i(i, i);
+      VertexHandle vh(i);
+      vprop[vh] = Vec2i(i, i);
   }
 
   mesh_.set_persistent(hfprop);
@@ -211,11 +215,11 @@ TEST_F(PolyhedralMeshBase, SerializeVectorValuedProperties) {
    * Change property values
    */
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-	  hfprop[i] = Vec3d((double)i/3.0, (double)i/3.0, (double)i/3.0);
+	  hfprop[HalfFaceHandle(i)] = Vec3d((double)i/3.0, (double)i/3.0, (double)i/3.0);
   }
 
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-	  vprop[i] = Vec2i(2*i, 2*i);
+	  vprop[VertexHandle(i)] = Vec2i(2*i, 2*i);
   }
 
   std::ifstream ifs1("hfVecPropTest");
@@ -228,13 +232,15 @@ TEST_F(PolyhedralMeshBase, SerializeVectorValuedProperties) {
   ifs2.close();
 
   for(unsigned int i = 0; i < mesh_.n_halffaces(); ++i) {
-      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop[i][0]);
-      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop[i][1]);
-      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop[i][2]);
+      HalfFaceHandle hfh(i);
+      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop[hfh][0]);
+      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop[hfh][1]);
+      EXPECT_DOUBLE_EQ((double)i/2.0, hfprop[hfh][2]);
   }
   for(unsigned int i = 0; i < mesh_.n_vertices(); ++i) {
-      EXPECT_EQ((int)i, vprop[i][0]);
-      EXPECT_EQ((int)i, vprop[i][1]);
+      VertexHandle vh(i);
+      EXPECT_EQ((int)i, vprop[vh][0]);
+      EXPECT_EQ((int)i, vprop[vh][1]);
   }
 }
 
