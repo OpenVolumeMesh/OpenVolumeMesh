@@ -97,7 +97,7 @@ class EdgePropertyT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, EdgePropHan
 public:
     EdgePropertyT(const std::string& _name, ResourceManager& _resMan, EdgePropHandle _handle, const T _def = T());
     virtual ~EdgePropertyT() {}
-    virtual BaseProperty* clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const;
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual void serialize(std::ostream& _ostr) const;
     virtual void deserialize(std::istream& _istr);
     virtual const std::string entityType() const { return "EProp"; }
@@ -110,7 +110,7 @@ class HalfEdgePropertyT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, HalfEdg
 public:
     HalfEdgePropertyT(const std::string& _name, ResourceManager& _resMan, HalfEdgePropHandle _handle, const T _def = T());
     virtual ~HalfEdgePropertyT() {}
-    virtual BaseProperty* clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const;
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual void serialize(std::ostream& _ostr) const;
     virtual void deserialize(std::istream& _istr);
     virtual const std::string entityType() const { return "HEProp"; }
@@ -123,7 +123,7 @@ class FacePropertyT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, FacePropHan
 public:
     FacePropertyT(const std::string& _name, ResourceManager& _resMan, FacePropHandle _handle, const T _def = T());
     virtual ~FacePropertyT() {}
-    virtual BaseProperty* clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const;
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual void serialize(std::ostream& _ostr) const;
     virtual void deserialize(std::istream& _istr);
     virtual const std::string entityType() const { return "FProp"; }
@@ -136,7 +136,7 @@ class HalfFacePropertyT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, HalfFac
 public:
     HalfFacePropertyT(const std::string& _name, ResourceManager& _resMan, HalfFacePropHandle _handle, const T _def = T());
     virtual ~HalfFacePropertyT() {}
-    virtual BaseProperty* clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const;
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual void serialize(std::ostream& _ostr) const;
     virtual void deserialize(std::istream& _istr);
     virtual const std::string entityType() const { return "HFProp"; }
@@ -149,7 +149,7 @@ class CellPropertyT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, CellPropHan
 public:
     CellPropertyT(const std::string& _name, ResourceManager& _resMan, CellPropHandle _handle, const T _def = T());
     virtual ~CellPropertyT() {}
-    virtual BaseProperty* clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const;
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual void serialize(std::ostream& _ostr) const;
     virtual void deserialize(std::istream& _istr);
     virtual const std::string entityType() const { return "CProp"; }
@@ -162,7 +162,7 @@ class MeshPropertyT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, MeshPropHan
 public:
     MeshPropertyT(const std::string& _name, ResourceManager& _resMan, MeshPropHandle _handle, const T _def = T());
     virtual ~MeshPropertyT() {}
-    virtual BaseProperty* clone(ResourceManager &_resMan, const OpenVolumeMeshHandle _handle) const;
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual void serialize(std::ostream& _ostr) const;
     virtual void deserialize(std::istream& _istr);
     virtual const std::string entityType() const { return "MProp"; }
