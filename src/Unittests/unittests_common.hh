@@ -8,6 +8,10 @@
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 
+#define EXPECT_HANDLE_EQ(a, b)  EXPECT_EQ((a).idx(), (b).idx())
+#define EXPECT_HANDLE_NE(a, b)  EXPECT_NE((a).idx(), (b).idx())
+
+
 /*
  * Simple test setting for polyhedral meshes
  */
