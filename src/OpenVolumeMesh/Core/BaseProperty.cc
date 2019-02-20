@@ -46,10 +46,4 @@
 
 namespace OpenVolumeMesh {
 
-BaseProperty& BaseProperty::operator=(const BaseProperty& _cpy) {
-    resMan_ = _cpy.resMan_;
-    lock_ = _cpy.lock_;
-    return *this;
-}
-
 } // Namespace OpenVolumeMesh

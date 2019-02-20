@@ -59,7 +59,7 @@ public:
 
     BaseProperty(const BaseProperty& _cpy) : resMan_(_cpy.resMan_), lock_(_cpy.lock_) {}
 
-    BaseProperty& operator=(const BaseProperty& _cpy);
+    BaseProperty& operator=(const BaseProperty& _cpy) = delete;
 
     virtual ~BaseProperty() {}
 
