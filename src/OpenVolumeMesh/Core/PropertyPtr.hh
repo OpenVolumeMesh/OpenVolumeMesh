@@ -63,7 +63,7 @@ class ResourceManager;
  */
 
 template <class PropT, class HandleT>
-class PropertyPtr : public ptr::shared_ptr<PropT>, public BaseProperty {
+class PropertyPtr : protected ptr::shared_ptr<PropT>, public BaseProperty {
 public:
 
     friend class ResourceManager;
@@ -81,6 +81,10 @@ public:
 
     /// Destructor
     virtual ~PropertyPtr();
+
+    using ptr::shared_ptr<PropT>::operator*;
+    using ptr::shared_ptr<PropT>::operator->;
+    using ptr::shared_ptr<PropT>::operator bool;
 
     virtual const std::string& name() const;
 
