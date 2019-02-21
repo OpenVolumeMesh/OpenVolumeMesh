@@ -125,7 +125,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(NORMALATTRIBT_CC)
-#include "NormalAttribT.cc"
+#include "NormalAttribT_impl.hh"
 #endif
 
 #endif /* NORMALATTRIB_HH_ */

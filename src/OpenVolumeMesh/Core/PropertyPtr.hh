@@ -126,7 +126,7 @@ protected:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(PROPERTYPTRT_CC)
-#include "PropertyPtrT.cc"
+#include "PropertyPtrT_impl.hh"
 #endif
 
 #endif /* PROPERTYPTR_HH_ */

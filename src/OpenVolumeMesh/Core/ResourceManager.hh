@@ -361,7 +361,7 @@ private:
 }
 
 #if defined(INCLUDE_TEMPLATES) && !defined(RESOURCEMANAGERT_CC)
-#include "ResourceManagerT.cc"
+#include "ResourceManagerT_impl.hh"
 #endif
 
 #endif /* RESOURCEMANAGER_HH_ */

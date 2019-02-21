@@ -184,7 +184,7 @@ private:
 } // Namespace FileManager
 
 #if defined(INCLUDE_TEMPLATES) && !defined(FILEMANAGERT_CC)
-#include "FileManagerT.cc"
+#include "FileManagerT_impl.hh"
 #endif
 
 #endif /* FILEMANAGER_HH_ */

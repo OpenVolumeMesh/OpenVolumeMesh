@@ -83,7 +83,7 @@ std::istream& operator>>(std::istream& is, std::vector< bool >& rhs);
 }
 
 #if defined(INCLUDE_TEMPLATES) && !defined(SERIALIZERST_CC)
-#include "SerializersT.cc"
+#include "SerializersT_impl.hh"
 #endif
 
 #endif // SERIALIZERS_HH
