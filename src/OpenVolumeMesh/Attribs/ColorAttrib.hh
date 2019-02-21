@@ -187,7 +187,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(COLORATTRIBT_CC)
-#include "ColorAttribT.cc"
+#include "ColorAttribT_impl.hh"
 #endif
 
 #endif /* COLORATTRIB_HH_ */

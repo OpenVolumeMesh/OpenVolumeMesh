@@ -174,7 +174,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(PROPERTYDEFINEST_CC)
-#include "PropertyDefinesT.cc"
+#include "PropertyDefinesT_impl.hh"
 #endif
 
 #endif /* PROPERTYDEFINES_HH_ */

@@ -96,7 +96,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(TEXCOORDATTRIBT_CC)
-#include "TexCoordAttribT.cc"
+#include "TexCoordAttribT_impl.hh"
 #endif
 
 #endif /* TEXCOORDATTRIB_HH_ */

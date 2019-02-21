@@ -221,16 +221,6 @@ macro (acg_append_files_recursive ret ext)
   endforeach ()
 endmacro ()
 
-
-# drop all "*T.cc" files from list
-macro (acg_drop_templates list)
-  foreach (_file ${${list}})
-    if (_file MATCHES "T.cc$")
-      list (REMOVE_ITEM ${list} ${_file})
-    endif ()
-  endforeach ()
-endmacro ()
-
 # get all files in directory, but ignore svn
 macro (acg_get_files_in_dir ret dir)
   file (GLOB_RECURSE __files RELATIVE "${dir}" "${dir}/*")
