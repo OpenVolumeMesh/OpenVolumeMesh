@@ -32,16 +32,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
-#ifndef PROPERTYDEFINES_HH_
-#define PROPERTYDEFINES_HH_
+#pragma once
 
 #include <iosfwd>
 #include <stdexcept>
@@ -176,5 +167,3 @@ private:
 #if defined(INCLUDE_TEMPLATES) && !defined(PROPERTYDEFINEST_CC)
 #include "PropertyDefinesT_impl.hh"
 #endif
-
-#endif /* PROPERTYDEFINES_HH_ */

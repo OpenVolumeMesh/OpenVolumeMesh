@@ -32,16 +32,8 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
 
-#ifndef PROPERTYPTR_HH_
-#define PROPERTYPTR_HH_
+#pragma once
 
 #include <string>
 
@@ -129,4 +121,3 @@ protected:
 #include "PropertyPtrT_impl.hh"
 #endif
 
-#endif /* PROPERTYPTR_HH_ */
