@@ -2021,3 +2021,19 @@ TEST_F(PolyhedralMeshBase, DeferredFastDelete) {
 	testDeferredDelete(mesh_);
 }
 
+
+TEST_F(PolyhedralMeshBase, HandleDefaultConstructors) {
+    VertexHandle vh;
+    ASSERT_FALSE(vh.is_valid());
+    EdgeHandle eh;
+    ASSERT_FALSE(eh.is_valid());
+    HalfEdgeHandle heh;
+    ASSERT_FALSE(heh.is_valid());
+    FaceHandle fh;
+    ASSERT_FALSE(fh.is_valid());
+    HalfFaceHandle hfh;
+    ASSERT_FALSE(hfh.is_valid());
+    CellHandle ch;
+    ASSERT_FALSE(ch.is_valid());
+}
+

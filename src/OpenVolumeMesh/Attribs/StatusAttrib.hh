@@ -108,12 +108,12 @@ public:
     }
 
     const OpenVolumeMeshStatus& mesh_status() const {
-        OpenVolumeMeshHandle h(0);
+        MeshHandle h(0);
         return m_status_[h];
     }
 
     OpenVolumeMeshStatus& mesh_status() {
-        OpenVolumeMeshHandle h(0);
+        MeshHandle h(0);
         return m_status_[h];
     }
 

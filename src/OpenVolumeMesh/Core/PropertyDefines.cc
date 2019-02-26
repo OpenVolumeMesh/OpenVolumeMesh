@@ -32,13 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
 
 #include "PropertyDefines.hh"
 
@@ -60,4 +53,13 @@ template <> const std::string typeName<std::vector<double> >(){ return "vector_d
 template <> const std::string typeName<std::vector<VertexHandle> >(){ return "vector_vh"; }
 template <> const std::string typeName<std::vector<HalfFaceHandle> >(){ return "vector_hfh"; }
 template <> const std::string typeName<std::vector<std::vector<HalfFaceHandle> > >(){ return "vector_vector_hfh"; }
+
+template <> const std::string entityTypeName<Entity::Vertex>()  { return "VProp";  }
+template <> const std::string entityTypeName<Entity::HalfEdge>(){ return "HEProp"; }
+template <> const std::string entityTypeName<Entity::Edge>()    { return "EProp";  }
+template <> const std::string entityTypeName<Entity::Face>()    { return "FProp";  }
+template <> const std::string entityTypeName<Entity::HalfFace>(){ return "HFProp"; }
+template <> const std::string entityTypeName<Entity::Cell>()    { return "CProp";  }
+template <> const std::string entityTypeName<Entity::Mesh>()    { return "MProp";  }
+
 } // Namespace OpenVolumeMesh

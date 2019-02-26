@@ -32,16 +32,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
-#ifndef RESOURCEMANAGER_HH_
-#define RESOURCEMANAGER_HH_
+#pragma once
 
 #ifndef NDEBUG
 #include <iostream>
@@ -51,27 +42,12 @@
 
 #include "OpenVolumeMeshProperty.hh"
 #include "PropertyHandles.hh"
+#include "ForwardDeclarations.hh"
 
 namespace OpenVolumeMesh {
 
 // Forward declarations
 class BaseProperty;
-template <class T>
-class VertexPropertyT;
-template <class T>
-class EdgePropertyT;
-template <class T>
-class HalfEdgePropertyT;
-template <class T>
-class FacePropertyT;
-template <class T>
-class HalfFacePropertyT;
-template <class T>
-class CellPropertyT;
-template <class T>
-class MeshPropertyT;
-template <class PropT, class HandleT>
-class PropertyPtr;
 
 class ResourceManager {
 public:
@@ -364,4 +340,3 @@ private:
 #include "ResourceManagerT_impl.hh"
 #endif
 
-#endif /* RESOURCEMANAGER_HH_ */
