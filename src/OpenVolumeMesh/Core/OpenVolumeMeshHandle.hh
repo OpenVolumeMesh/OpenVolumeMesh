@@ -32,16 +32,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
-#ifndef OPENVOLUMEMESHHANDLE_HH_
-#define OPENVOLUMEMESHHANDLE_HH_
+#pragma once
 
 #include <algorithm>
 #include <iosfwd>
@@ -176,4 +167,3 @@ std::istream& operator>>(std::istream& _istr, OpenVolumeMeshHandle& _handle);
 
 } // Namespace OpenVolumeMesh
 
-#endif /* OPENVOLUMEMESHHANDLE_HH_ */

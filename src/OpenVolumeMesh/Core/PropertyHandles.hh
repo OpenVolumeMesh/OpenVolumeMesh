@@ -32,16 +32,8 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
 
-#ifndef PROPERTYHANDLES_HH_
-#define PROPERTYHANDLES_HH_
+#pragma once
 
 #include "OpenVolumeMeshHandle.hh"
 
@@ -87,4 +79,3 @@ public:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* PROPERTYHANDLES_HH_ */
