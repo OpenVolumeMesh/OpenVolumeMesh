@@ -36,46 +36,26 @@
 #pragma once
 
 #include "OpenVolumeMeshHandle.hh"
+#include "Entities.hh"
 
 namespace OpenVolumeMesh {
 
-// Defines for property handles
-class VertexPropHandle      : public OpenVolumeMeshHandle {
-public:
-    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = VertexHandle;
-};
-class EdgePropHandle        : public OpenVolumeMeshHandle {
-public:
-    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = EdgeHandle;
-};
-class HalfEdgePropHandle    : public OpenVolumeMeshHandle {
-public:
-    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = HalfEdgeHandle;
-};
-class FacePropHandle        : public OpenVolumeMeshHandle {
-public:
-    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = FaceHandle;
-};
-class HalfFacePropHandle    : public OpenVolumeMeshHandle {
-public:
-    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = HalfFaceHandle;
-};
-class CellPropHandle        : public OpenVolumeMeshHandle {
-public:
-    using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = CellHandle;
-};
-class MeshPropHandle        : public OpenVolumeMeshHandle
+template<typename EntityTag,
+    typename = typename std::enable_if<is_entity<EntityTag>::value>::type>
+class PropHandleT : public OpenVolumeMeshHandle
 {
 public:
+    using Entity = EntityTag;
     using OpenVolumeMeshHandle::OpenVolumeMeshHandle;
-    using EntityHandleT = OpenVolumeMeshHandle;
 };
+
+using VertexPropHandle   = PropHandleT<Entity::Vertex>;
+using EdgePropHandle     = PropHandleT<Entity::Edge>;
+using HalfEdgePropHandle = PropHandleT<Entity::HalfEdge>;
+using FacePropHandle     = PropHandleT<Entity::Face>;
+using HalfFacePropHandle = PropHandleT<Entity::HalfFace>;
+using CellPropHandle     = PropHandleT<Entity::Cell>;
+using MeshPropHandle     = PropHandleT<Entity::Mesh>;
 
 } // Namespace OpenVolumeMesh
 

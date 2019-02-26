@@ -74,7 +74,7 @@ public:
     typedef typename PropT::reference                   reference;
     typedef typename PropT::const_reference             const_reference;
 
-    typedef typename HandleT::EntityHandleT             EntityHandleT;
+    typedef OpenVolumeMesh::HandleT<typename HandleT::Entity>  EntityHandleT;
 
     /// Constructor
     PropertyPtr(PropT* _ptr, ResourceManager& _resMan, HandleT _handle);

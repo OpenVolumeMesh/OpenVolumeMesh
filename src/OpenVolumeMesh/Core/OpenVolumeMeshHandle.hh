@@ -38,6 +38,7 @@
 #include <iosfwd>
 #include <vector>
 
+#include "Entities.hh"
 #include "../System/FunctionalInclude.hh"
 #include "../System/Deprecation.hh"
 
@@ -86,14 +87,25 @@ private:
 	int idx_;
 };
 
+
+template<typename EntityTag,
+    typename = typename std::enable_if<is_entity<EntityTag>::value>::type>
+class HandleT : public OpenVolumeMeshHandle
+{
+public:
+    using Entity = EntityTag;
+    explicit HandleT(int _idx = -1) : OpenVolumeMeshHandle(_idx) {}
+};
+
 // Default entity handles
 
-class VertexHandle   : public OpenVolumeMeshHandle { public: explicit VertexHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class EdgeHandle     : public OpenVolumeMeshHandle { public: explicit EdgeHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class FaceHandle     : public OpenVolumeMeshHandle { public: explicit FaceHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class CellHandle     : public OpenVolumeMeshHandle { public: explicit CellHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class HalfEdgeHandle : public OpenVolumeMeshHandle { public: explicit HalfEdgeHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
-class HalfFaceHandle : public OpenVolumeMeshHandle { public: explicit HalfFaceHandle(int _idx = -1) : OpenVolumeMeshHandle(_idx) {} };
+using VertexHandle   = HandleT<Entity::Vertex>;
+using HalfEdgeHandle = HandleT<Entity::HalfEdge>;
+using EdgeHandle     = HandleT<Entity::Edge>;
+using HalfFaceHandle = HandleT<Entity::HalfFace>;
+using FaceHandle     = HandleT<Entity::Face>;
+using CellHandle     = HandleT<Entity::Cell>;
+using MeshHandle     = HandleT<Entity::Mesh>;
 
 // Helper class that is used to decrease all handles
 // exceeding a certain threshold
