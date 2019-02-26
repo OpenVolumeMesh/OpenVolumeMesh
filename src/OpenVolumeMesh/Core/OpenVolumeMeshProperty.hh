@@ -227,7 +227,13 @@ private:
 template<>
 inline void OpenVolumeMeshPropertyT<bool>::swap(size_t _i0, size_t _i1)
 {
-    data_.swap(data_[_i0], data_[_i1]);
+    // std::vector<bool>::swap(reference x, reference y) exists, but
+    // on libstdc++ with _GLIBCXX_DEBUG it doesn't compile
+    // (2018-02-26, libstdc++ 8.2.0)
+
+    auto tmp = data_[_i0];
+    data_[_i0] = data_[_i1];
+    data_[_i1] = tmp;;
 }
 
 template<>
