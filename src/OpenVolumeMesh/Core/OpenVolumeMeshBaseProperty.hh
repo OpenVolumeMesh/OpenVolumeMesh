@@ -75,9 +75,7 @@ public:
 		name_(_name), persistent_(false), handle_(-1) {
 	}
 
-	OpenVolumeMeshBaseProperty(const OpenVolumeMeshBaseProperty& _rhs) :
-		name_(_rhs.name_), persistent_(_rhs.persistent_), handle_(_rhs.handle_.idx()) {
-	}
+	OpenVolumeMeshBaseProperty(const OpenVolumeMeshBaseProperty& _rhs) = default;
 
 	virtual ~OpenVolumeMeshBaseProperty() {}
 
