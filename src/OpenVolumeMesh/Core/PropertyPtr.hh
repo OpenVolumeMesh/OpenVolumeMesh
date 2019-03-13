@@ -99,7 +99,7 @@ public:
     const_reference operator[](size_t _idx) const { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
 
     reference operator[](const EntityHandleT& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
-    const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
+    const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.uidx()]; }
 
     virtual void serialize(std::ostream& _ostr) const { ptr::shared_ptr<PropT>::get()->serialize(_ostr); }
     virtual void deserialize(std::istream& _istr) { ptr::shared_ptr<PropT>::get()->deserialize(_istr); }

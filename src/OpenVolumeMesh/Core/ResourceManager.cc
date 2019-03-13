@@ -178,32 +178,32 @@ void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2)
 
 void ResourceManager::release_property(VertexPropHandle _handle) {
 
-    remove_property(vertex_props_, _handle.idx());
+    remove_property(vertex_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(EdgePropHandle _handle) {
 
-    remove_property(edge_props_, _handle.idx());
+    remove_property(edge_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(HalfEdgePropHandle _handle) {
 
-    remove_property(halfedge_props_, _handle.idx());
+    remove_property(halfedge_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(FacePropHandle _handle) {
 
-    remove_property(face_props_, _handle.idx());
+    remove_property(face_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(HalfFacePropHandle _handle) {
 
-    remove_property(halfface_props_, _handle.idx());
+    remove_property(halfface_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(CellPropHandle _handle) {
 
-    remove_property(cell_props_, _handle.idx());
+    remove_property(cell_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(MeshPropHandle _handle) {
