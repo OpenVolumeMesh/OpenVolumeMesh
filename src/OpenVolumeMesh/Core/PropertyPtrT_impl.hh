@@ -54,9 +54,8 @@ PropertyPtr<PropT,Entity>::~PropertyPtr() {
      * remove it, since the resource manager is the
      * only one who stores the property.
      */
-    if(!locked() && !persistent() && ptr::shared_ptr<PropT>::use_count() == 2) {
-        resMan_.release_property(PropHandleT<Entity>(handle().idx()));
-        unlock();
+    if(resMan_ && !persistent() && ptr::shared_ptr<PropT>::use_count() == 2) {
+        resMan_->release_property(PropHandleT<Entity>(handle().idx()));
     }
 }
 

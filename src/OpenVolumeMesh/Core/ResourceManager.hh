@@ -51,10 +51,11 @@ class BaseProperty;
 
 class ResourceManager {
 public:
-    ResourceManager();
+    ResourceManager() = default;
     ResourceManager(const ResourceManager &other);
-    ResourceManager& operator=(const ResourceManager &other) = delete;
-
+    ResourceManager(ResourceManager &&other);
+    ResourceManager& operator=(const ResourceManager &other);
+    ResourceManager& operator=(ResourceManager &&other);
     virtual ~ResourceManager();
 
     template <class PropT, class HandleT> friend class PropertyPtr;
@@ -318,6 +319,9 @@ private:
 
     template<class StdVecT>
     void clearVec(StdVecT& _vec);
+
+    template<class StdVecT>
+    void updatePropHandles(StdVecT& _vec);
 
     Properties vertex_props_;
 
