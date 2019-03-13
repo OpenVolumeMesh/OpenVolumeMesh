@@ -11,7 +11,7 @@ class OpenVolumeMeshPropertyT;
 template <class E, typename >
 class PropHandleT;
 
-template <class PropT, class HandleT>
+template <class PropT, typename Entity>
 class PropertyPtr;
 
 template<typename T, typename Entity>

@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #define PROPERTYDEFINEST_CC
 
 #include <istream>
@@ -51,13 +43,13 @@ namespace OpenVolumeMesh {
 
 template<typename T, typename Entity>
 PropertyTT<T,Entity>::PropertyTT(const std::string& _name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def) :
-        PropertyPtr<OpenVolumeMeshPropertyT<T>, PropertyHandleT>(new OpenVolumeMeshPropertyT<T>(_name, _def), _resMan, _handle) {
+        PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity>(new OpenVolumeMeshPropertyT<T>(_name, _def), _resMan, _handle) {
 
 }
 
 template<typename T, typename Entity>
 PropertyTT<T,Entity>::PropertyTT(OpenVolumeMeshPropertyT<T> *_prop, ResourceManager &_resMan, PropertyHandleT _handle) :
-        PropertyPtr<OpenVolumeMeshPropertyT<T>, PropertyHandleT>(_prop, _resMan, _handle)
+        PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity>(_prop, _resMan, _handle)
 {
 }
 
@@ -66,16 +58,6 @@ BaseProperty *PropertyTT<T,Entity>::clone(ResourceManager &_resMan, OpenVolumeMe
 {
     auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
     return new PropertyTT<T, Entity>(prop_clone, _resMan, PropertyHandleT(_handle.idx()));
-}
-
-template<typename T, typename Entity>
-void PropertyTT<T,Entity>::serialize(std::ostream& _ostr) const {
-    PropertyPtr<OpenVolumeMeshPropertyT<T>, PropertyHandleT>::get()->serialize(_ostr);
-}
-
-template<typename T, typename Entity>
-void PropertyTT<T,Entity>::deserialize(std::istream& _istr) {
-    PropertyPtr<OpenVolumeMeshPropertyT<T>, PropertyHandleT>::get()->deserialize(_istr);
 }
 
 template<typename T>

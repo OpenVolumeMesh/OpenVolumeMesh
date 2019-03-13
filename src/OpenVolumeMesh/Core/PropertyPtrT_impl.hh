@@ -40,14 +40,14 @@
 
 namespace OpenVolumeMesh {
 
-template <class PropT, class HandleT>
-PropertyPtr<PropT,HandleT>::PropertyPtr(PropT* _ptr, ResourceManager& _resMan, HandleT _handle) :
+template <class PropT, typename Entity>
+PropertyPtr<PropT,Entity>::PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle) :
     ptr::shared_ptr<PropT>(_ptr), BaseProperty(_resMan) {
     ptr::shared_ptr<PropT>::get()->set_handle(_handle);
 }
 
-template <class PropT, class HandleT>
-PropertyPtr<PropT,HandleT>::~PropertyPtr() {
+template <class PropT, typename Entity>
+PropertyPtr<PropT,Entity>::~PropertyPtr() {
 
     /*
      * If use count is 2 and prop is not set persistent,
@@ -55,48 +55,48 @@ PropertyPtr<PropT,HandleT>::~PropertyPtr() {
      * only one who stores the property.
      */
     if(!locked() && !persistent() && ptr::shared_ptr<PropT>::use_count() == 2) {
-        resMan_.release_property(HandleT(handle().idx()));
+        resMan_.release_property(PropHandleT<Entity>(handle().idx()));
         unlock();
     }
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::resize(size_t _size) {
+template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::resize(size_t _size) {
     ptr::shared_ptr<PropT>::get()->resize(_size);
 }
 
-template <class PropT, class HandleT>
-const std::string& PropertyPtr<PropT,HandleT>::name() const {
+template <class PropT, typename Entity>
+const std::string& PropertyPtr<PropT,Entity>::name() const {
     return ptr::shared_ptr<PropT>::get()->name();
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::delete_element(size_t _idx) {
+template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::delete_element(size_t _idx) {
     ptr::shared_ptr<PropT>::get()->delete_element(_idx);
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::swap_elements(size_t _idx0, size_t _idx1) {
+template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::swap_elements(size_t _idx0, size_t _idx1) {
     ptr::shared_ptr<PropT>::get()->swap(_idx0, _idx1);
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::copy(size_t _src_idx, size_t _dst_idx) {
+template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::copy(size_t _src_idx, size_t _dst_idx) {
     ptr::shared_ptr<PropT>::get()->copy(_src_idx, _dst_idx);
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::set_handle(const OpenVolumeMeshHandle& _handle) {
+template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::set_handle(const OpenVolumeMeshHandle& _handle) {
     return ptr::shared_ptr<PropT>::get()->set_handle(_handle);
 }
 
-template <class PropT, class HandleT>
-OpenVolumeMeshHandle PropertyPtr<PropT,HandleT>::handle() const {
+template <class PropT, typename Entity>
+OpenVolumeMeshHandle PropertyPtr<PropT,Entity>::handle() const {
     return ptr::shared_ptr<PropT>::get()->handle();
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::delete_multiple_entries(const std::vector<bool>& _tags) {
+template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::delete_multiple_entries(const std::vector<bool>& _tags) {
     ptr::shared_ptr<PropT>::get()->delete_multiple_entries(_tags);
 }
 
