@@ -55,9 +55,9 @@ class BaseProperty {
 public:
     friend class ResourceManager;
 
-    explicit BaseProperty(ResourceManager& _resMan) : resMan_(_resMan), lock_(false) {}
+    explicit BaseProperty(ResourceManager& _resMan) : resMan_(&_resMan) {}
 
-    BaseProperty(const BaseProperty& _cpy) : resMan_(_cpy.resMan_), lock_(_cpy.lock_) {}
+    BaseProperty(const BaseProperty& _cpy) : resMan_(_cpy.resMan_) {}
 
     BaseProperty& operator=(const BaseProperty& _cpy) = delete;
 
@@ -95,15 +95,9 @@ protected:
 
     virtual void set_handle(const OpenVolumeMeshHandle& /*_handle*/) = 0;
 
-    void lock() { lock_ = true; }
+    void setResMan(ResourceManager *resMan) { resMan_ = resMan;}
 
-    void unlock() { lock_ = false; }
-
-    bool locked() const { return lock_; }
-
-    ResourceManager& resMan_;
-
-    bool lock_;
+    ResourceManager* resMan_;
 };
 
 } // Namespace OpenVolumeMesh

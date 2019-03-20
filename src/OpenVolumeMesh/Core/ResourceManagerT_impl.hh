@@ -170,13 +170,11 @@ void ResourceManager::set_persistentT(PropT& _prop, bool _flag) {
 template<class StdVecT>
 void ResourceManager::remove_property(StdVecT& _vec, size_t _idx) {
 
-    (*(_vec.begin() + _idx))->lock();
-    delete *(_vec.begin() + _idx);
+    auto prop_ptr = _vec[_idx];
+    prop_ptr->setResMan(nullptr);
+    delete prop_ptr;
     _vec.erase(_vec.begin() + _idx);
-    size_t n = _vec.size();
-    for(size_t i = 0; i < n; ++i) {
-        _vec[i]->set_handle(OpenVolumeMeshHandle((int)i));
-    }
+    updatePropHandles(_vec);
 }
 
 template<class StdVecT>
@@ -200,22 +198,20 @@ void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& 
 template<class StdVecT>
 void ResourceManager::clearVec(StdVecT& _vec) {
 
-    StdVecT newVec;
-    for(typename StdVecT::iterator it = _vec.begin();
-            it != _vec.end(); ++it) {
-        if(!(*it)->persistent()) {
-#ifndef NDEBUG
-            std::cerr << "Keeping property \"" << (*it)->name()
-                      << "\" since it is still in use!" << std::endl;
-#endif
-            (*it)->resize(0);
-            newVec.push_back(*it);
-        }
-        else
-            delete *it;
+    for (auto prop: _vec) {
+        prop->setResMan(nullptr);
+        delete prop;
     }
+    _vec.clear();
+}
 
-    _vec = newVec;
+template<class StdVecT>
+void ResourceManager::updatePropHandles(StdVecT &_vec)
+{
+    size_t n = _vec.size();
+    for(size_t i = 0; i < n; ++i) {
+        _vec[i]->set_handle(OpenVolumeMeshHandle((int)i));
+    }
 }
 
 } // Namespace OpenVolumeMesh

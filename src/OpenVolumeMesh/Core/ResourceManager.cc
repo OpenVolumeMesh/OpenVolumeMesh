@@ -32,22 +32,25 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include "ResourceManager.hh"
 
 namespace OpenVolumeMesh {
 
-ResourceManager::ResourceManager() {
+ResourceManager::ResourceManager(const ResourceManager &other)
+{
+   *this = other;
 }
 
-ResourceManager::ResourceManager(const ResourceManager &other) {
+ResourceManager::ResourceManager(ResourceManager &&other)
+{
+   *this = std::move(other);
+}
+
+ResourceManager& ResourceManager::operator=(const ResourceManager &other)
+{
+    if (this == &other)
+        return *this;
+
     auto cloneProps = [this](const Properties &src, Properties &dest) {
         dest.reserve(src.size());
         for (BaseProperty *bp: src) {
@@ -61,6 +64,28 @@ ResourceManager::ResourceManager(const ResourceManager &other) {
     cloneProps(other.halfface_props_, halfface_props_);
     cloneProps(other.cell_props_,     cell_props_);
     cloneProps(other.mesh_props_,     mesh_props_);
+    return *this;
+}
+
+ResourceManager& ResourceManager::operator=(ResourceManager &&other)
+{
+    if (this == &other)
+        return *this;
+
+    auto moveProps = [this](Properties &&src, Properties &dest) {
+        dest = std::move(src);
+        for (auto prop: dest) {
+            prop->setResMan(this);
+        }
+    };
+    moveProps(std::move(other.vertex_props_),   vertex_props_);
+    moveProps(std::move(other.edge_props_),     edge_props_);
+    moveProps(std::move(other.halfedge_props_), halfedge_props_);
+    moveProps(std::move(other.face_props_),     face_props_);
+    moveProps(std::move(other.halfface_props_), halfface_props_);
+    moveProps(std::move(other.cell_props_),     cell_props_);
+    moveProps(std::move(other.mesh_props_),     mesh_props_);
+    return *this;
 }
 
 ResourceManager::~ResourceManager() {
@@ -153,32 +178,32 @@ void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2)
 
 void ResourceManager::release_property(VertexPropHandle _handle) {
 
-    remove_property(vertex_props_, _handle.idx());
+    remove_property(vertex_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(EdgePropHandle _handle) {
 
-    remove_property(edge_props_, _handle.idx());
+    remove_property(edge_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(HalfEdgePropHandle _handle) {
 
-    remove_property(halfedge_props_, _handle.idx());
+    remove_property(halfedge_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(FacePropHandle _handle) {
 
-    remove_property(face_props_, _handle.idx());
+    remove_property(face_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(HalfFacePropHandle _handle) {
 
-    remove_property(halfface_props_, _handle.idx());
+    remove_property(halfface_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(CellPropHandle _handle) {
 
-    remove_property(cell_props_, _handle.idx());
+    remove_property(cell_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(MeshPropHandle _handle) {

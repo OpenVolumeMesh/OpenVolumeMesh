@@ -37,6 +37,8 @@
 #include <algorithm>
 #include <iosfwd>
 #include <vector>
+#include <cassert>
+#include <limits>
 
 #include "Entities.hh"
 #include "../System/FunctionalInclude.hh"
@@ -48,17 +50,15 @@ namespace OpenVolumeMesh {
 class OpenVolumeMeshHandle {
 public:
     // Default constructor
-	explicit OpenVolumeMeshHandle(int _idx) : idx_(_idx) {};
+    explicit OpenVolumeMeshHandle(int _idx) : idx_(_idx) {}
 
 	OpenVolumeMeshHandle& operator=(int _idx) {
 		idx_ = _idx;
 		return *this;
 	}
 
-	OpenVolumeMeshHandle& operator=(const OpenVolumeMeshHandle& _idx) {
-		idx_ = _idx.idx_;
-		return *this;
-	}
+    OpenVolumeMeshHandle(const OpenVolumeMeshHandle& _idx) = default;
+    OpenVolumeMeshHandle& operator=(const OpenVolumeMeshHandle& _idx) = default;
 
 	inline bool is_valid() const { return idx_ != -1; }
 
@@ -75,6 +75,9 @@ public:
 	inline bool operator!=(const OpenVolumeMeshHandle& _h) const { return _h.idx_ != this->idx_; }
 
 	inline const int& idx() const { return idx_; }
+
+    /// return unsigned idx - handle must be valid
+    inline size_t uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
 
 	void idx(const int& _idx) { idx_ = _idx; }
 
@@ -95,6 +98,17 @@ class HandleT : public OpenVolumeMeshHandle
 public:
     using Entity = EntityTag;
     explicit HandleT(int _idx = -1) : OpenVolumeMeshHandle(_idx) {}
+
+    static HandleT<EntityTag>
+    from_unsigned(size_t _idx)
+    {
+        if (_idx <= std::numeric_limits<int>::max()) {
+            return HandleT<EntityTag>(static_cast<int>(_idx));
+        } else {
+            assert(false);
+            return HandleT<EntityTag>(-1);
+        }
+    }
 };
 
 // Default entity handles

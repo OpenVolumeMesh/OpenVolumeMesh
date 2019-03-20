@@ -37,6 +37,7 @@
 
 #include <string>
 
+#include "PropertyHandles.hh"
 #include "BaseProperty.hh"
 #include "OpenVolumeMeshHandle.hh"
 #include "../System/MemoryInclude.hh"
@@ -54,7 +55,7 @@ class ResourceManager;
  * as soon as the object is not used anymore.
  */
 
-template <class PropT, class HandleT>
+template <class PropT, typename Entity>
 class PropertyPtr : protected ptr::shared_ptr<PropT>, public BaseProperty {
 public:
 
@@ -66,10 +67,10 @@ public:
     typedef typename PropT::reference                   reference;
     typedef typename PropT::const_reference             const_reference;
 
-    typedef OpenVolumeMesh::HandleT<typename HandleT::Entity>  EntityHandleT;
+    using EntityHandleT = HandleT<Entity>;
 
     /// Constructor
-    PropertyPtr(PropT* _ptr, ResourceManager& _resMan, HandleT _handle);
+    PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle);
 
     /// Destructor
     virtual ~PropertyPtr();
@@ -98,7 +99,10 @@ public:
     const_reference operator[](size_t _idx) const { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
 
     reference operator[](const EntityHandleT& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
-    const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
+    const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.uidx()]; }
+
+    virtual void serialize(std::ostream& _ostr) const { ptr::shared_ptr<PropT>::get()->serialize(_ostr); }
+    virtual void deserialize(std::istream& _istr) { ptr::shared_ptr<PropT>::get()->deserialize(_istr); }
 
     virtual OpenVolumeMeshHandle handle() const;
 

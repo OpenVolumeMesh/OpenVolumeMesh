@@ -99,8 +99,8 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
 
     // If the conditions are not fulfilled, assert will fail (instead
 	// of returning an invalid handle)
-    assert(_fromVertex.is_valid() && (size_t)_fromVertex.idx() < n_vertices());
-    assert(_toVertex.is_valid() && (size_t)_toVertex.idx() < n_vertices());
+    assert(_fromVertex.is_valid() && (size_t)_fromVertex.idx() < n_vertices() && !is_deleted(_fromVertex));
+    assert(_toVertex.is_valid() && (size_t)_toVertex.idx() < n_vertices() && !is_deleted(_toVertex));
 
     // Test if edge does not exist, yet
     if(!_allowDuplicates) {
@@ -164,7 +164,7 @@ FaceHandle TopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedge
     // Assert that halfedges are valid
     for(std::vector<HalfEdgeHandle>::const_iterator it = _halfedges.begin(),
             end = _halfedges.end(); it != end; ++it)
-        assert(it->is_valid() && (size_t)it->idx() < edges_.size() * 2u);
+        assert(it->is_valid() && (size_t)it->idx() < edges_.size() * 2u && !is_deleted(*it));
 #endif
 
     // Perform topology check
@@ -253,7 +253,7 @@ FaceHandle TopologyKernel::add_face(const std::vector<VertexHandle>& _vertices) 
     // Assert that all vertices have valid indices
     for(std::vector<VertexHandle>::const_iterator it = _vertices.begin(),
             end = _vertices.end(); it != end; ++it)
-        assert(it->is_valid() && (size_t)it->idx() < n_vertices());
+        assert(it->is_valid() && (size_t)it->idx() < n_vertices() && !is_deleted(*it));
 #endif
 
     // Add edge for each pair of vertices
@@ -381,7 +381,7 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
     // Assert that halffaces have valid indices
     for(std::vector<HalfFaceHandle>::const_iterator it = _halffaces.begin(),
             end = _halffaces.end(); it != end; ++it)
-        assert(it->is_valid() && ((size_t)it->idx() < faces_.size() * 2u));
+        assert(it->is_valid() && ((size_t)it->idx() < faces_.size() * 2u) && !is_deleted(*it));
 #endif
 
     // Perform topology check
@@ -482,6 +482,9 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
 
 /// Set the vertices of an edge
 void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVertex, const VertexHandle& _toVertex) {
+
+    assert(_fromVertex.is_valid() && (size_t)_fromVertex.idx() < n_vertices() && !is_deleted(_fromVertex));
+    assert(_toVertex.is_valid() && (size_t)_toVertex.idx() < n_vertices() && !is_deleted(_toVertex));
 
     Edge& e = edge(_eh);
 
@@ -591,6 +594,8 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
  */
 VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
 
+    assert(!is_deleted(_h));
+
     std::vector<VertexHandle> vs;
     vs.push_back(_h);
 
@@ -641,6 +646,8 @@ VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
  */
 EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
 
+    assert(!is_deleted(_h));
+
     std::vector<EdgeHandle> es;
     es.push_back(_h);
 
@@ -682,6 +689,8 @@ EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
  */
 FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
 
+    assert(!is_deleted(_h));
+
     std::vector<FaceHandle> fs;
     fs.push_back(_h);
 
@@ -711,6 +720,7 @@ FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
  */
 CellIter TopologyKernel::delete_cell(const CellHandle& _h) {
 
+    assert(!is_deleted(_h));
     return delete_cell_core(_h);
 }
 
