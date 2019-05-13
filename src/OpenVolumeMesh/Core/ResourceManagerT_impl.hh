@@ -125,6 +125,12 @@ struct request_property_impl {
 };
 
 template<class T>
+struct request_property_impl<T, Entity::Vertex>{
+    static PropertyTT<T, Entity::Vertex> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_vertex_property<T>(_name, _def);
+    }
+};
+template<class T>
 struct request_property_impl<T, Entity::Edge>{
     static PropertyTT<T, Entity::Edge> _(ResourceManager *resman, const std::string &_name, const T _def) {
         return resman->request_edge_property<T>(_name, _def);
