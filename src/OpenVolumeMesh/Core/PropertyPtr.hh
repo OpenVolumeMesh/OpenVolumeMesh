@@ -70,6 +70,8 @@ public:
     using EntityHandleT = HandleT<Entity>;
 
     /// Constructor
+    PropertyPtr() : BaseProperty(nullptr) {}
+    /// Constructor
     PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle);
 
     /// Destructor

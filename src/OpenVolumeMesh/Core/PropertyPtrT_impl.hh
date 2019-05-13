@@ -42,7 +42,7 @@ namespace OpenVolumeMesh {
 
 template <class PropT, typename Entity>
 PropertyPtr<PropT,Entity>::PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle) :
-    ptr::shared_ptr<PropT>(_ptr), BaseProperty(_resMan) {
+    ptr::shared_ptr<PropT>(_ptr), BaseProperty(&_resMan) {
     ptr::shared_ptr<PropT>::get()->set_handle(_handle);
 }
 

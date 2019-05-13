@@ -55,9 +55,10 @@ class BaseProperty {
 public:
     friend class ResourceManager;
 
-    explicit BaseProperty(ResourceManager& _resMan) : resMan_(&_resMan) {}
+    explicit BaseProperty(ResourceManager* _resMan) : resMan_(_resMan) {}
 
-    BaseProperty(const BaseProperty& _cpy) : resMan_(_cpy.resMan_) {}
+    BaseProperty(BaseProperty&& _other) = default;
+    BaseProperty(const BaseProperty& _other) = default;
 
     BaseProperty& operator=(const BaseProperty& _cpy) = delete;
 

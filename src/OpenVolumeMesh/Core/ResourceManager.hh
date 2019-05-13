@@ -132,6 +132,12 @@ public:
     /// Get number of cells in mesh
     virtual size_t n_cells() const = 0;
 
+
+    template<typename T,
+             typename EntityTag
+             >
+    PropertyTT<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
+
     template<class T> VertexPropertyT<T> request_vertex_property(const std::string& _name = std::string(), const T _def = T());
 
     template<class T> EdgePropertyT<T> request_edge_property(const std::string& _name = std::string(), const T _def = T());
@@ -145,6 +151,7 @@ public:
     template<class T> CellPropertyT<T> request_cell_property(const std::string& _name = std::string(), const T _def = T());
 
     template<class T> MeshPropertyT<T> request_mesh_property(const std::string& _name = std::string(), const T _def = T());
+
 
 private:
 
@@ -178,19 +185,8 @@ public:
 
     size_t n_mesh_props() const { return mesh_props_.size(); }
 
-    template<class T> void set_persistent(VertexPropertyT<T>& _prop, bool _flag = true);
-
-    template<class T> void set_persistent(EdgePropertyT<T>& _prop, bool _flag = true);
-
-    template<class T> void set_persistent(HalfEdgePropertyT<T>& _prop, bool _flag = true);
-
-    template<class T> void set_persistent(FacePropertyT<T>& _prop, bool _flag = true);
-
-    template<class T> void set_persistent(HalfFacePropertyT<T>& _prop, bool _flag = true);
-
-    template<class T> void set_persistent(CellPropertyT<T>& _prop, bool _flag = true);
-
-    template<class T> void set_persistent(MeshPropertyT<T>& _prop, bool _flag = true);
+    template<typename T, class EntityTag>
+    void set_persistent(PropertyTT<T, EntityTag>& _prop, bool _flag = true);
 
     typedef std::vector<BaseProperty*> Properties;
 
@@ -313,9 +309,6 @@ private:
 
     template<class StdVecT, class PropT, class HandleT, class T>
     PropT request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def = T());
-
-    template<class PropT>
-    void set_persistentT(PropT& _prop, bool _flag);
 
     template<class StdVecT>
     void clearVec(StdVecT& _vec);
