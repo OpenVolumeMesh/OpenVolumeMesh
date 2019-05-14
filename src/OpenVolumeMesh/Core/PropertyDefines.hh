@@ -84,6 +84,10 @@ template <> const std::string entityTypeName<Entity::Mesh>();
 template<typename T, typename Entity>
 class PropertyTT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity> {
 public:
+    template<typename MeshT>
+    PropertyTT(MeshT *mesh, const std::string& _name, const T _def = T())
+        : PropertyTT(std::move(mesh->template request_property<T, Entity>(_name, _def)))
+    {}
     using PropertyHandleT = OpenVolumeMesh::PropHandleT<Entity>;
     PropertyTT(const std::string& _name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def = T());
     virtual ~PropertyTT() = default;

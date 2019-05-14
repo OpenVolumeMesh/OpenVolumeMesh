@@ -117,53 +117,61 @@ PropT ResourceManager::request_property(StdVecT& _vec, const std::string& _name,
     return *prop;
 }
 
-template<class T>
-void ResourceManager::set_persistent(VertexPropertyT<T>& _prop, bool _flag) {
+// request_property: work around C++ currently now allowing partial specialisation on functions by using structs:
 
-    set_persistentT(_prop, _flag);
-}
-
-template<class T>
-void ResourceManager::set_persistent(EdgePropertyT<T>& _prop, bool _flag) {
-
-    set_persistentT(_prop, _flag);
-}
+template<class T, typename EntityTag>
+struct request_property_impl {
+    static PropertyTT<T, EntityTag> _(ResourceManager* /*resman*/, const std::string& /*_name*/, const T /*_def*/);
+};
 
 template<class T>
-void ResourceManager::set_persistent(HalfEdgePropertyT<T>& _prop, bool _flag) {
-
-    set_persistentT(_prop, _flag);
-}
-
+struct request_property_impl<T, Entity::Vertex>{
+    static PropertyTT<T, Entity::Vertex> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_vertex_property<T>(_name, _def);
+    }
+};
 template<class T>
-void ResourceManager::set_persistent(FacePropertyT<T>& _prop, bool _flag) {
-
-    set_persistentT(_prop, _flag);
-}
-
+struct request_property_impl<T, Entity::Edge>{
+    static PropertyTT<T, Entity::Edge> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_edge_property<T>(_name, _def);
+    }
+};
 template<class T>
-void ResourceManager::set_persistent(HalfFacePropertyT<T>& _prop, bool _flag) {
-
-    set_persistentT(_prop, _flag);
-}
-
+struct request_property_impl<T, Entity::HalfEdge>{
+    static PropertyTT<T, Entity::HalfEdge> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_halfedge_property<T>(_name, _def);
+    }
+};
 template<class T>
-void ResourceManager::set_persistent(CellPropertyT<T>& _prop, bool _flag) {
-
-    set_persistentT(_prop, _flag);
-}
-
+struct request_property_impl<T, Entity::Face>{
+    static PropertyTT<T, Entity::Face> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_face_property<T>(_name, _def);
+    }
+};
 template<class T>
-void ResourceManager::set_persistent(MeshPropertyT<T>& _prop, bool _flag) {
+struct request_property_impl<T, Entity::HalfFace>{
+    static PropertyTT<T, Entity::HalfFace> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_halfface_property<T>(_name, _def);
+    }
+};
+template<class T>
+struct request_property_impl<T, Entity::Cell>{
+    static PropertyTT<T, Entity::Cell> _(ResourceManager *resman, const std::string &_name, const T _def) {
+        return resman->request_cell_property<T>(_name, _def);
+    }
+};
 
-    set_persistentT(_prop, _flag);
+template<typename T, typename EntityTag>
+PropertyTT<T, EntityTag> ResourceManager::request_property(const std::string& _name, const T _def)
+{
+    return request_property_impl<T, EntityTag>::_(this, _name, _def);
 }
 
-template<class PropT>
-void ResourceManager::set_persistentT(PropT& _prop, bool _flag) {
 
+template<typename T, class EntityTag>
+void ResourceManager::set_persistent(PropertyTT<T, EntityTag>& _prop, bool _flag)
+{
     if(_flag == _prop->persistent()) return;
-
     _prop->set_persistent(_flag);
 }
 
