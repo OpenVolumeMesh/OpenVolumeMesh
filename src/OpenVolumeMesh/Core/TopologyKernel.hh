@@ -62,6 +62,9 @@ public:
 
     TopologyKernel& operator=(const TopologyKernel&) = default;
 
+    void assign(const TopologyKernel *other) {
+        *this = *other;
+    }
 
     /*
      * Defines and constants

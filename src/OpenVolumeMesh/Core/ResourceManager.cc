@@ -51,11 +51,34 @@ ResourceManager& ResourceManager::operator=(const ResourceManager &other)
     if (this == &other)
         return *this;
 
-    auto cloneProps = [this](const Properties &src, Properties &dest) {
-        dest.reserve(src.size());
-        for (BaseProperty *bp: src) {
-            dest.push_back(bp->clone(*this, bp->handle()));
+    auto cloneProps = [this](const Properties &src, Properties &dest)
+    {
+        // If possible, re-use existing properties instead of copying
+        // everything blindly.
+        // This way, references to properties of `this` do not expire
+        // if a corresponding property exists in `other`, e.g. attributes.
+        Properties out;
+        out.reserve(src.size());
+        for (BaseProperty *srcprop: src) {
+            bool found = false;
+            for (auto it = dest.begin(); it != dest.end(); ++it) {
+                auto dstprop = *it;
+                if (dstprop->name() == srcprop->name())
+                {
+                    // TODO: type check
+                    out.push_back(dstprop);
+                    dest.erase(it);
+                    dstprop->assign_values_from(srcprop);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                out.push_back(srcprop->clone(*this, OpenVolumeMeshHandle(-1)));
+            }
         }
+        updatePropHandles(out);
+        dest = std::move(out);
     };
     cloneProps(other.vertex_props_,   vertex_props_);
     cloneProps(other.edge_props_,     edge_props_);
@@ -72,7 +95,8 @@ ResourceManager& ResourceManager::operator=(ResourceManager &&other)
     if (this == &other)
         return *this;
 
-    auto moveProps = [this](Properties &&src, Properties &dest) {
+    auto moveProps = [this](Properties &&src, Properties &dest){
+        // TODO: check for existing properties and move data contents instead of Property classes
         dest = std::move(src);
         for (auto prop: dest) {
             prop->setResMan(this);
