@@ -116,6 +116,7 @@ public:
 protected:
 
     void assign_values_from(const BaseProperty *other) override;
+    void move_values_from(BaseProperty *other) override;
 
     virtual void delete_multiple_entries(const std::vector<bool>& _tags);
 

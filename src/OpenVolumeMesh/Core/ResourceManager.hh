@@ -39,6 +39,7 @@
 #endif
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #include "OpenVolumeMeshProperty.hh"
 #include "PropertyHandles.hh"
@@ -315,6 +316,12 @@ private:
 
     template<class StdVecT>
     void updatePropHandles(StdVecT& _vec);
+
+    template<bool Move>
+    void assignProperties(typename std::conditional<Move, Properties&, const Properties&>::type src,
+                          Properties &dest);
+    template<bool Move>
+    void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager*, const ResourceManager*>::type src);
 
     Properties vertex_props_;
 

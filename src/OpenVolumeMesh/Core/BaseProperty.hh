@@ -97,6 +97,10 @@ protected:
     /// Currently no type check is performed.
     virtual void assign_values_from(const BaseProperty *other) = 0;
 
+    /// Move data from other property. `other` MUST point to an object with the same type as `this`!
+    /// Currently no type check is performed.
+    virtual void move_values_from(BaseProperty *other) = 0;
+
     virtual void delete_multiple_entries(const std::vector<bool>& _tags) = 0;
 
     virtual void resize(size_t /*_size*/) = 0;

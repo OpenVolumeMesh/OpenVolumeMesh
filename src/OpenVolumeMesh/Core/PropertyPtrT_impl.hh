@@ -67,6 +67,13 @@ void PropertyPtr<PropT,Entity>::assign_values_from(const BaseProperty *other) {
 }
 
 template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::move_values_from(BaseProperty *other) {
+    auto _other = static_cast<PropertyPtr<PropT,Entity>*>(other);
+    // FIXME: would be nice to perform a type check here
+    ptr::shared_ptr<PropT>::get()->data_vector() = std::move(_other->get()->data_vector());
+}
+
+template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::resize(size_t _size) {
     ptr::shared_ptr<PropT>::get()->resize(_size);
 }
