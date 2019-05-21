@@ -59,10 +59,11 @@ public:
     typedef TopologyKernelT KernelT;
 
     /// Constructor
-    GeometryKernel() {}
+    GeometryKernel() = default;
 
     /// Destructor
-    ~GeometryKernel() {}
+    ~GeometryKernel() = default;
+
 
     /// Override of empty add_vertex function
     virtual VertexHandle add_vertex() { return add_vertex(VecT()); }
