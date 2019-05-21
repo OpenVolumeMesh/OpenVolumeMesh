@@ -32,18 +32,11 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 36 $                                                         *
- *   $Date: 2012-01-10 18:00:06 +0100 (Di, 10 Jan 2012) $                    *
- *   $LastChangedBy: kremer $                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include "BaseProperty.hh"
 
-#include "ResourceManager.hh"
-
 namespace OpenVolumeMesh {
+
+// define this here to emit a vtable only in this translation unit
+BaseProperty::~BaseProperty() = default;
 
 } // Namespace OpenVolumeMesh

@@ -63,7 +63,7 @@ public:
     BaseProperty& operator=(const BaseProperty& _cpy) = delete;
 
 
-    virtual ~BaseProperty() {}
+    virtual ~BaseProperty();
 
     virtual const std::string& name() const = 0;
 
