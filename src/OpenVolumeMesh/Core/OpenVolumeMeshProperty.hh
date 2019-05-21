@@ -88,6 +88,9 @@ public:
 	virtual void resize(size_t _n) {
                 data_.resize(_n, def_);
 	}
+	virtual size_t size() const {
+		return data_.size();
+	}
 	virtual void clear() {
 		data_.clear();
 		vector_type().swap(data_);

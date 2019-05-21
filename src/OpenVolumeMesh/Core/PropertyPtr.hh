@@ -91,6 +91,7 @@ public:
 
     const_iterator begin() const { return ptr::shared_ptr<PropT>::get()->begin(); }
     iterator begin() { return ptr::shared_ptr<PropT>::get()->begin(); }
+    size_t size() const { return ptr::shared_ptr<PropT>::get()->size(); }
 
     const_iterator end() const { return ptr::shared_ptr<PropT>::get()->end(); }
     iterator end() { return ptr::shared_ptr<PropT>::get()->end(); }

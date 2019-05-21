@@ -88,6 +88,8 @@ public:
 
     virtual const std::string typeNameWrapper() const = 0;
 
+    virtual size_t size() const = 0;
+
 protected:
 
     virtual void delete_multiple_entries(const std::vector<bool>& _tags) = 0;
