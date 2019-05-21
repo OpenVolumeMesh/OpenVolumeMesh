@@ -58,19 +58,6 @@ const FaceHandle        TopologyKernel::InvalidFaceHandle     = FaceHandle(-1);
 const HalfFaceHandle    TopologyKernel::InvalidHalfFaceHandle = HalfFaceHandle(-1);
 const CellHandle        TopologyKernel::InvalidCellHandle     = CellHandle(-1);
 
-TopologyKernel::TopologyKernel() :
-    n_vertices_(0u),
-    v_bottom_up_(true),
-    e_bottom_up_(true),
-    f_bottom_up_(true),
-    deferred_deletion(true),
-    fast_deletion(true)
-{
-}
-
-TopologyKernel::~TopologyKernel() {
-}
-
 //========================================================================================
 
 VertexHandle TopologyKernel::add_vertex() {

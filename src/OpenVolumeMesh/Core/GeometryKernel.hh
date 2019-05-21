@@ -59,10 +59,16 @@ public:
     typedef TopologyKernelT KernelT;
 
     /// Constructor
-    GeometryKernel() {}
+    GeometryKernel() = default;
 
     /// Destructor
-    ~GeometryKernel() {}
+    ~GeometryKernel() = default;
+
+    template<class OtherTopoKernel>
+    void assign(const GeometryKernel<VecT, OtherTopoKernel> *other) {
+        TopologyKernelT::assign(other);
+        other->clone_vertices(vertices_);
+    }
 
     /// Override of empty add_vertex function
     virtual VertexHandle add_vertex() { return add_vertex(VecT()); }

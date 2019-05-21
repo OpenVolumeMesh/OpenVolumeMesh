@@ -91,6 +91,7 @@ public:
 
     const_iterator begin() const { return ptr::shared_ptr<PropT>::get()->begin(); }
     iterator begin() { return ptr::shared_ptr<PropT>::get()->begin(); }
+    size_t size() const { return ptr::shared_ptr<PropT>::get()->size(); }
 
     const_iterator end() const { return ptr::shared_ptr<PropT>::get()->end(); }
     iterator end() { return ptr::shared_ptr<PropT>::get()->end(); }
@@ -113,6 +114,9 @@ public:
     virtual bool anonymous() const { return ptr::shared_ptr<PropT>::get()->name().empty(); }
 
 protected:
+
+    void assign_values_from(const BaseProperty *other) override;
+    void move_values_from(BaseProperty *other) override;
 
     virtual void delete_multiple_entries(const std::vector<bool>& _tags);
 

@@ -62,7 +62,8 @@ public:
 
     BaseProperty& operator=(const BaseProperty& _cpy) = delete;
 
-    virtual ~BaseProperty() {}
+
+    virtual ~BaseProperty();
 
     virtual const std::string& name() const = 0;
 
@@ -88,7 +89,17 @@ public:
 
     virtual const std::string typeNameWrapper() const = 0;
 
+    virtual size_t size() const = 0;
+
 protected:
+
+    /// Copy data from other property. `other` MUST point to an object with the same type as `this`!
+    /// Currently no type check is performed.
+    virtual void assign_values_from(const BaseProperty *other) = 0;
+
+    /// Move data from other property. `other` MUST point to an object with the same type as `this`!
+    /// Currently no type check is performed.
+    virtual void move_values_from(BaseProperty *other) = 0;
 
     virtual void delete_multiple_entries(const std::vector<bool>& _tags) = 0;
 

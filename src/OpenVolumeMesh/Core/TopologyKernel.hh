@@ -57,8 +57,14 @@ namespace OpenVolumeMesh {
 class TopologyKernel : public ResourceManager {
 public:
 
-    TopologyKernel();
-    virtual ~TopologyKernel();
+    TopologyKernel() = default;
+    virtual ~TopologyKernel() = default;
+
+    TopologyKernel& operator=(const TopologyKernel&) = default;
+
+    void assign(const TopologyKernel *other) {
+        *this = *other;
+    }
 
     /*
      * Defines and constants
@@ -361,7 +367,7 @@ public:
 private:
 
     // Cache total vertex number
-    size_t n_vertices_;
+    size_t n_vertices_ = 0u;
 
 public:
 
@@ -793,15 +799,15 @@ protected:
     std::vector<CellHandle> incident_cell_per_hf_;
 
 private:
-    bool v_bottom_up_;
+    bool v_bottom_up_ = true;
 
-    bool e_bottom_up_;
+    bool e_bottom_up_ = true;
 
-    bool f_bottom_up_;
+    bool f_bottom_up_ = true;
 
-    bool deferred_deletion;
+    bool deferred_deletion = true;
 
-    bool fast_deletion;
+    bool fast_deletion = true;
 
     //=====================================================================
     // Connectivity
