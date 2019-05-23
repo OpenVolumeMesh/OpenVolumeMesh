@@ -114,6 +114,7 @@ public:
     virtual bool anonymous() const { return ptr::shared_ptr<PropT>::get()->name().empty(); }
 
 protected:
+    virtual const std::string &internal_type_name() const { return ptr::shared_ptr<PropT>::get()->internal_type_name(); }
 
     void assign_values_from(const BaseProperty *other) override;
     void move_values_from(BaseProperty *other) override;

@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef BASEPROPERTY_HH_
 #define BASEPROPERTY_HH_
 
@@ -92,6 +84,8 @@ public:
     virtual size_t size() const = 0;
 
 protected:
+
+    virtual const std::string &internal_type_name() const = 0;
 
     /// Copy data from other property. `other` MUST point to an object with the same type as `this`!
     /// Currently no type check is performed.

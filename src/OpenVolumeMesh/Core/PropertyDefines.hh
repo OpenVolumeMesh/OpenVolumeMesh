@@ -89,7 +89,7 @@ public:
         : PropertyTT(std::move(mesh->template request_property<T, Entity>(_name, _def)))
     {}
     using PropertyHandleT = OpenVolumeMesh::PropHandleT<Entity>;
-    PropertyTT(const std::string& _name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def = T());
+    PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def = T());
     virtual ~PropertyTT() = default;
     virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
     virtual const std::string entityType() const { return entityTypeName<Entity>(); }

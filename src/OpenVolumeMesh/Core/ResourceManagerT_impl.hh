@@ -44,8 +44,10 @@
 
 #include "ResourceManager.hh"
 #include "PropertyDefines.hh"
+#include "TypeName.hh"
 
 namespace OpenVolumeMesh {
+
 
 template<class T>
 VertexPropertyT<T> ResourceManager::request_vertex_property(const std::string& _name, const T _def) {
@@ -90,25 +92,24 @@ MeshPropertyT<T> ResourceManager::request_mesh_property(const std::string& _name
 }
 
 template<class StdVecT, class PropT, class HandleT, class T>
-PropT ResourceManager::internal_request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def) {
+PropT ResourceManager::internal_request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def)
+{
+    auto type_name = get_type_name<T>();
 
     if(!_name.empty()) {
         for(typename StdVecT::iterator it = _vec.begin();
                 it != _vec.end(); ++it) {
-            if((*it)->name() == _name) {
-#if OVM_FORCE_STATIC_CAST
+            if((*it)->name() == _name
+                && (*it)->internal_type_name() == type_name)
+            {
                 return *static_cast<PropT*>(*it);
-#else
-                PropT* prop = dynamic_cast<PropT*>(*it);
-                if(prop != NULL) return *prop;
-#endif
             }
         }
     }
 
     HandleT handle((int)_vec.size());
 
-    PropT* prop = new PropT(_name, *this, handle, _def);
+    PropT* prop = new PropT(_name, type_name, *this, handle, _def);
     prop->resize(_size);
 
     // Store property pointer
