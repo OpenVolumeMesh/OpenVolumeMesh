@@ -22,16 +22,6 @@ echo "Please Wait ..."
 # Run cppcheck and output into file
 cppcheck --enable=all . -I src -i Doc/ --force --suppress=missingIncludeSystem --quiet -Umin -Umax -UBMPOSTFIX -DOPENVOLUMEMESHDLLEXPORT="" 2>&1 | tee cppcheck.log
 
-echo -e "${OUTPUT}"
-echo "=============================================================================="
-echo "CPPCHECK Messages"
-echo "=============================================================================="
-echo -e "${NC}"
-
-
-# Echo output to command line for simple analysis via gitlab
-cat cppcheck.log
-
 COUNT=$(wc -l < cppcheck.log )
 
 echo -e "${OUTPUT}"
