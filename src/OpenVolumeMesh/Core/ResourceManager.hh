@@ -309,7 +309,7 @@ private:
     void remove_property(StdVecT& _vec, size_t _idx);
 
     template<class StdVecT, class PropT, class HandleT, class T>
-    PropT request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def = T());
+    PropT internal_request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def = T());
 
     template<class StdVecT>
     void clearVec(StdVecT& _vec);

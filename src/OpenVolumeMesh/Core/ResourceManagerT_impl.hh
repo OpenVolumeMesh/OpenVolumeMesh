@@ -44,71 +44,72 @@
 
 #include "ResourceManager.hh"
 #include "PropertyDefines.hh"
+#include "TypeName.hh"
 
 namespace OpenVolumeMesh {
+
 
 template<class T>
 VertexPropertyT<T> ResourceManager::request_vertex_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,VertexPropertyT<T>,VertexPropHandle,T>(vertex_props_, _name, n_vertices(), _def);
+    return internal_request_property<std::vector<BaseProperty*>,VertexPropertyT<T>,VertexPropHandle,T>(vertex_props_, _name, n_vertices(), _def);
 }
 
 template<class T>
 EdgePropertyT<T> ResourceManager::request_edge_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,EdgePropertyT<T>,EdgePropHandle,T>(edge_props_, _name, n_edges(), _def);
+    return internal_request_property<std::vector<BaseProperty*>,EdgePropertyT<T>,EdgePropHandle,T>(edge_props_, _name, n_edges(), _def);
 }
 
 template<class T>
 HalfEdgePropertyT<T> ResourceManager::request_halfedge_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,HalfEdgePropertyT<T>,HalfEdgePropHandle,T>(halfedge_props_, _name, n_edges()*2u, _def);
+    return internal_request_property<std::vector<BaseProperty*>,HalfEdgePropertyT<T>,HalfEdgePropHandle,T>(halfedge_props_, _name, n_edges()*2u, _def);
 }
 
 template<class T>
 FacePropertyT<T> ResourceManager::request_face_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,FacePropertyT<T>,FacePropHandle,T>(face_props_, _name, n_faces(), _def);
+    return internal_request_property<std::vector<BaseProperty*>,FacePropertyT<T>,FacePropHandle,T>(face_props_, _name, n_faces(), _def);
 }
 
 template<class T>
 HalfFacePropertyT<T> ResourceManager::request_halfface_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,HalfFacePropertyT<T>,HalfFacePropHandle,T>(halfface_props_, _name, n_faces()*2u, _def);
+    return internal_request_property<std::vector<BaseProperty*>,HalfFacePropertyT<T>,HalfFacePropHandle,T>(halfface_props_, _name, n_faces()*2u, _def);
 }
 
 template<class T>
 CellPropertyT<T> ResourceManager::request_cell_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,CellPropertyT<T>,CellPropHandle,T>(cell_props_, _name, n_cells(), _def);
+    return internal_request_property<std::vector<BaseProperty*>,CellPropertyT<T>,CellPropHandle,T>(cell_props_, _name, n_cells(), _def);
 }
 
 template<class T>
 MeshPropertyT<T> ResourceManager::request_mesh_property(const std::string& _name, const T _def) {
 
-    return request_property<std::vector<BaseProperty*>,MeshPropertyT<T>,MeshPropHandle,T>(mesh_props_, _name, 1, _def);
+    return internal_request_property<std::vector<BaseProperty*>,MeshPropertyT<T>,MeshPropHandle,T>(mesh_props_, _name, 1, _def);
 }
 
 template<class StdVecT, class PropT, class HandleT, class T>
-PropT ResourceManager::request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def) {
+PropT ResourceManager::internal_request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def)
+{
+    auto type_name = get_type_name<T>();
 
     if(!_name.empty()) {
         for(typename StdVecT::iterator it = _vec.begin();
                 it != _vec.end(); ++it) {
-            if((*it)->name() == _name) {
-#if OVM_FORCE_STATIC_CAST
+            if((*it)->name() == _name
+                && (*it)->internal_type_name() == type_name)
+            {
                 return *static_cast<PropT*>(*it);
-#else
-                PropT* prop = dynamic_cast<PropT*>(*it);
-                if(prop != NULL) return *prop;
-#endif
             }
         }
     }
 
     HandleT handle((int)_vec.size());
 
-    PropT* prop = new PropT(_name, *this, handle, _def);
+    PropT* prop = new PropT(_name, type_name, *this, handle, _def);
     prop->resize(_size);
 
     // Store property pointer

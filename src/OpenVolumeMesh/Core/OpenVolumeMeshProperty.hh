@@ -62,7 +62,7 @@ template<class T>
 class OpenVolumeMeshPropertyT: public OpenVolumeMeshBaseProperty {
 public:
 
-    template <class PropT, class HandleT> friend class PropertyPtr;
+    template <class PropT, class Entity> friend class PropertyPtr;
 
 	typedef T 										Value;
 	typedef std::vector<T> 				            vector_type;
@@ -72,10 +72,13 @@ public:
 
 public:
 
-	OpenVolumeMeshPropertyT(const std::string& _name = "<unknown>", const T &_def = T()) :
-		OpenVolumeMeshBaseProperty(_name),
-		def_(_def) {
-	}
+	explicit OpenVolumeMeshPropertyT(
+            const std::string& _name = "<unknown>",
+            const std::string& _internal_type_name = "<unknown>",
+            const T &_def = T())
+        : OpenVolumeMeshBaseProperty(_name, _internal_type_name),
+          def_(_def)
+    {}
 
 
 	OpenVolumeMeshPropertyT(const OpenVolumeMeshPropertyT& _rhs) = default;

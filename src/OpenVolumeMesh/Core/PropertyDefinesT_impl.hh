@@ -42,8 +42,8 @@
 namespace OpenVolumeMesh {
 
 template<typename T, typename Entity>
-PropertyTT<T,Entity>::PropertyTT(const std::string& _name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def) :
-        PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity>(new OpenVolumeMeshPropertyT<T>(_name, _def), _resMan, _handle) {
+PropertyTT<T,Entity>::PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def) :
+        PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity>(new OpenVolumeMeshPropertyT<T>(_name, _internal_type_name, _def), _resMan, _handle) {
 
 }
 
