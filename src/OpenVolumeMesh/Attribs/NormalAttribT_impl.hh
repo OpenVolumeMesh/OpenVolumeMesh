@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #define NORMALATTRIBT_CC
 
 #include <set>
@@ -53,8 +45,8 @@ namespace OpenVolumeMesh {
 template <class GeomKernelT>
 NormalAttrib<GeomKernelT>::NormalAttrib(GeomKernelT& _kernel) :
 kernel_(_kernel),
-v_normals_(_kernel.template request_vertex_property<typename GeomKernelT::PointT>("vertex_normals")),
-f_normals_(_kernel.template request_face_property<typename GeomKernelT::PointT>("face_normals"))
+v_normals_(_kernel.template request_vertex_property<typename GeomKernelT::PointT>("vertex_normals", typename GeomKernelT::PointT(0.0))),
+f_normals_(_kernel.template request_face_property<typename GeomKernelT::PointT>("face_normals", typename GeomKernelT::PointT(0.0)))
 {
 
 }
