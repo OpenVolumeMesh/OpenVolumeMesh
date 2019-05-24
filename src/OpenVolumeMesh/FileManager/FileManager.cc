@@ -184,6 +184,7 @@ bool FileManager::isHexahedralMesh(const std::string& _filename) const {
   return true;
 }
 
+// cppcheck-suppress unusedFunction ; public interface
 bool FileManager::isTetrahedralMesh(const std::string& _filename) const {
 
   std::ifstream iff(_filename.c_str(), std::ios::in);

@@ -468,6 +468,7 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
 //========================================================================================
 
 /// Set the vertices of an edge
+// cppcheck-suppress unusedFunction ; public interface
 void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVertex, const VertexHandle& _toVertex) {
 
     assert(_fromVertex.is_valid() && (size_t)_fromVertex.idx() < n_vertices() && !is_deleted(_fromVertex));
@@ -502,6 +503,7 @@ void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVe
 //========================================================================================
 
 /// Set the half-edges of a face
+// cppcheck-suppress unusedFunction ; public interface
 void TopologyKernel::set_face(const FaceHandle& _fh, const std::vector<HalfEdgeHandle>& _hes) {
 
     Face& f = face(_fh);
@@ -542,6 +544,7 @@ void TopologyKernel::set_face(const FaceHandle& _fh, const std::vector<HalfEdgeH
 //========================================================================================
 
 /// Set the half-faces of a cell
+// cppcheck-suppress unusedFunction ; public interface
 void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceHandle>& _hfs) {
 
     Cell& c = cell(_ch);
@@ -1954,6 +1957,7 @@ void TopologyKernel::delete_multiple_cells(const std::vector<bool>& _tag) {
 
 //========================================================================================
 
+// cppcheck-suppress unusedFunction ; public interface
 CellIter TopologyKernel::delete_cell_range(const CellIter& _first, const CellIter& _last) {
 
     assert(_first >= cells_begin());
