@@ -355,10 +355,8 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
     for (VertexCellIter vc_it = vc_iter(from_vh); vc_it.valid(); ++vc_it)
         incidentCells.push_back(*vc_it);
 
-    for (unsigned int i = 0; i < incidentCells.size(); ++i)
+    for (const CellHandle &ch: incidentCells)
     {
-        CellHandle ch = incidentCells[i];
-
         if (collapsingCells.find(ch) != collapsingCells.end())
             continue;
 
@@ -366,9 +364,9 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 
         std::vector<HalfFaceHandle> newHalffaces;
 
-        for (unsigned int i = 0; i < 4; ++i)
+        for (unsigned int hf_idx = 0; hf_idx < 4; ++hf_idx)
         {
-            Face hf = halfface(c.halffaces()[i]);
+            Face hf = halfface(c.halffaces()[hf_idx]);
             std::vector<HalfEdgeHandle> newHalfedges;
 
             for (unsigned int j = 0; j < 3; ++j)
@@ -384,7 +382,7 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 
             HalfFaceHandle hfh = add_halfface(newHalfedges);
             newHalffaces.push_back(hfh);
-            swap_halfface_properties(c.halffaces()[i], hfh);
+            swap_halfface_properties(c.halffaces()[hf_idx], hfh);
         }
 
         delete_cell(ch);
