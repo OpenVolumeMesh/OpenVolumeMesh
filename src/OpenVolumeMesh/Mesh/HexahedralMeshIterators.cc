@@ -235,10 +235,12 @@ HexVertexIter::HexVertexIter(const CellHandle& _ref_h,
 BaseIter(_mesh, _ref_h, _max_laps) {
 
     assert(_ref_h.is_valid());
-    assert(_mesh->cell(_ref_h).halffaces().size() == 6);
+
+    HexahedralMeshTopologyKernel::Cell cell = _mesh->cell(_ref_h);
+    assert(cell.halffaces().size() == 6);
 
     // Get first half-face
-    HalfFaceHandle curHF = *_mesh->cell(_ref_h).halffaces().begin();
+    HalfFaceHandle curHF = *cell.halffaces().begin();
     assert(curHF.is_valid());
 
     // Get first half-edge
