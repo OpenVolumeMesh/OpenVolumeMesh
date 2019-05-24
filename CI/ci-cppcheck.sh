@@ -20,7 +20,7 @@ echo -e "${NC}"
 echo "Please Wait ..."
 
 # Run cppcheck and output into file
-cppcheck --enable=all . -I src -i Doc/ --force --suppress=missingIncludeSystem --quiet -Umin -Umax -UBMPOSTFIX -DOPENVOLUMEMESHDLLEXPORT="" 2>&1 | tee cppcheck.log
+cppcheck --enable=all . -I src -i Doc/ --force --suppress=missingIncludeSystem --inline-suppr --quiet -Umin -Umax -UBMPOSTFIX -DOPENVOLUMEMESHDLLEXPORT="" 2>&1 | tee cppcheck.log
 
 COUNT=$(wc -l < cppcheck.log )
 
