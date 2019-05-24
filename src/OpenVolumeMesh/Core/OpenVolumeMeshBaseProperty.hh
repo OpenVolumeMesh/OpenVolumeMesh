@@ -83,6 +83,9 @@ public:
 	/// Resize storage to hold n elements.
 	virtual void resize(size_t _n) = 0;
 
+	/// Return underlying container size
+	virtual size_t size() const = 0;
+
 	/// Clear all elements and free memory.
 	virtual void clear() = 0;
 
