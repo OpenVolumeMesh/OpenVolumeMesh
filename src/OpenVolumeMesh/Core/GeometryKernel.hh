@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef GEOMETRYKERNEL_HH_
 #define GEOMETRYKERNEL_HH_
 
@@ -71,7 +63,7 @@ public:
     }
 
     /// Override of empty add_vertex function
-    virtual VertexHandle add_vertex() { return add_vertex(VecT()); }
+    VertexHandle add_vertex() override { return add_vertex(VecT()); }
 
     /// Add a geometric point to the mesh
     VertexHandle add_vertex(const VecT& _p) {
@@ -96,7 +88,7 @@ public:
         return vertices_[_vh.idx()];
     }
 
-    virtual VertexIter delete_vertex(const VertexHandle& _h) {
+    VertexIter delete_vertex(const VertexHandle& _h) override {
         assert(_h.idx() < (int)TopologyKernelT::n_vertices());
 
         VertexIter nV = TopologyKernelT::delete_vertex(_h);
@@ -111,7 +103,7 @@ public:
         return nV;
     }
 
-    virtual void collect_garbage()
+    void collect_garbage() override
     {
         if (!TopologyKernelT::needs_garbage_collection())
             return;
@@ -130,7 +122,7 @@ public:
 
     }
 
-    virtual void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
+    void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2) override
     {
         assert(_h1.idx() >= 0 && _h1.idx() < (int)vertices_.size());
         assert(_h2.idx() >= 0 && _h2.idx() < (int)vertices_.size());
@@ -145,7 +137,7 @@ public:
 
 protected:
 
-    virtual void delete_multiple_vertices(const std::vector<bool>& _tag) {
+    void delete_multiple_vertices(const std::vector<bool>& _tag) override{
 
         assert(_tag.size() == TopologyKernelT::n_vertices());
 
@@ -171,7 +163,7 @@ protected:
 
 public:
 
-    virtual void clear(bool _clearProps = true) {
+    void clear(bool _clearProps = true) override {
 
         vertices_.clear();
         TopologyKernelT::clear(_clearProps);

@@ -85,40 +85,39 @@ public:
 
 public:
 	// inherited from OpenVolumeMeshBaseProperty
-	virtual void reserve(size_t _n) {
+	void reserve(size_t _n) override{
 		data_.reserve(_n);
 	}
-	virtual void resize(size_t _n) {
+	void resize(size_t _n) override {
                 data_.resize(_n, def_);
 	}
-	virtual size_t size() const {
+	size_t size() const override {
 		return data_.size();
 	}
-	virtual void clear() {
+	void clear() override {
 		data_.clear();
 		vector_type().swap(data_);
 	}
-	virtual void push_back() {
+	void push_back() override {
 		data_.push_back(def_);
 	}
-	virtual void swap(size_t _i0, size_t _i1) {
+	void swap(size_t _i0, size_t _i1) override {
         std::swap(data_[_i0], data_[_i1]);
     }
-
 
 	virtual void copy(size_t _src_idx, size_t _dst_idx) {
 		data_[_dst_idx] = data_[_src_idx];
 	}
-	void delete_element(size_t _idx) {
+	void delete_element(size_t _idx) override {
 		data_.erase(data_.begin() + _idx);
 	}
 
 public:
 
-	virtual size_t n_elements() const {
+	size_t n_elements() const override {
 		return data_.size();
 	}
-	virtual size_t element_size() const {
+	size_t element_size() const override {
         return sizeof(T);
     }
 
@@ -131,18 +130,18 @@ public:
 	};
 #endif
 
-    virtual size_t size_of() const {
+    size_t size_of() const override {
         if (element_size() != OpenVolumeMeshBaseProperty::UnknownSize)
             return this->OpenVolumeMeshBaseProperty::size_of(n_elements());
         return std::accumulate(data_.begin(), data_.end(), size_t(0), plus());
     }
 
-	virtual size_t size_of(size_t _n_elem) const {
+	size_t size_of(size_t _n_elem) const override {
 		return this->OpenVolumeMeshBaseProperty::size_of(_n_elem);
 	}
 
 	// Function to serialize a property
-    virtual void serialize(std::ostream& _ostr) const {
+    void serialize(std::ostream& _ostr) const override {
         for(typename vector_type::const_iterator it = data_.begin();
                 it != data_.end(); ++it) {
             OpenVolumeMesh::serialize(_ostr, *it) << std::endl;
@@ -150,7 +149,7 @@ public:
     }
 
     // Function to deserialize a property
-    virtual void deserialize(std::istream& _istr) {
+    void deserialize(std::istream& _istr) override {
         for(unsigned int i = 0; i < n_elements(); ++i) {
             OpenVolumeMesh::deserialize(_istr, data_[i]);
         }
@@ -187,7 +186,7 @@ public:
 	}
 
 	/// Make a copy of self.
-	OpenVolumeMeshPropertyT<T>* clone() const {
+	OpenVolumeMeshPropertyT<T>* clone() const override {
 		OpenVolumeMeshPropertyT<T>* p = new OpenVolumeMeshPropertyT<T>(*this);
 		return p;
 	}
@@ -203,7 +202,7 @@ public:
 protected:
 
     /// Delete multiple entries in list
-    virtual void delete_multiple_entries(const std::vector<bool>& _tags) {
+    void delete_multiple_entries(const std::vector<bool>& _tags) override {
 
         assert(_tags.size() == data_.size());
         vector_type new_data;

@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef TOPOLOGYKERNEL_HH_
 #define TOPOLOGYKERNEL_HH_
 
@@ -58,7 +50,7 @@ class TopologyKernel : public ResourceManager {
 public:
 
     TopologyKernel() = default;
-    virtual ~TopologyKernel() = default;
+    ~TopologyKernel() override = default;
 
     TopologyKernel& operator=(const TopologyKernel&) = default;
 
@@ -325,17 +317,17 @@ public:
      */
 
     /// Get number of vertices in mesh
-    virtual size_t n_vertices()   const { return n_vertices_; }
+    size_t n_vertices()   const override { return n_vertices_; }
     /// Get number of edges in mesh
-    virtual size_t n_edges()      const { return edges_.size(); }
+    size_t n_edges()      const override { return edges_.size(); }
     /// Get number of halfedges in mesh
-    virtual size_t n_halfedges()  const { return edges_.size() * 2u; }
+    size_t n_halfedges()  const override { return edges_.size() * 2u; }
     /// Get number of faces in mesh
-    virtual size_t n_faces()      const { return faces_.size(); }
+    size_t n_faces()      const override { return faces_.size(); }
     /// Get number of halffaces in mesh
-    virtual size_t n_halffaces()  const { return faces_.size() * 2u; }
+    size_t n_halffaces()  const override { return faces_.size() * 2u; }
     /// Get number of cells in mesh
-    virtual size_t n_cells()      const { return cells_.size(); }
+    size_t n_cells()      const override { return cells_.size(); }
 
     /// Get number of undeleted vertices in mesh
     size_t n_logical_vertices()   const { return n_vertices_ - n_deleted_vertices_; }
@@ -880,17 +872,17 @@ public:
     size_t n_vertices_in_cell(const CellHandle& _ch) const {
         assert(_ch.is_valid() && (size_t)_ch.idx() < cells_.size());
 
-        std::set<VertexHandle> vertices;
+        std::set<VertexHandle> vhs;
         std::vector<HalfFaceHandle> hfs = cell(_ch).halffaces();
         for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin();
                 hf_it != hfs.end(); ++hf_it) {
             std::vector<HalfEdgeHandle> hes = halfface(*hf_it).halfedges();
             for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                 he_it != hes.end(); ++he_it) {
-                vertices.insert(halfedge(*he_it).to_vertex());
+                vhs.insert(halfedge(*he_it).to_vertex());
             }
         }
-        return vertices.size();
+        return vhs.size();
     }
 
     //=========================================================================

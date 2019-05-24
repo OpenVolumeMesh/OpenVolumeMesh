@@ -75,23 +75,23 @@ public:
     PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle);
 
     /// Destructor
-    virtual ~PropertyPtr();
+    ~PropertyPtr() override;
 
     using ptr::shared_ptr<PropT>::operator*;
     using ptr::shared_ptr<PropT>::operator->;
     using ptr::shared_ptr<PropT>::operator bool;
 
-    virtual const std::string& name() const;
+    const std::string& name() const override;
 
-    virtual void delete_element(size_t _idx);
+    void delete_element(size_t _idx) override;
 
-    virtual void swap_elements(size_t _idx0, size_t _idx1);
+    void swap_elements(size_t _idx0, size_t _idx1) override;
 
-    virtual void copy(size_t _src_idx, size_t _dst_idx);
+    void copy(size_t _src_idx, size_t _dst_idx) override;
 
     const_iterator begin() const { return ptr::shared_ptr<PropT>::get()->begin(); }
     iterator begin() { return ptr::shared_ptr<PropT>::get()->begin(); }
-    size_t size() const { return ptr::shared_ptr<PropT>::get()->size(); }
+    size_t size() const override { return ptr::shared_ptr<PropT>::get()->size(); }
 
     const_iterator end() const { return ptr::shared_ptr<PropT>::get()->end(); }
     iterator end() { return ptr::shared_ptr<PropT>::get()->end(); }
@@ -104,26 +104,26 @@ public:
     reference operator[](const EntityHandleT& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
     const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.uidx()]; }
 
-    virtual void serialize(std::ostream& _ostr) const { ptr::shared_ptr<PropT>::get()->serialize(_ostr); }
-    virtual void deserialize(std::istream& _istr) { ptr::shared_ptr<PropT>::get()->deserialize(_istr); }
+    void serialize(std::ostream& _ostr) const override { ptr::shared_ptr<PropT>::get()->serialize(_ostr); }
+    void deserialize(std::istream& _istr) override { ptr::shared_ptr<PropT>::get()->deserialize(_istr); }
 
-    virtual OpenVolumeMeshHandle handle() const;
+    OpenVolumeMeshHandle handle() const override;
 
-    virtual bool persistent() const { return ptr::shared_ptr<PropT>::get()->persistent(); }
+     bool persistent() const override { return ptr::shared_ptr<PropT>::get()->persistent(); }
 
-    virtual bool anonymous() const { return ptr::shared_ptr<PropT>::get()->name().empty(); }
+     bool anonymous() const override { return ptr::shared_ptr<PropT>::get()->name().empty(); }
 
 protected:
-    virtual const std::string &internal_type_name() const { return ptr::shared_ptr<PropT>::get()->internal_type_name(); }
+    const std::string &internal_type_name() const override { return ptr::shared_ptr<PropT>::get()->internal_type_name(); }
 
     void assign_values_from(const BaseProperty *other) override;
     void move_values_from(BaseProperty *other) override;
 
-    virtual void delete_multiple_entries(const std::vector<bool>& _tags);
+    void delete_multiple_entries(const std::vector<bool>& _tags) override;
 
-    virtual void resize(size_t _size);
+    void resize(size_t _size) override;
 
-    virtual void set_handle(const OpenVolumeMeshHandle& _handle);
+    void set_handle(const OpenVolumeMeshHandle& _handle) override;
 };
 
 } // Namespace OpenVolumeMesh

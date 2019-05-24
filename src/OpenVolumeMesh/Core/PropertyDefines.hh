@@ -90,10 +90,10 @@ public:
     {}
     using PropertyHandleT = OpenVolumeMesh::PropHandleT<Entity>;
     PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def = T());
-    virtual ~PropertyTT() = default;
-    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const;
-    virtual const std::string entityType() const { return entityTypeName<Entity>(); }
-    virtual const std::string typeNameWrapper() const { return typeName<T>(); }
+    ~PropertyTT() override = default;
+    BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const override;
+    const std::string entityType() const override { return entityTypeName<Entity>(); }
+    const std::string typeNameWrapper() const override { return typeName<T>(); }
 private:
     PropertyTT(OpenVolumeMeshPropertyT<T> *_prop, ResourceManager& _resMan, PropertyHandleT _handle);
 };
