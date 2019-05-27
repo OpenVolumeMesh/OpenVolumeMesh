@@ -85,11 +85,11 @@ template<typename T, typename Entity>
 class PropertyTT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity> {
 public:
     template<typename MeshT>
-    PropertyTT(MeshT *mesh, const std::string& _name, const T _def = T())
+    PropertyTT(MeshT *mesh, const std::string& _name, const T &_def = T())
         : PropertyTT(std::move(mesh->template request_property<T, Entity>(_name, _def)))
     {}
     using PropertyHandleT = OpenVolumeMesh::PropHandleT<Entity>;
-    PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T _def = T());
+    PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T &_def = T());
     ~PropertyTT() override = default;
     BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const override;
     const std::string entityType() const override { return entityTypeName<Entity>(); }
