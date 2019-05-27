@@ -4,10 +4,12 @@
 
 if (UNIX)
 
+  set ( ADDITIONAL_CXX_FLAGS )
   set ( ADDITIONAL_CXX_DEBUG_FLAGS )
   set ( ADDITIONAL_CXX_RELEASE_FLAGS )
   set ( ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS )
   
+  set ( ADDITIONAL_C_FLAGS )
   set ( ADDITIONAL_C_DEBUG_FLAGS )
   set ( ADDITIONAL_C_RELEASE_FLAGS )
   set ( ADDITIONAL_C_RELWITHDEBINFO_FLAGS )
@@ -17,21 +19,15 @@ if (UNIX)
   ################################################################################
 
   # add our standard flags for Template inclusion
-  list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-DINCLUDE_TEMPLATES" )
-  list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-DINCLUDE_TEMPLATES" )
-  list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-DINCLUDE_TEMPLATES" )
-  
-  # add our standard flags for Template inclusion
-  list(APPEND ADDITIONAL_C_DEBUG_FLAGS            "-DINCLUDE_TEMPLATES" )
-  list(APPEND ADDITIONAL_C_RELEASE_FLAGS          "-DINCLUDE_TEMPLATES" )
-  list(APPEND ADDITIONAL_C_RELWITHDEBINFO_FLAGS   "-DINCLUDE_TEMPLATES" )
+  list(APPEND ADDITIONAL_CXX_FLAGS          "-DINCLUDE_TEMPLATES" )
+  list(APPEND ADDITIONAL_C_FLAGS            "-DINCLUDE_TEMPLATES" )
   
   # Increase the template depth as this might be exceeded from time to time
   IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-ftemplate-depth-100" )
-    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-ftemplate-depth-100" )
-    list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-ftemplate-depth-100" )  
+    list(APPEND ADDITIONAL_CXX_FLAGS          "-ftemplate-depth-100" )
   ENDIF()
+
+
   
   ################################################################################
   # Build/Release Defines
@@ -51,13 +47,8 @@ if (UNIX)
   ################################################################################
   
   IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-W" "-Wall" "-Wno-unused" )    
-    
-    list(APPEND ADDITIONAL_C_DEBUG_FLAGS            "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_C_RELEASE_FLAGS          "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_C_RELWITHDEBINFO_FLAGS   "-W" "-Wall" "-Wno-unused" )
+    list(APPEND ADDITIONAL_CXX_FLAGS          "-W" "-Wall" "-Wno-unused" )
+    list(APPEND ADDITIONAL_C_FLAGS            "-W" "-Wall" "-Wno-unused" )
   ENDIF()
   
   ################################################################################
@@ -87,43 +78,49 @@ if (UNIX)
   ################################################################################
 
   # Add the debug flags
-  foreach( flag ${ADDITIONAL_CXX_DEBUG_FLAGS} )
-    if( NOT CMAKE_CXX_FLAGS_DEBUG MATCHES "${flag}" )
+  foreach( flag ${ADDITIONAL_CXX_FLAGS} ${ADDITIONAL_CXX_DEBUG_FLAGS} )
+    list (FIND ${CMAKE_CXX_FLAGS_DEBUG} ${flag} _index)
+    if (${_index} EQUAL -1)
       set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${flag} ")
     endif()
   endforeach()
 
   # Add the release flags
-  foreach( flag ${ADDITIONAL_CXX_RELEASE_FLAGS} )
-    if( NOT CMAKE_CXX_FLAGS_RELEASE MATCHES "${flag}" )
+  foreach( flag ${ADDITIONAL_CXX_FLAGS} ${ADDITIONAL_CXX_RELEASE_FLAGS} )
+    list (FIND ${CMAKE_CXX_FLAGS_RELEASE} ${flag} _index)
+    if (${_index} EQUAL -1)
       set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${flag} ")
     endif()
   endforeach()
 
   # Add the release with debug info flags
-  foreach( flag ${ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS} )
-    if( NOT CMAKE_CXX_FLAGS_RELWITHDEBINFO MATCHES "${flag}" )
+  foreach( flag ${ADDITIONAL_CXX_FLAGS} ${ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS} )
+    list (FIND ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${flag} _index)
+    if (${_index} EQUAL -1)
       set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${flag} ")
     endif()
   endforeach()
 
   # Add the debug flags
-  foreach( flag ${ADDITIONAL_C_DEBUG_FLAGS} )
-    if( NOT CMAKE_C_FLAGS_DEBUG MATCHES "${flag}" )
+  foreach( flag ${ADDITIONAL_C_FLAGS} ${ADDITIONAL_C_DEBUG_FLAGS} )
+    list (FIND ${CMAKE_C_FLAGS_DEBUG} ${flag} _index)
+    if (${_index} EQUAL -1)
       set( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${flag} ")
     endif()
   endforeach()
 
   # Add the release flags
-  foreach( flag ${ADDITIONAL_C_RELEASE_FLAGS} )
-    if( NOT CMAKE_C_FLAGS_RELEASE MATCHES "${flag}" )
+  foreach( flag ${ADDITIONAL_C_FLAGS} ${ADDITIONAL_C_RELEASE_FLAGS} )
+      list (FIND ${CMAKE_C_FLAGS_RELEASE} ${flag} _index)
+    if (${_index} EQUAL -1)
       set( CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${flag} ")
     endif()
   endforeach()
 
   # Add the release with debug info flags
-  foreach( flag ${ADDITIONAL_C_RELWITHDEBINFO_FLAGS} )
-    if( NOT CMAKE_C_FLAGS_RELWITHDEBINFO MATCHES "${flag}" )
+  foreach( flag ${ADDITIONAL_C_FLAGS} ${ADDITIONAL_C_RELWITHDEBINFO_FLAGS} )
+    list (FIND ${CMAKE_C_FLAGS_RELWITHDEBINFO} ${flag} _index)
+    if (${_index} EQUAL -1)
       set( CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${flag} ")
     endif()
   endforeach()
