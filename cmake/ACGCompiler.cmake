@@ -34,14 +34,6 @@ if (UNIX)
   ENDIF()
   
   ################################################################################
-  # OS Defines
-  ################################################################################  
-  
-  if (APPLE)
-    add_definitions( -DARCH_DARWIN )
-  endif()
-  
-  ################################################################################
   # Build/Release Defines
   ################################################################################
   IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
@@ -68,12 +60,6 @@ if (UNIX)
     list(APPEND ADDITIONAL_C_RELWITHDEBINFO_FLAGS   "-W" "-Wall" "-Wno-unused" )
   ENDIF()
   
-  if (APPLE)
-    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-Wno-non-virtual-dtor" )
-    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-Wno-non-virtual-dtor" )
-    list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-Wno-non-virtual-dtor" ) 
-  endif ()  
-
   ################################################################################
   # STL Vector checks
   ################################################################################
