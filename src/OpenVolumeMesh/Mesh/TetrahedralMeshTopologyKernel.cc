@@ -32,34 +32,11 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include "TetrahedralMeshTopologyKernel.hh"
 
 #include <iostream>
 
 namespace OpenVolumeMesh {
-
-
-TetrahedralMeshTopologyKernel::TetrahedralMeshTopologyKernel() {
-
-}
-
-//========================================================================================
-
-
-TetrahedralMeshTopologyKernel::~TetrahedralMeshTopologyKernel() {
-
-}
-
-//========================================================================================
-
 
 FaceHandle TetrahedralMeshTopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck) {
 
@@ -458,7 +435,7 @@ void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
     if (!deferred_deletion_tmp)
         enable_deferred_deletion(true);
 
-    for (unsigned int i = 0; i < 2; ++i)
+    for (char i = 0; i < 2; ++i)
     {
         HalfFaceHandle hfh = halfface_handle(_fh, i);
         CellHandle ch = incident_cell(hfh);

@@ -63,11 +63,8 @@ namespace OpenVolumeMesh {
 class TetrahedralMeshTopologyKernel : public TopologyKernel {
 public:
 
-    // Constructor
-    TetrahedralMeshTopologyKernel();
-
-    // Destructor
-    ~TetrahedralMeshTopologyKernel();
+    TetrahedralMeshTopologyKernel() = default;
+    ~TetrahedralMeshTopologyKernel() override = default;
 
     FaceHandle add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false) override;
 

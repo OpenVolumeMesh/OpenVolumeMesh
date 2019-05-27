@@ -635,7 +635,7 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshColorTest) {
 
     generatePolyhedralMesh(mesh_);
 
-    typedef OpenVolumeMesh::Geometry::Vec4f Vec4f;
+    using OpenVolumeMesh::Geometry::Vec4f;
 
     // Request colors
     ColorAttrib<Vec4f> colors(mesh_);
@@ -1806,11 +1806,9 @@ TEST_F(HexahedralMeshBase, HalfFaceFetchFunction2) {
     VertexHandle v0(0);
     VertexHandle v1(1);
     VertexHandle v2(2);
-    VertexHandle v3(3);
     VertexHandle v4(4);
     VertexHandle v5(5);
     VertexHandle v6(6);
-    VertexHandle v7(7);
 
     std::vector<VertexHandle> vs;
     vs.push_back(v0); vs.push_back(v1); vs.push_back(v2);
@@ -2002,7 +2000,7 @@ TEST_F(PolyhedralMeshBase, SwapVertices) {
 	EXPECT_EQ(12u, mesh_.n_vertices());
 }
 
-void testDeferredDelete(PolyhedralMesh &mesh) {
+static void testDeferredDelete(PolyhedralMesh &mesh) {
 	mesh.add_vertex(Vec3d(1,0,0));
 	mesh.add_vertex(Vec3d(0,1,0));
 	mesh.delete_vertex(VertexHandle(0));
