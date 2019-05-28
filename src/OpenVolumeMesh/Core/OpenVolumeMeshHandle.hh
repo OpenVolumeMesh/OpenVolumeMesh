@@ -112,7 +112,7 @@ public:
     static HandleT<EntityTag>
     from_unsigned(size_t _idx)
     {
-        if (_idx <= std::numeric_limits<int>::max()) {
+        if (_idx <= static_cast<size_t>(std::numeric_limits<int>::max())) {
             return HandleT<EntityTag>(static_cast<int>(_idx));
         } else {
             assert(false);
