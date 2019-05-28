@@ -88,7 +88,7 @@ public:
     static const unsigned char INVALID = 6;
 
     static inline unsigned char opposite_orientation(const unsigned char _d) {
-        return (_d % 2 == 0 ? _d + 1 : _d - 1);
+        return static_cast<unsigned char>(_d % 2 == 0 ? _d + 1 : _d - 1);
     }
 
     // Constructor

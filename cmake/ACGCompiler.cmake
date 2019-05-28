@@ -46,12 +46,7 @@ if (UNIX)
   # Warnings
   ################################################################################
   
-  IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-    list(APPEND ADDITIONAL_CXX_FLAGS          "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_C_FLAGS            "-W" "-Wall" "-Wno-unused" )
-  ENDIF()
-
-  if ("${CMAKE_CXX_COMPILER}" MATCHES ".*clang.*")
+  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang.*")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Weverything")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-c++98-compat")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-padded")
@@ -62,6 +57,17 @@ if (UNIX)
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-sign-conversion")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-deprecated")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-weak-vtables")
+  endif()
+  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wall")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wextra")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wpedantic")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wshadow")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wpointer-arith")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wcast-qual")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wconversion")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wtype-limits")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wsign-compare")
   endif()
   
   ################################################################################
