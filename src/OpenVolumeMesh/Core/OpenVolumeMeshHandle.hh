@@ -50,7 +50,7 @@ namespace OpenVolumeMesh {
 class OpenVolumeMeshHandle {
 public:
     // Default constructor
-    explicit OpenVolumeMeshHandle(int _idx) : idx_(_idx) {}
+    explicit constexpr OpenVolumeMeshHandle(int _idx) : idx_(_idx) {}
 
 	OpenVolumeMeshHandle& operator=(int _idx) {
 		idx_ = _idx;
@@ -90,14 +90,24 @@ private:
 	int idx_;
 };
 
-
 template<typename EntityTag,
     typename = typename std::enable_if<is_entity<EntityTag>::value>::type>
+class PropHandleTag {};
+
+template <typename T> struct is_prop_handle_tag : std::false_type {};
+template<typename T>
+struct is_prop_handle_tag<PropHandleTag<T>> : std::true_type {};
+
+template<typename T>
+using is_handle_tag = std::enable_if<is_entity<T>::value || is_prop_handle_tag<T>::value>;
+
+
+template<typename EntityTag, typename = typename is_handle_tag<EntityTag>::type>
 class HandleT : public OpenVolumeMeshHandle
 {
 public:
     using Entity = EntityTag;
-    explicit HandleT(int _idx = -1) : OpenVolumeMeshHandle(_idx) {}
+    explicit constexpr HandleT(int _idx = -1) : OpenVolumeMeshHandle(_idx) {}
 
     static HandleT<EntityTag>
     from_unsigned(size_t _idx)

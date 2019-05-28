@@ -100,7 +100,7 @@ protected:
     {
         PropIterator p_iter =  _begin;
         for (; p_iter != _end; ++p_iter)
-            (*p_iter)->swap_elements(_h1.idx(), _h2.idx());
+            (*p_iter)->swap_elements(_h1.uidx(), _h2.uidx());
     }
 
 
@@ -237,10 +237,10 @@ private:
         {
             if((*it)->name() == _name )
             {
-#if OVM_FORCE_STATIC_CAST
+#if defined OVM_FORCE_STATIC_CAST && OVM_FORCE_STATIC_CAST
             return true;
 #else
-            if(dynamic_cast<FullPropT*>(*it) != NULL)
+            if(dynamic_cast<FullPropT*>(*it) != nullptr)
             {
             return true;
             }

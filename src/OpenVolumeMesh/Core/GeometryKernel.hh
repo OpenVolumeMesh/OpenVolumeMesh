@@ -54,7 +54,7 @@ public:
     GeometryKernel() = default;
 
     /// Destructor
-    ~GeometryKernel() = default;
+    ~GeometryKernel() override = default;
 
     template<class OtherTopoKernel>
     void assign(const GeometryKernel<VecT, OtherTopoKernel> *other) {

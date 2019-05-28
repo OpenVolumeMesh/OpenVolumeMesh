@@ -44,7 +44,7 @@ bool operator==(const int& _lhs, const OpenVolumeMeshHandle& _rhs) {
 
 bool operator==(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs) {
 
-    return _lhs == (unsigned int)_rhs.idx();
+    return _lhs == _rhs.uidx();
 }
 
 bool operator!=(const int& _lhs, const OpenVolumeMeshHandle& _rhs) {

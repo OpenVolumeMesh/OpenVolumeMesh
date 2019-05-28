@@ -52,7 +52,7 @@
 // macro expansion and preprocessor defines
 // don't work properly.
 
-#if (_MSC_VER >= 1900 || __cplusplus > 199711L || defined(__GXX_EXPERIMENTAL_CXX0X__)) && !defined(OPENVOLUMEMESH_VECTOR_LEGACY)
+#if ((defined _MSC_VER && _MSC_VER >= 1900) || __cplusplus > 199711L || defined(__GXX_EXPERIMENTAL_CXX0X__)) && !defined(OPENVOLUMEMESH_VECTOR_LEGACY)
 #include "Vector11T.hh"
 #else
 #ifndef DOXYGEN

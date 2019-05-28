@@ -252,14 +252,12 @@ FaceHandle TopologyKernel::add_face(const std::vector<VertexHandle>& _vertices) 
 
         // Swap halfedge if edge already existed and
         // has been initially defined in reverse orientation
-        int swap = 0;
-        if(edge(e_idx).to_vertex() == *it) swap = 1;
+        char swap = edge(e_idx).to_vertex() == *it;
 
         halfedges.push_back(halfedge_handle(e_idx, swap));
     }
     EdgeHandle e_idx = add_edge(*it, *_vertices.begin());
-    int swap = 0;
-    if(edge(e_idx).to_vertex() == *it) swap = 1;
+    char swap = edge(e_idx).to_vertex() == *it;
     halfedges.push_back(halfedge_handle(e_idx, swap));
 
     // Add face

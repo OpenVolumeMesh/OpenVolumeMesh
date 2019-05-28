@@ -1,5 +1,9 @@
 #include <gtest/gtest.h>
 
+#ifdef __clang__
+#  pragma GCC diagnostic ignored "-Weverything"
+#endif
+
 int main(int _argc, char** _argv) {
 
     testing::InitGoogleTest(&_argc, _argv);

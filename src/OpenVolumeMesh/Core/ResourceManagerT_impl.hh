@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #define RESOURCEMANAGERT_CC
 
 #include "ResourceManager.hh"
@@ -107,7 +99,7 @@ PropT ResourceManager::internal_request_property(StdVecT& _vec, const std::strin
         }
     }
 
-    HandleT handle((int)_vec.size());
+    auto handle = HandleT::from_unsigned(_vec.size());
 
     PropT* prop = new PropT(_name, type_name, *this, handle, _def);
     prop->resize(_size);
@@ -200,7 +192,7 @@ void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& 
 
     for(typename StdVecT::iterator it = _vec.begin();
             it != _vec.end(); ++it) {
-        (*it)->delete_element(_h.idx());
+        (*it)->delete_element(_h.uidx());
     }
 }
 
@@ -219,7 +211,7 @@ void ResourceManager::updatePropHandles(StdVecT &_vec)
 {
     size_t n = _vec.size();
     for(size_t i = 0; i < n; ++i) {
-        _vec[i]->set_handle(OpenVolumeMeshHandle((int)i));
+        _vec[i]->set_handle(OpenVolumeMeshHandle(static_cast<int>(i)));
     }
 }
 

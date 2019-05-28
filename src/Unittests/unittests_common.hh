@@ -8,6 +8,12 @@
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 
+#ifdef __clang__
+#  pragma GCC diagnostic ignored "-Wglobal-constructors"
+#  pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+#  pragma GCC diagnostic ignored "-Wundef"
+#endif
+
 #define EXPECT_HANDLE_EQ(a, b)  EXPECT_EQ((a).idx(), (b).idx())
 #define EXPECT_HANDLE_NE(a, b)  EXPECT_NE((a).idx(), (b).idx())
 

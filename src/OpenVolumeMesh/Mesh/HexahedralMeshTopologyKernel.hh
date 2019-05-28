@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef HEXAHEDRALMESHTOPOLOGYKERNEL_HH
 #define HEXAHEDRALMESHTOPOLOGYKERNEL_HH
 
@@ -100,10 +92,10 @@ public:
     }
 
     // Constructor
-    HexahedralMeshTopologyKernel();
+    HexahedralMeshTopologyKernel() = default;
 
     // Destructor
-    ~HexahedralMeshTopologyKernel();
+    ~HexahedralMeshTopologyKernel() override = default;
 
     // Overridden function
     FaceHandle add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false) override;

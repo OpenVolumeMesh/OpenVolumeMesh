@@ -41,15 +41,13 @@
 
 #include "OpenVolumeMeshHandle.hh"
 
-//== CLASS DEFINITION =========================================================
+namespace OpenVolumeMesh {
 
 /** \class OpenVolumeMeshBaseProperty
 
  Abstract class defining the basic interface of a dynamic property.
 
  **/
-
-namespace OpenVolumeMesh {
 
 class OpenVolumeMeshBaseProperty {
 public:
