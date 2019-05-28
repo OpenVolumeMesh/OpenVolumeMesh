@@ -46,9 +46,10 @@ if (UNIX)
   # Warnings
   ################################################################################
   
-  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang.*")
+  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Weverything")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-c++98-compat")
+      list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-c++98-compat-pedantic")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-padded")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-old-style-cast")
       list(APPEND ADDITIONAL_CXX_FLAGS "-Wno-documentation-unknown-command")

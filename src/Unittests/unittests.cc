@@ -1,8 +1,4 @@
-#include <gtest/gtest.h>
-
-#ifdef __clang__
-#  pragma GCC diagnostic ignored "-Weverything"
-#endif
+#include "unittests_common.hh"
 
 int main(int _argc, char** _argv) {
 

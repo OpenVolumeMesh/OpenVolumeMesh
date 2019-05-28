@@ -1,5 +1,4 @@
-#include <gtest/gtest.h>
-#include <Unittests/unittests_common.hh>
+#include "unittests_common.hh"
 
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
 #include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
