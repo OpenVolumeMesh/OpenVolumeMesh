@@ -261,9 +261,9 @@ void ResourceManager::assignProperties(typename std::conditional<Move, Propertie
         bool found = false;
         for (auto it = dest.begin(); it != dest.end(); ++it) {
             auto dstprop = *it;
-            if (dstprop->name() == srcprop->name())
+            if (dstprop->name() == srcprop->name()
+                    && dstprop->internal_type_name() == srcprop->internal_type_name())
             {
-                // TODO: type check
                 out.push_back(dstprop);
                 dest.erase(it);
                 if (Move) {
