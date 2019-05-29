@@ -238,7 +238,7 @@ inline void OpenVolumeMeshPropertyT<bool>::swap(size_t _i0, size_t _i1)
 
     auto tmp = data_[_i0];
     data_[_i0] = data_[_i1];
-    data_[_i1] = tmp;;
+    data_[_i1] = tmp;
 }
 
 template<>

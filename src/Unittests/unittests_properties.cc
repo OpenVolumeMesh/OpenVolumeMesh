@@ -1,8 +1,6 @@
 
 #include <iostream>
 
-#include <gtest/gtest.h>
-
 #include "unittests_common.hh"
 
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>

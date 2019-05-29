@@ -6,3 +6,8 @@ build*
 .settings
 
 cppcheck.log
+
+# gcov output files:
+
+*.gcda
+*.gcno

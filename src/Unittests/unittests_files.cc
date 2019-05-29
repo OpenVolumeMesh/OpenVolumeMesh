@@ -1,5 +1,4 @@
-#include <gtest/gtest.h>
-#include <Unittests/unittests_common.hh>
+#include "unittests_common.hh"
 
 #include <OpenVolumeMesh/FileManager/FileManager.hh>
 

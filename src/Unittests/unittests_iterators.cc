@@ -1,6 +1,5 @@
-#include <gtest/gtest.h>
+#include "unittests_common.hh"
 
-#include <Unittests/unittests_common.hh>
 
 using namespace OpenVolumeMesh;
 
