@@ -1,12 +1,25 @@
 #ifndef INCLUDE_UNITTESTS_COMMON_HH
 #define INCLUDE_UNITTESTS_COMMON_HH
 
-#include <gtest/gtest.h>
 
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/HexahedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
+
+#ifdef __clang__
+#  pragma GCC diagnostic ignored "-Weverything"
+#  pragma GCC diagnostic ignored "-Wundef"
+#  pragma GCC diagnostic ignored "-Wglobal-constructors"
+#  pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+#  pragma GCC diagnostic ignored "-Wmissing-noreturn"
+#endif
+
+#include <gtest/gtest.h>
+
+#define EXPECT_HANDLE_EQ(a, b)  EXPECT_EQ((a).idx(), (b).idx())
+#define EXPECT_HANDLE_NE(a, b)  EXPECT_NE((a).idx(), (b).idx())
+
 
 /*
  * Simple test setting for polyhedral meshes

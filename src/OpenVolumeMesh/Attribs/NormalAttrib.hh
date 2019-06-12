@@ -94,19 +94,19 @@ public:
 
     typename GeomKernelT::PointT& operator[](const VertexHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_vertices());
-        return v_normals_[_h.idx()];
+        return v_normals_[_h];
     }
 
     typename GeomKernelT::PointT& operator[](const FaceHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_faces());
-        return f_normals_[_h.idx()];
+        return f_normals_[_h];
     }
 
     typename GeomKernelT::PointT operator[](const HalfFaceHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_halffaces());
         double mult = 1.0;
         if(_h.idx() % 2 == 1) mult = -1.0;
-        return f_normals_[kernel_.face_handle(_h).idx()] * mult;
+        return f_normals_[kernel_.face_handle(_h)] * mult;
     }
 
 private:
@@ -125,7 +125,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(NORMALATTRIBT_CC)
-#include "NormalAttribT.cc"
+#include "NormalAttribT_impl.hh"
 #endif
 
 #endif /* NORMALATTRIB_HH_ */

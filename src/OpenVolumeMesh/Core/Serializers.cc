@@ -57,7 +57,7 @@ std::ostream& serialize(std::ostream& _ostr, const std::string& _rhs)
 
 std::istream& deserialize(std::istream& _istr, std::string& _rhs)
 {
-    int len;
+    size_t len;
     char delimiter;
     _istr >> len;  //deserialize size of string
     _istr >> delimiter;

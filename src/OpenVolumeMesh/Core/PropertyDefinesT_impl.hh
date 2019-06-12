@@ -32,80 +32,37 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
+#define PROPERTYDEFINEST_CC
 
-#define PROPERTYPTRT_CC
+#include <istream>
+#include <ostream>
 
-#include "PropertyPtr.hh"
-#include "ResourceManager.hh"
 #include "PropertyDefines.hh"
 
 namespace OpenVolumeMesh {
 
-template <class PropT, class HandleT>
-PropertyPtr<PropT,HandleT>::PropertyPtr(PropT* _ptr, ResourceManager& _resMan, HandleT _handle) :
-    ptr::shared_ptr<PropT>(_ptr), BaseProperty(_resMan) {
-    ptr::shared_ptr<PropT>::get()->set_handle(_handle);
+template<typename T, typename Entity>
+PropertyTT<T,Entity>::PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T &_def) :
+        PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity>(new OpenVolumeMeshPropertyT<T>(_name, _internal_type_name, _def), _resMan, _handle) {
+
 }
 
-template <class PropT, class HandleT>
-PropertyPtr<PropT,HandleT>::~PropertyPtr() {
-
-    /*
-     * If use count is 2 and prop is not set persistent,
-     * remove it, since the resource manager is the
-     * only one who stores the property.
-     */
-    if(!locked() && !persistent() && ptr::shared_ptr<PropT>::use_count() == 2) {
-        resMan_.release_property(HandleT(handle().idx()));
-        unlock();
-    }
+template<typename T, typename Entity>
+PropertyTT<T,Entity>::PropertyTT(OpenVolumeMeshPropertyT<T> *_prop, ResourceManager &_resMan, PropertyHandleT _handle) :
+        PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity>(_prop, _resMan, _handle)
+{
 }
 
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::resize(size_t _size) {
-    ptr::shared_ptr<PropT>::get()->resize(_size);
+template<typename T, typename Entity>
+BaseProperty *PropertyTT<T,Entity>::clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const
+{
+    auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
+    return new PropertyTT<T, Entity>(prop_clone, _resMan, PropertyHandleT(_handle.idx()));
 }
 
-template <class PropT, class HandleT>
-const std::string& PropertyPtr<PropT,HandleT>::name() const {
-    return ptr::shared_ptr<PropT>::get()->name();
-}
-
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::delete_element(size_t _idx) {
-    ptr::shared_ptr<PropT>::get()->delete_element(_idx);
-}
-
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::swap_elements(size_t _idx0, size_t _idx1) {
-    ptr::shared_ptr<PropT>::get()->swap(_idx0, _idx1);
-}
-
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::copy(size_t _src_idx, size_t _dst_idx) {
-    ptr::shared_ptr<PropT>::get()->copy(_src_idx, _dst_idx);
-}
-
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::set_handle(const OpenVolumeMeshHandle& _handle) {
-    return ptr::shared_ptr<PropT>::get()->set_handle(_handle);
-}
-
-template <class PropT, class HandleT>
-OpenVolumeMeshHandle PropertyPtr<PropT,HandleT>::handle() const {
-    return ptr::shared_ptr<PropT>::get()->handle();
-}
-
-template <class PropT, class HandleT>
-void PropertyPtr<PropT,HandleT>::delete_multiple_entries(const std::vector<bool>& _tags) {
-    ptr::shared_ptr<PropT>::get()->delete_multiple_entries(_tags);
+template<typename T>
+const std::string typeName() {
+    throw std::runtime_error("Serialization is not supported for these data types!");
 }
 
 } // Namespace OpenVolumeMesh

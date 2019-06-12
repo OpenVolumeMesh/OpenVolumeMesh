@@ -15,16 +15,6 @@ IF "%BUILD_PLATFORM%" == "VS2013" (
     set GTESTVERSION=gtest-1.6.0
     set GENERATOR=Visual Studio 12%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"
-    set QT_VERSION=
-    IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_64_opengl
-    )
-
-    IF "%ARCHITECTURE%" == "x32" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.3.1-vs2013-%STRING_ARCH%\5.3\msvc2013_opengl
-    )
 ) 
 
 IF "%BUILD_PLATFORM%" == "VS2015" (
@@ -33,21 +23,31 @@ IF "%BUILD_PLATFORM%" == "VS2015" (
     set GENERATOR=Visual Studio 14%ARCH_VS%
     set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"
 
-    set QT_VERSION=
-    IF "%ARCHITECTURE%" == "x64" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015_64
-    )
-
-    IF "%ARCHITECTURE%" == "x32" (
-      set QT_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
-      set QT_BASE_CONFIG=-DQT5_INSTALL_PATH=E:\Qt\Qt5.6.0-vs2015-%STRING_ARCH%\5.6\msvc2015
-    )
-
 ) 
 
+IF "%BUILD_PLATFORM%" == "VS2017" (
+    set LIBPATH=E:\libs\VS2017
+    set GTESTVERSION=gtest-1.7.0
+    set GENERATOR=Visual Studio 15%ARCH_VS%
+    set VS_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\devenv.com"
+)
 
-"cmake" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%"  -DCMAKE_BUILD_TYPE=Release %CMAKE_CONFIGURATION% ..
+ECHO "==============================================================="
+ECHO "==============================================================="
+ECHO "Building with :"
+ECHO "ARCHITECTURE        : %ARCHITECTURE%"
+ECHO "BUILD_PLATFORM      : %BUILD_PLATFORM%"
+ECHO "GTESTVERSION        : %GTESTVERSION%"
+ECHO "GENERATOR           : %GENERATOR%"
+ECHO "CMAKE_CONFIGURATION : %CMAKE_CONFIGURATION%"
+ECHO "VS_PATH             : %VS_PATH%"
+ECHO "LIBPATH             : %LIBPATH%"
+ECHO "==============================================================="
+ECHO "==============================================================="
+
+
+
+"C:\Program Files\CMake\bin\cmake.exe" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%"  -DCMAKE_BUILD_TYPE=Release %CMAKE_CONFIGURATION% ..
 
 %VS_PATH% /Build "Release" OpenVolumeMesh.sln /Project "ALL_BUILD"
 
@@ -68,7 +68,7 @@ mkdir build-debug
 
 cd build-debug
 
-"cmake" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Debug %CMAKE_CONFIGURATION% ..
+"C:\Program Files\CMake\bin\cmake.exe" -DGTEST_PREFIX="%LIBPATH%\%ARCHITECTURE%\%GTESTVERSION%" -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Debug %CMAKE_CONFIGURATION% ..
 
 %VS_PATH% /Build "Debug" OpenVolumeMesh.sln /Project "ALL_BUILD"
 

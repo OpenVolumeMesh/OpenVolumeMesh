@@ -1,5 +1,6 @@
 Version X (?/?/?)
 - !!!Break compatiblity with C++98, require C++11 as mininum!!!
+- Renamed *T.cc into *T_impl.hh to avoid ugly problems ith several IDEs
 - Fix bug in halfface reordering
 - Track if garbage collection is necessary.
 - Ignore non-serializable datatypes when saving properties instead of throwing exception. 
@@ -15,6 +16,8 @@ Version X (?/?/?)
 - Made property handle constructors explicit
 - Enable range iterators on MSVC
 - Fix mesh copying by implementing copy constructors and clone methods
+- Fix bug in edge split of tetrahedral meshes
+- Ensure that halfface iterators start with a boundary halffaces when cells are deleted
 
 
 

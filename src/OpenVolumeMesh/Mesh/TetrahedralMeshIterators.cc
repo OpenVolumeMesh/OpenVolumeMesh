@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include <set>
 
 #include "TetrahedralMeshIterators.hh"
@@ -58,10 +50,13 @@ TetVertexIter::TetVertexIter(const CellHandle& _ref_h,
 BaseIter(_mesh, _ref_h, _max_laps) {
 
     assert(_ref_h.is_valid());
-    assert(_mesh->cell(_ref_h).halffaces().size() == 4);
+
+    TetrahedralMeshTopologyKernel::Cell cell = _mesh->cell(_ref_h);
+
+    assert(cell.halffaces().size() == 4);
 
     // Get first half-face
-    HalfFaceHandle curHF = *_mesh->cell(_ref_h).halffaces().begin();
+    HalfFaceHandle curHF = *cell.halffaces().begin();
     assert(curHF.is_valid());
 
     // Get first half-edge

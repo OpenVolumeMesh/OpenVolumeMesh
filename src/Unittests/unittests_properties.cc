@@ -1,8 +1,6 @@
 
 #include <iostream>
 
-#include <gtest/gtest.h>
-
 #include "unittests_common.hh"
 
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
@@ -32,7 +30,7 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
 
         VertexPropertyT<float> v_prop = mesh_.request_vertex_property<float>("MyVProp");
 
-        v_prop[0] = 1.4f;
+        v_prop[VertexHandle(0)] = 1.4f;
 
         VertexPropertyT<float> v_prop2(v_prop);
 
@@ -46,7 +44,7 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
 
         EXPECT_EQ(2u, mesh_.n_vertex_props());
 
-        EXPECT_FLOAT_EQ(1.4f, v_prop3[0]);
+        EXPECT_FLOAT_EQ(1.4f, v_prop3[VertexHandle(0)]);
 
         VertexPropertyT<std::string> v_prop_duplicate_2 = mesh_.request_vertex_property<std::string>("MyVProp");
 
@@ -82,16 +80,16 @@ TEST_F(HexahedralMeshBase, PropertySmartPointerPersistencyTest1) {
 
         VertexPropertyT<float> v_prop = mesh_.request_vertex_property<float>("FloatVProp");
 
-        v_prop[0] = 24.5f;
-        v_prop[11] = 2.34f;
+        v_prop[VertexHandle(0)] = 24.5f;
+        v_prop[VertexHandle(11)] = 2.34f;
 
         mesh_.set_persistent(v_prop);
     }
 
     VertexPropertyT<float> v_prop2 = mesh_.request_vertex_property<float>("FloatVProp");
 
-    EXPECT_FLOAT_EQ(24.5f, v_prop2[0]);
-    EXPECT_FLOAT_EQ(2.34f, v_prop2[11]);
+    EXPECT_FLOAT_EQ(24.5f, v_prop2[VertexHandle(0)]);
+    EXPECT_FLOAT_EQ(2.34f, v_prop2[VertexHandle(11)]);
 }
 
 TEST_F(HexahedralMeshBase, PropertySmartPointerPersistencyTest2) {
@@ -165,8 +163,8 @@ TEST_F(PolyhedralMeshBase, PropValueCopyTest) {
 
     generatePolyhedralMesh(mesh_);
     VertexPropertyT<int> prop = mesh_.request_vertex_property<int>();
-    prop[0] = 1234;
-    prop[1] = 2345;
+    prop[VertexHandle(0)] = 1234;
+    prop[VertexHandle(1)] = 2345;
     prop.copy(0, 1);
-    EXPECT_EQ(prop[1], 1234);
+    EXPECT_EQ(prop[VertexHandle(1)], 1234);
 }

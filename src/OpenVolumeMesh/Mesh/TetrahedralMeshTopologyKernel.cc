@@ -32,34 +32,11 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include "TetrahedralMeshTopologyKernel.hh"
 
 #include <iostream>
 
 namespace OpenVolumeMesh {
-
-
-TetrahedralMeshTopologyKernel::TetrahedralMeshTopologyKernel() {
-
-}
-
-//========================================================================================
-
-
-TetrahedralMeshTopologyKernel::~TetrahedralMeshTopologyKernel() {
-
-}
-
-//========================================================================================
-
 
 FaceHandle TetrahedralMeshTopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck) {
 
@@ -330,6 +307,7 @@ void TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 //    swapPropertyElements(halfedge_props_begin(), halfedge_props_end(), source, destination);
 //}
 
+// cppcheck-suppress unusedFunction ; public interface
 VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 {
     bool deferred_deletion_tmp = deferred_deletion_enabled();
@@ -355,10 +333,8 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
     for (VertexCellIter vc_it = vc_iter(from_vh); vc_it.valid(); ++vc_it)
         incidentCells.push_back(*vc_it);
 
-    for (unsigned int i = 0; i < incidentCells.size(); ++i)
+    for (const CellHandle &ch: incidentCells)
     {
-        CellHandle ch = incidentCells[i];
-
         if (collapsingCells.find(ch) != collapsingCells.end())
             continue;
 
@@ -366,9 +342,9 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 
         std::vector<HalfFaceHandle> newHalffaces;
 
-        for (unsigned int i = 0; i < 4; ++i)
+        for (unsigned int hf_idx = 0; hf_idx < 4; ++hf_idx)
         {
-            Face hf = halfface(c.halffaces()[i]);
+            Face hf = halfface(c.halffaces()[hf_idx]);
             std::vector<HalfEdgeHandle> newHalfedges;
 
             for (unsigned int j = 0; j < 3; ++j)
@@ -384,7 +360,7 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 
             HalfFaceHandle hfh = add_halfface(newHalfedges);
             newHalffaces.push_back(hfh);
-            swap_halfface_properties(c.halffaces()[i], hfh);
+            swap_halfface_properties(c.halffaces()[hf_idx], hfh);
         }
 
         delete_cell(ch);
@@ -422,6 +398,7 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 
 }
 
+// cppcheck-suppress unusedFunction ; public interface
 void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle _vh)
 {
     bool deferred_deletion_tmp = deferred_deletion_enabled();
@@ -429,19 +406,24 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
     if (!deferred_deletion_tmp)
         enable_deferred_deletion(true);
 
+    std::vector<HalfFaceHandle> incident_halffaces_with_cells;
     for (HalfEdgeHalfFaceIter hehf_it = hehf_iter(_heh); hehf_it.valid(); ++hehf_it)
     {
         CellHandle ch = incident_cell(*hehf_it);
         if (ch.is_valid())
-        {
-            std::vector<VertexHandle> vertices = get_cell_vertices(*hehf_it, _heh);
+            incident_halffaces_with_cells.push_back(*hehf_it);
+    }
 
-            delete_cell(ch);
+    for (auto hfh : incident_halffaces_with_cells)
+    {
+        CellHandle ch = incident_cell(hfh);
 
-            add_cell(vertices[0], _vh, vertices[2], vertices[3]);
-            add_cell(_vh, vertices[1], vertices[2], vertices[3]);
-        }
+        std::vector<VertexHandle> vertices = get_cell_vertices(hfh, _heh);
 
+        delete_cell(ch);
+
+        add_cell(vertices[0], _vh, vertices[2], vertices[3]);
+        add_cell(_vh, vertices[1], vertices[2], vertices[3]);
     }
 
     delete_edge(edge_handle(_heh));
@@ -450,6 +432,7 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
 
 }
 
+// cppcheck-suppress unusedFunction ; public interface
 void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
 {
     bool deferred_deletion_tmp = deferred_deletion_enabled();
@@ -457,7 +440,7 @@ void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
     if (!deferred_deletion_tmp)
         enable_deferred_deletion(true);
 
-    for (unsigned int i = 0; i < 2; ++i)
+    for (char i = 0; i < 2; ++i)
     {
         HalfFaceHandle hfh = halfface_handle(_fh, i);
         CellHandle ch = incident_cell(hfh);
@@ -562,6 +545,7 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_halfface_vertices(H
     return std::vector<VertexHandle>();
 }
 
+// cppcheck-suppress unusedFunction ; public interface
 std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const
 {
     std::vector<VertexHandle> vertices;

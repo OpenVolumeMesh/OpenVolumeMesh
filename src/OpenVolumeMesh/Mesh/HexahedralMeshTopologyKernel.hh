@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef HEXAHEDRALMESHTOPOLOGYKERNEL_HH
 #define HEXAHEDRALMESHTOPOLOGYKERNEL_HH
 
@@ -96,23 +88,23 @@ public:
     static const unsigned char INVALID = 6;
 
     static inline unsigned char opposite_orientation(const unsigned char _d) {
-        return (_d % 2 == 0 ? _d + 1 : _d - 1);
+        return static_cast<unsigned char>(_d % 2 == 0 ? _d + 1 : _d - 1);
     }
 
     // Constructor
-    HexahedralMeshTopologyKernel();
+    HexahedralMeshTopologyKernel() = default;
 
     // Destructor
-    ~HexahedralMeshTopologyKernel();
+    ~HexahedralMeshTopologyKernel() override = default;
 
     // Overridden function
-    virtual FaceHandle add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false);
+    FaceHandle add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false) override;
 
     // Overridden function
-    virtual FaceHandle add_face(const std::vector<VertexHandle>& _vertices);
+    FaceHandle add_face(const std::vector<VertexHandle>& _vertices) override;
 
     /// Overridden function
-    virtual CellHandle add_cell(const std::vector<HalfFaceHandle>& _halffaces, bool _topologyCheck = false);
+    CellHandle add_cell(const std::vector<HalfFaceHandle>& _halffaces, bool _topologyCheck = false) override;
 
 private:
 

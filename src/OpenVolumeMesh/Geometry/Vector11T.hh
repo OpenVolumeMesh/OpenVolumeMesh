@@ -121,7 +121,9 @@ class VectorT {
             typename = typename std::enable_if<sizeof...(T) == DIM>::type,
             typename = typename std::enable_if<
                 are_convertible_to<Scalar, T...>::value>::type>
-        constexpr VectorT(T... vs) : values_ { {static_cast<Scalar>(vs)...} } {
+        // cppcheck-suppress noExplicitConstructor ; only applies to unimportant DIM==1
+        constexpr VectorT(T... vs) : values_ { {static_cast<Scalar>(vs)...} }
+        {
             static_assert(sizeof...(T) == DIM,
                     "Invalid number of components specified in constructor.");
             static_assert(are_convertible_to<Scalar, T...>::value,
@@ -176,7 +178,9 @@ class VectorT {
         template<typename OtherScalar,
             typename = typename std::enable_if<
                 std::is_convertible<OtherScalar, Scalar>::value>>
-        vector_type& operator=(const VectorT<OtherScalar, DIM>& _rhs) {
+        // cppcheck-suppress operatorEqRetRefThis ; false positive
+        vector_type& operator=(const VectorT<OtherScalar, DIM>& _rhs)
+        {
             std::transform(_rhs.data(), _rhs.data() + DIM,
                     data(), [](OtherScalar rhs) {
                         return static_cast<Scalar>(std::move(rhs));

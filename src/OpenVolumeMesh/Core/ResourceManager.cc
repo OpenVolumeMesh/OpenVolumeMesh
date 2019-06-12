@@ -32,35 +32,38 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include "ResourceManager.hh"
 
 namespace OpenVolumeMesh {
 
-ResourceManager::ResourceManager() {
+ResourceManager::ResourceManager(const ResourceManager &other)
+{
+   *this = other;
 }
 
-ResourceManager::ResourceManager(const ResourceManager &other) {
-    auto cloneProps = [this](const Properties &src, Properties &dest) {
-        dest.reserve(src.size());
-        for (BaseProperty *bp: src) {
-            dest.push_back(bp->clone(*this, bp->handle()));
-        }
-    };
-    cloneProps(other.vertex_props_,   vertex_props_);
-    cloneProps(other.edge_props_,     edge_props_);
-    cloneProps(other.halfedge_props_, halfedge_props_);
-    cloneProps(other.face_props_,     face_props_);
-    cloneProps(other.halfface_props_, halfface_props_);
-    cloneProps(other.cell_props_,     cell_props_);
-    cloneProps(other.mesh_props_,     mesh_props_);
+ResourceManager::ResourceManager(ResourceManager &&other)
+{
+   *this = std::move(other);
+}
+
+ResourceManager& ResourceManager::operator=(const ResourceManager &other)
+{
+    if (this == &other)
+        return *this;
+
+    assignAllPropertiesFrom<false>(&other);
+
+    return *this;
+}
+
+ResourceManager& ResourceManager::operator=(ResourceManager &&other)
+{
+    if (this == &other)
+        return *this;
+
+    assignAllPropertiesFrom<true>(&other);
+
+    return *this;
 }
 
 ResourceManager::~ResourceManager() {
@@ -153,32 +156,32 @@ void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2)
 
 void ResourceManager::release_property(VertexPropHandle _handle) {
 
-    remove_property(vertex_props_, _handle.idx());
+    remove_property(vertex_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(EdgePropHandle _handle) {
 
-    remove_property(edge_props_, _handle.idx());
+    remove_property(edge_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(HalfEdgePropHandle _handle) {
 
-    remove_property(halfedge_props_, _handle.idx());
+    remove_property(halfedge_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(FacePropHandle _handle) {
 
-    remove_property(face_props_, _handle.idx());
+    remove_property(face_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(HalfFacePropHandle _handle) {
 
-    remove_property(halfface_props_, _handle.idx());
+    remove_property(halfface_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(CellPropHandle _handle) {
 
-    remove_property(cell_props_, _handle.idx());
+    remove_property(cell_props_, _handle.uidx());
 }
 
 void ResourceManager::release_property(MeshPropHandle _handle) {
@@ -244,6 +247,56 @@ void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
     for(; cp_it != cp_end; ++cp_it) {
         (*cp_it)->delete_multiple_entries(_tags);
     }
+}
+
+template<bool Move>
+void ResourceManager::assignProperties(typename std::conditional<Move, Properties&, const Properties&>::type src,
+                      Properties &dest)
+{
+    // If possible, re-use existing properties instead of copying
+    // everything blindly.
+    Properties out;
+    out.reserve(src.size());
+    for (BaseProperty *srcprop: src) {
+        bool found = false;
+        for (auto it = dest.begin(); it != dest.end(); ++it) {
+            auto dstprop = *it;
+            if (dstprop->name() == srcprop->name()
+                    && dstprop->internal_type_name() == srcprop->internal_type_name())
+            {
+                out.push_back(dstprop);
+                dest.erase(it);
+                if (Move) {
+                    dstprop->move_values_from(srcprop);
+                } else {
+                    dstprop->assign_values_from(srcprop);
+                }
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            if (Move) {
+                out.push_back(srcprop);
+            } else {
+                out.push_back(srcprop->clone(*this, OpenVolumeMeshHandle(-1)));
+            }
+        }
+    }
+    updatePropHandles(out);
+    dest = std::move(out);
+}
+
+template<bool Move>
+void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager*, const ResourceManager*>::type other)
+{
+    assignProperties<Move>(other->vertex_props_,   vertex_props_);
+    assignProperties<Move>(other->edge_props_,     edge_props_);
+    assignProperties<Move>(other->halfedge_props_, halfedge_props_);
+    assignProperties<Move>(other->face_props_,     face_props_);
+    assignProperties<Move>(other->halfface_props_, halfface_props_);
+    assignProperties<Move>(other->cell_props_,     cell_props_);
+    assignProperties<Move>(other->mesh_props_,     mesh_props_);
 }
 
 } // Namespace OpenVolumeMesh
