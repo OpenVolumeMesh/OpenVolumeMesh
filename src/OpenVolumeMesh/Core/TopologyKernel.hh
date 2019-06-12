@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef TOPOLOGYKERNEL_HH_
 #define TOPOLOGYKERNEL_HH_
 
@@ -57,8 +49,15 @@ namespace OpenVolumeMesh {
 class TopologyKernel : public ResourceManager {
 public:
 
-    TopologyKernel();
-    virtual ~TopologyKernel();
+    TopologyKernel() = default;
+    ~TopologyKernel() override = default;
+
+    TopologyKernel& operator=(const TopologyKernel&) = default;
+
+    void assign(const TopologyKernel *other) {
+        assert(other != nullptr);
+        *this = *other;
+    }
 
     /*
      * Defines and constants
@@ -319,17 +318,30 @@ public:
      */
 
     /// Get number of vertices in mesh
-    virtual size_t n_vertices()   const { return n_vertices_; }
+    size_t n_vertices()   const override { return n_vertices_; }
     /// Get number of edges in mesh
-    virtual size_t n_edges()      const { return edges_.size(); }
+    size_t n_edges()      const override { return edges_.size(); }
     /// Get number of halfedges in mesh
-    virtual size_t n_halfedges()  const { return edges_.size() * 2u; }
+    size_t n_halfedges()  const override { return edges_.size() * 2u; }
     /// Get number of faces in mesh
-    virtual size_t n_faces()      const { return faces_.size(); }
+    size_t n_faces()      const override { return faces_.size(); }
     /// Get number of halffaces in mesh
-    virtual size_t n_halffaces()  const { return faces_.size() * 2u; }
+    size_t n_halffaces()  const override { return faces_.size() * 2u; }
     /// Get number of cells in mesh
-    virtual size_t n_cells()      const { return cells_.size(); }
+    size_t n_cells()      const override { return cells_.size(); }
+
+    /// Get number of undeleted vertices in mesh
+    size_t n_logical_vertices()   const { return n_vertices_ - n_deleted_vertices_; }
+    /// Get number of undeleted edges in mesh
+    size_t n_logical_edges()      const { return edges_.size() - n_deleted_edges_; }
+    /// Get number of undeleted halfedges in mesh
+    size_t n_logical_halfedges()  const { return n_logical_edges() * 2u; }
+    /// Get number of undeleted faces in mesh
+    size_t n_logical_faces()      const { return faces_.size() - n_deleted_faces_; }
+    /// Get number of undeleted halffaces in mesh
+    size_t n_logical_halffaces()  const { return n_faces() * 2u; }
+    /// Get number of undeleted cells in mesh
+    size_t n_logical_cells()      const { return cells_.size() - n_deleted_cells_; }
 
     int genus() const {
 
@@ -348,7 +360,7 @@ public:
 private:
 
     // Cache total vertex number
-    size_t n_vertices_;
+    size_t n_vertices_ = 0u;
 
 public:
 
@@ -451,7 +463,7 @@ public:
     /// Get valence of vertex (number of incident edges)
     inline size_t valence(const VertexHandle& _vh) const {
         assert(has_vertex_bottom_up_incidences());
-        assert(_vh.is_valid() && (size_t)_vh.idx() < outgoing_hes_per_vertex_.size());
+        assert(_vh.is_valid() && _vh.uidx() < outgoing_hes_per_vertex_.size());
 
         return outgoing_hes_per_vertex_[_vh.idx()].size();
     }
@@ -459,22 +471,22 @@ public:
     /// Get valence of edge (number of incident faces)
     inline size_t valence(const EdgeHandle& _eh) const {
         assert(has_edge_bottom_up_incidences());
-        assert(_eh.is_valid() && (size_t)_eh.idx() < edges_.size());
-        assert((size_t)halfedge_handle(_eh, 0).idx() < incident_hfs_per_he_.size());
+        assert(_eh.is_valid() && _eh.uidx() < edges_.size());
+        assert(halfedge_handle(_eh, 0).uidx() < incident_hfs_per_he_.size());
 
         return incident_hfs_per_he_[halfedge_handle(_eh, 0).idx()].size();
     }
 
     /// Get valence of face (number of incident edges)
     inline size_t valence(const FaceHandle& _fh) const {
-        assert(_fh.is_valid() && (size_t)_fh.idx() < faces_.size());
+        assert(_fh.is_valid() && _fh.uidx() < faces_.size());
 
         return face(_fh).halfedges().size();
     }
 
     /// Get valence of cell (number of incident faces)
     inline size_t valence(const CellHandle& _ch) const {
-        assert(_ch.is_valid() && (size_t)_ch.idx() < cells_.size());
+        assert(_ch.is_valid() && _ch.uidx() < cells_.size());
 
         return cell(_ch).halffaces().size();
     }
@@ -522,15 +534,21 @@ private:
 
     CellIter delete_cell_core(const CellHandle& _h);
 
+public:
+
+    /// Exchanges the indices of two cells while keeping the mesh otherwise unaffected.
+    virtual void swap_cell_indices(CellHandle _h1, CellHandle _h2);
+
+    /// Exchanges the indices of two faces while keeping the mesh otherwise unaffected.
+    virtual void swap_face_indices(FaceHandle _h1, FaceHandle _h2);
+
+    /// Exchanges the indices of two edges while keeping the mesh otherwise unaffected.
+    virtual void swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2);
+
+    /// Exchanges the indices of two vertices while keeping the mesh otherwise unaffected.
+    virtual void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2);
+
 protected:
-
-    virtual void swap_cells(CellHandle _h1, CellHandle _h2);
-
-    virtual void swap_faces(FaceHandle _h1, FaceHandle _h2);
-
-    virtual void swap_edges(EdgeHandle _h1, EdgeHandle _h2);
-
-    virtual void swap_vertices(VertexHandle _h1, VertexHandle _h2);
 
     virtual void delete_multiple_vertices(const std::vector<bool>& _tag);
 
@@ -564,7 +582,7 @@ protected:
                     he_end = hes.end(); he_it != he_end; ++he_it) {
 
                 EdgeHandle eh = edge_handle(*he_it);
-                unsigned char opp = (he_it->idx() - halfedge_handle(eh, 0).idx());
+                unsigned char opp = he_it->idx() == halfedge_handle(eh, 1).idx();
                 *he_it = halfedge_handle(EdgeHandle(newIndices_[eh.idx()]), opp);
             }
             _face.set_halfedges(hes);
@@ -584,7 +602,7 @@ protected:
                     hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
 
                 FaceHandle fh = face_handle(*hf_it);
-                unsigned char opp = (hf_it->idx() - halfface_handle(fh, 0).idx());
+                unsigned char opp = hf_it->idx() == halfface_handle(fh, 1).idx();
                 *hf_it = halfface_handle(FaceHandle(newIndices_[fh.idx()]), opp);
             }
             _cell.set_halffaces(hfs);
@@ -617,6 +635,10 @@ public:
         edge_deleted_.clear();
         face_deleted_.clear();
         cell_deleted_.clear();
+        n_deleted_vertices_ = 0;
+        n_deleted_edges_ = 0;
+        n_deleted_faces_ = 0;
+        n_deleted_cells_ = 0;
         outgoing_hes_per_vertex_.clear();
         incident_hfs_per_he_.clear();
         incident_cell_per_hf_.clear();
@@ -770,15 +792,15 @@ protected:
     std::vector<CellHandle> incident_cell_per_hf_;
 
 private:
-    bool v_bottom_up_;
+    bool v_bottom_up_ = true;
 
-    bool e_bottom_up_;
+    bool e_bottom_up_ = true;
 
-    bool f_bottom_up_;
+    bool f_bottom_up_ = true;
 
-    bool deferred_deletion;
+    bool deferred_deletion = true;
 
-    bool fast_deletion;
+    bool fast_deletion = true;
 
     //=====================================================================
     // Connectivity
@@ -799,14 +821,14 @@ public:
 
     bool is_boundary(const HalfFaceHandle& _halfFaceHandle) const {
 
-        assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
+        assert(_halfFaceHandle.is_valid() && _halfFaceHandle.uidx() < faces_.size() * 2u);
         assert(has_face_bottom_up_incidences());
-        assert((size_t)_halfFaceHandle.idx() < incident_cell_per_hf_.size());
+        assert(_halfFaceHandle.uidx() < incident_cell_per_hf_.size());
         return incident_cell_per_hf_[_halfFaceHandle.idx()] == InvalidCellHandle;
     }
 
     bool is_boundary(const FaceHandle& _faceHandle) const {
-        assert(_faceHandle.is_valid() && (size_t)_faceHandle.idx() < faces_.size());
+        assert(_faceHandle.is_valid() && _faceHandle.uidx() < faces_.size());
         assert(has_face_bottom_up_incidences());
         return  is_boundary(halfface_handle(_faceHandle, 0)) ||
                 is_boundary(halfface_handle(_faceHandle, 1));
@@ -814,7 +836,7 @@ public:
 
     bool is_boundary(const EdgeHandle& _edgeHandle) const {
         assert(has_edge_bottom_up_incidences());
-        assert(_edgeHandle.is_valid() && (size_t)_edgeHandle.idx() < edges_.size());
+        assert(_edgeHandle.is_valid() && _edgeHandle.uidx() < edges_.size());
 
         for(HalfEdgeHalfFaceIter hehf_it = hehf_iter(halfedge_handle(_edgeHandle, 0));
                 hehf_it.valid(); ++hehf_it) {
@@ -827,7 +849,7 @@ public:
 
     bool is_boundary(const HalfEdgeHandle& _halfedgeHandle) const {
         assert(has_edge_bottom_up_incidences());
-        assert(_halfedgeHandle.is_valid() && (size_t)_halfedgeHandle.idx() < edges_.size() * 2u);
+        assert(_halfedgeHandle.is_valid() && _halfedgeHandle.uidx() < edges_.size() * 2u);
 
         for(HalfEdgeHalfFaceIter hehf_it = hehf_iter(_halfedgeHandle);
                 hehf_it.valid(); ++hehf_it) {
@@ -840,7 +862,7 @@ public:
 
     bool is_boundary(const VertexHandle& _vertexHandle) const {
         assert(has_vertex_bottom_up_incidences());
-        assert(_vertexHandle.is_valid() && (size_t)_vertexHandle.idx() < n_vertices());
+        assert(_vertexHandle.is_valid() && _vertexHandle.uidx() < n_vertices());
 
         for(VertexOHalfEdgeIter voh_it = voh_iter(_vertexHandle); voh_it.valid(); ++voh_it) {
             if(is_boundary(*voh_it)) return true;
@@ -849,19 +871,19 @@ public:
     }
 
     size_t n_vertices_in_cell(const CellHandle& _ch) const {
-        assert(_ch.is_valid() && (size_t)_ch.idx() < cells_.size());
+        assert(_ch.is_valid() && _ch.uidx() < cells_.size());
 
-        std::set<VertexHandle> vertices;
+        std::set<VertexHandle> vhs;
         std::vector<HalfFaceHandle> hfs = cell(_ch).halffaces();
         for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin();
                 hf_it != hfs.end(); ++hf_it) {
             std::vector<HalfEdgeHandle> hes = halfface(*hf_it).halfedges();
             for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
                 he_it != hes.end(); ++he_it) {
-                vertices.insert(halfedge(*he_it).to_vertex());
+                vhs.insert(halfedge(*he_it).to_vertex());
             }
         }
-        return vertices.size();
+        return vhs.size();
     }
 
     //=========================================================================
@@ -946,7 +968,7 @@ public:
     }
 
     bool inline needs_garbage_collection() const {
-        return needs_garbage_collection_;
+        return n_deleted_vertices_ > 0 || n_deleted_edges_ > 0 || n_deleted_faces_ > 0 || n_deleted_cells_ > 0;
     }
 
 protected:
@@ -964,7 +986,12 @@ protected:
     std::vector<bool> edge_deleted_;
     std::vector<bool> face_deleted_;
     std::vector<bool> cell_deleted_;
-    bool needs_garbage_collection_;
+
+    // number of elements deleted, but not yet garbage collected
+    size_t n_deleted_vertices_ = 0;
+    size_t n_deleted_edges_ = 0;
+    size_t n_deleted_faces_ = 0;
+    size_t n_deleted_cells_ = 0;
 
 };
 

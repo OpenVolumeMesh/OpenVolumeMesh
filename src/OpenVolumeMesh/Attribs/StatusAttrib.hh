@@ -60,61 +60,61 @@ public:
     ~StatusAttrib();
 
     const OpenVolumeMeshStatus& operator[](const VertexHandle& _h) const {
-        return v_status_[_h.idx()];
+        return v_status_[_h];
     }
 
     OpenVolumeMeshStatus& operator[](const VertexHandle& _h) {
-        return v_status_[_h.idx()];
+        return v_status_[_h];
     }
 
     const OpenVolumeMeshStatus& operator[](const EdgeHandle& _h) const {
-        return e_status_[_h.idx()];
+        return e_status_[_h];
     }
 
     OpenVolumeMeshStatus& operator[](const EdgeHandle& _h) {
-        return e_status_[_h.idx()];
+        return e_status_[_h];
     }
 
     const OpenVolumeMeshStatus& operator[](const HalfEdgeHandle& _h) const {
-        return he_status_[_h.idx()];
+        return he_status_[_h];
     }
 
     OpenVolumeMeshStatus& operator[](const HalfEdgeHandle& _h) {
-        return he_status_[_h.idx()];
+        return he_status_[_h];
     }
 
     const OpenVolumeMeshStatus& operator[](const FaceHandle& _h) const {
-        return f_status_[_h.idx()];
+        return f_status_[_h];
     }
 
     OpenVolumeMeshStatus& operator[](const FaceHandle& _h) {
-        return f_status_[_h.idx()];
+        return f_status_[_h];
     }
 
     const OpenVolumeMeshStatus& operator[](const HalfFaceHandle& _h) const {
-        return hf_status_[_h.idx()];
+        return hf_status_[_h];
     }
 
     OpenVolumeMeshStatus& operator[](const HalfFaceHandle& _h) {
-        return hf_status_[_h.idx()];
+        return hf_status_[_h];
     }
 
     const OpenVolumeMeshStatus& operator[](const CellHandle& _h) const {
-        return c_status_[_h.idx()];
+        return c_status_[_h];
     }
 
     OpenVolumeMeshStatus& operator[](const CellHandle& _h) {
-        return c_status_[_h.idx()];
+        return c_status_[_h];
     }
 
     const OpenVolumeMeshStatus& mesh_status() const {
-        OpenVolumeMeshHandle h(0);
-        return m_status_[h.idx()];
+        MeshHandle h(0);
+        return m_status_[h];
     }
 
     OpenVolumeMeshStatus& mesh_status() {
-        OpenVolumeMeshHandle h(0);
-        return m_status_[h.idx()];
+        MeshHandle h(0);
+        return m_status_[h];
     }
 
     typedef VertexPropertyT<OpenVolumeMeshStatus>::const_iterator   const_vstatus_iterator;
@@ -280,7 +280,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(STATUSATTRIBT_CC)
-#include "StatusAttribT.cc"
+#include "StatusAttribT_impl.hh"
 #endif
 
 #endif /* STATUSATTRIB_HH_ */

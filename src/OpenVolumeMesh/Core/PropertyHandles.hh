@@ -32,30 +32,24 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
 
-#ifndef PROPERTYHANDLES_HH_
-#define PROPERTYHANDLES_HH_
+#pragma once
 
 #include "OpenVolumeMeshHandle.hh"
+#include "Entities.hh"
 
 namespace OpenVolumeMesh {
 
-// Defines for property handles
-class VertexPropHandle      : public OpenVolumeMeshHandle { public: explicit VertexPropHandle(int _idx = -1)     : OpenVolumeMeshHandle(_idx) {} };
-class EdgePropHandle        : public OpenVolumeMeshHandle { public: explicit EdgePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class HalfEdgePropHandle    : public OpenVolumeMeshHandle { public: explicit HalfEdgePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class FacePropHandle        : public OpenVolumeMeshHandle { public: explicit FacePropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class HalfFacePropHandle    : public OpenVolumeMeshHandle { public: explicit HalfFacePropHandle(int _idx = -1)   : OpenVolumeMeshHandle(_idx) {} };
-class CellPropHandle        : public OpenVolumeMeshHandle { public: explicit CellPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
-class MeshPropHandle        : public OpenVolumeMeshHandle { public: explicit MeshPropHandle(int _idx = -1)       : OpenVolumeMeshHandle(_idx) {} };
+template<typename EntityTag>
+using PropHandleT = HandleT<PropHandleTag<EntityTag>>;
+
+using VertexPropHandle   = PropHandleT<Entity::Vertex>;
+using EdgePropHandle     = PropHandleT<Entity::Edge>;
+using HalfEdgePropHandle = PropHandleT<Entity::HalfEdge>;
+using FacePropHandle     = PropHandleT<Entity::Face>;
+using HalfFacePropHandle = PropHandleT<Entity::HalfFace>;
+using CellPropHandle     = PropHandleT<Entity::Cell>;
+using MeshPropHandle     = PropHandleT<Entity::Mesh>;
 
 } // Namespace OpenVolumeMesh
 
-#endif /* PROPERTYHANDLES_HH_ */

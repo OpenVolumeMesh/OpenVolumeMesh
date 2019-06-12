@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #define NORMALATTRIBT_CC
 
 #include <set>
@@ -53,8 +45,8 @@ namespace OpenVolumeMesh {
 template <class GeomKernelT>
 NormalAttrib<GeomKernelT>::NormalAttrib(GeomKernelT& _kernel) :
 kernel_(_kernel),
-v_normals_(_kernel.template request_vertex_property<typename GeomKernelT::PointT>("vertex_normals")),
-f_normals_(_kernel.template request_face_property<typename GeomKernelT::PointT>("face_normals"))
+v_normals_(_kernel.template request_vertex_property<typename GeomKernelT::PointT>("vertex_normals", typename GeomKernelT::PointT(0.0))),
+f_normals_(_kernel.template request_face_property<typename GeomKernelT::PointT>("face_normals", typename GeomKernelT::PointT(0.0)))
 {
 
 }
@@ -117,7 +109,7 @@ void NormalAttrib<GeomKernelT>::compute_vertex_normal(const VertexHandle& _vh) {
 
     normal.normalize();
 
-    v_normals_[_vh.idx()] = normal;
+    v_normals_[_vh] = normal;
 }
 
 template <class GeomKernelT>
@@ -139,7 +131,7 @@ void NormalAttrib<GeomKernelT>::compute_face_normal(const FaceHandle& _fh) {
     typename GeomKernelT::PointT n = (p2 - p1) % (p3 - p2);
     n.normalize();
 
-    f_normals_[_fh.idx()] = n;
+    f_normals_[_fh] = n;
 }
 
 } // Namespace OpenVolumeMesh

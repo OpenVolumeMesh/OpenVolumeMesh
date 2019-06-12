@@ -67,13 +67,13 @@ public:
     //==================
     const ColT& operator[](const VertexHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_vertices());
-        return vcolor_prop_[_h.idx()];
+        return vcolor_prop_[_h];
     }
 
     ColT& operator[](const VertexHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_vertices());
         vertex_colors_available_ = true;
-        return vcolor_prop_[_h.idx()];
+        return vcolor_prop_[_h];
     }
 
     //==================
@@ -81,13 +81,13 @@ public:
     //==================
     const ColT& operator[](const EdgeHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_edges());
-        return ecolor_prop_[_h.idx()];
+        return ecolor_prop_[_h];
     }
 
     ColT& operator[](const EdgeHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_edges());
         edge_colors_available_ = true;
-        return ecolor_prop_[_h.idx()];
+        return ecolor_prop_[_h];
     }
 
     //==================
@@ -95,13 +95,13 @@ public:
     //==================
     const ColT& operator[](const HalfEdgeHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_halfedges());
-        return hecolor_prop_[_h.idx()];
+        return hecolor_prop_[_h];
     }
 
     ColT& operator[](const HalfEdgeHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_halfedges());
         halfedge_colors_available_ = true;
-        return hecolor_prop_[_h.idx()];
+        return hecolor_prop_[_h];
     }
 
     //==================
@@ -109,13 +109,13 @@ public:
     //==================
     const ColT& operator[](const FaceHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_faces());
-        return fcolor_prop_[_h.idx()];
+        return fcolor_prop_[_h];
     }
 
     ColT& operator[](const FaceHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_faces());
         face_colors_available_ = true;
-        return fcolor_prop_[_h.idx()];
+        return fcolor_prop_[_h];
     }
 
     //==================
@@ -123,13 +123,13 @@ public:
     //==================
     const ColT& operator[](const HalfFaceHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_halffaces());
-        return hfcolor_prop_[_h.idx()];
+        return hfcolor_prop_[_h];
     }
 
     ColT& operator[](const HalfFaceHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_halffaces());
         halfface_colors_available_ = true;
-        return hfcolor_prop_[_h.idx()];
+        return hfcolor_prop_[_h];
     }
 
     //==================
@@ -137,13 +137,13 @@ public:
     //==================
     const ColT& operator[](const CellHandle& _h) const {
         assert((unsigned int)_h.idx() < kernel_.n_cells());
-        return ccolor_prop_[_h.idx()];
+        return ccolor_prop_[_h];
     }
 
     ColT& operator[](const CellHandle& _h) {
         assert((unsigned int)_h.idx() < kernel_.n_cells());
         cell_colors_available_ = true;
-        return ccolor_prop_[_h.idx()];
+        return ccolor_prop_[_h];
     }
 
 
@@ -187,7 +187,7 @@ private:
 } // Namespace OpenVolumeMesh
 
 #if defined(INCLUDE_TEMPLATES) && !defined(COLORATTRIBT_CC)
-#include "ColorAttribT.cc"
+#include "ColorAttribT_impl.hh"
 #endif
 
 #endif /* COLORATTRIB_HH_ */

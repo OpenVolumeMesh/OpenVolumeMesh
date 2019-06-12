@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef BASEPROPERTY_HH_
 #define BASEPROPERTY_HH_
 
@@ -55,15 +47,19 @@ class BaseProperty {
 public:
     friend class ResourceManager;
 
-    explicit BaseProperty(ResourceManager& _resMan) : resMan_(_resMan), lock_(false) {}
+    explicit BaseProperty(ResourceManager* _resMan) : resMan_(_resMan) {}
 
-    BaseProperty(const BaseProperty& _cpy) : resMan_(_cpy.resMan_), lock_(_cpy.lock_) {}
+    BaseProperty(BaseProperty&& _other) = default;
+    BaseProperty(const BaseProperty& _other) = default;
 
-    BaseProperty& operator=(const BaseProperty& _cpy);
+    BaseProperty& operator=(const BaseProperty& _cpy) = delete;
 
-    virtual ~BaseProperty() {}
+
+    virtual ~BaseProperty();
 
     virtual const std::string& name() const = 0;
+
+    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const = 0;
 
     virtual void delete_element(size_t _idx) = 0;
 
@@ -85,7 +81,19 @@ public:
 
     virtual const std::string typeNameWrapper() const = 0;
 
+    virtual size_t size() const = 0;
+
 protected:
+
+    virtual const std::string &internal_type_name() const = 0;
+
+    /// Copy data from other property. `other` MUST point to an object with the same type as `this`!
+    /// Currently no type check is performed.
+    virtual void assign_values_from(const BaseProperty *other) = 0;
+
+    /// Move data from other property. `other` MUST point to an object with the same type as `this`!
+    /// Currently no type check is performed.
+    virtual void move_values_from(BaseProperty *other) = 0;
 
     virtual void delete_multiple_entries(const std::vector<bool>& _tags) = 0;
 
@@ -93,15 +101,9 @@ protected:
 
     virtual void set_handle(const OpenVolumeMeshHandle& /*_handle*/) = 0;
 
-    void lock() { lock_ = true; }
+    void setResMan(ResourceManager *resMan) { resMan_ = resMan;}
 
-    void unlock() { lock_ = false; }
-
-    bool locked() const { return lock_; }
-
-    ResourceManager& resMan_;
-
-    bool lock_;
+    ResourceManager* resMan_;
 };
 
 } // Namespace OpenVolumeMesh

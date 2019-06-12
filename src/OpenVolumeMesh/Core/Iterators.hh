@@ -73,8 +73,8 @@ public:
         valid_(true), mesh_(_mesh) {}
 
     // STL compliance (needs to have default constructor)
-	BaseIterator() : valid_(false), mesh_(0) {}
-	virtual ~BaseIterator() {}
+	BaseIterator() : valid_(false), mesh_(nullptr) {}
+	virtual ~BaseIterator() = default;
 	bool operator== (const BaseIterator& _c) const {
         return (this->cur_handle_ == _c.cur_handle() &&
                 this->valid_ == _c.valid() &&
@@ -185,7 +185,7 @@ public:
         max_laps_(1)
     {}
 
-    virtual ~BaseCirculator() {}
+    virtual ~BaseCirculator() = default;
 
     bool operator== (const BaseCirculator& _c) const {
         return (BaseIter::operator==(_c) &&

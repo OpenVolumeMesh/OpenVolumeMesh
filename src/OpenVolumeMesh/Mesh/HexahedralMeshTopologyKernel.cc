@@ -45,20 +45,6 @@
 namespace OpenVolumeMesh {
 
 
-HexahedralMeshTopologyKernel::HexahedralMeshTopologyKernel() {
-
-}
-
-//========================================================================================
-
-
-HexahedralMeshTopologyKernel::~HexahedralMeshTopologyKernel() {
-
-}
-
-//========================================================================================
-
-
 FaceHandle HexahedralMeshTopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck) {
 
     if(_halfedges.size() != 4) {

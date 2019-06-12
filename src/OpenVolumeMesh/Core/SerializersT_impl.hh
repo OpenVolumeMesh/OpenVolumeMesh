@@ -65,7 +65,7 @@ private:
   template<class U> static false_type test(...);
 
 public:
-  enum { bool_value = sizeof(true_type) == sizeof(test<T>(0)) };
+  enum { bool_value = sizeof(true_type) == sizeof(test<T>(nullptr)) };
   typedef bool_type<bool_value> type;
   static type value;
 };
@@ -82,7 +82,7 @@ private:
   template<class U> static false_type test(...);
 
 public:
-  enum { bool_value = sizeof(true_type) == sizeof(test<T>(0)) };
+  enum { bool_value = sizeof(true_type) == sizeof(test<T>(nullptr)) };
   typedef bool_type<bool_value> type;
   static type value;
 };

@@ -32,24 +32,11 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 36 $                                                         *
- *   $Date: 2012-01-10 18:00:06 +0100 (Di, 10 Jan 2012) $                    *
- *   $LastChangedBy: kremer $                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include "BaseProperty.hh"
-
-#include "ResourceManager.hh"
 
 namespace OpenVolumeMesh {
 
-BaseProperty& BaseProperty::operator=(const BaseProperty& _cpy) {
-    resMan_ = _cpy.resMan_;
-    lock_ = _cpy.lock_;
-    return *this;
-}
+// define this here to emit a vtable only in this translation unit
+BaseProperty::~BaseProperty() = default;
 
 } // Namespace OpenVolumeMesh

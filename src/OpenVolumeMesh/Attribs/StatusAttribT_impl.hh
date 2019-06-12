@@ -143,10 +143,10 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
     std::vector<bool>::iterator tag_it = tags.begin();
 
     for(CellIter c_it = kernel_.cells_begin(); c_it != kernel_.cells_end(); ++c_it, ++tag_it) {
-        *tag_it = c_status_[c_it->idx()].deleted();
+        *tag_it = c_status_[*c_it].deleted();
 
         if (track_ch) {
-            if (c_status_[c_it->idx()].deleted()) {
+            if (c_status_[*c_it].deleted()) {
                 ++offset_ch;
                 if (ch_map.find(c_it->idx()) != ch_map.end())
                     ch_map[c_it->idx()] = -1;
@@ -162,11 +162,11 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
     tag_it = tags.begin();
 
     for(FaceIter f_it = kernel_.faces_begin(); f_it != kernel_.faces_end(); ++f_it, ++tag_it) {
-        *tag_it = f_status_[f_it->idx()].deleted();
+        *tag_it = f_status_[*f_it].deleted();
 
         if (track_hfh) {
             int halfface_idx = f_it->idx() * 2;
-            if (f_status_[f_it->idx()].deleted()) {
+            if (f_status_[*f_it].deleted()) {
                 offset_hfh += 2;
                 if (hfh_map.find(halfface_idx) != hfh_map.end()) {
                     hfh_map[halfface_idx] = -1;
@@ -190,11 +190,11 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
     tag_it = tags.begin();
 
     for(EdgeIter e_it = kernel_.edges_begin(); e_it != kernel_.edges_end(); ++e_it, ++tag_it) {
-        *tag_it = e_status_[e_it->idx()].deleted();
+        *tag_it = e_status_[*e_it].deleted();
 
         if (track_hh) {
             int halfedge_idx = e_it->idx() * 2;
-            if (e_status_[e_it->idx()].deleted()) {
+            if (e_status_[*e_it].deleted()) {
                 offset_hh += 2;
                 if (hh_map.find(halfedge_idx) != hh_map.end()) {
                     hh_map[halfedge_idx] = -1;
@@ -218,10 +218,10 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
     tag_it = tags.begin();
 
     for(VertexIter v_it = kernel_.vertices_begin(); v_it != kernel_.vertices_end(); ++v_it, ++tag_it) {
-        *tag_it = v_status_[v_it->idx()].deleted();
+        *tag_it = v_status_[*v_it].deleted();
 
         if (track_vh) {
-            if (v_status_[v_it->idx()].deleted()) {
+            if (v_status_[*v_it].deleted()) {
                 if (vh_map.find(v_it->idx()) != vh_map.end()) {
                     ++offset_vh;
                     vh_map[v_it->idx()] = -1;
@@ -291,7 +291,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
                 if(kernel_.incident_cell(hf0) == TopologyKernel::InvalidCellHandle &&
                         kernel_.incident_cell(hf1) == TopologyKernel::InvalidCellHandle) {
 
-                    f_status_[f_it->idx()].set_deleted(true);
+                    f_status_[*f_it].set_deleted(true);
                 }
             }
 
@@ -307,18 +307,18 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
 
                 if(!hehf_it.valid()) {
 
-                    e_status_[e_it->idx()].set_deleted(true);
+                    e_status_[*e_it].set_deleted(true);
 
                 } else {
                     bool validFace = false;
                     for(; hehf_it.valid(); ++hehf_it) {
-                        if(!f_status_[kernel_.face_handle(*hehf_it).idx()].deleted()) {
+                        if(!f_status_[kernel_.face_handle(*hehf_it)].deleted()) {
                             validFace = true;
                             break;
                         }
                     }
                     if(!validFace) {
-                        e_status_[e_it->idx()].set_deleted(true);
+                        e_status_[*e_it].set_deleted(true);
                     }
                 }
             }
@@ -332,7 +332,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
 
                 if(!voh_it.valid()) {
 
-                    v_status_[v_it->idx()].set_deleted(true);
+                    v_status_[*v_it].set_deleted(true);
                 } else {
 
                     bool validEdge = false;
@@ -343,7 +343,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
                         }
                     }
                     if(!validEdge) {
-                        v_status_[v_it->idx()].set_deleted(true);
+                        v_status_[*v_it].set_deleted(true);
                     }
                 }
             }

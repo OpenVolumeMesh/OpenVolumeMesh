@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.6)
-
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+set(CMAKE_CXX_STANDARD 11)
 
 if("${PROJECT_NAME}" STREQUAL "")
     message("Setting project name to OpenVolumeMesh")
@@ -10,8 +10,18 @@ if("${PROJECT_NAME}" STREQUAL "")
 endif()
 
 # add our macro directory to cmake search path
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set (CMAKE_DEBUG_POSTFIX "d")
+
+
+# Enable bigobj on MSVC Windows debug mode
+if ( MSVC )
+   add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,$<$<CONFIG:DEBUG>:/bigobj>,>")
+endif()
+
+if (WIN32)
+  add_definitions( -D_USE_MATH_DEFINES -DNOMINMAX  )
+endif ()
 
 # include our cmake files
 include (ACGCommon)
@@ -20,11 +30,6 @@ acg_get_version ()
 
 include (ACGOutput)
 
-if (WIN32)
-  add_definitions(
-      -D_USE_MATH_DEFINES -DNOMINMAX
-  )
-endif ()
 
 # ========================================================================
 # Call the subdirectories with the projects

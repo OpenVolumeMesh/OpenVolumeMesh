@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 36 $                                                         *
- *   $Date: 2012-01-10 18:00:06 +0100 (Di, 10 Jan 2012) $                    *
- *   $LastChangedBy: kremer $                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include <istream>
 
 #include "OpenVolumeMeshHandle.hh"
@@ -52,7 +44,7 @@ bool operator==(const int& _lhs, const OpenVolumeMeshHandle& _rhs) {
 
 bool operator==(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs) {
 
-    return _lhs == (unsigned int)_rhs.idx();
+    return _lhs == _rhs.uidx();
 }
 
 bool operator!=(const int& _lhs, const OpenVolumeMeshHandle& _rhs) {

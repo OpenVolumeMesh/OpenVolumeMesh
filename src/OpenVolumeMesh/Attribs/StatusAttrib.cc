@@ -74,19 +74,19 @@ void StatusAttrib::mark_higher_dim_entities() {
     if(kernel_.has_vertex_bottom_up_incidences()) {
 
         for(VertexIter v_it = kernel_.vertices_begin(); v_it != kernel_.vertices_end(); ++v_it) {
-            if(v_status_[v_it->idx()].deleted()) {
+            if(v_status_[*v_it].deleted()) {
                 for(VertexOHalfEdgeIter voh_it = kernel_.voh_iter(*v_it);
                         voh_it.valid(); ++voh_it) {
-                    e_status_[kernel_.edge_handle(*voh_it).idx()].set_deleted(true);
+                    e_status_[kernel_.edge_handle(*voh_it)].set_deleted(true);
                 }
             }
         }
     } else {
 
         for(EdgeIter e_it = kernel_.edges_begin(); e_it != kernel_.edges_end(); ++e_it) {
-            if(v_status_[kernel_.edge(*e_it).from_vertex().idx()].deleted() ||
-                    v_status_[kernel_.edge(*e_it).to_vertex().idx()].deleted()) {
-                e_status_[e_it->idx()].set_deleted(true);
+            if(v_status_[kernel_.edge(*e_it).from_vertex()].deleted() ||
+                    v_status_[kernel_.edge(*e_it).to_vertex()].deleted()) {
+                e_status_[*e_it].set_deleted(true);
             }
         }
     }
@@ -95,10 +95,10 @@ void StatusAttrib::mark_higher_dim_entities() {
     if(kernel_.has_edge_bottom_up_incidences()) {
 
         for(EdgeIter e_it = kernel_.edges_begin(); e_it != kernel_.edges_end(); ++e_it) {
-            if(e_status_[e_it->idx()].deleted()) {
+            if(e_status_[*e_it].deleted()) {
                 for(HalfEdgeHalfFaceIter hehf_it = kernel_.hehf_iter(kernel_.halfedge_handle(*e_it, 0));
                         hehf_it.valid(); ++hehf_it) {
-                    f_status_[kernel_.face_handle(*hehf_it).idx()].set_deleted(true);
+                    f_status_[kernel_.face_handle(*hehf_it)].set_deleted(true);
                 }
             }
         }
@@ -121,7 +121,7 @@ void StatusAttrib::mark_higher_dim_entities() {
     if(kernel_.has_face_bottom_up_incidences()) {
 
         for(FaceIter f_it = kernel_.faces_begin(); f_it != kernel_.faces_end(); ++f_it) {
-            if(f_status_[f_it->idx()].deleted()) {
+            if(f_status_[*f_it].deleted()) {
                 CellHandle c0 = kernel_.incident_cell(kernel_.halfface_handle(*f_it, 0));
                 CellHandle c1 = kernel_.incident_cell(kernel_.halfface_handle(*f_it, 1));
                 if(c0.is_valid()) {
