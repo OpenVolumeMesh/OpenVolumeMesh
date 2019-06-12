@@ -406,19 +406,24 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
     if (!deferred_deletion_tmp)
         enable_deferred_deletion(true);
 
+    std::vector<HalfFaceHandle> incident_halffaces_with_cells;
     for (HalfEdgeHalfFaceIter hehf_it = hehf_iter(_heh); hehf_it.valid(); ++hehf_it)
     {
         CellHandle ch = incident_cell(*hehf_it);
         if (ch.is_valid())
-        {
-            std::vector<VertexHandle> vertices = get_cell_vertices(*hehf_it, _heh);
+            incident_halffaces_with_cells.push_back(*hehf_it);
+    }
 
-            delete_cell(ch);
+    for (auto hfh : incident_halffaces_with_cells)
+    {
+        CellHandle ch = incident_cell(hfh);
 
-            add_cell(vertices[0], _vh, vertices[2], vertices[3]);
-            add_cell(_vh, vertices[1], vertices[2], vertices[3]);
-        }
+        std::vector<VertexHandle> vertices = get_cell_vertices(hfh, _heh);
 
+        delete_cell(ch);
+
+        add_cell(vertices[0], _vh, vertices[2], vertices[3]);
+        add_cell(_vh, vertices[1], vertices[2], vertices[3]);
     }
 
     delete_edge(edge_handle(_heh));

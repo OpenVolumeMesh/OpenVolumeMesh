@@ -16,6 +16,8 @@ Version X (?/?/?)
 - Made property handle constructors explicit
 - Enable range iterators on MSVC
 - Fix mesh copying by implementing copy constructors and clone methods
+- Fix bug in edge split of tetrahedral meshes
+- Ensure that halfface iterators start with a boundary halffaces when cells are deleted
 
 
 
