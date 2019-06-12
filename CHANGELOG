@@ -18,6 +18,7 @@ Version X (?/?/?)
 - Fix mesh copying by implementing copy constructors and clone methods
 - Fix bug in edge split of tetrahedral meshes
 - Ensure that halfface iterators start with a boundary halffaces when cells are deleted
+- Added new iterators (VertexIHalfEdgeIter, VertexEdgeIter, VertexHalfFaceIter, EdgeHalfFaceIter, EdgeFaceIter, EdgeCellIter)
 
 
 
