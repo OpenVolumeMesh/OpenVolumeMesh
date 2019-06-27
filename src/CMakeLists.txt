@@ -1,5 +1,12 @@
 include (ACGCommon)
 
+set(OVM_ENABLE_DEPRECATED_APIS ON CACHE BOOL "Support deprecated OpenVolumeMesh APIs")
+
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/Config/DeprecationConfig.hh.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/Config/DeprecationConfig.hh"
+)
+
 include_directories (
   ..
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -10,6 +17,7 @@ set (directories
   .
   OpenVolumeMesh/Attribs
   OpenVolumeMesh/Core
+  OpenVolumeMesh/Config
   OpenVolumeMesh/FileManager
   OpenVolumeMesh/Geometry
   OpenVolumeMesh/Mesh
@@ -32,6 +40,11 @@ else ()
     set_target_properties (OpenVolumeMesh PROPERTIES VERSION ${OPENVOLUMEMESH_VERSION_MAJOR}.${OPENVOLUMEMESH_VERSION_MINOR}
                                           SOVERSION ${OPENVOLUMEMESH_VERSION_MAJOR}.${OPENVOLUMEMESH_VERSION_MINOR} )
 endif ()
+foreach(TARGET_NAME OpenVolumeMesh OpenVolumeMeshStatic)
+    if (TARGET ${TARGET_NAME})
+        target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/Config/")
+    endif()
+endforeach(TARGET_NAME)
 
 # Only install if the project name matches OpenVolumeMesh.
 if (NOT APPLE AND ${PROJECT_NAME} MATCHES "OpenVolumeMesh")
@@ -49,6 +62,10 @@ install(DIRECTORY .
         PATTERN "Templates" EXCLUDE
         PATTERN "Debian*" EXCLUDE)
 endif ()
+
+# install config files
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/Config/DeprecationConfig.hh
+           DESTINATION include/OpenVolumeMesh/Config )
 
 # Only build unittests and file converter
 # if not built as external library
