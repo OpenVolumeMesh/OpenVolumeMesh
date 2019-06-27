@@ -170,15 +170,11 @@ public:
     }
 
     typename PointT::value_type length(const HalfEdgeHandle& _heh) const {
-
-        const typename TopologyKernelT::Edge& e = TopologyKernelT::halfedge(_heh);
-        return (vertex(e.to_vertex()) - vertex(e.from_vertex())).length();
+        return vector(_heh).length();
     }
 
     typename PointT::value_type length(const EdgeHandle& _eh) const {
-
-        const typename TopologyKernelT::Edge& e = TopologyKernelT::edge(_eh);
-        return (vertex(e.to_vertex()) - vertex(e.from_vertex())).length();
+        return vector(_eh).length();
     }
 
     PointT vector(const HalfEdgeHandle& _heh) const {
