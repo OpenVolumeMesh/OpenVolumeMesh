@@ -96,10 +96,12 @@ public:
     const_iterator end() const { return ptr::shared_ptr<PropT>::get()->end(); }
     iterator end() { return ptr::shared_ptr<PropT>::get()->end(); }
 
+#if OVM_ENABLE_DEPRECATED_APIS
     OVM_DEPRECATED("use handles to index properties")
     reference operator[](size_t _idx) { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
     OVM_DEPRECATED("use handles to index properties")
     const_reference operator[](size_t _idx) const { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
+#endif
 
     reference operator[](const EntityHandleT& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.idx()]; }
     const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.uidx()]; }

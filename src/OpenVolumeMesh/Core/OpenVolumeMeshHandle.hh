@@ -81,8 +81,10 @@ public:
 
 	void idx(const int& _idx) { idx_ = _idx; }
 
+#if OVM_ENABLE_DEPRECATED_APIS
     OVM_DEPRECATED("use explicit .idx() instead")
     inline operator int() const { return idx_; }
+#endif
 
 	void reset() { idx_ = -1; }
 
