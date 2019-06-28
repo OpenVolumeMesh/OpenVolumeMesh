@@ -169,10 +169,18 @@ public:
         TopologyKernelT::clear(_clearProps);
     }
 
-    typename PointT::value_type length(const EdgeHandle& _eh) const {
+    typename PointT::value_type length(const HalfEdgeHandle& _heh) const {
+        return vector(_heh).length();
+    }
 
-        const typename TopologyKernelT::Edge& e = TopologyKernelT::edge(_eh);
-        return (vertex(e.to_vertex()) - vertex(e.from_vertex())).length();
+    typename PointT::value_type length(const EdgeHandle& _eh) const {
+        return vector(_eh).length();
+    }
+
+    PointT vector(const HalfEdgeHandle& _heh) const {
+
+        const typename TopologyKernelT::Edge& e = TopologyKernelT::halfedge(_heh);
+        return (vertex(e.to_vertex()) - vertex(e.from_vertex()));
     }
 
     PointT vector(const EdgeHandle& _eh) const {
