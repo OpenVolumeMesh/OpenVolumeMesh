@@ -1510,7 +1510,7 @@ CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator--() {
     const std::vector<HalfFaceHandle>& halffaces =
         BaseIter::mesh()->cell(ref_handle_).halffaces();
     if (hf_iter_ == halffaces.begin()) {
-        hf_iter_ == halffaces.end();
+        hf_iter_ = halffaces.end();
         --lap_;
         if (lap_ < 0)
             BaseIter::valid(false);
@@ -1555,7 +1555,7 @@ CellFaceIterImpl& CellFaceIterImpl::operator--() {
     const std::vector<HalfFaceHandle>& halffaces =
         BaseIter::mesh()->cell(ref_handle_).halffaces();
     if (hf_iter_ == halffaces.begin()) {
-        hf_iter_ == halffaces.end();
+        hf_iter_ = halffaces.end();
         --lap_;
         if (lap_ < 0)
             BaseIter::valid(false);
