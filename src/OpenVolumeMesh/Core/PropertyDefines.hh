@@ -84,6 +84,8 @@ template <> const std::string entityTypeName<Entity::Mesh>();
 template<typename T, typename Entity>
 class PropertyTT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity> {
 public:
+    using value_type = T;
+    using entity_type = Entity;
     template<typename MeshT>
     PropertyTT(MeshT *mesh, const std::string& _name, const T &_def = T())
         : PropertyTT(std::move(mesh->template request_property<T, Entity>(_name, _def)))

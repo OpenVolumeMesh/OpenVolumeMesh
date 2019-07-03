@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <typeinfo>
 
@@ -6,7 +8,7 @@
 /// We need this in order to provide property type safety when
 /// only limited RTTI support is available.
 template<typename T>
-std::string get_type_name()
+inline std::string get_type_name()
 {
 #ifdef _MSC_VER
     // MSVC's type_name only returns a friendly name with .name(),
