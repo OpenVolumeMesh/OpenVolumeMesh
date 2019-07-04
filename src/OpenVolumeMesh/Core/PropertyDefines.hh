@@ -38,6 +38,7 @@
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
+#include <map>
 
 #include "Entities.hh"
 #include "PropertyHandles.hh"

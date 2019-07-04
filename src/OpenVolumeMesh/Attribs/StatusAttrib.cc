@@ -44,6 +44,7 @@
 #include <iostream>
 #endif
 
+#include "../Core/TopologyKernel.hh"
 #include "StatusAttrib.hh"
 
 namespace OpenVolumeMesh {
