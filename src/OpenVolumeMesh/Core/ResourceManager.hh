@@ -41,6 +41,7 @@
 #include <vector>
 #include <type_traits>
 
+#include "../Config/Export.hh"
 #include "OpenVolumeMeshProperty.hh"
 #include "PropertyHandles.hh"
 #include "TypeName.hh"
@@ -51,7 +52,7 @@ namespace OpenVolumeMesh {
 // Forward declarations
 class BaseProperty;
 
-class ResourceManager {
+class OVM_EXPORT ResourceManager {
 public:
     ResourceManager() = default;
     ResourceManager(const ResourceManager &other);

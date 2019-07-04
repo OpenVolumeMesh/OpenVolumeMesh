@@ -1,52 +1,54 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
-set(CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_policy(VERSION 3.12.0)
 
-if("${PROJECT_NAME}" STREQUAL "")
-    message("Setting project name to OpenVolumeMesh")
-    project (OpenVolumeMesh)
 
-    set(CMAKE_MACOSX_RPATH 1)
+project (OpenVolumeMesh
+    VERSION 2.1.0
+    LANGUAGES CXX
+    HOMEPAGE_URL https://openvolumemesh.org/
+    )
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+if( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR} )
+    set(OVM_STANDALONE_BUILD TRUE)
+else()
+    set(OVM_STANDALONE_BUILD FALSE)
 endif()
 
-# add our macro directory to cmake search path
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+#message("OVM_STANDALONE_BUILD: ${OVM_STANDALONE_BUILD}")
+set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh unit tests in 'all' target")
+set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples in 'all' target")
+set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation in 'all' target")
+
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    if (WIN32)
+        set (ACG_PROJECT_LIBDIR "lib")
+        set (ACG_PROJECT_BINDIR ".")
+    else ()
+        set (ACG_PROJECT_LIBDIR "lib")
+        set (ACG_PROJECT_BINDIR "bin")
+    endif ()
+
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/${ACG_PROJECT_BINDIR}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}")
+endif()
+
 set (CMAKE_DEBUG_POSTFIX "d")
 
-
-# Enable bigobj on MSVC Windows debug mode
-if ( MSVC )
-   add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,$<$<CONFIG:DEBUG>:/bigobj>,>")
-endif()
-
-if (WIN32)
-  add_definitions( -D_USE_MATH_DEFINES -DNOMINMAX  )
-endif ()
-
-# include our cmake files
-include (ACGCommon)
-
-acg_get_version ()
-
-include (ACGOutput)
-
-
-# ========================================================================
-# Call the subdirectories with the projects
-# ========================================================================
-
+enable_testing()
 add_subdirectory (src)
 
-# Only add examples and doc to build target if OpenVolumeMesh
-# is not built as external library only
-if(${PROJECT_NAME} MATCHES "OpenVolumeMesh")
+if (OVM_ENABLE_EXAMPLES)
     add_subdirectory (examples)
+endif()
+
+if (OVM_BUILD_DOCUMENTATION)
     add_subdirectory (documentation)
 endif()
 
-# ========================================================================
-# Bundle generation (Targets exist, now configure them)
-# ========================================================================
+#export(PACKAGE OpenVolumeMesh)
 
-# display results
-acg_print_configure_header (OPENVOLUMEMESH "OpenVolumeMesh")
+list(REMOVE_AT CMAKE_MODULE_PATH -1)

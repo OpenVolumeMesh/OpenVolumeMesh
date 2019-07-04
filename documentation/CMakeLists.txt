@@ -1,19 +1,25 @@
-include (ACGDoxygen)
+if (NOT TARGET doc)
+    include (ACGDoxygen)
 
-IF (DOXYGEN_FOUND)
+#find_package(Doxygen REQUIRED dot)
 
-  if (TARGET doc)
-    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html")
-  endif ()
+    IF (DOXYGEN_FOUND)
 
-  # Add a documentation install target
-  add_custom_target(doc-install COMMENT "Installing Documentation" VERBATIM )
+    if (TARGET doc)
+        # TODO
+        #acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html")
+    endif ()
 
-  # Build Documentation before installing it
-  add_dependencies(doc-install doc)
+    # Add a documentation install target
+    add_custom_target(doc-install COMMENT "Installing Documentation" VERBATIM )
 
-  if (TARGET doc-install)
-    acg_copy_after_build (doc-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/doc/html")
-  endif()
+    # Build Documentation before installing it
+    add_dependencies(doc-install doc)
 
-ENDIF(DOXYGEN_FOUND)
+    if (TARGET doc-install)
+        # TODO
+        # acg_copy_after_build (doc-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/doc/html")
+    endif()
+
+    ENDIF(DOXYGEN_FOUND)
+ENDIF()
