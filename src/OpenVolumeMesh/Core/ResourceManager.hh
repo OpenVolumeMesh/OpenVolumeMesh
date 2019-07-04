@@ -43,6 +43,7 @@
 
 #include "OpenVolumeMeshProperty.hh"
 #include "PropertyHandles.hh"
+#include "TypeName.hh"
 #include "ForwardDeclarations.hh"
 
 namespace OpenVolumeMesh {
@@ -222,7 +223,9 @@ public:
 private:
 
     template <class FullPropT, class PropIterT>
-    bool property_exists(const PropIterT& _begin, const PropIterT& _end, const std::string& _name) const {
+    bool property_exists(const PropIterT& _begin, const PropIterT& _end, const std::string& _name) const
+    {
+        auto type_name = get_type_name<typename FullPropT::value_type>();
 
         if(_name.empty()) {
 #ifndef NDEBUG
@@ -235,16 +238,10 @@ private:
         PropIterT it = _begin;
         for(; it != _end; ++it)
         {
-            if((*it)->name() == _name )
+            if((*it)->name() == _name
+                && (*it)->internal_type_name() == type_name)
             {
-#if defined OVM_FORCE_STATIC_CAST && OVM_FORCE_STATIC_CAST
-            return true;
-#else
-            if(dynamic_cast<FullPropT*>(*it) != nullptr)
-            {
-            return true;
-            }
-#endif
+                return true;
             }
         }
         return false;
