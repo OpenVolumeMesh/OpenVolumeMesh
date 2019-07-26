@@ -110,7 +110,7 @@ PropT ResourceManager::internal_request_property(StdVecT& _vec, const std::strin
     return *prop;
 }
 
-// request_property: work around C++ currently now allowing partial specialisation on functions by using structs:
+// request_property: work around C++ currently not allowing partial specialisation on functions by using structs:
 
 template<class T, typename EntityTag>
 struct request_property_impl {
