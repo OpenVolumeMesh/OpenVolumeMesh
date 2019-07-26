@@ -10,6 +10,12 @@ NC='\033[0m'
 OUTPUT='\033[0;32m'
 WARNING='\033[0;93m'
 
+BUILDPATH="build-cppcheck"
+mkdir -p "${BUILDPATH}"
+cd "${BUILDPATH}"
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+cd ..
+
 echo -e "${OUTPUT}"
 echo "=============================================================================="
 echo "Running cppcheck"
@@ -20,7 +26,15 @@ echo -e "${NC}"
 echo "Please Wait ..."
 
 # Run cppcheck and output into file
-cppcheck --enable=all . -I src -i Doc/ --force --suppress=missingIncludeSystem --inline-suppr --quiet -Umin -Umax -UBMPOSTFIX -DOPENVOLUMEMESHDLLEXPORT="" 2>&1 | tee cppcheck.log
+# we do not enable 'style' and 'unusedFunction' (the latter gives false positive
+# for the public library interface)
+cppcheck \
+    --project=${BUILDPATH}/compile_commands.json \
+    --enable=warning,performance,portability,information,missingInclude \
+    --suppress=missingIncludeSystem \
+    --inline-suppr \
+    --quiet \
+    2>&1 | tee cppcheck.log
 
 COUNT=$(wc -l < cppcheck.log )
 
