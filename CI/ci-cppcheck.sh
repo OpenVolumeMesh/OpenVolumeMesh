@@ -30,8 +30,8 @@ echo "Please Wait ..."
 # for the public library interface)
 cppcheck \
     --project=${BUILDPATH}/compile_commands.json \
+    --force \
     --enable=warning,performance,portability,information,missingInclude \
-    --suppress=missingIncludeSystem \
     --inline-suppr \
     --quiet \
     2>&1 | tee cppcheck.log
@@ -44,7 +44,7 @@ echo "CPPCHECK Summary"
 echo "=============================================================================="
 echo -e "${NC}"
 
-if [ $COUNT -gt 5 ]; then
+if [ $COUNT -gt 3 ]; then
   echo -e ${WARNING}
   echo "Total CPPCHECK error Count is $COUNT, which is too High! CPPCHECK Run failed";
   echo -e "${NC}"
