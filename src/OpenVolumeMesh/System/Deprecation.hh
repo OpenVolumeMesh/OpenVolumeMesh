@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DeprecationConfig.hh"
+#include "../Config/DeprecationConfig.hh"
 
 #if defined(__cplusplus) && (__cplusplus >= 201402L)
 #  define OVM_DEPRECATED(msg) [[deprecated(msg)]]
