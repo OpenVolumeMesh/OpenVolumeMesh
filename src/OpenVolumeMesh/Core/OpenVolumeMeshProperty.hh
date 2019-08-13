@@ -73,8 +73,8 @@ public:
 public:
 
 	explicit OpenVolumeMeshPropertyT(
-            const std::string& _name = "<unknown>",
-            const std::string& _internal_type_name = "<unknown>",
+            const std::string& _name,
+            const std::string& _internal_type_name,
             const T &_def = T())
         : OpenVolumeMeshBaseProperty(_name, _internal_type_name),
           def_(_def)
