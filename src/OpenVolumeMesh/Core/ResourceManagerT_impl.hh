@@ -44,121 +44,85 @@ namespace OpenVolumeMesh {
 template<class T>
 VertexPropertyT<T> ResourceManager::request_vertex_property(const std::string& _name, const T _def) {
 
-    return internal_request_property<std::vector<BaseProperty*>,VertexPropertyT<T>,VertexPropHandle,T>(vertex_props_, _name, n_vertices(), _def);
+    return request_property<T, Entity::Vertex>(_name, _def);
 }
 
 template<class T>
 EdgePropertyT<T> ResourceManager::request_edge_property(const std::string& _name, const T _def) {
 
-    return internal_request_property<std::vector<BaseProperty*>,EdgePropertyT<T>,EdgePropHandle,T>(edge_props_, _name, n_edges(), _def);
+    return request_property<T, Entity::Edge>(_name, _def);
 }
 
 template<class T>
 HalfEdgePropertyT<T> ResourceManager::request_halfedge_property(const std::string& _name, const T _def) {
 
-    return internal_request_property<std::vector<BaseProperty*>,HalfEdgePropertyT<T>,HalfEdgePropHandle,T>(halfedge_props_, _name, n_edges()*2u, _def);
+    return request_property<T, Entity::HalfEdge>(_name, _def);
 }
 
 template<class T>
 FacePropertyT<T> ResourceManager::request_face_property(const std::string& _name, const T _def) {
 
-    return internal_request_property<std::vector<BaseProperty*>,FacePropertyT<T>,FacePropHandle,T>(face_props_, _name, n_faces(), _def);
+    return request_property<T, Entity::Face>(_name, _def);
 }
 
 template<class T>
 HalfFacePropertyT<T> ResourceManager::request_halfface_property(const std::string& _name, const T _def) {
-
-    return internal_request_property<std::vector<BaseProperty*>,HalfFacePropertyT<T>,HalfFacePropHandle,T>(halfface_props_, _name, n_faces()*2u, _def);
+    return request_property<T, Entity::HalfFace>(_name, _def);
 }
 
 template<class T>
 CellPropertyT<T> ResourceManager::request_cell_property(const std::string& _name, const T _def) {
 
-    return internal_request_property<std::vector<BaseProperty*>,CellPropertyT<T>,CellPropHandle,T>(cell_props_, _name, n_cells(), _def);
+    return request_property<T, Entity::Cell>(_name, _def);
 }
 
 template<class T>
 MeshPropertyT<T> ResourceManager::request_mesh_property(const std::string& _name, const T _def) {
 
-    return internal_request_property<std::vector<BaseProperty*>,MeshPropertyT<T>,MeshPropHandle,T>(mesh_props_, _name, 1, _def);
+    return request_property<T, Entity::Mesh>(_name, _def);
 }
 
-template<class StdVecT, class PropT, class HandleT, class T>
-PropT ResourceManager::internal_request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def)
+template<typename T, typename EntityTag>
+PropertyTT<T, EntityTag>* ResourceManager::internal_find_property(const std::string& _name)
 {
+    using PropT = PropertyTT<T, EntityTag>;
     auto type_name = get_type_name<T>();
+    auto &propVec = entity_props<EntityTag>();
 
     if(!_name.empty()) {
-        for(typename StdVecT::iterator it = _vec.begin();
-                it != _vec.end(); ++it) {
-            if((*it)->name() == _name
-                && (*it)->internal_type_name() == type_name)
+        for(auto &prop: propVec)
+        {
+            if(prop->name() == _name
+                && prop->internal_type_name() == type_name)
             {
-                return *static_cast<PropT*>(*it);
+                return static_cast<PropT*>(prop);
             }
         }
     }
-
-    auto handle = HandleT::from_unsigned(_vec.size());
-
-    PropT* prop = new PropT(_name, type_name, *this, handle, _def);
-    prop->resize(_size);
-
-    // Store property pointer
-    _vec.push_back(prop);
-
-    return *prop;
+    return nullptr;
 }
 
-// request_property: work around C++ currently not allowing partial specialisation on functions by using structs:
-
-template<class T, typename EntityTag>
-struct request_property_impl {
-    static PropertyTT<T, EntityTag> _(ResourceManager* /*resman*/, const std::string& /*_name*/, const T /*_def*/);
-};
-
-template<class T>
-struct request_property_impl<T, Entity::Vertex>{
-    static PropertyTT<T, Entity::Vertex> _(ResourceManager *resman, const std::string &_name, const T _def) {
-        return resman->request_vertex_property<T>(_name, _def);
-    }
-};
-template<class T>
-struct request_property_impl<T, Entity::Edge>{
-    static PropertyTT<T, Entity::Edge> _(ResourceManager *resman, const std::string &_name, const T _def) {
-        return resman->request_edge_property<T>(_name, _def);
-    }
-};
-template<class T>
-struct request_property_impl<T, Entity::HalfEdge>{
-    static PropertyTT<T, Entity::HalfEdge> _(ResourceManager *resman, const std::string &_name, const T _def) {
-        return resman->request_halfedge_property<T>(_name, _def);
-    }
-};
-template<class T>
-struct request_property_impl<T, Entity::Face>{
-    static PropertyTT<T, Entity::Face> _(ResourceManager *resman, const std::string &_name, const T _def) {
-        return resman->request_face_property<T>(_name, _def);
-    }
-};
-template<class T>
-struct request_property_impl<T, Entity::HalfFace>{
-    static PropertyTT<T, Entity::HalfFace> _(ResourceManager *resman, const std::string &_name, const T _def) {
-        return resman->request_halfface_property<T>(_name, _def);
-    }
-};
-template<class T>
-struct request_property_impl<T, Entity::Cell>{
-    static PropertyTT<T, Entity::Cell> _(ResourceManager *resman, const std::string &_name, const T _def) {
-        return resman->request_cell_property<T>(_name, _def);
-    }
-};
+template<class T, class EntityTag>
+PropertyTT<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def)
+{
+    auto type_name = get_type_name<T>();
+    auto &propVec = entity_props<EntityTag>();
+    auto handle = PropHandleT<EntityTag>::from_unsigned(propVec.size());
+    auto prop = new PropertyTT<T, EntityTag>(_name, type_name, *this, handle, _def);
+    prop->resize(n<EntityTag>());
+    propVec.push_back(prop);
+    return *prop;
+}
 
 template<typename T, typename EntityTag>
 PropertyTT<T, EntityTag> ResourceManager::request_property(const std::string& _name, const T _def)
 {
-    return request_property_impl<T, EntityTag>::_(this, _name, _def);
+    auto *prop = internal_find_property<T, EntityTag>(_name);
+    if (prop)
+        return *prop;
+    return internal_create_property<T, EntityTag>(_name, _def);
 }
+
 
 
 template<typename T, class EntityTag>

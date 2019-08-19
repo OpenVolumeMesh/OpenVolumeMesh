@@ -300,4 +300,87 @@ void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, Re
     assignProperties<Move>(other->mesh_props_,     mesh_props_);
 }
 
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::Vertex>()
+{
+    return vertex_props_;
+}
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::Edge>()
+{
+    return edge_props_;
+}
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::HalfEdge>()
+{
+    return halfedge_props_;
+}
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::Face>()
+{
+    return face_props_;
+}
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::HalfFace>()
+{
+    return halfface_props_;
+}
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::Cell>()
+{
+    return cell_props_;
+}
+template<>
+ResourceManager::Properties&
+ResourceManager::entity_props<Entity::Mesh>()
+{
+    return mesh_props_;
+}
+
+template<>
+size_t ResourceManager::n<Entity::Vertex>()
+{
+    return n_vertices();
+}
+template<>
+size_t ResourceManager::n<Entity::Edge>()
+{
+    return n_edges();
+}
+template<>
+size_t ResourceManager::n<Entity::HalfEdge>()
+{
+    return n_halfedges();
+}
+template<>
+size_t ResourceManager::n<Entity::Face>()
+{
+    return n_faces();
+}
+template<>
+size_t ResourceManager::n<Entity::HalfFace>()
+{
+    return n_halffaces();
+}
+
+template<>
+size_t ResourceManager::n<Entity::Cell>()
+{
+    return n_cells();
+}
+
+template<>
+size_t ResourceManager::n<Entity::Mesh>()
+{
+    return 1;
+}
+
+
+
 } // Namespace OpenVolumeMesh

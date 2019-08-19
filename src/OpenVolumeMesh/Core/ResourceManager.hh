@@ -136,9 +136,9 @@ public:
     virtual size_t n_cells() const = 0;
 
 
-    template<typename T,
-             typename EntityTag
-             >
+    /** Get or create property: if the property does not exist yet, create it.
+     */
+    template<typename T, typename EntityTag>
     PropertyTT<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
 
     template<class T> VertexPropertyT<T> request_vertex_property(const std::string& _name = std::string(), const T _def = T());
@@ -306,8 +306,11 @@ private:
     template<class StdVecT>
     void remove_property(StdVecT& _vec, size_t _idx);
 
-    template<class StdVecT, class PropT, class HandleT, class T>
-    PropT internal_request_property(StdVecT& _vec, const std::string& _name, size_t _size, const T _def = T());
+    template<typename T, typename EntityTag>
+    PropertyTT<T, EntityTag> *internal_find_property(const std::string& _name);
+
+    template<typename T, typename EntityTag>
+    PropertyTT<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T());
 
     template<class StdVecT>
     void clearVec(StdVecT& _vec);
@@ -334,6 +337,12 @@ private:
     Properties cell_props_;
 
     Properties mesh_props_;
+
+    template<typename Entity>
+    Properties &entity_props();
+
+    template<typename Entity>
+    size_t n();
 };
 
 }
