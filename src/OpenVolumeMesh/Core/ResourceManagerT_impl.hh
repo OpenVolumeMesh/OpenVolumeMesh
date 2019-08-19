@@ -123,6 +123,28 @@ PropertyTT<T, EntityTag> ResourceManager::request_property(const std::string& _n
     return internal_create_property<T, EntityTag>(_name, _def);
 }
 
+#if OVM_CXX_17
+
+template<typename T, typename EntityTag>
+std::optional<PropertyTT<T, EntityTag>>
+ResourceManager::create_property(const std::string& _name, const T _def)
+{
+    auto *prop = internal_find_property<T, EntityTag>(_name);
+    if (prop)
+        return {};
+    return {*internal_create_property<T, EntityTag>(_name, _def)};
+}
+
+template<typename T, typename EntityTag>
+std::optional<PropertyTT<T, EntityTag>>
+ResourceManager::get_property(const std::string& _name)
+{
+    auto *prop = internal_find_property<T, EntityTag>(_name);
+    if (prop)
+        return {*prop};
+    return {};
+}
+#endif
 
 
 template<typename T, class EntityTag>

@@ -41,11 +41,16 @@
 #include <vector>
 #include <type_traits>
 
+#include "../System/Compiler.hh"
 #include "../Config/Export.hh"
 #include "OpenVolumeMeshProperty.hh"
 #include "PropertyHandles.hh"
 #include "TypeName.hh"
 #include "ForwardDeclarations.hh"
+
+#if OVM_CXX_17
+#include <optional>
+#endif
 
 namespace OpenVolumeMesh {
 
@@ -140,6 +145,18 @@ public:
      */
     template<typename T, typename EntityTag>
     PropertyTT<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
+
+#if OVM_CXX_17
+    /** Create new property: if the property already exists, return no value.
+     */
+    template<typename T, typename EntityTag>
+    std::optional<PropertyTT<T, EntityTag>> create_property(const std::string& _name = std::string(), const T _def = T());
+
+    /** Get existing property: if the property does not exist, return no value.
+     */
+    template<typename T, typename EntityTag>
+    std::optional<PropertyTT<T, EntityTag>> get_property(const std::string& _name = std::string());
+#endif
 
     template<class T> VertexPropertyT<T> request_vertex_property(const std::string& _name = std::string(), const T _def = T());
 
