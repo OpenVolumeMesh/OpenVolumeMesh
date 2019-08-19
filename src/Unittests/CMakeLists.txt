@@ -31,7 +31,12 @@ if(GTEST_FOUND)
         DESTINATION "${CMAKE_BINARY_DIR}/Unittests"
         )
 
-    set_target_properties(unittests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests)
+    set_target_properties(unittests PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests
+        CXX_STANDARD ${OVM_CXX_VERSION}
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO
+        )
 
     #[[=
     if ( WIN32 )

@@ -9,10 +9,11 @@ add_executable(simple_mesh simple_mesh/simple_mesh.cc)
 
 target_link_libraries(simple_mesh OpenVolumeMesh::OpenVolumeMesh)
 
-set_target_properties(simple_mesh PROPERTIES
-    CXX_STANDARD 14
+set_target_properties (simple_mesh PROPERTIES
+    CXX_STANDARD ${OVM_CXX_VERSION}
     CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO)
+    CXX_EXTENSIONS NO
+)
 
 #[[=
 if(WIN32)

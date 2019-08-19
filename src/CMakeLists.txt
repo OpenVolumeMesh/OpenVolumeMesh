@@ -111,7 +111,7 @@ generate_export_header(OpenVolumeMesh
 set_target_properties (OpenVolumeMesh PROPERTIES
     VERSION ${OpenVolumeMesh_VERSION_MAJOR}.${OpenVolumeMesh_VERSION_MINOR}
     SOVERSION ${OpenVolumeMesh_VERSION_MAJOR}.${OpenVolumeMesh_VERSION_MINOR}
-    CXX_STANDARD 14
+    CXX_STANDARD ${OVM_CXX_VERSION}
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
     CXX_VISIBILITY_PRESET hidden

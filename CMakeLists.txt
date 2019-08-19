@@ -22,6 +22,10 @@ set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMes
 set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples in 'all' target")
 set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation in 'all' target")
 
+set(OVM_CXX_VERSION 14 CACHE STRING "C++ version to use")
+set_property(CACHE OVM_CXX_VERSION PROPERTY STRINGS 14 17 20)
+
+
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     if (WIN32)
         set (ACG_PROJECT_LIBDIR "lib")
