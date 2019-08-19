@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 36 $                                                         *
- *   $Date: 2012-01-10 18:00:06 +0100 (Di, 10 Jan 2012) $                    *
- *   $LastChangedBy: kremer $                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include <istream>
 
 #include "OpenVolumeMeshStatus.hh"
@@ -47,7 +39,11 @@
 namespace OpenVolumeMesh {
 
 std::ostream& operator<<(std::ostream& _ostr, const OpenVolumeMeshStatus& _status) {
-    _ostr << _status.selected() << " " << _status.tagged() << " " << _status.deleted() << std::endl;
+    _ostr << _status.selected()
+          << " " << _status.tagged()
+          << " " << _status.deleted()
+          << " " << _status.hidden()
+          << std::endl;
     return _ostr;
 }
 
@@ -59,7 +55,8 @@ std::istream& operator>>(std::istream& _istr, OpenVolumeMeshStatus& _status) {
     _status.set_tagged(b);
     _istr >> b;
     _status.set_deleted(b);
+    _istr >> b;
+    _status.set_hidden(b);
     return _istr;
 }
-
 } // Namespace OpenVolumeMesh
