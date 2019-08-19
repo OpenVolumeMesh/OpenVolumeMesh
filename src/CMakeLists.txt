@@ -134,6 +134,7 @@ target_compile_definitions(OpenVolumeMesh
 
 target_compile_options(OpenVolumeMesh PRIVATE
     "$<$<CXX_COMPILER_ID:MSVC>:/W1>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>" # Enable updated __cplusplus macro
     "$<$<CXX_COMPILER_ID:GNU>:-Wall>"
     "$<$<CXX_COMPILER_ID:Clang>:-Wall;-Wno-c++98-compat;-Wno-c++98-compat-pedantic;-Wno-weak-vtables;-Wno-padded;-Wno-sign-conversion;-Wno-missing-prototypes>"
     )
