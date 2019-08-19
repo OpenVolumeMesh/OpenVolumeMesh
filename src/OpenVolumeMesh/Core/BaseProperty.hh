@@ -38,12 +38,13 @@
 #include <string>
 
 #include "OpenVolumeMeshHandle.hh"
+#include "../Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
 class ResourceManager;
 
-class BaseProperty {
+class OVM_EXPORT BaseProperty {
 public:
     friend class ResourceManager;
 

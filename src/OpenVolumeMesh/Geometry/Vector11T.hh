@@ -54,6 +54,8 @@
 #include <cassert>
 #include <cstdlib>
 
+#include "../Config/Export.hh"
+
 namespace OpenVolumeMesh {
 
 namespace Geometry {
@@ -830,20 +832,20 @@ using namespace Geometry;
 template <class T>
 const std::string typeName();
 
-template <> const std::string typeName<Vec2f>();
-template <> const std::string typeName<Vec2d>();
-template <> const std::string typeName<Vec2i>();
-template <> const std::string typeName<Vec2ui>();
+template <> OVM_EXPORT const std::string typeName<Vec2f>();
+template <> OVM_EXPORT const std::string typeName<Vec2d>();
+template <> OVM_EXPORT const std::string typeName<Vec2i>();
+template <> OVM_EXPORT const std::string typeName<Vec2ui>();
 
-template <> const std::string typeName<Vec3f>();
-template <> const std::string typeName<Vec3d>();
-template <> const std::string typeName<Vec3i>();
-template <> const std::string typeName<Vec3ui>();
+template <> OVM_EXPORT const std::string typeName<Vec3f>();
+template <> OVM_EXPORT const std::string typeName<Vec3d>();
+template <> OVM_EXPORT const std::string typeName<Vec3i>();
+template <> OVM_EXPORT const std::string typeName<Vec3ui>();
 
-template <> const std::string typeName<Vec4f>();
-template <> const std::string typeName<Vec4d>();
-template <> const std::string typeName<Vec4i>();
-template <> const std::string typeName<Vec4ui>();
+template <> OVM_EXPORT const std::string typeName<Vec4f>();
+template <> OVM_EXPORT const std::string typeName<Vec4d>();
+template <> OVM_EXPORT const std::string typeName<Vec4i>();
+template <> OVM_EXPORT const std::string typeName<Vec4ui>();
 
 } // namespace OpenVolumeMesh
 

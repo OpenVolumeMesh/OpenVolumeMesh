@@ -49,13 +49,14 @@
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "OpenVolumeMeshStatus.hh"
 #include "../Core/PropertyDefines.hh"
+#include "../Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
 // Forward declaration
 class TopologyKernel;
 
-class StatusAttrib {
+class OVM_EXPORT StatusAttrib {
 public:
     explicit StatusAttrib(TopologyKernel& _kernel);
     ~StatusAttrib();

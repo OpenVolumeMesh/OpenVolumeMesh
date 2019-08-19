@@ -52,6 +52,7 @@
 #endif
 
 #include "OpenVolumeMeshHandle.hh"
+#include "../Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -242,7 +243,7 @@ protected:
 
 //===========================================================================
 
-class VertexOHalfEdgeIter :
+class OVM_EXPORT VertexOHalfEdgeIter :
     public BaseCirculator<
   VertexHandle,
   HalfEdgeHandle> {
@@ -305,7 +306,7 @@ private:
 
 //===========================================================================
 
-class VertexVertexIter :
+class OVM_EXPORT VertexVertexIter :
     public BaseCirculator<
   VertexHandle,
   VertexHandle> {
@@ -366,7 +367,7 @@ private:
 
 //===========================================================================
 
-class HalfEdgeHalfFaceIter : public BaseCirculator<
+class OVM_EXPORT HalfEdgeHalfFaceIter : public BaseCirculator<
 	HalfEdgeHandle,
 	HalfFaceHandle> {
 public:
@@ -424,7 +425,7 @@ private:
 
 //===========================================================================
 
-class VertexFaceIter : public BaseCirculator<
+class OVM_EXPORT VertexFaceIter : public BaseCirculator<
   VertexHandle,
   FaceHandle> {
 public:
@@ -482,7 +483,7 @@ private:
 
 //===========================================================================
 
-class VertexCellIter : public BaseCirculator<
+class OVM_EXPORT VertexCellIter : public BaseCirculator<
 	VertexHandle,
 	CellHandle> {
 public:
@@ -538,7 +539,7 @@ private:
     size_t cur_index_;
 };
 
-class HalfEdgeCellIter : public BaseCirculator<
+class OVM_EXPORT HalfEdgeCellIter : public BaseCirculator<
 	HalfEdgeHandle,
 	CellHandle> {
 public:
@@ -600,7 +601,7 @@ private:
 
 //===========================================================================
 
-class CellVertexIter : public BaseCirculator<
+class OVM_EXPORT CellVertexIter : public BaseCirculator<
 	CellHandle,
 	VertexHandle> {
 public:
@@ -658,7 +659,7 @@ private:
 
 //===========================================================================
 
-class CellCellIter : public BaseCirculator<
+class OVM_EXPORT CellCellIter : public BaseCirculator<
 	CellHandle,
 	CellHandle> {
 public:
@@ -716,7 +717,7 @@ private:
 
 //===========================================================================
 
-class HalfFaceVertexIter : public BaseCirculator<
+class OVM_EXPORT HalfFaceVertexIter : public BaseCirculator<
     HalfFaceHandle,
     VertexHandle> {
 public:
@@ -774,7 +775,7 @@ private:
 
 //===========================================================================
 
-class BoundaryHalfFaceHalfFaceIter : public BaseCirculator<HalfFaceHandle,
+class OVM_EXPORT BoundaryHalfFaceHalfFaceIter : public BaseCirculator<HalfFaceHandle,
     HalfFaceHandle> {
 private:
     typedef BaseCirculator<HalfFaceHandle,
@@ -834,7 +835,7 @@ private:
 
 //===========================================================================
 
-class VertexIter : public BaseIterator<VertexHandle> {
+class OVM_EXPORT VertexIter : public BaseIterator<VertexHandle> {
 public:
     typedef BaseIterator<VertexHandle> BaseIter;
 
@@ -888,7 +889,7 @@ private:
 
 //===========================================================================
 
-class EdgeIter : public BaseIterator<EdgeHandle> {
+class OVM_EXPORT EdgeIter : public BaseIterator<EdgeHandle> {
 public:
     typedef BaseIterator<EdgeHandle> BaseIter;
 
@@ -942,7 +943,7 @@ private:
 
 //===========================================================================
 
-class HalfEdgeIter : public BaseIterator<HalfEdgeHandle> {
+class OVM_EXPORT HalfEdgeIter : public BaseIterator<HalfEdgeHandle> {
 public:
     typedef BaseIterator<HalfEdgeHandle> BaseIter;
 
@@ -996,7 +997,7 @@ private:
 
 //===========================================================================
 
-class FaceIter : public BaseIterator<FaceHandle> {
+class OVM_EXPORT FaceIter : public BaseIterator<FaceHandle> {
 public:
     typedef BaseIterator<FaceHandle> BaseIter;
 
@@ -1050,7 +1051,7 @@ private:
 
 //===========================================================================
 
-class HalfFaceIter : public BaseIterator<HalfFaceHandle> {
+class OVM_EXPORT HalfFaceIter : public BaseIterator<HalfFaceHandle> {
 public:
     typedef BaseIterator<HalfFaceHandle> BaseIter;
 
@@ -1104,7 +1105,7 @@ private:
 
 //===========================================================================
 
-class CellIter : public BaseIterator<CellHandle> {
+class OVM_EXPORT CellIter : public BaseIterator<CellHandle> {
 public:
     typedef BaseIterator<CellHandle> BaseIter;
 
@@ -1162,7 +1163,7 @@ namespace Internal {
 
 //===========================================================================
 
-class VertexIHalfEdgeIterImpl : public BaseCirculator<VertexHandle, HalfEdgeHandle> {
+class OVM_EXPORT VertexIHalfEdgeIterImpl : public BaseCirculator<VertexHandle, HalfEdgeHandle> {
 public:
 
     typedef BaseCirculator<VertexHandle, HalfEdgeHandle> BaseIter;
@@ -1179,7 +1180,7 @@ private:
 
 //===========================================================================
 
-class VertexEdgeIterImpl : public BaseCirculator<VertexHandle, EdgeHandle> {
+class OVM_EXPORT VertexEdgeIterImpl : public BaseCirculator<VertexHandle, EdgeHandle> {
 public:
 
     typedef BaseCirculator<VertexHandle, EdgeHandle> BaseIter;
@@ -1196,7 +1197,7 @@ private:
 
 //===========================================================================
 
-class VertexHalfFaceIterImpl : public BaseCirculator<VertexHandle, HalfFaceHandle> {
+class OVM_EXPORT VertexHalfFaceIterImpl : public BaseCirculator<VertexHandle, HalfFaceHandle> {
 public:
 
     typedef BaseCirculator<VertexHandle, HalfFaceHandle> BaseIter;
@@ -1214,7 +1215,7 @@ private:
 
 //===========================================================================
 
-class HalfEdgeFaceIterImpl : public BaseCirculator<HalfEdgeHandle, FaceHandle> {
+class OVM_EXPORT HalfEdgeFaceIterImpl : public BaseCirculator<HalfEdgeHandle, FaceHandle> {
 public:
 
     typedef BaseCirculator<HalfEdgeHandle, FaceHandle> BaseIter;
@@ -1232,7 +1233,7 @@ private:
 
 //===========================================================================
 
-class EdgeHalfFaceIterImpl : public BaseCirculator<EdgeHandle, HalfFaceHandle> {
+class OVM_EXPORT EdgeHalfFaceIterImpl : public BaseCirculator<EdgeHandle, HalfFaceHandle> {
 public:
 
     typedef BaseCirculator<EdgeHandle, HalfFaceHandle> BaseIter;
@@ -1250,7 +1251,7 @@ private:
 
 //===========================================================================
 
-class EdgeFaceIterImpl : public HalfEdgeFaceIterImpl {
+class OVM_EXPORT EdgeFaceIterImpl : public HalfEdgeFaceIterImpl {
 public:
 
     typedef EdgeHandle CenterEntityHandle;
@@ -1260,7 +1261,7 @@ public:
 
 //===========================================================================
 
-class EdgeCellIterImpl : public HalfEdgeCellIter {
+class OVM_EXPORT EdgeCellIterImpl : public HalfEdgeCellIter {
 public:
 
     typedef EdgeHandle CenterEntityHandle;
@@ -1270,7 +1271,7 @@ public:
 
 //===========================================================================
 
-class HalfFaceHalfEdgeIterImpl : public BaseCirculator<HalfFaceHandle, HalfEdgeHandle> {
+class OVM_EXPORT HalfFaceHalfEdgeIterImpl : public BaseCirculator<HalfFaceHandle, HalfEdgeHandle> {
 public:
 
     typedef BaseCirculator<HalfFaceHandle, HalfEdgeHandle> BaseIter;
@@ -1287,7 +1288,7 @@ private:
 
 //===========================================================================
 
-class HalfFaceEdgeIterImpl : public BaseCirculator<HalfFaceHandle, EdgeHandle> {
+class OVM_EXPORT HalfFaceEdgeIterImpl : public BaseCirculator<HalfFaceHandle, EdgeHandle> {
 public:
 
     typedef BaseCirculator<HalfFaceHandle, EdgeHandle> BaseIter;
@@ -1304,7 +1305,7 @@ private:
 
 //===========================================================================
 
-class FaceVertexIterImpl : public HalfFaceVertexIter {
+class OVM_EXPORT FaceVertexIterImpl : public HalfFaceVertexIter {
 public:
 
     typedef FaceHandle CenterEntityHandle;
@@ -1314,7 +1315,7 @@ public:
 
 //===========================================================================
 
-class FaceHalfEdgeIterImpl : public HalfFaceHalfEdgeIterImpl {
+class OVM_EXPORT FaceHalfEdgeIterImpl : public HalfFaceHalfEdgeIterImpl {
 public:
 
     typedef FaceHandle CenterEntityHandle;
@@ -1324,7 +1325,7 @@ public:
 
 //===========================================================================
 
-class FaceEdgeIterImpl : public HalfFaceEdgeIterImpl {
+class OVM_EXPORT FaceEdgeIterImpl : public HalfFaceEdgeIterImpl {
 public:
 
     typedef FaceHandle CenterEntityHandle;
@@ -1334,7 +1335,7 @@ public:
 
 //===========================================================================
 
-class CellHalfEdgeIterImpl : public BaseCirculator<CellHandle, HalfEdgeHandle> {
+class OVM_EXPORT CellHalfEdgeIterImpl : public BaseCirculator<CellHandle, HalfEdgeHandle> {
 public:
 
     typedef BaseCirculator<CellHandle, HalfEdgeHandle> BaseIter;
@@ -1352,7 +1353,7 @@ private:
 
 //===========================================================================
 
-class CellEdgeIterImpl : public BaseCirculator<CellHandle, EdgeHandle> {
+class OVM_EXPORT CellEdgeIterImpl : public BaseCirculator<CellHandle, EdgeHandle> {
 public:
 
     typedef BaseCirculator<CellHandle, EdgeHandle> BaseIter;
@@ -1370,7 +1371,7 @@ private:
 
 //===========================================================================
 
-class CellHalfFaceIterImpl : public BaseCirculator<CellHandle, HalfFaceHandle> {
+class OVM_EXPORT CellHalfFaceIterImpl : public BaseCirculator<CellHandle, HalfFaceHandle> {
 public:
 
     typedef BaseCirculator<CellHandle, HalfFaceHandle> BaseIter;
@@ -1387,7 +1388,7 @@ private:
 
 //===========================================================================
 
-class CellFaceIterImpl : public BaseCirculator<CellHandle, FaceHandle> {
+class OVM_EXPORT CellFaceIterImpl : public BaseCirculator<CellHandle, FaceHandle> {
 public:
 
     typedef BaseCirculator<CellHandle, FaceHandle> BaseIter;
@@ -1466,6 +1467,33 @@ public:
 };
 
 //===========================================================================
+
+
+template class OVM_EXPORT GenericCirculator<Internal::VertexIHalfEdgeIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::VertexEdgeIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::VertexHalfFaceIterImpl>;
+
+template class OVM_EXPORT GenericCirculator<Internal::HalfEdgeFaceIterImpl>;
+
+template class OVM_EXPORT GenericCirculator<Internal::EdgeHalfFaceIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::EdgeFaceIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::EdgeCellIterImpl>;
+
+template class OVM_EXPORT GenericCirculator<Internal::HalfFaceHalfEdgeIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::HalfFaceEdgeIterImpl>;
+
+template class OVM_EXPORT GenericCirculator<Internal::FaceVertexIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::FaceHalfEdgeIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::FaceEdgeIterImpl>;
+
+template class OVM_EXPORT GenericCirculator<Internal::CellHalfEdgeIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::CellEdgeIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::CellHalfFaceIterImpl>;
+template class OVM_EXPORT GenericCirculator<Internal::CellFaceIterImpl>;
+
+
+
+
 
 typedef GenericCirculator<Internal::VertexIHalfEdgeIterImpl> VertexIHalfEdgeIter;
 typedef GenericCirculator<Internal::VertexEdgeIterImpl> VertexEdgeIter;
@@ -1595,7 +1623,6 @@ private:
 };
 
 //===========================================================================
-
 typedef BoundaryItemIter<VertexIter, VertexHandle> BoundaryVertexIter;
 typedef BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle> BoundaryHalfEdgeIter;
 typedef BoundaryItemIter<EdgeIter, EdgeHandle> BoundaryEdgeIter;

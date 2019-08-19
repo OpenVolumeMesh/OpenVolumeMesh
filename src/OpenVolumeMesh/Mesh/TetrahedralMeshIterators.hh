@@ -44,6 +44,7 @@
 #define TETRAHEDRALMESHITERATORS_HH
 
 #include "../Core/Iterators.hh"
+#include "../Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -56,7 +57,7 @@ class TetrahedralMeshTopologyKernel;
  *
  */
 
-class TetVertexIter : public BaseCirculator<CellHandle,
+class OVM_EXPORT TetVertexIter : public BaseCirculator<CellHandle,
     VertexHandle> {
 private:
     typedef BaseCirculator<CellHandle,

@@ -43,10 +43,11 @@
 #include "OpenVolumeMeshHandle.hh"
 #include "ResourceManager.hh"
 #include "Iterators.hh"
+#include "../Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
-class TopologyKernel : public ResourceManager {
+class OVM_EXPORT TopologyKernel : public ResourceManager {
 public:
 
     TopologyKernel() = default;
