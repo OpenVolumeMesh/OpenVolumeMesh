@@ -109,7 +109,7 @@ public:
 		data_[_dst_idx] = data_[_src_idx];
 	}
 	void delete_element(size_t _idx) override {
-		data_.erase(data_.begin() + static_cast<ssize_t>(_idx));
+		data_.erase(data_.begin() + static_cast<long>(_idx));
 	}
 
 public:
