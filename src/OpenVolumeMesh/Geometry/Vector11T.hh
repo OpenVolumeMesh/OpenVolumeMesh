@@ -678,7 +678,7 @@ auto operator<<(std::ostream& os, const VectorT<Scalar, DIM> &_vec) ->
         sizeof(decltype(os << _vec[0])) >= 0, std::ostream&>::type {
 
     os << _vec[0];
-    for (int i = 1; i < DIM; ++i) {
+    for (size_t i = 1; i < DIM; ++i) {
         os << " " << _vec[i];
     }
     return os;
@@ -689,7 +689,7 @@ template<typename Scalar, int DIM>
 auto operator>> (std::istream& is, VectorT<Scalar, DIM> &_vec) ->
     typename std::enable_if<
         sizeof(decltype(is >> _vec[0])) >= 0, std::istream &>::type {
-    for (int i = 0; i < DIM; ++i)
+    for (size_t i = 0; i < DIM; ++i)
         is >> _vec[i];
     return is;
 }

@@ -80,12 +80,12 @@ public:
 
         assert(_vh.idx() < (int)vertices_.size());
 
-        vertices_[_vh.idx()] = _p;
+        vertices_[_vh.uidx()] = _p;
     }
 
     /// Get point _vh's coordinates
     const VecT& vertex(const VertexHandle& _vh) const {
-        return vertices_[_vh.idx()];
+        return vertices_[_vh.uidx()];
     }
 
     VertexIter delete_vertex(const VertexHandle& _h) override {
@@ -130,7 +130,7 @@ public:
         if (_h1 == _h2)
             return;
 
-        std::swap(vertices_[_h1.idx()], vertices_[_h2.idx()]);
+        std::swap(vertices_[_h1.uidx()], vertices_[_h2.uidx()]);
 
         TopologyKernelT::swap_vertex_indices(_h1, _h2);
     }
