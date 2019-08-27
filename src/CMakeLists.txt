@@ -121,6 +121,11 @@ set_target_properties (OpenVolumeMesh PROPERTIES
 
 target_compile_options(OpenVolumeMesh PUBLIC
     "$<$<CXX_COMPILER_ID:MSVC>:/bigobj>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>" # Enable updated __cplusplus macro
+    PRIVATE
+    "$<$<CXX_COMPILER_ID:GNU>:-Wall>"
+    "$<$<CXX_COMPILER_ID:Clang>:-Wall;-Wno-c++98-compat;-Wno-c++98-compat-pedantic;-Wno-weak-vtables;-Wno-padded;-Wno-sign-conversion;-Wno-missing-prototypes>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/W1>"
     # disable MSVC inline warnings that are enabled with /Ob2, which is in the default cmake release cxxflags:
     "$<$<CXX_COMPILER_ID:MSVC>:/wd4710>"
     "$<$<CXX_COMPILER_ID:MSVC>:/wd4711>"
@@ -131,13 +136,6 @@ target_compile_definitions(OpenVolumeMesh
         "INCLUDE_TEMPLATES"
         "$<$<CXX_COMPILER_ID:MSVC>:NOMINMAX>"
         "$<$<CXX_COMPILER_ID:MSVC>:_USE_MATH_DEFINES>"
-    )
-
-target_compile_options(OpenVolumeMesh PRIVATE
-    "$<$<CXX_COMPILER_ID:MSVC>:/W1>"
-    "$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>" # Enable updated __cplusplus macro
-    "$<$<CXX_COMPILER_ID:GNU>:-Wall>"
-    "$<$<CXX_COMPILER_ID:Clang>:-Wall;-Wno-c++98-compat;-Wno-c++98-compat-pedantic;-Wno-weak-vtables;-Wno-padded;-Wno-sign-conversion;-Wno-missing-prototypes>"
     )
 
 target_include_directories(OpenVolumeMesh
