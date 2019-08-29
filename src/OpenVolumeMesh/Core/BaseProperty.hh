@@ -50,10 +50,17 @@ public:
 
     explicit BaseProperty(ResourceManager* _resMan) : resMan_(_resMan) {}
 
-    BaseProperty(BaseProperty&& _other) = default;
     BaseProperty(const BaseProperty& _other) = default;
-
     BaseProperty& operator=(const BaseProperty& _cpy) = delete;
+    BaseProperty(BaseProperty&& _other) {
+        resMan_ = _other.resMan_;
+        _other.resMan_ = nullptr;
+    }
+    BaseProperty& operator=(BaseProperty&& _other) {
+        resMan_ = _other.resMan_;
+        _other.resMan_ = nullptr;
+        return *this;
+    }
 
 
     virtual ~BaseProperty();
