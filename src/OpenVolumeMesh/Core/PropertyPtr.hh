@@ -77,6 +77,11 @@ public:
     /// Destructor
     ~PropertyPtr() override;
 
+    PropertyPtr(const PropertyPtr<PropT, Entity>&) = default;
+    PropertyPtr(PropertyPtr<PropT, Entity>&&) = default;
+    PropertyPtr<PropT, Entity>& operator=(const PropertyPtr<PropT, Entity>&) = default;
+    PropertyPtr<PropT, Entity>& operator=(PropertyPtr<PropT, Entity>&&) = default;
+
     using ptr::shared_ptr<PropT>::operator*;
     using ptr::shared_ptr<PropT>::operator->;
     using ptr::shared_ptr<PropT>::operator bool;

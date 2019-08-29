@@ -91,6 +91,13 @@ public:
     PropertyTT(MeshT *mesh, const std::string& _name, const T &_def = T())
         : PropertyTT(std::move(mesh->template request_property<T, Entity>(_name, _def)))
     {}
+    PropertyTT (const PropertyTT<T, Entity>&) = default;
+    PropertyTT (PropertyTT<T,Entity>&&) = default;
+    // copy assignment can be confusing for users - instead of the property contents
+    // being assigned, the PropertyPtr just points to the rhs now.
+    PropertyTT<T, Entity>& operator=(const PropertyTT<T, Entity>&) = delete;
+    PropertyTT<T, Entity>& operator=(PropertyTT<T, Entity>&&) = default;
+
     using PropertyHandleT = OpenVolumeMesh::PropHandleT<Entity>;
     PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T &_def = T());
     ~PropertyTT() override = default;
