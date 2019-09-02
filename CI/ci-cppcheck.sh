@@ -32,6 +32,7 @@ cppcheck \
     --project=${BUILDPATH}/compile_commands.json \
     --force \
     --enable=warning,performance,portability,information,missingInclude \
+    --suppress=missingIncludeSystem \
     --inline-suppr \
     --quiet \
     2>&1 | tee cppcheck.log
