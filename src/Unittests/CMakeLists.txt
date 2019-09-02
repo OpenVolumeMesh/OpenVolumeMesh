@@ -18,7 +18,7 @@ if(GTEST_FOUND)
     include(GoogleTest)
 
     add_executable(${TARGET_NAME} ${SOURCE_FILES})
-    target_link_libraries(unittests
+    target_link_libraries(${TARGET_NAME}
         OpenVolumeMesh::OpenVolumeMesh
         GTest::GTest
         GTest::Main
