@@ -93,6 +93,9 @@ if(IN_ACG_BUILD)
     endif()
 else(IN_ACG_BUILD)
     if (WIN32)
+        # Windows .dll build is not supported yet.
+        # TODO: turn this on once we have OVM_EXPORT macros in all required places,
+        # cf CXX_VISIBILITY_PRESET:
         add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
     else()
         option(BUILD_SHARED_LIBS "Build shared library (*.dll, *.so, *.dylib) instead of static library (*.a, *.lib)" ON)
@@ -116,7 +119,8 @@ set_target_properties (OpenVolumeMesh PROPERTIES
     CXX_STANDARD ${OVM_CXX_VERSION}
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
-    CXX_VISIBILITY_PRESET hidden
+    # TODO: turn this on once we have OVM_EXPORT macros in all required places:
+    #CXX_VISIBILITY_PRESET hidden
     POSITION_INDEPENDENT_CODE ON
     )
 
