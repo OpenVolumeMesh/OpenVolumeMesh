@@ -161,5 +161,5 @@ endif()
 
 if (OVM_ENABLE_UNITTESTS)
     add_subdirectory(Unittests)
-else()
+endif()
 
