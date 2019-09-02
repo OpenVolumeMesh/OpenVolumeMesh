@@ -8,7 +8,7 @@ project (OpenVolumeMesh
     HOMEPAGE_URL https://openvolumemesh.org/
     )
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR} )
     set(OVM_STANDALONE_BUILD TRUE)
@@ -49,4 +49,4 @@ endif()
 
 #export(PACKAGE OpenVolumeMesh)
 
-list(REMOVE_AT CMAKE_MODULE_PATH -1)
+#list(REMOVE_AT CMAKE_MODULE_PATH -1)
