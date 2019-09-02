@@ -1,25 +1,18 @@
-if (NOT TARGET doc)
-    include (ACGDoxygen)
+find_package(Doxygen REQUIRED dot)
+set(TARGET_NAME "${OVM_TARGET_PREFIX}doc")
 
-#find_package(Doxygen REQUIRED dot)
+if (DOXYGEN_FOUND)
+    set(DOXYGEN_PROJECT_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/html/logo_vci.png")
+    set(DOXYGEN_IMAGE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/images")
+    set(DOXYGEN_WARN_IF_UNDOCUMENTED "FALSE")
+    set(DOXYGEN_CITE_BIB_FILES "${CMAKE_CURRENT_SOURCE_DIR}/references.bib")
 
-    IF (DOXYGEN_FOUND)
-
-    if (TARGET doc)
-        # TODO
-        #acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html")
-    endif ()
-
-    # Add a documentation install target
-    add_custom_target(doc-install COMMENT "Installing Documentation" VERBATIM )
-
-    # Build Documentation before installing it
-    add_dependencies(doc-install doc)
-
-    if (TARGET doc-install)
-        # TODO
-        # acg_copy_after_build (doc-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/doc/html")
+    if (${ACG_PROJECT_DATADIR})
+        set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/html")
+    else()
+        set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/share/doc/OpenVolumeMesh")
     endif()
 
-    ENDIF(DOXYGEN_FOUND)
-ENDIF()
+    doxygen_add_docs(${TARGET_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+endif()

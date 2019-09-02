@@ -9,20 +9,22 @@ SET(SOURCE_FILES
 
 find_package(OpenVolumeMesh REQUIRED)
 
+set(TARGET_NAME "${OVM_TARGET_PREFIX}unittests")
+
 enable_testing()
 find_package(GTest)
 
 if(GTEST_FOUND)
     include(GoogleTest)
 
-    add_executable(unittests ${SOURCE_FILES})
+    add_executable(${TARGET_NAME} ${SOURCE_FILES})
     target_link_libraries(unittests
         OpenVolumeMesh::OpenVolumeMesh
         GTest::GTest
         GTest::Main
         )
 
-    gtest_add_tests(TARGET unittests
+    gtest_add_tests(TARGET ${TARGET_NAME}
         EXTRA_ARGS "--gtest_color=yes;--gtest_output=xml"
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/Unittests"
         )
@@ -31,7 +33,7 @@ if(GTEST_FOUND)
         DESTINATION "${CMAKE_BINARY_DIR}/Unittests"
         )
 
-    set_target_properties(unittests PROPERTIES
+    set_target_properties(${TARGET_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests
         CXX_STANDARD ${OVM_CXX_VERSION}
         CXX_STANDARD_REQUIRED YES
@@ -40,7 +42,7 @@ if(GTEST_FOUND)
 
     #[[=
     if ( WIN32 )
-            add_custom_command (TARGET unittests POST_BUILD
+        add_custom_command (TARGET ${TARGET_NAME} POST_BUILD
                                 COMMAND ${CMAKE_COMMAND} -E
                                     copy_if_different
                                     ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/unittests.exe
