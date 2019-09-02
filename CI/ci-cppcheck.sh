@@ -33,6 +33,7 @@ cppcheck \
     --force \
     --enable=warning,performance,portability,information,missingInclude \
     --suppress=missingIncludeSystem \
+    --suppress=unmatchedSuppression \
     --inline-suppr \
     --quiet \
     2>&1 | tee cppcheck.log
