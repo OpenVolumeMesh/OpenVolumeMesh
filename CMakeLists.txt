@@ -16,6 +16,7 @@ else()
     set(OVM_STANDALONE_BUILD FALSE)
 endif()
 
+set(OVM_ENABLE_APPLICATIONS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh applications in 'all' target")
 set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh unit tests in 'all' target")
 set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples in 'all' target")
 set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation in 'all' target")
@@ -40,12 +41,12 @@ enable_testing()
 add_subdirectory (src)
 
 if (OVM_ENABLE_EXAMPLES)
-    add_subdirectory (examples)
+    add_subdirectory(examples)
+else()
+    add_subdirectory(examples EXCLUDE_FROM_ALL)
 endif()
 
-if (OVM_BUILD_DOCUMENTATION)
-    add_subdirectory (documentation)
-endif()
+add_subdirectory(documentation)
 
 #export(PACKAGE OpenVolumeMesh)
 

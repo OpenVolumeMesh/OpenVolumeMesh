@@ -198,15 +198,15 @@ export(EXPORT OpenVolumeMeshTargets
     NAMESPACE OpenVolumeMesh::)
 export(PACKAGE OpenVolumeMesh)
 
-# copy library to correct folder for building as subdirectory of other projects,
-# such as OpenFlipper
-
-#add_subdirectory(FileConverter)
+if (OVM_ENABLE_APPLICATIONS)
+    add_subdirectory(FileConverter)
+else()
+    add_subdirectory(FileConverter EXCLUDE_FROM_ALL)
+endif()
 
 if (OVM_ENABLE_UNITTESTS)
     add_subdirectory(Unittests)
 else()
-    # currently this clashes for an in-tree OF build
-    #add_subdirectory(Unittests EXCLUDE_FROM_ALL)
+    add_subdirectory(Unittests EXCLUDE_FROM_ALL)
 endif()
 
