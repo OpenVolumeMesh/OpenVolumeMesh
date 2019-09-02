@@ -6,6 +6,7 @@ SET(HEADER_FILES
     OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh
     OpenVolumeMesh/Attribs/ColorAttribT_impl.hh
     OpenVolumeMesh/Attribs/ColorAttrib.hh
+    OpenVolumeMesh/Attribs/InterfaceAttrib.hh
     OpenVolumeMesh/Attribs/NormalAttrib.hh
     OpenVolumeMesh/Attribs/NormalAttribT_impl.hh
     OpenVolumeMesh/Attribs/TexCoordAttribT_impl.hh
@@ -47,6 +48,7 @@ SET(HEADER_FILES
     Unittests/unittests_common.hh)
 
 SET(SOURCE_FILES
+    OpenVolumeMesh/Attribs/InterfaceAttrib.cc
     OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.cc
     OpenVolumeMesh/Attribs/StatusAttrib.cc
     OpenVolumeMesh/Geometry/Vector.cc
