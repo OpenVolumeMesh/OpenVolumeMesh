@@ -1,5 +1,4 @@
-find_package(Doxygen REQUIRED dot)
-set(TARGET_NAME "${OVM_TARGET_PREFIX}doc")
+find_package(Doxygen)
 
 if (DOXYGEN_FOUND)
     set(DOXYGEN_PROJECT_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/html/logo_vci.png")
@@ -27,7 +26,7 @@ if (DOXYGEN_FOUND)
         set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/share/doc/OpenVolumeMesh")
     endif()
 
-    doxygen_add_docs(${TARGET_NAME}
+    doxygen_add_docs("${OVM_TARGET_PREFIX}doc"
         "${CMAKE_CURRENT_SOURCE_DIR}/"
         "${CMAKE_CURRENT_SOURCE_DIR}/../src"
         )
