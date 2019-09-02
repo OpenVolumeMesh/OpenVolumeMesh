@@ -162,6 +162,4 @@ endif()
 if (OVM_ENABLE_UNITTESTS)
     add_subdirectory(Unittests)
 else()
-    add_subdirectory(Unittests EXCLUDE_FROM_ALL)
-endif()
 

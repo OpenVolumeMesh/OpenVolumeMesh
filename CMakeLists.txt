@@ -17,7 +17,7 @@ else()
 endif()
 
 set(OVM_ENABLE_APPLICATIONS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh applications in 'all' target")
-set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh unit tests in 'all' target")
+set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh unit tests")
 set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples in 'all' target")
 set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation in 'all' target")
 
@@ -29,6 +29,7 @@ if (OVM_STANDALONE_BUILD)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/lib")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/lib")
     set(OVM_TARGET_PREFIX "")
+    enable_testing()
 else()
     # OVM_TARGET_PREFIX is prepended to targets with generic names,
     # i.e., "doc", "unittests"
@@ -37,7 +38,6 @@ endif()
 
 set (CMAKE_DEBUG_POSTFIX "d")
 
-enable_testing()
 add_subdirectory (src)
 
 if (OVM_ENABLE_EXAMPLES)
