@@ -36,7 +36,7 @@
 #define STATUS_HH_
 
 #include <iosfwd>
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 

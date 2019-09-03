@@ -42,7 +42,7 @@
 
 #include "../Core/TopologyKernel.hh"
 #include "HexahedralMeshIterators.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 

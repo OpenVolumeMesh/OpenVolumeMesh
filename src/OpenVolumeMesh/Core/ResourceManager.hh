@@ -42,7 +42,7 @@
 #include <type_traits>
 
 #include "../System/Compiler.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 #include "OpenVolumeMeshProperty.hh"
 #include "PropertyHandles.hh"
 #include "TypeName.hh"

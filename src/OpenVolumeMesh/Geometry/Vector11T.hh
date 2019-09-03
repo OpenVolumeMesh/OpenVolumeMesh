@@ -54,7 +54,7 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 

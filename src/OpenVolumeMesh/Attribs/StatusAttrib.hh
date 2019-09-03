@@ -49,7 +49,7 @@
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "OpenVolumeMeshStatus.hh"
 #include "../Core/PropertyDefines.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 

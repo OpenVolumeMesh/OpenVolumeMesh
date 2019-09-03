@@ -1,4 +1,4 @@
-#include "../Config/Version.hh"
+#include "OpenVolumeMesh/Config/Version.hh"
 
 // C++ version at OVM build time,
 // to be used for things that change ABI

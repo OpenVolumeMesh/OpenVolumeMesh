@@ -43,7 +43,7 @@
 #include "Entities.hh"
 #include "../System/FunctionalInclude.hh"
 #include "../System/Deprecation.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 

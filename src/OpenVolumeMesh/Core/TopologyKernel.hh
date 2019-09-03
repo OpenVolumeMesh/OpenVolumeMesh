@@ -43,7 +43,7 @@
 #include "OpenVolumeMeshHandle.hh"
 #include "ResourceManager.hh"
 #include "Iterators.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 

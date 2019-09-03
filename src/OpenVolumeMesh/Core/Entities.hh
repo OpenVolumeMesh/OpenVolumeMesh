@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 #include <type_traits>
 
 namespace OpenVolumeMesh {
 
 namespace Entity {
-    struct OVM_EXPORT Vertex   {};
+    struct OVM_EXPORT Vertex   { Vertex() = delete;};
     struct OVM_EXPORT Edge     {};
     struct OVM_EXPORT HalfEdge {};
     struct OVM_EXPORT Face     {};

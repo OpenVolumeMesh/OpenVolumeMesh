@@ -36,7 +36,7 @@
 #include "../Core/OpenVolumeMeshProperty.hh"
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "../Core/PropertyDefines.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 #include "../Core/TopologyKernel.hh"
 
 namespace OpenVolumeMesh {

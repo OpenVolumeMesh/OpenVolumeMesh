@@ -52,7 +52,7 @@
 #include <string>
 
 #include <iterator>
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh
 {

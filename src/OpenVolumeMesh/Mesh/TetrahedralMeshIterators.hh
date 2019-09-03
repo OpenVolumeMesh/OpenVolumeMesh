@@ -44,7 +44,7 @@
 #define TETRAHEDRALMESHITERATORS_HH
 
 #include "../Core/Iterators.hh"
-#include "../Config/Export.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
