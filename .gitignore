@@ -11,3 +11,4 @@ cppcheck.log
 
 *.gcda
 *.gcno
+.DS_Store
