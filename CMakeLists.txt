@@ -16,10 +16,10 @@ else()
     set(OVM_STANDALONE_BUILD FALSE)
 endif()
 
-set(OVM_ENABLE_APPLICATIONS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh applications in 'all' target")
+set(OVM_ENABLE_APPLICATIONS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh applications")
 set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh unit tests")
-set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples in 'all' target")
-set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation in 'all' target")
+set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples")
+set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation")
 
 set(OVM_CXX_VERSION 14 CACHE STRING "C++ version to use")
 set_property(CACHE OVM_CXX_VERSION PROPERTY STRINGS 14 17 20)
@@ -42,11 +42,11 @@ add_subdirectory (src)
 
 if (OVM_ENABLE_EXAMPLES)
     add_subdirectory(examples)
-else()
-    add_subdirectory(examples EXCLUDE_FROM_ALL)
 endif()
 
-add_subdirectory(documentation)
+if (OVM_BUILD_DOCUMENTATION)
+   add_subdirectory(documentation)
+endif()
 
 #export(PACKAGE OpenVolumeMesh)
 

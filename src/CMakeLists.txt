@@ -155,8 +155,6 @@ export(PACKAGE OpenVolumeMesh)
 
 if (OVM_ENABLE_APPLICATIONS)
     add_subdirectory(FileConverter)
-else()
-    add_subdirectory(FileConverter EXCLUDE_FROM_ALL)
 endif()
 
 if (OVM_ENABLE_UNITTESTS)
