@@ -30,6 +30,17 @@ if (OVM_STANDALONE_BUILD)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/lib")
     set(OVM_TARGET_PREFIX "")
     enable_testing()
+    option(STL_DEBUG "Enable STL debug checks. Warning: This must be consistent across the whole build! Not compatible with the libc++ shipped with Apple XCode as of 2019." OFF)
+    if (STL_DEBUG)
+        # We do not know which STL will be used, defining both is the easist way.
+
+        # https://libcxx.llvm.org/docs/UsingLibcxx.html#libc-configuration-macros
+        # https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html#using-debug-mode
+        add_definitions(-D_LIBCPP_DEBUG=1)
+        # https://gcc.gnu.org/onlinedocs/libstdc%2B%2B/manual/debug_mode_using.html
+        add_definitions(-D_GLIBXX_DEBUG=1)
+        add_definitions(-D_GLIBXX_DEBUG_PEDANTIC=1)
+    endif()
 else()
     # OVM_TARGET_PREFIX is prepended to targets with generic names,
     # i.e., "doc", "unittests"

@@ -37,7 +37,7 @@ fi
 
 cd build-release-$BUILDPATH
 
-cmake -DCMAKE_BUILD_TYPE=Release -DSTL_VECTOR_CHECKS=ON $OPTIONS ../
+cmake -DCMAKE_BUILD_TYPE=Release -DSTL_DEBUG=ON $OPTIONS ../
 
 #build it
 make
@@ -68,7 +68,7 @@ fi
 
 cd build-debug-$BUILDPATH
 
-cmake -DCMAKE_BUILD_TYPE=Debug -DSTL_VECTOR_CHECKS=ON $OPTIONS ../
+cmake -DCMAKE_BUILD_TYPE=Debug -DSTL_DEBUG=ON $OPTIONS ../
 
 #build the unit tests
 make unittests

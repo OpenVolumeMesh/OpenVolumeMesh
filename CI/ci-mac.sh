@@ -32,7 +32,7 @@ fi
 
 cd build-release
 
-cmake -DCMAKE_BUILD_TYPE=Release -DSTL_VECTOR_CHECKS=ON $OPTIONS ../
+cmake -DCMAKE_BUILD_TYPE=Release $OPTIONS ../
 
 #build it
 make
@@ -62,7 +62,7 @@ fi
 
 cd build-debug
 
-cmake -DCMAKE_BUILD_TYPE=Debug -DSTL_VECTOR_CHECKS=ON $OPTIONS ../
+cmake -DCMAKE_BUILD_TYPE=Debug $OPTIONS ../
 
 #build it
 make
