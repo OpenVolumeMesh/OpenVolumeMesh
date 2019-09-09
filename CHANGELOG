@@ -1,4 +1,5 @@
-Version X (?/?/?)
+Version 2.1 (2019/09/09)
+- Modern target-based CMake 3 build system
 - !!!Break compatiblity with C++98, require C++11 as mininum!!!
 - Renamed *T.cc into *T_impl.hh to avoid ugly problems ith several IDEs
 - Fix bug in halfface reordering
@@ -19,6 +20,8 @@ Version X (?/?/?)
 - Fix bug in edge split of tetrahedral meshes
 - Ensure that halfface iterators start with a boundary halffaces when cells are deleted
 - Added new iterators (VertexIHalfEdgeIter, VertexEdgeIter, VertexHalfFaceIter, EdgeHalfFaceIter, EdgeFaceIter, EdgeCellIter)
+- Added `hidden` flag to StatusAttrib for visualisation purposes
+- Added InterfaceAttrib to denote interior interfaces
 
 
 
