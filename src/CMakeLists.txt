@@ -151,7 +151,7 @@ install(EXPORT OpenVolumeMeshTargets
 
 export(EXPORT OpenVolumeMeshTargets
     NAMESPACE OpenVolumeMesh::)
-export(PACKAGE OpenVolumeMesh)
+#export(PACKAGE OpenVolumeMesh)
 
 if (OVM_ENABLE_APPLICATIONS)
     add_subdirectory(FileConverter)
