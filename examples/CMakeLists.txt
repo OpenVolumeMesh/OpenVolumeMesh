@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 cmake_policy(VERSION 3.12.0)
 project(OpenVolumeMeshExamples)
 
-find_package(OpenVolumeMesh REQUIRED)
+if (NOT TARGET OpenVolumeMesh::OpenVolumeMesh)
+    find_package(OpenVolumeMesh REQUIRED)
+endif()
 
 # Add target for first example
 add_executable(simple_mesh simple_mesh/simple_mesh.cc)

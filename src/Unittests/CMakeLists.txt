@@ -7,7 +7,9 @@ SET(SOURCE_FILES
     unittests_iterators.cc
     unittests_properties.cc)
 
-find_package(OpenVolumeMesh REQUIRED)
+if (NOT TARGET OpenVolumeMesh::OpenVolumeMesh)
+    find_package(OpenVolumeMesh REQUIRED)
+endif()
 
 set(TARGET_NAME "${OVM_TARGET_PREFIX}unittests")
 
