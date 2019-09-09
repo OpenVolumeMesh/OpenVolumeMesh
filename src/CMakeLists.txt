@@ -70,9 +70,9 @@ set_target_properties (OpenVolumeMesh PROPERTIES
     CXX_STANDARD ${OVM_CXX_VERSION}
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
+    POSITION_INDEPENDENT_CODE ON
     # TODO: turn this on once we have OVM_EXPORT macros in all required places:
     #CXX_VISIBILITY_PRESET hidden
-    POSITION_INDEPENDENT_CODE ON
     )
 
 
@@ -88,17 +88,12 @@ target_compile_options(OpenVolumeMesh PUBLIC
     "$<$<CXX_COMPILER_ID:MSVC>:/wd4711>"
     )
 
-target_compile_definitions(OpenVolumeMesh
-    PUBLIC
-        "INCLUDE_TEMPLATES"
-        "$<$<CXX_COMPILER_ID:MSVC>:NOMINMAX>"
-        "$<$<CXX_COMPILER_ID:MSVC>:_USE_MATH_DEFINES>"
-    )
+target_compile_definitions(OpenVolumeMesh PUBLIC "INCLUDE_TEMPLATES")
 
 target_include_directories(OpenVolumeMesh
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
