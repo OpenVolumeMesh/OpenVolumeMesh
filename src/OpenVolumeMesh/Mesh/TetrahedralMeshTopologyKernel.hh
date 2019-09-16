@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,16 +33,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
-#ifndef TETRAHEDRALMESHTOPOLOGYKERNEL_HH
-#define TETRAHEDRALMESHTOPOLOGYKERNEL_HH
 
 #ifndef NDEBUG
 #include <iostream>
@@ -133,4 +124,3 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* TETRAHEDRALMESHTOPOLOGYKERNEL_HH */
