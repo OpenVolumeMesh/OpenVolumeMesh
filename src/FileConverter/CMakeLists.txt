@@ -3,7 +3,7 @@ if(Boost_FOUND)
 
   add_executable(file_converter ovm_converter.cc)
   set_target_properties (file_converter PROPERTIES
-      CXX_STANDARD ${OVM_CXX_VERSION}
+      CXX_STANDARD ${OVM_CXX_STANDARD}
       CXX_STANDARD_REQUIRED YES
       CXX_EXTENSIONS NO
     )
