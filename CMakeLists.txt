@@ -38,8 +38,8 @@ if (OVM_STANDALONE_BUILD)
         # https://libcxx.llvm.org/docs/DesignDocs/DebugMode.html#using-debug-mode
         add_definitions(-D_LIBCPP_DEBUG=1)
         # https://gcc.gnu.org/onlinedocs/libstdc%2B%2B/manual/debug_mode_using.html
-        add_definitions(-D_GLIBXX_DEBUG=1)
-        add_definitions(-D_GLIBXX_DEBUG_PEDANTIC=1)
+        add_definitions(-D_GLIBCXX_DEBUG=1)
+        add_definitions(-D_GLIBCXX_DEBUG_PEDANTIC=1)
     endif()
 else()
     # OVM_TARGET_PREFIX is prepended to targets with generic names,
