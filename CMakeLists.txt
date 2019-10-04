@@ -21,8 +21,6 @@ set(OVM_ENABLE_UNITTESTS ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMes
 set(OVM_ENABLE_EXAMPLES ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh examples")
 set(OVM_BUILD_DOCUMENTATION ${OVM_STANDALONE_BUILD} CACHE BOOL "Build OpenVolumeMesh documentation")
 
-set(OVM_CXX_STANDARD 11 CACHE STRING "C++ standard version to use")
-set_property(CACHE OVM_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
 
 if (OVM_STANDALONE_BUILD)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build/bin")
@@ -41,6 +39,11 @@ if (OVM_STANDALONE_BUILD)
         add_definitions(-D_GLIBCXX_DEBUG=1)
         add_definitions(-D_GLIBCXX_DEBUG_PEDANTIC=1)
     endif()
+    set(OVM_CXX_STANDARD 11 CACHE STRING "C++ standard version to use")
+    set_property(CACHE OVM_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
+    set(CMAKE_CXX_VERSION ${OVM_CXX_STANDARD})
+    set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CMAKE_CXX_STANDARD_REQUIRED YES)
 else()
     # OVM_TARGET_PREFIX is prepended to targets with generic names,
     # i.e., "doc", "unittests"

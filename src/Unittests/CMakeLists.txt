@@ -37,9 +37,6 @@ if(GTEST_FOUND)
 
     set_target_properties(${TARGET_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests
-        CXX_STANDARD ${OVM_CXX_STANDARD}
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO
         )
 
     #[[=
