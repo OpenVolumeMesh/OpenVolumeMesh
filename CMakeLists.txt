@@ -41,9 +41,9 @@ if (OVM_STANDALONE_BUILD)
     endif()
     set(OVM_CXX_STANDARD 11 CACHE STRING "C++ standard version to use")
     set_property(CACHE OVM_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
-    set(CMAKE_CXX_VERSION ${OVM_CXX_STANDARD})
-    set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CMAKE_CXX_STANDARD ${OVM_CXX_STANDARD})
     set(CMAKE_CXX_STANDARD_REQUIRED YES)
+    set(CMAKE_CXX_EXTENSIONS OFF)
 else()
     # OVM_TARGET_PREFIX is prepended to targets with generic names,
     # i.e., "doc", "unittests"
