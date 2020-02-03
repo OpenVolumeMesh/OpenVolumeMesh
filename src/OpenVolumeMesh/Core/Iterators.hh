@@ -79,7 +79,11 @@ public:
 
     // STL compliance (needs to have default constructor)
 	BaseIterator() : valid_(false), mesh_(nullptr) {}
+    BaseIterator(const BaseIterator& _c) = default;
 	virtual ~BaseIterator() = default;
+
+    BaseIterator& operator=(const BaseIterator& _c) = default;
+
 	bool operator== (const BaseIterator& _c) const {
         return (this->cur_handle_ == _c.cur_handle() &&
                 this->valid_ == _c.valid() &&
@@ -99,13 +103,6 @@ public:
 
 	bool operator< (const BaseIterator& _c) const {
 	    return cur_handle_.idx() < _c.cur_handle_.idx();
-	}
-
-	BaseIterator& operator=(const BaseIterator& _c) {
-		this->valid_ = _c.valid();
-        this->cur_handle_ = _c.cur_handle();
-		this->mesh_ = _c.mesh();
-		return *this;
 	}
 
 	operator bool() const {
@@ -189,6 +186,7 @@ public:
         lap_(0),
         max_laps_(1)
     {}
+    BaseCirculator(const BaseCirculator& _c) = default;
 
     virtual ~BaseCirculator() = default;
 
@@ -208,13 +206,7 @@ public:
             return lap_ < _c.lap_;
     }
 
-    BaseCirculator& operator=(const BaseCirculator& _c) {
-        BaseIter::operator=(_c);
-        this->ref_handle_ = _c.ref_handle();
-        this->lap_ = _c.lap_;
-        this->max_laps_ = _c.max_laps_;
-        return *this;
-    }
+    BaseCirculator& operator=(const BaseCirculator& _c) = default;
 
     const IH& ref_handle() const {
         return ref_handle_;
