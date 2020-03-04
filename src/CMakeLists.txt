@@ -21,7 +21,7 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Mesh/HexahedralMeshTopologyKernel.cc
 )
 
-set(OVM_ENABLE_DEPRECATED_APIS ON CACHE BOOL "Support deprecated OpenVolumeMesh APIs")
+set(OVM_ENABLE_DEPRECATED_APIS OFF CACHE BOOL "Support deprecated OpenVolumeMesh APIs")
 
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMesh/Config/DeprecationConfig.hh.in"
