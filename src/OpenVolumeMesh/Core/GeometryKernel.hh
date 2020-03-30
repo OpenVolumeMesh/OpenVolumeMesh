@@ -217,6 +217,28 @@ public:
         return p;
     }
 
+    /// Compute halfface normal assuming planarity (just uses first 2 edges)
+    /// Note: NormalAttrib provides fast access to precomputed normals.
+    PointT normal(const HalfFaceHandle& _hfh) const
+    {
+        if(TopologyKernelT::halfface(_hfh).halfedges().size() < 3) {
+            std::cerr << "Warning: Degenerate face: "
+                      << TopologyKernelT::face_handle(_hfh) << std::endl;
+            return PointT {0.0};
+        }
+
+        const std::vector<HalfEdgeHandle>& halfedges = TopologyKernelT::halfface(_hfh).halfedges();
+        std::vector<HalfEdgeHandle>::const_iterator he_it = halfedges.begin();
+
+        PointT p1 = vertex(TopologyKernelT::halfedge(*he_it).from_vertex());
+        PointT p2 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
+        ++he_it;
+        PointT p3 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
+
+        PointT n = (p2 - p1) % (p3 - p2);
+        return n.normalized();
+    }
+
     void clone_vertices(std::vector<VecT>& _copy) const {
         _copy.clear();
         _copy.reserve(vertices_.size());

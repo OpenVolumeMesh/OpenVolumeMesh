@@ -113,8 +113,6 @@ private:
 
     void compute_vertex_normal(const VertexHandle& _vh);
 
-    void compute_face_normal(const FaceHandle& _fh);
-
     GeomKernelT& kernel_;
 
     VertexPropertyT<typename GeomKernelT::PointT> v_normals_;

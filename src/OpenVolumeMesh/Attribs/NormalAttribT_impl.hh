@@ -67,8 +67,9 @@ void NormalAttrib<GeomKernelT>::update_vertex_normals() {
     // Compute face normals
     update_face_normals();
 
-    for(VertexIter v_it = kernel_.v_iter(); v_it.valid(); ++v_it) {
-        compute_vertex_normal(*v_it);
+    for(const auto &_vh: kernel_.vertices())
+    {
+        compute_vertex_normal(_vh);
     }
 }
 
@@ -80,10 +81,8 @@ void NormalAttrib<GeomKernelT>::update_face_normals() {
         return;
     }
 
-    for(FaceIter f_it = kernel_.f_iter(); f_it.valid(); ++f_it) {
-        // Assume the face is planar, so just take the
-        // first two edges
-        compute_face_normal(*f_it);
+    for (const auto &_fh: kernel_.faces()) {
+        f_normals_[_fh] = kernel_.normal(kernel_.halfface_handle(_fh, 0));
     }
 }
 
@@ -109,29 +108,6 @@ void NormalAttrib<GeomKernelT>::compute_vertex_normal(const VertexHandle& _vh) {
 
     normal.normalize();
 
-    v_normals_[_vh] = normal;
-}
-
-template <class GeomKernelT>
-void NormalAttrib<GeomKernelT>::compute_face_normal(const FaceHandle& _fh) {
-
-    if(kernel_.face(_fh).halfedges().size() < 3) {
-        std::cerr << "Warning: Degenerate face detected!" << std::endl;
-        return;
-    }
-
-    const std::vector<HalfEdgeHandle>& halfedges = kernel_.face(_fh).halfedges();
-    std::vector<HalfEdgeHandle>::const_iterator he_it = halfedges.begin();
-
-    typename GeomKernelT::PointT p1 = kernel_.vertex(kernel_.halfedge(*he_it).from_vertex());
-    typename GeomKernelT::PointT p2 = kernel_.vertex(kernel_.halfedge(*he_it).to_vertex());
-    ++he_it;
-    typename GeomKernelT::PointT p3 = kernel_.vertex(kernel_.halfedge(*he_it).to_vertex());
-
-    typename GeomKernelT::PointT n = (p2 - p1) % (p3 - p2);
-    n.normalize();
-
-    f_normals_[_fh] = n;
 }
 
 } // Namespace OpenVolumeMesh
