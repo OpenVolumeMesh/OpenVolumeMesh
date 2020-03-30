@@ -377,14 +377,32 @@ class VectorT {
             };
         }
 
+        /// cross product: only defined for Vec3* as specialization
+        /// \see OpenVolumeMesh::cross and .cross()
+        template<typename OtherScalar>
+        auto cross (const VectorT<OtherScalar, DIM> &_rhs) const ->
+            decltype(*this % _rhs)
+        {
+            return *this % _rhs;
+        }
+
         /// compute scalar product
-        /// \see OpenVolumeMesh::dot
+        /// \see OpenVolumeMesh::dot and .dot()
         template<typename OtherScalar>
         auto operator|(const VectorT<OtherScalar, DIM>& _rhs) const ->
             decltype(*this->data() * *_rhs.data()) {
 
             return std::inner_product(data() + 1, data() + DIM, _rhs.data() + 1,
                     *data() * *_rhs.data());
+        }
+
+        /// compute scalar product
+        /// \see OpenVolumeMesh::dot and .operator|
+        template<typename OtherScalar>
+        auto dot(const VectorT<OtherScalar, DIM>& _rhs) const ->
+            decltype(*this | _rhs)
+        {
+            return *this | _rhs;
         }
 
         //------------------------------------------------------------ euclidean norm
