@@ -37,6 +37,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <type_traits>
 
 #include "../Geometry/VectorT.hh"
 #include "TopologyKernel.hh"
@@ -224,18 +225,18 @@ public:
         if(TopologyKernelT::halfface(_hfh).halfedges().size() < 3) {
             std::cerr << "Warning: Degenerate face: "
                       << TopologyKernelT::face_handle(_hfh) << std::endl;
-            return PointT {0.0};
+            return PointT {0.0, 0.0, 0.0};
         }
 
         const std::vector<HalfEdgeHandle>& halfedges = TopologyKernelT::halfface(_hfh).halfedges();
         std::vector<HalfEdgeHandle>::const_iterator he_it = halfedges.begin();
 
-        PointT p1 = vertex(TopologyKernelT::halfedge(*he_it).from_vertex());
-        PointT p2 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
+        const PointT &p1 = vertex(TopologyKernelT::halfedge(*he_it).from_vertex());
+        const PointT &p2 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
         ++he_it;
-        PointT p3 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
+        const PointT &p3 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
 
-        PointT n = (p2 - p1) % (p3 - p2);
+        const PointT n = (p2 - p1).cross(p3 - p2);
         return n.normalized();
     }
 
