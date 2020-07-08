@@ -232,6 +232,8 @@ FaceHandle TopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedge
 
 //========================================================================================
 
+// TODO: add iterator-based interface + range adapter
+
 /// Add face via incident vertices
 /// Define the _vertices in counter-clockwise order (from the "outside")
 FaceHandle TopologyKernel::add_face(const std::vector<VertexHandle>& _vertices) {
