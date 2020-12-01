@@ -39,7 +39,7 @@ configure_file (
 include(ACGCommon OPTIONAL RESULT_VARIABLE IN_ACG_BUILD)
 if(IN_ACG_BUILD)
     message("OVM is being built as part of an ACG project, using acg_add_library!")
-    if (WIN32)
+    if (WIN32 or EMSCRIPTEN)
         acg_add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
     else()
         acg_add_library(OpenVolumeMesh SHARED ${SOURCE_FILES})
@@ -154,4 +154,3 @@ endif()
 if (OVM_ENABLE_UNITTESTS)
     add_subdirectory(Unittests)
 endif()
-
