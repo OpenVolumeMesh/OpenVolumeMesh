@@ -42,6 +42,7 @@
 
 #include "../Core/TopologyKernel.hh"
 #include "HexahedralMeshIterators.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -75,7 +76,7 @@ namespace OpenVolumeMesh {
  * \li \c 6. ZB
  */
 
-class HexahedralMeshTopologyKernel : public TopologyKernel {
+class OVM_EXPORT HexahedralMeshTopologyKernel : public TopologyKernel {
 public:
 
     // Orientation constants

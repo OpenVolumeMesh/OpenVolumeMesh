@@ -43,11 +43,12 @@
 #include "Entities.hh"
 #include "../System/FunctionalInclude.hh"
 #include "../System/Deprecation.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
 // Define handle types in order to distinguish different entities by their indices
-class OpenVolumeMeshHandle {
+class OVM_EXPORT OpenVolumeMeshHandle {
 public:
     // Default constructor
     explicit constexpr OpenVolumeMeshHandle(int _idx) : idx_(_idx) {}
@@ -124,6 +125,14 @@ public:
 };
 
 // Default entity handles
+//
+template class OVM_EXPORT HandleT<Entity::Vertex>;
+template class OVM_EXPORT HandleT<Entity::HalfEdge>;
+template class OVM_EXPORT HandleT<Entity::Edge>;
+template class OVM_EXPORT HandleT<Entity::HalfFace>;
+template class OVM_EXPORT HandleT<Entity::Face>;
+template class OVM_EXPORT HandleT<Entity::Cell>;
+template class OVM_EXPORT HandleT<Entity::Mesh>;
 
 using VertexHandle   = HandleT<Entity::Vertex>;
 using HalfEdgeHandle = HandleT<Entity::HalfEdge>;
@@ -191,16 +200,22 @@ private:
     CellHandle thld_;
 };
 
+OVM_EXPORT
 bool operator==(const int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+OVM_EXPORT
 bool operator==(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+OVM_EXPORT
 bool operator!=(const int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+OVM_EXPORT
 bool operator!=(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+OVM_EXPORT
 std::ostream& operator<<(std::ostream& _ostr, const OpenVolumeMeshHandle& _handle);
 
+OVM_EXPORT
 std::istream& operator>>(std::istream& _istr, OpenVolumeMeshHandle& _handle);
 
 } // Namespace OpenVolumeMesh

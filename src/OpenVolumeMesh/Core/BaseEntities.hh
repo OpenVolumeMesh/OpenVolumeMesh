@@ -45,11 +45,12 @@
 
 #include <vector>
 
+#include "OpenVolumeMesh/Config/Export.hh"
 #include "OpenVolumeMeshHandle.hh"
 
 namespace OpenVolumeMesh {
 
-class OpenVolumeMeshEdge {
+class OVM_EXPORT OpenVolumeMeshEdge {
 friend class TopologyKernel;
 public:
     OpenVolumeMeshEdge(const VertexHandle& _fromVertex,
@@ -84,7 +85,7 @@ std::ostream& operator<<(std::ostream& _os, const OpenVolumeMeshEdge& _edge);
 
 //***************************************************************************
 
-class OpenVolumeMeshFace {
+class OVM_EXPORT OpenVolumeMeshFace {
 friend class TopologyKernel;
 public:
     explicit OpenVolumeMeshFace(const std::vector<HalfEdgeHandle>& _halfedges) :
@@ -115,7 +116,7 @@ std::ostream& operator<<(std::ostream& _os, const OpenVolumeMeshFace& _face);
 
 //***************************************************************************
 
-class OpenVolumeMeshCell {
+class OVM_EXPORT OpenVolumeMeshCell {
 friend class TopologyKernel;
 public:
     explicit OpenVolumeMeshCell(const std::vector<HalfFaceHandle>& _halffaces) :

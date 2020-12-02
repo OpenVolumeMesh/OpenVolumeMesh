@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,16 +33,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
-#ifndef TETRAHEDRALMESHTOPOLOGYKERNEL_HH
-#define TETRAHEDRALMESHTOPOLOGYKERNEL_HH
 
 #ifndef NDEBUG
 #include <iostream>
@@ -50,6 +41,7 @@
 
 #include "../Core/TopologyKernel.hh"
 #include "TetrahedralMeshIterators.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -60,7 +52,7 @@ namespace OpenVolumeMesh {
  *
  */
 
-class TetrahedralMeshTopologyKernel : public TopologyKernel {
+class OVM_EXPORT TetrahedralMeshTopologyKernel : public TopologyKernel {
 public:
 
     TetrahedralMeshTopologyKernel() = default;
@@ -132,4 +124,3 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* TETRAHEDRALMESHTOPOLOGYKERNEL_HH */

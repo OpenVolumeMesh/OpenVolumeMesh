@@ -47,6 +47,7 @@
 #include <fstream>
 #include <istream>
 #include <ostream>
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -59,7 +60,7 @@ namespace IO {
  * \todo Implement binary file support
  */
 
-class FileManager {
+class OVM_EXPORT FileManager {
 public:
 
   /// Default constructor

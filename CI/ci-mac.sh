@@ -10,6 +10,10 @@ export PATH
 
 OPTIONS=""
 
+OPTIONS="${OPTIONS} -DGTEST_LIBRARY=${HOME}/sw/gtest-1.7.0/lib/libgtest.a"
+OPTIONS="${OPTIONS} -DGTEST_INCLUDE_DIR=${HOME}/sw/gtest-1.7.0/include/"
+OPTIONS="${OPTIONS} -DGTEST_MAIN_LIBRARY=${HOME}/sw/gtest-1.7.0/lib/libgtest_main.a"
+
 if [ "$LANGUAGE" == "C++98" ]; then
   echo "Building with C++98";
 elif [ "$LANGUAGE" == "C++11" ]; then
@@ -28,7 +32,7 @@ fi
 
 cd build-release
 
-cmake -DCMAKE_BUILD_TYPE=Release -DSTL_VECTOR_CHECKS=ON $OPTIONS ../
+cmake -DCMAKE_BUILD_TYPE=Release $OPTIONS ../
 
 #build it
 make
@@ -58,7 +62,7 @@ fi
 
 cd build-debug
 
-cmake -DCMAKE_BUILD_TYPE=Debug -DSTL_VECTOR_CHECKS=ON $OPTIONS ../
+cmake -DCMAKE_BUILD_TYPE=Debug $OPTIONS ../
 
 #build it
 make

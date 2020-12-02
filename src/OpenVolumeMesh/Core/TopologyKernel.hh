@@ -43,10 +43,11 @@
 #include "OpenVolumeMeshHandle.hh"
 #include "ResourceManager.hh"
 #include "Iterators.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
-class TopologyKernel : public ResourceManager {
+class OVM_EXPORT TopologyKernel : public ResourceManager {
 public:
 
     TopologyKernel() = default;
@@ -674,7 +675,7 @@ public:
         assert(has_vertex_bottom_up_incidences());
         assert(_vh.is_valid() && _vh.uidx() < outgoing_hes_per_vertex_.size());
 
-        return outgoing_hes_per_vertex_[_vh.idx()].size();
+        return outgoing_hes_per_vertex_[_vh.uidx()].size();
     }
 
     /// Get valence of edge (number of incident faces)
@@ -683,7 +684,7 @@ public:
         assert(_eh.is_valid() && _eh.uidx() < edges_.size());
         assert(halfedge_handle(_eh, 0).uidx() < incident_hfs_per_he_.size());
 
-        return incident_hfs_per_he_[halfedge_handle(_eh, 0).idx()].size();
+        return incident_hfs_per_he_[halfedge_handle(_eh, 0).uidx()].size();
     }
 
     /// Get valence of face (number of incident edges)
@@ -717,12 +718,12 @@ public:
     virtual void collect_garbage();
 
 
-    virtual bool is_deleted(const VertexHandle& _h)   const { return vertex_deleted_[_h.idx()]; }
-    virtual bool is_deleted(const EdgeHandle& _h)     const { return edge_deleted_[_h.idx()];   }
-    virtual bool is_deleted(const HalfEdgeHandle& _h) const { return edge_deleted_[_h.idx()/2]; }
-    virtual bool is_deleted(const FaceHandle& _h)     const { return face_deleted_[_h.idx()];   }
-    virtual bool is_deleted(const HalfFaceHandle& _h) const { return face_deleted_[_h.idx()/2]; }
-    virtual bool is_deleted(const CellHandle& _h)     const { return cell_deleted_[_h.idx()];   }
+    virtual bool is_deleted(const VertexHandle& _h)   const { return vertex_deleted_[_h.uidx()]; }
+    virtual bool is_deleted(const EdgeHandle& _h)     const { return edge_deleted_[_h.uidx()];   }
+    virtual bool is_deleted(const HalfEdgeHandle& _h) const { return edge_deleted_[_h.uidx()/2]; }
+    virtual bool is_deleted(const FaceHandle& _h)     const { return face_deleted_[_h.uidx()];   }
+    virtual bool is_deleted(const HalfFaceHandle& _h) const { return face_deleted_[_h.uidx()/2]; }
+    virtual bool is_deleted(const CellHandle& _h)     const { return cell_deleted_[_h.uidx()];   }
 
 private:
 
@@ -773,8 +774,8 @@ protected:
             newIndices_(_newIndices) {}
 
         void operator()(Edge& _edge) {
-            _edge.set_from_vertex(VertexHandle(newIndices_[_edge.from_vertex().idx()]));
-            _edge.set_to_vertex(VertexHandle(newIndices_[_edge.to_vertex().idx()]));
+            _edge.set_from_vertex(VertexHandle(newIndices_[_edge.from_vertex().uidx()]));
+            _edge.set_to_vertex(VertexHandle(newIndices_[_edge.to_vertex().uidx()]));
         }
     private:
         const std::vector<int>& newIndices_;
@@ -792,7 +793,7 @@ protected:
 
                 EdgeHandle eh = edge_handle(*he_it);
                 unsigned char opp = he_it->idx() == halfedge_handle(eh, 1).idx();
-                *he_it = halfedge_handle(EdgeHandle(newIndices_[eh.idx()]), opp);
+                *he_it = halfedge_handle(EdgeHandle(newIndices_[eh.uidx()]), opp);
             }
             _face.set_halfedges(hes);
         }
@@ -812,7 +813,7 @@ protected:
 
                 FaceHandle fh = face_handle(*hf_it);
                 unsigned char opp = hf_it->idx() == halfface_handle(fh, 1).idx();
-                *hf_it = halfface_handle(FaceHandle(newIndices_[fh.idx()]), opp);
+                *hf_it = halfface_handle(FaceHandle(newIndices_[fh.uidx()]), opp);
             }
             _cell.set_halffaces(hfs);
         }
@@ -1033,7 +1034,7 @@ public:
         assert(_halfFaceHandle.is_valid() && _halfFaceHandle.uidx() < faces_.size() * 2u);
         assert(has_face_bottom_up_incidences());
         assert(_halfFaceHandle.uidx() < incident_cell_per_hf_.size());
-        return incident_cell_per_hf_[_halfFaceHandle.idx()] == InvalidCellHandle;
+        return incident_cell_per_hf_[_halfFaceHandle.uidx()] == InvalidCellHandle;
     }
 
     bool is_boundary(const FaceHandle& _faceHandle) const {

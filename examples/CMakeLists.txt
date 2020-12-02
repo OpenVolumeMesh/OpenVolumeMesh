@@ -1,27 +1,23 @@
-# Set project variable such that OpenVolumeMesh does not
-# build its unit tests and stuff
-project(Examples)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_policy(VERSION 3.12.0)
+project(OpenVolumeMeshExamples)
 
-# Add OpenVolumeMesh's source path to include path for compiler
-include_directories(../src)
-
-# Add target for first example
-add_executable(simple_mesh EXCLUDE_FROM_ALL simple_mesh/simple_mesh.cc)
-
-if(NOT WIN32)
-  # Link against OpenVolumeMesh
-  target_link_libraries(simple_mesh OpenVolumeMesh)
-  
-  # Set output directory to ${BINARY_DIR}/Examples
-  set_target_properties(simple_mesh PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Examples)
-
-else()
-  # Link against OpenVolumeMesh
-  target_link_libraries(simple_mesh OpenVolumeMesh) 
+if (NOT TARGET OpenVolumeMesh::OpenVolumeMesh)
+    find_package(OpenVolumeMesh REQUIRED)
 endif()
 
+# Add target for first example
+add_executable(simple_mesh simple_mesh/simple_mesh.cc)
 
+target_link_libraries(simple_mesh OpenVolumeMesh::OpenVolumeMesh)
 
+set_target_properties (simple_mesh PROPERTIES
+    CXX_STANDARD ${OVM_CXX_STANDARD}
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
+#[[=
 if(WIN32)
   # copy exe file to "Build" directory
   # Visual studio will create this file in a subdirectory so we can't use
@@ -31,4 +27,6 @@ if(WIN32)
                               copy_if_different
                                 ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/simple_mesh.exe
                                 ${CMAKE_BINARY_DIR}/Examples/simple_mesh.exe)
+else()
 endif()
+=]]

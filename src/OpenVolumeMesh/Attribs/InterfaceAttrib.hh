@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,35 +33,72 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
+#include "../Core/OpenVolumeMeshProperty.hh"
+#include "../Core/OpenVolumeMeshHandle.hh"
+#include "../Core/PropertyDefines.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
+#include "../Core/TopologyKernel.hh"
 
-#ifndef DEFINES_HH_
-#define DEFINES_HH_
+namespace OpenVolumeMesh {
 
-#ifndef OVMDLLEXPORT
-    #ifdef WIN32
-        #ifdef OVMDLL
-            #ifdef BUILDOVM
-                #define OVMDLLEXPORT __declspec(dllexport)
-                #define OVMDLLEXPORTONLY __declspec(dllexport)
-            #else
-                #define OVMDLLEXPORT __declspec(dllimport)
-                #define OVMDLLEXPORTONLY
-            #endif
-        #else
-            #define OVMDLLEXPORT
-            #define OVMDLLEXPORTONLY
-        #endif
-    #else
-        #define OVMDLLEXPORT
-        #define OVMDLLEXPORTONLY
-    #endif
-#endif
+class TopologyKernel;
 
-#endif /* DEFINES_HH_ */
+/**
+ * @brief InterfaceAttrib stores if an entity is part of an interface,
+ * e.g. an material boundary inside the volume.
+ */
+class OVM_EXPORT InterfaceAttrib {
+    using boolref = std::vector<bool>::reference;
+public:
+    explicit InterfaceAttrib(TopologyKernel& _kernel);
+    ~InterfaceAttrib() = default;
+
+    bool operator[](const VertexHandle& _h) const {
+        return v_interface_[_h];
+    }
+
+    boolref operator[](const VertexHandle& _h) {
+        return v_interface_[_h];
+    }
+
+    bool operator[](const EdgeHandle& _h) const {
+        return e_interface_[_h];
+    }
+
+    boolref operator[](const EdgeHandle& _h) {
+        return e_interface_[_h];
+    }
+
+    bool operator[](const HalfEdgeHandle& _h) const {
+        return e_interface_[kernel_.edge_handle(_h)];
+    }
+
+    boolref operator[](const HalfEdgeHandle& _h) {
+        return e_interface_[kernel_.edge_handle(_h)];
+    }
+
+    bool operator[](const FaceHandle& _h) const {
+        return f_interface_[_h];
+    }
+
+    boolref operator[](const FaceHandle& _h) {
+        return f_interface_[_h];
+    }
+
+    bool operator[](const HalfFaceHandle& _h) const {
+        return f_interface_[kernel_.face_handle(_h)];
+    }
+
+    boolref operator[](const HalfFaceHandle& _h) {
+        return f_interface_[kernel_.face_handle(_h)];
+    }
+
+    TopologyKernel& kernel_;
+
+    VertexPropertyT<bool> v_interface_;
+    EdgePropertyT<bool> e_interface_;
+    FacePropertyT<bool> f_interface_;
+};
+
+
+} // Namespace OpenVolumeMesh

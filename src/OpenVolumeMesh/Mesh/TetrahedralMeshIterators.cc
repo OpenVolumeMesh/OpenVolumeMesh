@@ -64,27 +64,24 @@ BaseIter(_mesh, _ref_h, _max_laps) {
     HalfEdgeHandle curHE = *_mesh->halfface(curHF).halfedges().begin();
     assert(curHE.is_valid());
 
-    vertices_.push_back(_mesh->halfedge(curHE).to_vertex());
+    vertices_[0] = _mesh->halfedge(curHE).to_vertex();
 
     curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
 
-    vertices_.push_back(_mesh->halfedge(curHE).to_vertex());
+    vertices_[1] = _mesh->halfedge(curHE).to_vertex();
 
     curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
 
-    vertices_.push_back(_mesh->halfedge(curHE).to_vertex());
+    vertices_[2] = _mesh->halfedge(curHE).to_vertex();
 
     curHF = _mesh->adjacent_halfface_in_cell(curHF, curHE);
     curHE = _mesh->opposite_halfedge_handle(curHE);
     curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
 
-    vertices_.push_back(_mesh->halfedge(curHE).to_vertex());
+    vertices_[3] = _mesh->halfedge(curHE).to_vertex();
 
     cur_index_ = 0;
-    BaseIter::valid(vertices_.size() > 0);
-    if(BaseIter::valid()) {
-        BaseIter::cur_handle(vertices_[cur_index_]);
-    }
+    BaseIter::cur_handle(vertices_[cur_index_]);
 }
 
 

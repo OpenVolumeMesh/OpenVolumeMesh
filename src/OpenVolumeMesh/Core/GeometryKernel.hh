@@ -37,6 +37,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <type_traits>
 
 #include "../Geometry/VectorT.hh"
 #include "TopologyKernel.hh"
@@ -80,12 +81,12 @@ public:
 
         assert(_vh.idx() < (int)vertices_.size());
 
-        vertices_[_vh.idx()] = _p;
+        vertices_[_vh.uidx()] = _p;
     }
 
     /// Get point _vh's coordinates
     const VecT& vertex(const VertexHandle& _vh) const {
-        return vertices_[_vh.idx()];
+        return vertices_[_vh.uidx()];
     }
 
     VertexIter delete_vertex(const VertexHandle& _h) override {
@@ -130,7 +131,7 @@ public:
         if (_h1 == _h2)
             return;
 
-        std::swap(vertices_[_h1.idx()], vertices_[_h2.idx()]);
+        std::swap(vertices_[_h1.uidx()], vertices_[_h2.uidx()]);
 
         TopologyKernelT::swap_vertex_indices(_h1, _h2);
     }
@@ -215,6 +216,28 @@ public:
         }
         p /= valence;
         return p;
+    }
+
+    /// Compute halfface normal assuming planarity (just uses first 2 edges)
+    /// Note: NormalAttrib provides fast access to precomputed normals.
+    PointT normal(const HalfFaceHandle& _hfh) const
+    {
+        if(TopologyKernelT::halfface(_hfh).halfedges().size() < 3) {
+            std::cerr << "Warning: Degenerate face: "
+                      << TopologyKernelT::face_handle(_hfh) << std::endl;
+            return PointT {0.0, 0.0, 0.0};
+        }
+
+        const std::vector<HalfEdgeHandle>& halfedges = TopologyKernelT::halfface(_hfh).halfedges();
+        std::vector<HalfEdgeHandle>::const_iterator he_it = halfedges.begin();
+
+        const PointT &p1 = vertex(TopologyKernelT::halfedge(*he_it).from_vertex());
+        const PointT &p2 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
+        ++he_it;
+        const PointT &p3 = vertex(TopologyKernelT::halfedge(*he_it).to_vertex());
+
+        const PointT n = (p2 - p1).cross(p3 - p2);
+        return n.normalized();
     }
 
     void clone_vertices(std::vector<VecT>& _copy) const {

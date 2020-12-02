@@ -1,76 +1,156 @@
-include (ACGCommon)
 
-set(OVM_ENABLE_DEPRECATED_APIS ON CACHE BOOL "Support deprecated OpenVolumeMesh APIs")
+
+SET(SOURCE_FILES
+    OpenVolumeMesh/Attribs/InterfaceAttrib.cc
+    OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.cc
+    OpenVolumeMesh/Attribs/StatusAttrib.cc
+    OpenVolumeMesh/Geometry/Vector.cc
+    OpenVolumeMesh/FileManager/FileManager.cc
+    OpenVolumeMesh/Core/PropertyDefines.cc
+    OpenVolumeMesh/Core/OpenVolumeMeshHandle.cc
+    OpenVolumeMesh/Core/ResourceManager.cc
+    OpenVolumeMesh/Core/BaseEntities.cc
+    OpenVolumeMesh/Core/BaseProperty.cc
+    OpenVolumeMesh/Core/TopologyKernel.cc
+    OpenVolumeMesh/Core/Serializers.cc
+    OpenVolumeMesh/Core/Iterators.cc
+    OpenVolumeMesh/Core/OpenVolumeMeshBaseProperty.cc
+    OpenVolumeMesh/Mesh/TetrahedralMeshIterators.cc
+    OpenVolumeMesh/Mesh/HexahedralMeshIterators.cc
+    OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.cc
+    OpenVolumeMesh/Mesh/HexahedralMeshTopologyKernel.cc
+)
+
+set(OVM_ENABLE_DEPRECATED_APIS OFF CACHE BOOL "Support deprecated OpenVolumeMesh APIs")
 
 configure_file (
-    "${CMAKE_CURRENT_SOURCE_DIR}/Config/DeprecationConfig.hh.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/Config/DeprecationConfig.hh"
+    "${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMesh/Config/DeprecationConfig.hh.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenVolumeMesh/Config/DeprecationConfig.hh"
 )
 
-include_directories (
-  ..
-  ${CMAKE_CURRENT_SOURCE_DIR}
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMesh/Config/Version.hh.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenVolumeMesh/Config/Version.hh"
 )
 
-# source code directories
-set (directories 
-  .
-  OpenVolumeMesh/Attribs
-  OpenVolumeMesh/Core
-  OpenVolumeMesh/Config
-  OpenVolumeMesh/FileManager
-  OpenVolumeMesh/Geometry
-  OpenVolumeMesh/Mesh
+
+# If we are in a subdirectory of another project that has a ACGCommon module
+# (e.g. OpenFlipper), we will use acg_add_library; otherwise behave "normally".
+include(ACGCommon OPTIONAL RESULT_VARIABLE IN_ACG_BUILD)
+if(IN_ACG_BUILD)
+    message("OVM is being built as part of an ACG project, using acg_add_library!")
+    if (WIN32 OR EMSCRIPTEN)
+        acg_add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
+    else()
+        acg_add_library(OpenVolumeMesh SHARED ${SOURCE_FILES})
+    endif()
+else(IN_ACG_BUILD)
+    if (WIN32)
+        # Windows .dll build is not supported yet.
+        # TODO: turn this on once we have OVM_EXPORT macros in all required places,
+        # cf CXX_VISIBILITY_PRESET:
+        add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
+    else()
+        option(BUILD_SHARED_LIBS "Build shared library (*.dll, *.so, *.dylib) instead of static library (*.a, *.lib)" ON)
+        add_library(OpenVolumeMesh ${SOURCE_FILES})
+    endif()
+endif(IN_ACG_BUILD)
+
+add_library(OpenVolumeMesh::OpenVolumeMesh ALIAS OpenVolumeMesh)
+
+include(GenerateExportHeader)
+generate_export_header(OpenVolumeMesh
+    BASE_NAME OVM
+    EXPORT_FILE_NAME "OpenVolumeMesh/Config/Export.hh"
+    DEPRECATED_MACRO_NAME "CMAKE_OVM_DEPRECATED"
+    NO_DEPRECATED_MACRO_NAME "CMAKE_OVM_NO_DEPRECATED"
 )
 
-# collect all header and source files
-acg_append_files (headers "*.hh" ${directories})
-acg_append_files (sources "*.cc" ${directories})
+set_target_properties (OpenVolumeMesh PROPERTIES
+    VERSION ${OpenVolumeMesh_VERSION_MAJOR}.${OpenVolumeMesh_VERSION_MINOR}
+    SOVERSION ${OpenVolumeMesh_VERSION_MAJOR}.${OpenVolumeMesh_VERSION_MINOR}
+    POSITION_INDEPENDENT_CODE ON
+    # TODO: turn this on once we have OVM_EXPORT macros in all required places:
+     #CXX_VISIBILITY_PRESET hidden
+    )
 
-# Disable Library installation when not building OpenVolumeMesh on its own but as part of another project!
-if ( NOT ${PROJECT_NAME} MATCHES "OpenVolumeMesh")
-  set(ACG_NO_LIBRARY_INSTALL true)
+
+target_compile_options(OpenVolumeMesh PUBLIC
+    "$<$<CXX_COMPILER_ID:MSVC>:/bigobj>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>" # Enable updated __cplusplus macro
+    PRIVATE
+    "$<$<CXX_COMPILER_ID:GNU>:-Wall>"
+    "$<$<CXX_COMPILER_ID:Clang>:-Wall;-Wno-c++98-compat;-Wno-c++98-compat-pedantic;-Wno-weak-vtables;-Wno-padded;-Wno-sign-conversion;-Wno-missing-prototypes>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/W1>"
+    # disable MSVC inline warnings that are enabled with /Ob2, which is in the default cmake release cxxflags:
+    "$<$<CXX_COMPILER_ID:MSVC>:/wd4710>"
+    "$<$<CXX_COMPILER_ID:MSVC>:/wd4711>"
+    )
+
+target_compile_definitions(OpenVolumeMesh PUBLIC "INCLUDE_TEMPLATES")
+
+target_include_directories(OpenVolumeMesh
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
+
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/OpenVolumeMesh)
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMeshConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenVolumeMeshConfig.cmake"
+    INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
+    )
+
+write_basic_package_version_file(
+    OpenVolumeMeshConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMinorVersion
+    )
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenVolumeMeshConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenVolumeMeshConfig.cmake"
+    DESTINATION ${INSTALL_CONFIGDIR})
+
+
+install(DIRECTORY
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenVolumeMesh/Config"
+    DESTINATION include/OpenVolumeMesh)
+
+# Install Header Files
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/OpenVolumeMesh
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.hh"
+    )
+
+install(TARGETS OpenVolumeMesh
+    EXPORT OpenVolumeMeshTargets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(EXPORT OpenVolumeMeshTargets
+    FILE OpenVolumeMeshTargets.cmake
+    NAMESPACE OpenVolumeMesh::
+    DESTINATION ${INSTALL_CONFIGDIR}
+)
+
+export(EXPORT OpenVolumeMeshTargets
+    NAMESPACE OpenVolumeMesh::)
+#export(PACKAGE OpenVolumeMesh)
+
+if (OVM_ENABLE_APPLICATIONS)
+    add_subdirectory(FileConverter)
 endif()
 
-if (WIN32)
-    # OpenVolumeMesh has no dll exports so we have to build a static library on windows
-    acg_add_library (OpenVolumeMesh STATIC ${sources} ${headers})
-else ()
-    acg_add_library (OpenVolumeMesh SHAREDANDSTATIC ${sources} ${headers})
-    set_target_properties (OpenVolumeMesh PROPERTIES VERSION ${OPENVOLUMEMESH_VERSION_MAJOR}.${OPENVOLUMEMESH_VERSION_MINOR}
-                                          SOVERSION ${OPENVOLUMEMESH_VERSION_MAJOR}.${OPENVOLUMEMESH_VERSION_MINOR} )
-endif ()
-foreach(TARGET_NAME OpenVolumeMesh OpenVolumeMeshStatic)
-    if (TARGET ${TARGET_NAME})
-        target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/Config/")
-    endif()
-endforeach(TARGET_NAME)
-
-# Only install if the project name matches OpenVolumeMesh.
-if (NOT APPLE AND ${PROJECT_NAME} MATCHES "OpenVolumeMesh")
-
-# Install Header Files)
-install(DIRECTORY . 
-        DESTINATION include
-        FILES_MATCHING 
-        PATTERN "*.hh"
-        PATTERN "Unittests" EXCLUDE
-        PATTERN "FileConverter" EXCLUDE
-        PATTERN "CVS" EXCLUDE
-        PATTERN ".svn" EXCLUDE
-        PATTERN "tmp" EXCLUDE
-        PATTERN "Templates" EXCLUDE
-        PATTERN "Debian*" EXCLUDE)
-endif ()
-
-# install config files
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/Config/DeprecationConfig.hh
-           DESTINATION include/OpenVolumeMesh/Config )
-
-# Only build unittests and file converter
-# if not built as external library
-if(${PROJECT_NAME} MATCHES "OpenVolumeMesh")
-    # Add unittests target
+if (OVM_ENABLE_UNITTESTS)
     add_subdirectory(Unittests)
-    add_subdirectory(FileConverter)
 endif()

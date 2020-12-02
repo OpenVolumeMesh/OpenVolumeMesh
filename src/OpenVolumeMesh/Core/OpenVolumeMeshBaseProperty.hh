@@ -40,6 +40,7 @@
 #include <vector>
 
 #include "OpenVolumeMeshHandle.hh"
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -49,7 +50,7 @@ namespace OpenVolumeMesh {
 
  **/
 
-class OpenVolumeMeshBaseProperty {
+class OVM_EXPORT OpenVolumeMeshBaseProperty {
 public:
 
     friend class ResourceManager;

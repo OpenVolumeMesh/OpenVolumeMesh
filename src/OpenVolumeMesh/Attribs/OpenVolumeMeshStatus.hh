@@ -36,6 +36,7 @@
 #define STATUS_HH_
 
 #include <iosfwd>
+#include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {
 
@@ -44,7 +45,7 @@ namespace OpenVolumeMesh {
  * \brief Stores statuses like selected, tagged, deleted, hidden.
  */
 
-class OpenVolumeMeshStatus {
+class OVM_EXPORT OpenVolumeMeshStatus {
 public:
 
     OpenVolumeMeshStatus() = default;
