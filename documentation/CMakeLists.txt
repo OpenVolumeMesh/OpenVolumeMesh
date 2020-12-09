@@ -20,8 +20,8 @@ if (DOXYGEN_FOUND)
                         "${CMAKE_CURRENT_SOURCE_DIR}/../src/Unittests"
                         )
 
-    if (${ACG_PROJECT_DATADIR})
-        set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc")
+    if (${VCI_PROJECT_DATADIR})
+        set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${VCI_PROJECT_DATADIR}/Doc")
     else()
         set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/share/doc/OpenVolumeMesh")
     endif()
