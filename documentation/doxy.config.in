@@ -58,7 +58,7 @@ PROJECT_LOGO           = @CMAKE_CURRENT_SOURCE_DIR@/html/logo_vci.png
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @CMAKE_BINARY_DIR@/Build/@ACG_PROJECT_DATADIR@/Doc
+OUTPUT_DIRECTORY       = @CMAKE_BINARY_DIR@/Build/@VCI_PROJECT_DATADIR@/Doc
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
