@@ -829,9 +829,7 @@ void TopologyKernel::get_incident_faces(const ContainerT& _es,
 
                 const FaceHandle fh = face_handle(*hehf_it);
 
-                if(_fs.count(fh) == 0) {
-                    _fs.insert(fh);
-                }
+                _fs.insert(fh);
             }
         }
     } else {

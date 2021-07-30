@@ -148,11 +148,15 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
         if (track_ch) {
             if (c_status_[*c_it].deleted()) {
                 ++offset_ch;
-                if (ch_map.find(c_it->idx()) != ch_map.end())
-                    ch_map[c_it->idx()] = -1;
+                auto it = ch_map.find(c_it->idx());
+                if (it != ch_map.end()) {
+                    it->second = -1;
+                }
             } else {
-                if (ch_map.find(c_it->idx()) != ch_map.end())
-                    ch_map[c_it->idx()] = c_it->idx() - offset_ch;
+                auto it = ch_map.find(c_it->idx());
+                if (it != ch_map.end()) {
+                    it->second = c_it->idx() - offset_ch;
+                }
             }
         }
     }
@@ -168,18 +172,22 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
             int halfface_idx = f_it->idx() * 2;
             if (f_status_[*f_it].deleted()) {
                 offset_hfh += 2;
-                if (hfh_map.find(halfface_idx) != hfh_map.end()) {
-                    hfh_map[halfface_idx] = -1;
+                auto it = hfh_map.find(halfface_idx);
+                if (it != hfh_map.end()) {
+                    it->second = -1;
                 }
-                if (hfh_map.find(halfface_idx + 1) != hfh_map.end()) {
-                    hfh_map[halfface_idx + 1] = -1;
+                it = hfh_map.find(halfface_idx + 1);
+                if (it != hfh_map.end()) {
+                    it->second = -1;
                 }
             } else {
-                if (hfh_map.find(halfface_idx) != hfh_map.end()) {
-                    hfh_map[halfface_idx] = halfface_idx - offset_hfh;
+                auto it = hfh_map.find(halfface_idx);
+                if (it != hfh_map.end()) {
+                    it->second = halfface_idx - offset_hfh;
                 }
-                if (hfh_map.find(halfface_idx + 1) != hfh_map.end()) {
-                    hfh_map[halfface_idx + 1] = halfface_idx + 1 - offset_hfh;
+                it = hfh_map.find(halfface_idx + 1);
+                if (it != hfh_map.end()) {
+                    it->second = halfface_idx + 1 - offset_hfh;
                 }
             }
         }
@@ -196,18 +204,22 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
             int halfedge_idx = e_it->idx() * 2;
             if (e_status_[*e_it].deleted()) {
                 offset_hh += 2;
-                if (hh_map.find(halfedge_idx) != hh_map.end()) {
-                    hh_map[halfedge_idx] = -1;
+                auto it = hh_map.find(halfedge_idx);
+                if (it != hh_map.end()) {
+                    it->second = -1;
                 }
-                if (hh_map.find(halfedge_idx + 1) != hh_map.end()) {
-                    hh_map[halfedge_idx + 1] = -1;
+                it = hh_map.find(halfedge_idx + 1);
+                if (it != hh_map.end()) {
+                    it->second = -1;
                 }
             } else {
-                if (hh_map.find(halfedge_idx) != hh_map.end()) {
-                    hh_map[halfedge_idx] = halfedge_idx - offset_hh;
+                auto it = hh_map.find(halfedge_idx);
+                if (it != hh_map.end()) {
+                    it->second = halfedge_idx - offset_hh;
                 }
-                if (hh_map.find(halfedge_idx + 1) != hh_map.end()) {
-                    hh_map[halfedge_idx + 1] = halfedge_idx + 1 - offset_hh;
+                it = hh_map.find(halfedge_idx + 1);
+                if (it != hh_map.end()) {
+                    it->second = halfedge_idx + 1 - offset_hh;
                 }
             }
         }
@@ -222,9 +234,10 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
 
         if (track_vh) {
             if (v_status_[*v_it].deleted()) {
-                if (vh_map.find(v_it->idx()) != vh_map.end()) {
+                auto it = vh_map.find(v_it->idx());
+                if (it != vh_map.end()) {
                     ++offset_vh;
-                    vh_map[v_it->idx()] = -1;
+                    it->second = -1;
                 }
             } else {
                 if (vh_map.find(v_it->idx()) != vh_map.end()) {
