@@ -1276,6 +1276,7 @@ public:
 
 private:
     size_t cur_index_;
+    std::vector<HalfEdgeHandle> hes_;
 };
 
 //===========================================================================
@@ -1293,6 +1294,7 @@ public:
 
 private:
     size_t cur_index_;
+    std::vector<HalfEdgeHandle> hes_;
 };
 
 //===========================================================================
