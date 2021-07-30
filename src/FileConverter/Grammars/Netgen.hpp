@@ -29,45 +29,36 @@ class netgen_grammar : public qi::grammar<Iterator/*, qi::space_type*/> {
 public:
     explicit netgen_grammar(MeshGenerator& _generator) :
         netgen_grammar::base_type(content),
-        generator_(_generator) {
-
-        content = node_section_header >> *node >>
-                  element_section_header >> *element >>
-                  face_section_header >> *face;
-
-        node_section_header = qi::int_ /* Number of vertices */ >> spirit::eol;
-
-        node = *space >> qi::double_[boost::bind(&MeshGenerator::add_vertex_component, &generator_, ::_1)] >>
-               *space >> qi::double_[boost::bind(&MeshGenerator::add_vertex_component, &generator_, ::_1)] >>
-               *space >> qi::double_[boost::bind(&MeshGenerator::add_vertex_component, &generator_, ::_1)] >> spirit::eol;
-
-        element_section_header = qi::int_[boost::bind(&MeshGenerator::set_num_cells, &generator_, ::_1)] /* Number of tetrahedra */ >>
-                spirit::eol;;
-
-        element = *space >> qi::int_ >>
-                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
-                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
-                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
-                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
-                  spirit::eol;
-
-        face_section_header = qi::int_ /* Number of faces */ >> spirit::eol;
-
-        face = *space >> qi::int_ >>
-               *space >> qi::int_ >>
-               *space >> qi::int_ >>
-               *space >> qi::int_ >>
-               spirit::eol;
-
-        space = spirit::ascii::space - spirit::eol;
-    }
+        generator_(_generator)
+    {}
 
 private:
-
-    qi::rule<Iterator/*, qi::space_type*/> node_section_header, element_section_header, face_section_header,
-                                       node, element, face, space, content;
-
     MeshGenerator& generator_;
+
+    using Rule = qi::rule<Iterator>;
+
+    Rule space {spirit::ascii::space - spirit::eol};
+    Rule node_section_header {qi::int_ /* Number of vertices */ >> spirit::eol};
+    Rule element_section_header {qi::int_[boost::bind(&MeshGenerator::set_num_cells, &generator_, ::_1)] /* Number of tetrahedra */ >> spirit::eol};
+    Rule face_section_header {qi::int_ /* Number of faces */ >> spirit::eol};
+    Rule node {*space >> qi::double_[boost::bind(&MeshGenerator::add_vertex_component, &generator_, ::_1)] >>
+               *space >> qi::double_[boost::bind(&MeshGenerator::add_vertex_component, &generator_, ::_1)] >>
+               *space >> qi::double_[boost::bind(&MeshGenerator::add_vertex_component, &generator_, ::_1)] >> spirit::eol};
+    Rule element {*space >> qi::int_ >>
+                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
+                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
+                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
+                  *space >> qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)] >>
+                  spirit::eol};
+    Rule face {*space >> qi::int_ >>
+               *space >> qi::int_ >>
+               *space >> qi::int_ >>
+               *space >> qi::int_ >>
+               spirit::eol};
+    Rule content {node_section_header >> *node >>
+                  element_section_header >> *element >>
+                  face_section_header >> *face};
+
 };
 
 #endif /* NETGEN_HPP_ */
