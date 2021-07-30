@@ -38,7 +38,7 @@
 
 namespace OpenVolumeMesh {
 
-FaceHandle TetrahedralMeshTopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck) {
+FaceHandle TetrahedralMeshTopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool _topologyCheck) {
 
     if(_halfedges.size() != 3) {
 #ifndef NDEBUG
@@ -48,7 +48,7 @@ FaceHandle TetrahedralMeshTopologyKernel::add_face(const std::vector<HalfEdgeHan
         return TopologyKernel::InvalidFaceHandle;
     }
 
-    return TopologyKernel::add_face(_halfedges, _topologyCheck);
+    return TopologyKernel::add_face(std::move(_halfedges), _topologyCheck);
 }
 
 //========================================================================================
@@ -72,7 +72,7 @@ TetrahedralMeshTopologyKernel::add_face(const std::vector<VertexHandle>& _vertic
 
 
 CellHandle
-TetrahedralMeshTopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halffaces, bool _topologyCheck) {
+TetrahedralMeshTopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck) {
 
     if(_halffaces.size() != 4) {
 // To make this consistent with add_face
@@ -91,7 +91,7 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _half
         }
     }
 
-    return TopologyKernel::add_cell(_halffaces, _topologyCheck);
+    return TopologyKernel::add_cell(std::move(_halffaces), _topologyCheck);
 }
 
 

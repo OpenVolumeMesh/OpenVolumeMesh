@@ -99,13 +99,13 @@ public:
     ~HexahedralMeshTopologyKernel() override = default;
 
     // Overridden function
-    FaceHandle add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false) override;
+    FaceHandle add_face(std::vector<HalfEdgeHandle> _halfedges, bool _topologyCheck = false) override;
 
     // Overridden function
     FaceHandle add_face(const std::vector<VertexHandle>& _vertices) override;
 
     /// Overridden function
-    CellHandle add_cell(const std::vector<HalfFaceHandle>& _halffaces, bool _topologyCheck = false) override;
+    CellHandle add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck = false) override;
 
 private:
 
