@@ -582,7 +582,7 @@ public:
     ///
     /// \warning If _halfedges are not connected and \a _topologyCheck is \a false,
     ///          the behavior is undefined.
-    virtual FaceHandle add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false);
+    virtual FaceHandle add_face(std::vector<HalfEdgeHandle> _halfedges, bool _topologyCheck = false);
 
     /// Add face via incident vertices
     virtual FaceHandle add_face(const std::vector<VertexHandle>& _vertices);
@@ -594,7 +594,7 @@ public:
     ///
     /// \warning If _halffaces are not connected and \a _topologyCheck is \a false,
     ///          the behavior is undefined.
-    virtual CellHandle add_cell(const std::vector<HalfFaceHandle>& _halffaces, bool _topologyCheck = false);
+    virtual CellHandle add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck = false);
 
     /// Set the vertices of an edge
     void set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVertex, const VertexHandle& _toVertex);

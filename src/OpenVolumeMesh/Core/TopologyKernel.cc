@@ -32,14 +32,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #ifndef NDEBUG
 #include <iostream>
 #endif
@@ -167,7 +159,7 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
 //========================================================================================
 
 /// Add face via incident edges
-FaceHandle TopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck) {
+FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool _topologyCheck) {
 
 #ifndef NDEBUG
     // Assert that halfedges are valid
@@ -218,7 +210,7 @@ FaceHandle TopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedge
     }
 
     // Create face
-    faces_.emplace_back(_halfedges);
+    faces_.emplace_back(std::move(_halfedges));
     face_deleted_.push_back(false);
 
     // Get added face's handle
@@ -230,14 +222,15 @@ FaceHandle TopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedge
     // Update edge bottom-up incidences
     if(e_bottom_up_) {
 
-        for(std::vector<HalfEdgeHandle>::const_iterator it = _halfedges.begin(),
-            end = _halfedges.end(); it != end; ++it) {
+        const auto &face_halfedges = faces_[fh.idx()].halfedges();
+        for (const auto heh: face_halfedges) {
+            auto opp = opposite_halfedge_handle(heh);
 
-            assert((size_t)it->idx() < incident_hfs_per_he_.size());
-            assert((size_t)opposite_halfedge_handle(*it).idx() < incident_hfs_per_he_.size());
+            assert((size_t)heh.idx() < incident_hfs_per_he_.size());
+            assert((size_t)opp.idx() < incident_hfs_per_he_.size());
 
-            incident_hfs_per_he_[it->idx()].push_back(halfface_handle(fh, 0));
-            incident_hfs_per_he_[opposite_halfedge_handle(*it).idx()].push_back(halfface_handle(fh, 1));
+            incident_hfs_per_he_[heh.idx()].push_back(halfface_handle(fh, 0));
+            incident_hfs_per_he_[opp.idx()].push_back(halfface_handle(fh, 1));
         }
     }
 
@@ -386,7 +379,7 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
 //========================================================================================
 
 /// Add cell via incident halffaces
-CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halffaces, bool _topologyCheck) {
+CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck) {
 
 #ifndef NDEBUG
     // Assert that halffaces have valid indices
@@ -409,14 +402,12 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
         std::set<HalfEdgeHandle> incidentHalfedges;
         std::set<EdgeHandle>     incidentEdges;
 
-        for(std::vector<HalfFaceHandle>::const_iterator it = _halffaces.begin(),
-                end = _halffaces.end(); it != end; ++it) {
-
-            OpenVolumeMeshFace hface = halfface(*it);
-            for(std::vector<HalfEdgeHandle>::const_iterator he_it = hface.halfedges().begin(),
-                    he_end = hface.halfedges().end(); he_it != he_end; ++he_it) {
-                incidentHalfedges.insert(*he_it);
-                incidentEdges.insert(edge_handle(*he_it));
+        for (const auto &hfh: _halffaces) {
+            // TODO: optimize this, halfface() creates unnecessary copies
+            OpenVolumeMeshFace const hface = halfface(hfh);
+            for(const auto &heh: halfface_halfedges(hfh)) {
+                incidentHalfedges.insert(heh);
+                incidentEdges.insert(edge_handle(heh));
             }
         }
 
@@ -431,7 +422,7 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
     }
 
     // Create new cell
-    cells_.emplace_back(_halffaces);
+    cells_.emplace_back(std::move(_halffaces));
     cell_deleted_.push_back(false);
 
     // Resize props
@@ -442,32 +433,30 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
     // Update face bottom-up incidences
     if(f_bottom_up_) {
 
+        const auto &cell_halffaces = cells_[ch.idx()].halffaces();
         std::set<EdgeHandle> cell_edges;
-        for(std::vector<HalfFaceHandle>::const_iterator it = _halffaces.begin(),
-                end = _halffaces.end(); it != end; ++it) {
-            assert((size_t)it->idx() < incident_cell_per_hf_.size());
+        for(const auto &hfh: cell_halffaces) {
+            assert((size_t)hfh.idx() < incident_cell_per_hf_.size());
 
 #ifndef NDEBUG
             if(_topologyCheck) {
-                if(incident_cell_per_hf_[it->idx()] != InvalidCellHandle) {
+                if(incident_cell_per_hf_[hfh.idx()] != InvalidCellHandle) {
                     // Shouldn't this situation be dealt with before adding the
                     // cell and return InvalidCellHandle in this case?
-                	// Mike: Not if the user intends to add non-manifold
-                	// configurations. Although, in this case, he should be
-                	// warned about it.
+                    // Mike: Not if the user intends to add non-manifold
+                    // configurations. Although, in this case, he should be
+                    // warned about it.
                     std::cerr << "add_cell(): One of the specified half-faces is already incident to another cell!" << std::endl;
                 }
             }
 #endif
 
             // Overwrite incident cell for current half-face
-            incident_cell_per_hf_[it->idx()] = ch;
+            incident_cell_per_hf_[hfh.idx()] = ch;
 
             // Collect all edges of cell
-            const std::vector<HalfEdgeHandle> hes = halfface(*it).halfedges();
-            for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(),
-                    he_end = hes.end(); he_it != he_end; ++he_it) {
-                cell_edges.insert(edge_handle(*he_it));
+            for(const auto &eh: face_edges(face_handle(hfh))) {
+                cell_edges.insert(eh);
             }
         }
 
@@ -477,9 +466,8 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
             // their incident half-edges such that all
             // half-faces are in cyclic order around
             // a half-edge
-            for(std::set<EdgeHandle>::const_iterator e_it = cell_edges.begin(),
-                    e_end = cell_edges.end(); e_it != e_end; ++e_it) {
-                reorder_incident_halffaces(*e_it);
+            for (const auto &eh: cell_edges) {
+                reorder_incident_halffaces(eh);
             }
         }
     }
