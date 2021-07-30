@@ -138,14 +138,10 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
         }
     }
 
-    // Create edge object
-    OpenVolumeMeshEdge e(_fromVertex, _toVertex);
-
-    // Store edge locally
-    edges_.push_back(e);
+    // Store edge
+    edges_.emplace_back(_fromVertex, _toVertex);
     edge_deleted_.push_back(false);
 
-    // Resize props
     resize_eprops(n_edges());
 
     EdgeHandle eh((int)edges_.size()-1);
@@ -222,9 +218,7 @@ FaceHandle TopologyKernel::add_face(const std::vector<HalfEdgeHandle>& _halfedge
     }
 
     // Create face
-    OpenVolumeMeshFace face(_halfedges);
-
-    faces_.push_back(face);
+    faces_.emplace_back(_halfedges);
     face_deleted_.push_back(false);
 
     // Get added face's handle
@@ -437,9 +431,7 @@ CellHandle TopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _halfface
     }
 
     // Create new cell
-    OpenVolumeMeshCell cell(_halffaces);
-
-    cells_.push_back(cell);
+    cells_.emplace_back(_halffaces);
     cell_deleted_.push_back(false);
 
     // Resize props
