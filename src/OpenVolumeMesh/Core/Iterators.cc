@@ -543,10 +543,10 @@ CellVertexIter::CellVertexIter(const CellHandle& _ref_h,
         const TopologyKernel* _mesh, int _max_laps) :
 BaseIter(_mesh, _ref_h, _max_laps) {
 
-    OpenVolumeMeshCell c = BaseIter::mesh()->cell(_ref_h);
+    OpenVolumeMeshCell const &c = BaseIter::mesh()->cell(_ref_h);
     std::vector<HalfFaceHandle>::const_iterator hf_iter = c.halffaces().begin();
     for(; hf_iter != c.halffaces().end(); ++hf_iter) {
-        const OpenVolumeMeshFace& halfface = BaseIter::mesh()->halfface(*hf_iter);
+        const OpenVolumeMeshFace halfface = BaseIter::mesh()->halfface(*hf_iter);
         const std::vector<HalfEdgeHandle>& hes = halfface.halfedges();
         for(std::vector<HalfEdgeHandle>::const_iterator he_iter = hes.begin(); he_iter != hes.end(); ++he_iter) {
             incident_vertices_.push_back(BaseIter::mesh()->halfedge(*he_iter).to_vertex());
