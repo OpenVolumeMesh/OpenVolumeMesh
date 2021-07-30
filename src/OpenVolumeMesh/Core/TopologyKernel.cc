@@ -276,45 +276,37 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
      * will address the related entities in an arbitrary fashion.
      */
 
-    HalfEdgeHandle cur_he = halfedge_handle(_eh, 0);
-    assert((size_t)cur_he.idx() < incident_hfs_per_he_.size());
-    std::vector<HalfFaceHandle> new_halffaces;
-    auto &incident_hfs = incident_hfs_per_he_[cur_he.idx()];
-
-    if(incident_hfs.size() == 0)
-        return;
+    HalfEdgeHandle heh = halfedge_handle(_eh, 0);
+    assert((size_t)heh.idx() < incident_hfs_per_he_.size());
+    auto &incident_hfs = incident_hfs_per_he_[heh.idx()];
 
     const size_t n_hfs = incident_hfs.size();
+
+    if(n_hfs < 2)
+        return;
+
+    std::vector<HalfFaceHandle> new_halffaces;
     new_halffaces.reserve(n_hfs);
 
     // Start with one incident halfface and go into the first direction
-    auto cur_hf = *incident_hfs_per_he_[cur_he.idx()].begin();
-    auto start_hf = cur_hf;
+    auto start_hf = incident_hfs.front();
+    auto cur_hf = start_hf;
 
-    while(cur_hf != InvalidHalfFaceHandle)
-    {
+    do {
         new_halffaces.push_back(cur_hf);
+        if (new_halffaces.size() > incident_hfs.size()) {
+            std::cerr << "reorder_incident_halffaces(" << _eh.idx() << "): weird topology, aborting." << std::endl;
+            return;
+        };
 
         if (incident_cell(cur_hf) == InvalidCellHandle
                 || is_deleted(incident_cell(cur_hf)))
             break;
 
-        // Go to next halfface
-        cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
-
-        assert(cur_hf != InvalidHalfFaceHandle);
-
+        cur_hf = adjacent_halfface_in_cell(cur_hf, heh); assert(cur_hf != InvalidHalfFaceHandle);
         cur_hf = opposite_halfface_handle(cur_hf);
 
-        // End when we're through
-        if(cur_hf == start_hf) break;
-        // if one of the faces of the cell was already incident to another cell we need this check
-        // to prevent running into an infinite loop.
-        if(new_halffaces.size() > incident_hfs.size()) {
-            std::cerr << "reorder_incident_halffaces(" << _eh.idx() << "): weird topology, aborting" << std::endl;
-            return;
-        };
-    }
+    } while (cur_hf != start_hf);
 
     // First direction has terminated
     // If new_halffaces has the same size as old (unordered)
@@ -325,8 +317,7 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
 
         cur_hf = start_hf;
 
-        while(cur_hf != InvalidHalfFaceHandle) {
-
+        while(true) {
             cur_hf = opposite_halfface_handle(cur_hf);
 
             if (incident_cell(cur_hf) == InvalidCellHandle
@@ -335,10 +326,7 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
                 break;
             }
 
-            cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
-
-            // End when we're through
-            assert(cur_hf != InvalidHalfFaceHandle);
+            cur_hf = adjacent_halfface_in_cell(cur_hf, heh); assert(cur_hf != InvalidHalfFaceHandle);
 
             // TODO PERF: just move everything we already have to the end *once* and fill backwards
             new_halffaces.insert(new_halffaces.begin(), cur_hf);
@@ -352,13 +340,18 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
     // Everything worked just fine, set the new ordered vector
     if(new_halffaces.size() == incident_hfs.size()) {
         incident_hfs = std::move(new_halffaces);
+        // update incident halffaces of the opposite halfedge:
         std::transform(incident_hfs.rbegin(), incident_hfs.rend(),
-                incident_hfs_per_he_[opposite_halfedge_handle(cur_he).idx()].begin(),
+                incident_hfs_per_he_[opposite_halfedge_handle(heh).idx()].begin(),
                 opposite_halfface_handle);
-    } else {
-        std::cerr << "reorder_incident_halffaces: edge has more than one boundary! Currently not supported, not reordering." << std::endl;
+    }
+#if 0
+    else {
+        std::cerr << "reorder_incident_halffaces: found " << new_halffaces.size() << " of " << incident_hfs.size()
+            << " incident halffaces, likely the edge has more than one boundary! Currently not supported, not reordering." << std::endl;
         // TODO FIXME: we should support this case.
     }
+#endif
 
 }
 
