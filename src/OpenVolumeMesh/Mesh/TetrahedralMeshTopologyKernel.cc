@@ -413,6 +413,8 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
         if (ch.is_valid())
             incident_halffaces_with_cells.push_back(*hehf_it);
     }
+    // defer creation of new cells to avoid non-manifold configurations that confuse reorder_incident_halffaces:
+    std::vector<std::array<VertexHandle, 4>> new_cells;
 
     for (auto hfh : incident_halffaces_with_cells)
     {
@@ -422,11 +424,14 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
 
         delete_cell(ch);
 
-        add_cell(vertices[0], _vh, vertices[2], vertices[3]);
-        add_cell(_vh, vertices[1], vertices[2], vertices[3]);
+        new_cells.push_back({vertices[0], _vh, vertices[2], vertices[3]});
+        new_cells.push_back({_vh, vertices[1], vertices[2], vertices[3]});
     }
-
     delete_edge(edge_handle(_heh));
+
+    for (const auto verts: new_cells) {
+        add_cell(verts[0], verts[1], verts[2], verts[3]);
+    }
 
     enable_deferred_deletion(deferred_deletion_tmp);
 
@@ -440,6 +445,8 @@ void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
     if (!deferred_deletion_tmp)
         enable_deferred_deletion(true);
 
+    std::vector<std::array<VertexHandle, 4>> new_cells;
+
     for (char i = 0; i < 2; ++i)
     {
         HalfFaceHandle hfh = halfface_handle(_fh, i);
@@ -450,13 +457,18 @@ void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
 
             delete_cell(ch);
 
-            add_cell(vertices[0], vertices[1], _vh, vertices[3]);
-            add_cell(vertices[0], _vh, vertices[2], vertices[3]);
-            add_cell(_vh, vertices[1], vertices[2], vertices[3]);
+            new_cells.push_back({vertices[0], vertices[1], _vh, vertices[3]});
+            new_cells.push_back({vertices[0], _vh, vertices[2], vertices[3]});
+            new_cells.push_back({_vh, vertices[1], vertices[2], vertices[3]});
         }
     }
 
     delete_face(_fh);
+
+    for (const auto verts: new_cells) {
+        add_cell(verts[0], verts[1], verts[2], verts[3]);
+    }
+
 
     enable_deferred_deletion(deferred_deletion_tmp);
 
