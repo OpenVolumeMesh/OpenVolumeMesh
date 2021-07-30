@@ -319,6 +319,7 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
     // If new_halffaces has the same size as old (unordered)
     // vector of incident halffaces, we are done here
     // If not, try the other way round
+    // (this must be a boundary edge)
     if(new_halffaces.size() != incident_hfs.size()) {
 
         cur_hf = start_hf;
@@ -329,18 +330,17 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
             cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
 
             // End when we're through
-            if(cur_hf == start_hf) break;
+            if(cur_hf == InvalidHalfFaceHandle) break;
+
+            // TODO PERF: just move everything we already have to the end *once* and fill backwards
+            new_halffaces.insert(new_halffaces.begin(), cur_hf);
             if(new_halffaces.size() > incident_hfs.size()) {
                 std::cerr << "reorder_incident_halffaces(" << _eh.idx() << ") #2: weird topology, aborting" << std::endl;
                 return;
-            };
-
-            if(cur_hf != InvalidHalfFaceHandle)
-                // TODO PERF: just move everything we already have to the end *once* and fill backwards
-                new_halffaces.insert(new_halffaces.begin(), cur_hf);
-            else return;
+            }
         }
     }
+    // TODO FIXME: if there is more than 1 boundary on this edge, this code fails!
 
     // Everything worked just fine, set the new ordered vector
     if(new_halffaces.size() == incident_hfs.size()) {
