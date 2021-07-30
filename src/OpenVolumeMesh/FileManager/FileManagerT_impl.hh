@@ -33,13 +33,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
 
 
 #include <vector>
@@ -139,6 +132,8 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> c;
 
+        _mesh.reserve_vertices(c);
+
         // Read in vertices
         for(uint64_t i = 0u; i < c; ++i) {
 
@@ -173,6 +168,8 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> c;
 
+        _mesh.reserve_edges(c);
+
         // Read in edges
         for(uint64_t i = 0u; i < c; ++i) {
 
@@ -183,6 +180,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr.str(line);
             sstr >> v1;
             sstr >> v2;
+            // TODO: check index validity
             _mesh.add_edge(VertexHandle(v1), VertexHandle(v2), true);
         }
     }
@@ -208,6 +206,10 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> c;
 
+        _mesh.reserve_faces(c);
+
+        std::vector<HalfEdgeHandle> hes;
+
         // Read in faces
         for(uint64_t i = 0u; i < c; ++i) {
 
@@ -215,18 +217,20 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr.clear();
             sstr.str(line);
 
-            std::vector<HalfEdgeHandle> hes;
 
             // Get face valence
             uint64_t val = 0u;
             sstr >> val;
 
+            hes.clear();
+            hes.reserve(val);
             // Read half-edge indices
             for(unsigned int e = 0; e < val; ++e) {
 
                 unsigned int v1 = 0;
                 sstr >> v1;
-                hes.push_back(HalfEdgeHandle(v1));
+                // TODO: check index validity
+                hes.emplace_back(v1);
             }
 
             _mesh.add_face(hes, _topologyCheck);
@@ -254,6 +258,9 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> c;
 
+        _mesh.reserve_cells(c);
+
+        std::vector<HalfFaceHandle> hfs;
         // Read in cells
         for(uint64_t i = 0u; i < c; ++i) {
 
@@ -261,18 +268,21 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr.clear();
             sstr.str(line);
 
-            std::vector<HalfFaceHandle> hfs;
 
             // Get cell valence
             uint64_t val = 0u;
             sstr >> val;
+
+            hfs.clear();
+            hfs.reserve(val);
 
             // Read half-face indices
             for(unsigned int f = 0; f < val; ++f) {
 
                 unsigned int v1 = 0;
                 sstr >> v1;
-                hfs.push_back(HalfFaceHandle(v1));
+                // TODO: check index validity
+                hfs.emplace_back(v1);
             }
 
             _mesh.add_cell(hfs, _topologyCheck);

@@ -1,3 +1,9 @@
+Version 2.2 (2021/08/?)
+  Performance improvements:
+    - Utilize std::vector::reserve to avoid reallocations
+  API changes:
+    - add_{face,edge,cell} takes an std::vector by value instead of by const reference.
+
 Version 2.1 (2019/09/09)
 - Modern target-based CMake 3 build system
 - !!!Break compatiblity with C++98, require C++11 as mininum!!!

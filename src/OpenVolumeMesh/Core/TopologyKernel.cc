@@ -59,6 +59,32 @@ const HalfFaceHandle    TopologyKernel::InvalidHalfFaceHandle = HalfFaceHandle(-
 const CellHandle        TopologyKernel::InvalidCellHandle     = CellHandle(-1);
 
 //========================================================================================
+void TopologyKernel::reserve_vertices(size_t n)
+{
+    ResourceManager::reserve_vprops(n);
+    vertex_deleted_.reserve(n);
+}
+
+void TopologyKernel::reserve_edges(size_t n)
+{
+    ResourceManager::reserve_eprops(n);
+    edges_.reserve(n);
+    edge_deleted_.reserve(n);
+}
+
+void TopologyKernel::reserve_faces(size_t n)
+{
+    ResourceManager::reserve_fprops(n);
+    faces_.reserve(n);
+    face_deleted_.reserve(n);
+}
+
+void TopologyKernel::reserve_cells(size_t n)
+{
+    ResourceManager::reserve_cprops(n);
+    cells_.reserve(n);
+    cell_deleted_.reserve(n);
+}
 
 VertexHandle TopologyKernel::add_vertex() {
 
@@ -2340,6 +2366,14 @@ void TopologyKernel::compute_vertex_bottom_up_incidences() {
     // Clear incidences
     outgoing_hes_per_vertex_.clear();
     outgoing_hes_per_vertex_.resize(n_vertices());
+    std::vector<int> n_edges_per_vertex(n_vertices(), 0);
+    for (const auto &eh: edges()) {
+        ++n_edges_per_vertex[edges_[eh.idx()].from_vertex().idx()];
+        ++n_edges_per_vertex[edges_[eh.idx()].to_vertex().idx()];
+    }
+    for (const auto &vh: vertices()) {
+        outgoing_hes_per_vertex_[vh.idx()].reserve(n_edges_per_vertex[vh.idx()]);
+    }
 
     // Store outgoing halfedges per vertex
     int n_edges = (int)edges_.size();
@@ -2368,23 +2402,25 @@ void TopologyKernel::compute_edge_bottom_up_incidences() {
 
     // Clear
     incident_hfs_per_he_.clear();
-    incident_hfs_per_he_.resize(edges_.size() * 2u);
+    incident_hfs_per_he_.resize(n_halfedges());
 
+    std::vector<int> n_faces_per_edge(n_edges(), 0);
+    for (const auto &fh: faces()) {
+        for (const auto &heh: face(fh).halfedges()) {
+            ++n_faces_per_edge[edge_handle(heh).idx()];
+        }
+    }
+    for (const auto &eh: edges()) {
+        incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].resize(n_faces_per_edge[eh.idx()]);
+        incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].resize(n_faces_per_edge[eh.idx()]);
+    }
     // Store incident halffaces per halfedge
-    int n_faces = (int)faces_.size();
-    for(int i = 0; i < n_faces; ++i) {
-        if (face_deleted_[i])
-            continue;
-
-        std::vector<HalfEdgeHandle> halfedges = faces_[i].halfedges();
-
-        // Go over all halfedges
-        for(std::vector<HalfEdgeHandle>::const_iterator he_it = halfedges.begin();
-                he_it != halfedges.end(); ++he_it) {
-
-            incident_hfs_per_he_[he_it->idx()].push_back(halfface_handle(FaceHandle(i), 0));
-            incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].push_back(
-                    halfface_handle(FaceHandle(i), 1));
+    for (const auto &fh: faces()) {
+        for(const auto &heh: faces_[fh.idx()].halfedges()) {
+            auto opp = opposite_halfedge_handle(heh);
+            auto &idx = --n_faces_per_edge[edge_handle(heh).idx()];
+            incident_hfs_per_he_[heh.idx()][idx] = halfface_handle(fh, 0);
+            incident_hfs_per_he_[opp.idx()][idx] = halfface_handle(fh, 1);
         }
     }
 }

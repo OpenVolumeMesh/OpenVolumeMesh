@@ -80,6 +80,11 @@ public:
     /// Change size of stored cell properties
     void resize_cprops(size_t _nc);
 
+    void reserve_vprops(size_t n);
+    void reserve_eprops(size_t n);
+    void reserve_fprops(size_t n);
+    void reserve_cprops(size_t n);
+
 protected:
 
     void vertex_deleted(const VertexHandle& _h);
@@ -316,6 +321,9 @@ private:
 
     template<class StdVecT>
     void resize_props(StdVecT& _vec, size_t _n);
+
+    template<class StdVecT>
+    void reserve_props(StdVecT& _vec, size_t _n);
 
     template<class StdVecT>
     void entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h);
