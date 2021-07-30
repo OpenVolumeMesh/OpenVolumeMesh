@@ -295,15 +295,16 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
     {
         new_halffaces.push_back(cur_hf);
 
+        if (incident_cell(cur_hf) == InvalidCellHandle
+                || is_deleted(incident_cell(cur_hf)))
+            break;
+
         // Go to next halfface
         cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
 
-        if(cur_hf != InvalidHalfFaceHandle)
-        {
-            if (is_deleted(incident_cell(cur_hf)))
-                break; // pretend we ran into a boundary
-            cur_hf = opposite_halfface_handle(cur_hf);
-        }
+        assert(cur_hf != InvalidHalfFaceHandle);
+
+        cur_hf = opposite_halfface_handle(cur_hf);
 
         // End when we're through
         if(cur_hf == start_hf) break;
@@ -327,10 +328,17 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
         while(cur_hf != InvalidHalfFaceHandle) {
 
             cur_hf = opposite_halfface_handle(cur_hf);
+
+            if (incident_cell(cur_hf) == InvalidCellHandle
+                    || is_deleted(incident_cell(cur_hf))) {
+                // reached the other boundary
+                break;
+            }
+
             cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
 
             // End when we're through
-            if(cur_hf == InvalidHalfFaceHandle) break;
+            assert(cur_hf != InvalidHalfFaceHandle);
 
             // TODO PERF: just move everything we already have to the end *once* and fill backwards
             new_halffaces.insert(new_halffaces.begin(), cur_hf);
@@ -340,7 +348,6 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
             }
         }
     }
-    // TODO FIXME: if there is more than 1 boundary on this edge, this code fails!
 
     // Everything worked just fine, set the new ordered vector
     if(new_halffaces.size() == incident_hfs.size()) {
@@ -348,7 +355,11 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
         std::transform(incident_hfs.rbegin(), incident_hfs.rend(),
                 incident_hfs_per_he_[opposite_halfedge_handle(cur_he).idx()].begin(),
                 opposite_halfface_handle);
+    } else {
+        std::cerr << "reorder_incident_halffaces: edge has more than one boundary! Currently not supported, not reordering." << std::endl;
+        // TODO FIXME: we should support this case.
     }
+
 }
 
 //========================================================================================
