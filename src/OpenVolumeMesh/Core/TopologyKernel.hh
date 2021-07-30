@@ -33,6 +33,7 @@
  *                                                                           *
 \*===========================================================================*/
 
+
 #include <cassert>
 #include <set>
 #include <vector>
@@ -561,6 +562,10 @@ private:
     size_t n_vertices_ = 0u;
 
 public:
+    void reserve_vertices(size_t n);
+    void reserve_edges(size_t n);
+    void reserve_faces(size_t n);
+    void reserve_cells(size_t n);
 
     /// Add abstract vertex
     virtual VertexHandle add_vertex();
@@ -908,15 +913,9 @@ public:
             compute_edge_bottom_up_incidences();
 
             if(f_bottom_up_) {
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-                for(EdgeIter e_it = edges_begin(), e_end = edges_end();
-                    e_it != e_end; ++e_it) {
-                    reorder_incident_halffaces(*e_it);
+                for (const auto &eh: edges()) {
+                    reorder_incident_halffaces(eh);
                 }
-#else
-                std::for_each(edges_begin(), edges_end(),
-                              std::bind(&TopologyKernel::reorder_incident_halffaces, this, std::placeholders::_1));
-#endif
             }
         }
 
@@ -946,15 +945,9 @@ public:
 
         if(updateOrder) {
             if(e_bottom_up_) {
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-                for(EdgeIter e_it = edges_begin(), e_end = edges_end();
-                    e_it != e_end; ++e_it) {
-                    reorder_incident_halffaces(*e_it);
+                for (const auto &eh: edges()) {
+                    reorder_incident_halffaces(eh);
                 }
-#else
-                std::for_each(edges_begin(), edges_end(),
-                              std::bind(&TopologyKernel::reorder_incident_halffaces, this, std::placeholders::_1));
-#endif
             }
         }
     }
