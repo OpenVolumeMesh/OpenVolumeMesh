@@ -67,6 +67,8 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     typedef typename MeshT::PointT Point;
     Point v = Point(0.0, 0.0, 0.0);
 
+    _istream.imbue(std::locale::classic());
+
     _mesh.clear(false);
     // Temporarily disable bottom-up incidences
     // since it's way faster to first add all the
@@ -434,6 +436,7 @@ void FileManager::generateGenericProperty(const std::string& _entity_t, const st
 template<class MeshT>
 void FileManager::writeStream(std::ostream &_ostream, const MeshT &_mesh) const
 {
+    _ostream.imbue(std::locale::classic());
     // Write header
     _ostream << "OVM ASCII" << std::endl;
 
