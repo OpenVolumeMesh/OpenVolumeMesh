@@ -304,75 +304,80 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
      * will address the related entities in an arbitrary fashion.
      */
 
-    for(unsigned char s = 0; s <= 1; s++) {
+    HalfEdgeHandle cur_he = halfedge_handle(_eh, 0);
+    assert((size_t)cur_he.idx() < incident_hfs_per_he_.size());
+    std::vector<HalfFaceHandle> new_halffaces;
+    auto &incident_hfs = incident_hfs_per_he_[cur_he.idx()];
 
-        HalfEdgeHandle cur_he = halfedge_handle(_eh, s);
-        std::vector<HalfFaceHandle> new_halffaces;
-        HalfFaceHandle start_hf = InvalidHalfFaceHandle;
-        HalfFaceHandle cur_hf = InvalidHalfFaceHandle;
+    if(incident_hfs.size() == 0)
+        return;
 
-        // Start with one incident halfface and go into the first direction
-        assert((size_t)cur_he.idx() < incident_hfs_per_he_.size());
+    const size_t n_hfs = incident_hfs.size();
+    new_halffaces.reserve(n_hfs);
 
-        if(incident_hfs_per_he_[cur_he.idx()].size() != 0) {
+    // Start with one incident halfface and go into the first direction
+    auto cur_hf = *incident_hfs_per_he_[cur_he.idx()].begin();
+    auto start_hf = cur_hf;
 
-            // Get start halfface
-            cur_hf = *incident_hfs_per_he_[cur_he.idx()].begin();
-            start_hf = cur_hf;
+    while(cur_hf != InvalidHalfFaceHandle)
+    {
+        new_halffaces.push_back(cur_hf);
 
-            while(cur_hf != InvalidHalfFaceHandle) {
+        // Go to next halfface
+        cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
 
-                // Add halfface
-                new_halffaces.push_back(cur_hf);
-
-                // Go to next halfface
-                cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
-
-                if(cur_hf != InvalidHalfFaceHandle)
-                {
-                    if (is_deleted(incident_cell(cur_hf)))
-                      break; // pretend we ran into a boundary
-                    cur_hf = opposite_halfface_handle(cur_hf);
-                }
-
-                // End when we're through
-                if(cur_hf == start_hf) break;
-                // if one of the faces of the cell was already incident to another cell we need this check
-                // to prevent running into an infinite loop.
-                if(std::find(new_halffaces.begin(), new_halffaces.end(), cur_hf) != new_halffaces.end()) break;
-            }
-
-            // First direction has terminated
-            // If new_halffaces has the same size as old (unordered)
-            // vector of incident halffaces, we are done here
-            // If not, try the other way round
-            if(new_halffaces.size() != incident_hfs_per_he_[cur_he.idx()].size()) {
-
-                // Get opposite of start halfface
-                cur_hf = start_hf;
-
-                 while(cur_hf != InvalidHalfFaceHandle) {
-
-                     cur_hf = opposite_halfface_handle(cur_hf);
-                     cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
-
-                     if(cur_hf == start_hf) break;
-
-                     // if one of the faces of the cell was already incident to another cell we need this check
-                     // to prevent running into an infinite loop.
-                     if(std::find(new_halffaces.begin(), new_halffaces.end(), cur_hf) != new_halffaces.end()) break;
-
-                     if(cur_hf != InvalidHalfFaceHandle)
-                         new_halffaces.insert(new_halffaces.begin(), cur_hf);
-                     else break;
-                }
-            }
-
-            // Everything worked just fine, set the new ordered vector
-            if(new_halffaces.size() == incident_hfs_per_he_[cur_he.idx()].size()) {
-                incident_hfs_per_he_[cur_he.idx()] = new_halffaces;
-            }
+        if(cur_hf != InvalidHalfFaceHandle)
+        {
+            if (is_deleted(incident_cell(cur_hf)))
+                break; // pretend we ran into a boundary
+            cur_hf = opposite_halfface_handle(cur_hf);
         }
+
+        // End when we're through
+        if(cur_hf == start_hf) break;
+        // if one of the faces of the cell was already incident to another cell we need this check
+        // to prevent running into an infinite loop.
+        if(new_halffaces.size() > incident_hfs.size()) {
+            std::cerr << "reorder_incident_halffaces(" << _eh.idx() << "): weird topology, aborting" << std::endl;
+            return;
+        };
+    }
+
+    // First direction has terminated
+    // If new_halffaces has the same size as old (unordered)
+    // vector of incident halffaces, we are done here
+    // If not, try the other way round
+    if(new_halffaces.size() != incident_hfs.size()) {
+
+        cur_hf = start_hf;
+
+        while(cur_hf != InvalidHalfFaceHandle) {
+
+            cur_hf = opposite_halfface_handle(cur_hf);
+            cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
+
+            if(cur_hf == start_hf) break;
+
+            // End when we're through
+            if(cur_hf == start_hf) break;
+            if(new_halffaces.size() > incident_hfs.size()) {
+                std::cerr << "reorder_incident_halffaces(" << _eh.idx() << ") #2: weird topology, aborting" << std::endl;
+                return;
+            };
+
+            if(cur_hf != InvalidHalfFaceHandle)
+                // TODO PERF: just move everything we already have to the end *once* and fill backwards
+                new_halffaces.insert(new_halffaces.begin(), cur_hf);
+            else return;
+        }
+    }
+
+    // Everything worked just fine, set the new ordered vector
+    if(new_halffaces.size() == incident_hfs.size()) {
+        incident_hfs = std::move(new_halffaces);
+        std::transform(incident_hfs.rbegin(), incident_hfs.rend(),
+                incident_hfs_per_he_[opposite_halfedge_handle(cur_he).idx()].begin(),
+                opposite_halfface_handle);
     }
 }
 
