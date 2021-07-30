@@ -81,11 +81,11 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<HalfFaceHandle>& _half
 #endif
         return TopologyKernel::InvalidCellHandle;
     }
-    for(std::vector<HalfFaceHandle>::const_iterator it = _halffaces.begin();
-            it != _halffaces.end(); ++it) {
-        if(TopologyKernel::halfface(*it).halfedges().size() != 3) {
+    for(const auto &hfh: _halffaces) {
+        auto n_halfedges = TopologyKernel::valence(TopologyKernel::face_handle(hfh));
+        if (n_halfedges != 3) {
 #ifndef NDEBUG
-            std::cerr << "Incident face does not have valence three! Aborting." << std::endl;
+            std::cerr << "TetrahedralMeshTopologyKernel::add_cell(): Incident face " << hfh.idx() << " does not have valence three: " << n_halfedges << "; not adding cell." << std::endl;
 #endif
             return TopologyKernel::InvalidCellHandle;
         }
