@@ -170,42 +170,14 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
 
     // Perform topology check
     if(_topologyCheck) {
-
-        /*
-         * Test if halfedges are connected
-         *
-         * The test works as follows:
-         * For every edge in the parameter vector
-         * put all incident vertices into a
-         * set of either "from"-vertices or "to"-vertices,
-         * respectively.
-         * If and only if all edges are connected,
-         * then both sets are identical.
-         */
-
-        std::set<VertexHandle> fromVertices;
-        std::set<VertexHandle> toVertices;
-
-        for(std::vector<HalfEdgeHandle>::const_iterator it = _halfedges.begin(),
-            end = _halfedges.end(); it != end; ++it) {
-
-            fromVertices.insert(halfedge(*it).from_vertex());
-            toVertices.insert(halfedge(*it).to_vertex());
-        }
-
-        for(std::set<VertexHandle>::const_iterator v_it = fromVertices.begin(),
-                v_end = fromVertices.end(); v_it != v_end; ++v_it) {
-            if(toVertices.count(*v_it) != 1) {
-                // The situation here is different, the caller has requested a
-                // topology check and expects an invalid handle if the half-edges
-                // are not connected. Give him a message in debug mode.
-#ifndef NDEBUG
-                std::cerr << "add_face(): The specified halfedges are not connected!" << std::endl;
-#endif
+        for (size_t i = 0; i + 1< _halfedges.size(); ++i) {
+            if (to_vertex_handle(_halfedges[i]) != from_vertex_handle(_halfedges[i+1])) {
                 return InvalidFaceHandle;
             }
         }
-
+        if (to_vertex_handle(_halfedges.back()) != from_vertex_handle(_halfedges.front())) {
+            return InvalidFaceHandle;
+        }
         // The halfedges are now guaranteed to be connected
     }
 
