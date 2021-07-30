@@ -1299,8 +1299,7 @@ HalfFaceHalfEdgeIterImpl::HalfFaceHalfEdgeIterImpl(const HalfFaceHandle& _ref_h,
 }
 
 HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator--() {
-    const std::vector<HalfEdgeHandle> halfedges =
-        mesh()->halfface(ref_handle()).halfedges();
+    const auto &halfedges = mesh()->halfface(ref_handle()).halfedges();
     if (cur_index_ == 0) {
         cur_index_ = halfedges.size() - 1;
         --lap_;
@@ -1315,8 +1314,7 @@ HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator--() {
 }
 
 HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator++() {
-    const std::vector<HalfEdgeHandle> halfedges =
-        mesh()->halfface(ref_handle()).halfedges();
+    const auto &halfedges = mesh()->halfface(ref_handle()).halfedges();
     ++cur_index_;
     if (cur_index_ >= halfedges.size()) {
         cur_index_ = 0;
@@ -1345,8 +1343,7 @@ HalfFaceEdgeIterImpl::HalfFaceEdgeIterImpl(const HalfFaceHandle& _ref_h, const T
 }
 
 HalfFaceEdgeIterImpl& HalfFaceEdgeIterImpl::operator--() {
-    const std::vector<HalfEdgeHandle> halfedges =
-        mesh()->halfface(ref_handle()).halfedges();
+    const auto &halfedges = mesh()->halfface(ref_handle()).halfedges();
     if (cur_index_ == 0) {
         cur_index_ = halfedges.size() - 1;
         --lap_;
@@ -1361,8 +1358,7 @@ HalfFaceEdgeIterImpl& HalfFaceEdgeIterImpl::operator--() {
 }
 
 HalfFaceEdgeIterImpl& HalfFaceEdgeIterImpl::operator++() {
-    const std::vector<HalfEdgeHandle> halfedges =
-        mesh()->halfface(ref_handle()).halfedges();
+    const auto &halfedges = mesh()->halfface(ref_handle()).halfedges();
     ++cur_index_;
     if (cur_index_ >= halfedges.size()) {
         cur_index_ = 0;
