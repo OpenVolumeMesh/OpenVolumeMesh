@@ -42,6 +42,8 @@
 #include <cctype>
 #include <typeinfo>
 #include <stdint.h>
+#include <memory>
+#include <array>
 
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
@@ -319,6 +321,9 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
     bool _topologyCheck, bool _computeBottomUpIncidences) const {
 
     std::ifstream iff(_filename.c_str(), std::ios::in);
+
+    auto read_buf = std::make_unique<std::array<char, 0x10000>>();
+    iff.rdbuf()->pubsetbuf(read_buf->data(), read_buf->size());
 
     if(!iff.good()) {
         if (verbosity_level_ >= 1) {
