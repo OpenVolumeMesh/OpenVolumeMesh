@@ -883,8 +883,8 @@ public:
 
 public:
 
-    void enable_bottom_up_incidences(bool _enable = true) {
-
+    void enable_bottom_up_incidences(bool _enable = true)
+    {
         enable_vertex_bottom_up_incidences(_enable);
         enable_edge_bottom_up_incidences(_enable);
         enable_face_bottom_up_incidences(_enable);
@@ -1108,11 +1108,11 @@ public:
 
     Face opposite_halfface(const Face& _face) const {
         std::vector<HalfEdgeHandle> opp_halfedges;
-        for(std::vector<HalfEdgeHandle>::const_iterator it = _face.halfedges().begin(); it
-                != _face.halfedges().end(); ++it) {
-            opp_halfedges.insert(opp_halfedges.begin(), opposite_halfedge_handle(*it));
-        }
-
+        opp_halfedges.resize(_face.halfedges().size());
+        std::transform(_face.halfedges().rbegin(),
+                       _face.halfedges().rend(),
+                       opp_halfedges.begin(),
+                       opposite_halfedge_handle);
         return Face(opp_halfedges);
     }
 
