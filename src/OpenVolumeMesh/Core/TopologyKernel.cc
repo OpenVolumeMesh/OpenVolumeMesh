@@ -36,7 +36,7 @@
 #include <iostream>
 #endif
 
-#include <queue>
+#include <algorithm>
 
 #include "TopologyKernel.hh"
 
@@ -382,7 +382,9 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
 //========================================================================================
 
 /// Add cell via incident halffaces
-CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck) {
+CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck)
+{
+    assert(_halffaces.size() > 0);
 
 #ifndef NDEBUG
     // Assert that halffaces have valid indices
@@ -402,19 +404,24 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
          * exactly twice the number of involved edges.
          */
 
-        std::set<HalfEdgeHandle> incidentHalfedges;
-        std::set<EdgeHandle>     incidentEdges;
+        size_t guess_n_halfedges = _halffaces.size() * valence(face_handle(_halffaces[0]));
+        std::vector<HalfEdgeHandle> incidentHalfedges;
+        // actually, use double the guess, better to allocate a bit more than
+        // risk reallocation.
+        incidentHalfedges.reserve(2 * guess_n_halfedges);
 
         for (const auto &hfh: _halffaces) {
-            // TODO: optimize this, halfface() creates unnecessary copies
-            OpenVolumeMeshFace const hface = halfface(hfh);
-            for(const auto &heh: halfface_halfedges(hfh)) {
-                incidentHalfedges.insert(heh);
-                incidentEdges.insert(edge_handle(heh));
-            }
+            OpenVolumeMeshFace hface = halfface(hfh);
+            std::copy(hface.halfedges().begin(), hface.halfedges().end(), std::back_inserter(incidentHalfedges));
         }
+        std::sort(incidentHalfedges.begin(), incidentHalfedges.end());
+        auto he_end = std::unique(incidentHalfedges.begin(), incidentHalfedges.end());
+        auto n_halfedges = std::distance(incidentHalfedges.begin(), he_end);
+        auto e_end = std::unique(incidentHalfedges.begin(), he_end,
+                [](HalfEdgeHandle a, HalfEdgeHandle b) {return a.idx()/2 == b.idx()/2;});
+        auto n_edges = std::distance(incidentHalfedges.begin(), e_end);
 
-        if(incidentHalfedges.size() != (incidentEdges.size() * 2u)) {
+        if(n_halfedges != 2u * n_edges) {
 #ifndef NDEBUG
             std::cerr << "add_cell(): The specified half-faces are not connected!" << std::endl;
 #endif
