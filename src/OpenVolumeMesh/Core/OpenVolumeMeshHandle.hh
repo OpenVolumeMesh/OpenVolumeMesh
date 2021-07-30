@@ -39,6 +39,7 @@
 #include <vector>
 #include <cassert>
 #include <limits>
+#include <functional>
 
 #include "Entities.hh"
 #include "../System/FunctionalInclude.hh"
@@ -219,4 +220,16 @@ OVM_EXPORT
 std::istream& operator>>(std::istream& _istr, OpenVolumeMeshHandle& _handle);
 
 } // Namespace OpenVolumeMesh
+
+namespace std
+{
+    template<typename EntityTag>
+    struct hash<OpenVolumeMesh::HandleT<EntityTag>>
+    {
+        auto constexpr operator()(OpenVolumeMesh::HandleT<EntityTag> const& handle) const noexcept
+        {
+            return std::hash<int>{}(handle.idx());
+        }
+    };
+}
 
