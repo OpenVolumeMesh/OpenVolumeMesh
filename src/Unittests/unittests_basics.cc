@@ -878,6 +878,7 @@ TEST_F(PolyhedralMeshBase, DeleteCellBUTest1noBU) {
 
     mesh_.delete_cell(CellHandle(0));
 
+    mesh_.enable_bottom_up_incidences(true);
     for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin(),
             hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
         EXPECT_HANDLE_EQ(PolyhedralMesh::InvalidCellHandle, mesh_.incident_cell(*hf_it));
