@@ -2412,7 +2412,6 @@ void TopologyKernel::compute_vertex_bottom_up_incidences() {
 void TopologyKernel::compute_edge_bottom_up_incidences() {
 
     // Clear
-    incident_hfs_per_he_.clear();
     incident_hfs_per_he_.resize(n_halfedges());
 
     std::vector<int> n_faces_per_edge(n_edges(), 0);
@@ -2422,7 +2421,9 @@ void TopologyKernel::compute_edge_bottom_up_incidences() {
         }
     }
     for (const auto &eh: edges()) {
+        incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].clear();
         incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].reserve(n_faces_per_edge[eh.idx()]);
+        incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].clear();
         incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].reserve(n_faces_per_edge[eh.idx()]);
     }
     // Store incident halffaces per halfedge
