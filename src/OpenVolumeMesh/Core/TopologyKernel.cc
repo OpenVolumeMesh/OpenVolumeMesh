@@ -383,8 +383,16 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
         incidentHalfedges.reserve(2 * guess_n_halfedges);
 
         for (const auto &hfh: _halffaces) {
-            OpenVolumeMeshFace hface = halfface(hfh);
-            std::copy(hface.halfedges().begin(), hface.halfedges().end(), std::back_inserter(incidentHalfedges));
+            const auto &hes = face(face_handle(hfh)).halfedges();
+            if ((hfh.idx() & 1) == 0) { // first halfface
+                std::copy(hes.begin(), hes.end(),
+                        std::back_inserter(incidentHalfedges));
+            } else {
+                std::transform(hes.rbegin(),
+                        hes.rend(),
+                        std::back_inserter(incidentHalfedges),
+                        opposite_halfedge_handle);
+            }
         }
         std::sort(incidentHalfedges.begin(), incidentHalfedges.end());
         auto he_end = std::unique(incidentHalfedges.begin(), incidentHalfedges.end());
