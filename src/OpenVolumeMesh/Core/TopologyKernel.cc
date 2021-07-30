@@ -356,8 +356,6 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
             cur_hf = opposite_halfface_handle(cur_hf);
             cur_hf = adjacent_halfface_in_cell(cur_hf, cur_he);
 
-            if(cur_hf == start_hf) break;
-
             // End when we're through
             if(cur_hf == start_hf) break;
             if(new_halffaces.size() > incident_hfs.size()) {
