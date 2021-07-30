@@ -203,6 +203,8 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
 
             incident_hfs_per_he_[heh.idx()].push_back(halfface_handle(fh, 0));
             incident_hfs_per_he_[opp.idx()].push_back(halfface_handle(fh, 1));
+            // we added a single face, so the configuration is not manifold.
+            // no need to call reorder_incident_halffaces(edge_handle(heh))
         }
     }
 
@@ -295,7 +297,7 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
     do {
         new_halffaces.push_back(cur_hf);
         if (new_halffaces.size() > incident_hfs.size()) {
-            std::cerr << "reorder_incident_halffaces(" << _eh.idx() << "): weird topology, aborting." << std::endl;
+            //std::cerr << "reorder_incident_halffaces(" << _eh.idx() << "): weird topology, aborting." << std::endl;
             return;
         };
 
@@ -303,7 +305,10 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
                 || is_deleted(incident_cell(cur_hf)))
             break;
 
-        cur_hf = adjacent_halfface_in_cell(cur_hf, heh); assert(cur_hf != InvalidHalfFaceHandle);
+        cur_hf = adjacent_halfface_in_cell(cur_hf, heh);
+        if(cur_hf == InvalidHalfFaceHandle) {
+            return;
+        }
         cur_hf = opposite_halfface_handle(cur_hf);
 
     } while (cur_hf != start_hf);
@@ -326,12 +331,15 @@ void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
                 break;
             }
 
-            cur_hf = adjacent_halfface_in_cell(cur_hf, heh); assert(cur_hf != InvalidHalfFaceHandle);
+            cur_hf = adjacent_halfface_in_cell(cur_hf, heh);
+            if (cur_hf == InvalidHalfFaceHandle) {
+                return;
+            }
 
             // TODO PERF: just move everything we already have to the end *once* and fill backwards
             new_halffaces.insert(new_halffaces.begin(), cur_hf);
             if(new_halffaces.size() > incident_hfs.size()) {
-                std::cerr << "reorder_incident_halffaces(" << _eh.idx() << ") #2: weird topology, aborting" << std::endl;
+                //std::cerr << "reorder_incident_halffaces(" << _eh.idx() << ") #2: weird topology, aborting" << std::endl;
                 return;
             }
         }
