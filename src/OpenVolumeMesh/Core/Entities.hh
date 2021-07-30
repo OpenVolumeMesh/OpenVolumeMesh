@@ -5,14 +5,15 @@
 
 namespace OpenVolumeMesh {
 
+/// Entity tags
 namespace Entity {
-    struct OVM_EXPORT Vertex   { Vertex() = delete;};
-    struct OVM_EXPORT Edge     {};
-    struct OVM_EXPORT HalfEdge {};
-    struct OVM_EXPORT Face     {};
-    struct OVM_EXPORT HalfFace {};
-    struct OVM_EXPORT Cell     {};
-    struct OVM_EXPORT Mesh     {};
+    struct OVM_EXPORT Vertex   { Vertex()   = delete;};
+    struct OVM_EXPORT Edge     { Edge()     = delete;};
+    struct OVM_EXPORT HalfEdge { HalfEdge() = delete;};
+    struct OVM_EXPORT Face     { Face()     = delete;};
+    struct OVM_EXPORT HalfFace { HalfFace() = delete;};
+    struct OVM_EXPORT Cell     { Cell()     = delete;};
+    struct OVM_EXPORT Mesh     { Mesh()     = delete;};
 }
 
 template<typename T>
