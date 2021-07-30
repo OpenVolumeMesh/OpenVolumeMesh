@@ -2348,6 +2348,14 @@ void TopologyKernel::compute_vertex_bottom_up_incidences() {
     // Clear incidences
     outgoing_hes_per_vertex_.clear();
     outgoing_hes_per_vertex_.resize(n_vertices());
+    std::vector<int> n_edges_per_vertex(n_vertices(), 0);
+    for (const auto &eh: edges()) {
+        ++n_edges_per_vertex[edges_[eh.idx()].from_vertex().idx()];
+        ++n_edges_per_vertex[edges_[eh.idx()].to_vertex().idx()];
+    }
+    for (const auto &vh: vertices()) {
+        outgoing_hes_per_vertex_[vh.idx()].reserve(n_edges_per_vertex[vh.idx()]);
+    }
 
     // Store outgoing halfedges per vertex
     int n_edges = (int)edges_.size();
