@@ -59,6 +59,32 @@ const HalfFaceHandle    TopologyKernel::InvalidHalfFaceHandle = HalfFaceHandle(-
 const CellHandle        TopologyKernel::InvalidCellHandle     = CellHandle(-1);
 
 //========================================================================================
+void TopologyKernel::reserve_vertices(size_t n)
+{
+    ResourceManager::reserve_vprops(n);
+    vertex_deleted_.reserve(n);
+}
+
+void TopologyKernel::reserve_edges(size_t n)
+{
+    ResourceManager::reserve_eprops(n);
+    edges_.reserve(n);
+    edge_deleted_.reserve(n);
+}
+
+void TopologyKernel::reserve_faces(size_t n)
+{
+    ResourceManager::reserve_fprops(n);
+    faces_.reserve(n);
+    face_deleted_.reserve(n);
+}
+
+void TopologyKernel::reserve_cells(size_t n)
+{
+    ResourceManager::reserve_cprops(n);
+    cells_.reserve(n);
+    cell_deleted_.reserve(n);
+}
 
 VertexHandle TopologyKernel::add_vertex() {
 

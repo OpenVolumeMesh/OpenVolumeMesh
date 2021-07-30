@@ -129,6 +129,7 @@ protected:
     void delete_multiple_entries(const std::vector<bool>& _tags) override;
 
     void resize(size_t _size) override;
+    void reserve(size_t _size) override;
 
     void set_handle(const OpenVolumeMeshHandle& _handle) override;
 };

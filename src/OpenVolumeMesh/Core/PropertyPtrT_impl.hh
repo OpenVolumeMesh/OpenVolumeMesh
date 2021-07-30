@@ -79,6 +79,11 @@ void PropertyPtr<PropT,Entity>::resize(size_t _size) {
 }
 
 template <class PropT, typename Entity>
+void PropertyPtr<PropT,Entity>::reserve(size_t _size) {
+    ptr::shared_ptr<PropT>::get()->reserve(_size);
+}
+
+template <class PropT, typename Entity>
 const std::string& PropertyPtr<PropT,Entity>::name() const {
     return ptr::shared_ptr<PropT>::get()->name();
 }

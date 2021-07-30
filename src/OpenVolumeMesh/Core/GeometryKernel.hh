@@ -57,6 +57,12 @@ public:
     /// Destructor
     ~GeometryKernel() override = default;
 
+    void reserve_vertices(size_t n) {
+        TopologyKernelT::reserve_vertices(n);
+        vertices_.reserve(n);
+    }
+
+
     template<class OtherTopoKernel>
     void assign(const GeometryKernel<VecT, OtherTopoKernel> *other) {
         TopologyKernelT::assign(other);

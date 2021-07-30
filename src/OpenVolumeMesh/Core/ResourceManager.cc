@@ -101,6 +101,22 @@ void ResourceManager::resize_cprops(size_t _nc) {
     resize_props(cell_props_, _nc);
 }
 
+void ResourceManager::reserve_vprops(size_t _n) {
+    reserve_props(vertex_props_, _n);
+}
+void ResourceManager::reserve_eprops(size_t _n) {
+    reserve_props(halfedge_props_, _n);
+    reserve_props(edge_props_, _n);
+}
+void ResourceManager::reserve_fprops(size_t _n) {
+    reserve_props(halfface_props_, _n);
+    reserve_props(face_props_, _n);
+}
+void ResourceManager::reserve_cprops(size_t _n) {
+    reserve_props(cell_props_, _n);
+}
+
+
 void ResourceManager::vertex_deleted(const VertexHandle& _h) {
 
     entity_deleted(vertex_props_, _h);

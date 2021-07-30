@@ -139,6 +139,8 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> c;
 
+        _mesh.reserve_vertices(c);
+
         // Read in vertices
         for(uint64_t i = 0u; i < c; ++i) {
 
@@ -173,6 +175,8 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> c;
 
+        _mesh.reserve_edges(c);
+
         // Read in edges
         for(uint64_t i = 0u; i < c; ++i) {
 
@@ -183,6 +187,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr.str(line);
             sstr >> v1;
             sstr >> v2;
+            // TODO: check index validity
             _mesh.add_edge(VertexHandle(v1), VertexHandle(v2), true);
         }
     }
@@ -253,6 +258,8 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.clear();
         sstr.str(line);
         sstr >> c;
+
+        _mesh.reserve_cells(c);
 
         // Read in cells
         for(uint64_t i = 0u; i < c; ++i) {

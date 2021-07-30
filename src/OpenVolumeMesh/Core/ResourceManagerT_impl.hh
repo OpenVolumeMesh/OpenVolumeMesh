@@ -174,6 +174,16 @@ void ResourceManager::resize_props(StdVecT& _vec, size_t _n) {
 }
 
 template<class StdVecT>
+void ResourceManager::reserve_props(StdVecT& _vec, size_t _n) {
+
+    for(typename StdVecT::iterator it = _vec.begin();
+            it != _vec.end(); ++it) {
+        (*it)->reserve(_n);
+    }
+}
+
+
+template<class StdVecT>
 void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h) {
 
     for(typename StdVecT::iterator it = _vec.begin();

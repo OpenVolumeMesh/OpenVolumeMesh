@@ -563,6 +563,10 @@ private:
     size_t n_vertices_ = 0u;
 
 public:
+    void reserve_vertices(size_t n);
+    void reserve_edges(size_t n);
+    void reserve_faces(size_t n);
+    void reserve_cells(size_t n);
 
     /// Add abstract vertex
     virtual VertexHandle add_vertex();
