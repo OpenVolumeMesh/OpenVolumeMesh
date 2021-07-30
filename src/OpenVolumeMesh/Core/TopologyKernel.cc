@@ -2291,7 +2291,8 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(const HalfEdgeHandle& _
 //========================================================================================
 
 HalfFaceHandle
-TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle, const HalfEdgeHandle& _halfEdgeHandle) const {
+TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle, const HalfEdgeHandle& _halfEdgeHandle) const
+{
 
     assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
     assert(_halfEdgeHandle.is_valid() && (size_t)_halfEdgeHandle.idx() < edges_.size() * 2u);
@@ -2303,33 +2304,64 @@ TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
         return InvalidHalfFaceHandle;
     }
 
-    OpenVolumeMeshCell c = cell(incident_cell_per_hf_[_halfFaceHandle.idx()]);
-
     // Make sure that _halfFaceHandle is incident to _halfEdgeHandle
     bool skipped = false;
-    bool found = false;
     HalfFaceHandle idx = InvalidHalfFaceHandle;
-    for(std::vector<HalfFaceHandle>::const_iterator hf_it = c.halffaces().begin();
-            hf_it != c.halffaces().end(); ++hf_it) {
 
-        if(*hf_it == _halfFaceHandle) {
-            skipped = true;
-            continue;
-        }
+    const auto eh = edge_handle(_halfEdgeHandle);
+    const auto fh = face_handle(_halfFaceHandle);
+    const auto ch = incident_cell(_halfFaceHandle);
 
-        OpenVolumeMeshFace hf = halfface(*hf_it);
-        for(std::vector<HalfEdgeHandle>::const_iterator he_it = hf.halfedges().begin();
-            he_it != hf.halfedges().end(); ++he_it) {
-
-            if(edge_handle(*he_it) == edge_handle(_halfEdgeHandle)) {
-                found = true;
-                idx = *hf_it;
+    // if we have bottom up incidences, looping through the incident faces of the halfedge should be faster.
+    if (has_edge_bottom_up_incidences()) {
+        for (const auto hfh: incident_hfs_per_he_[_halfEdgeHandle.idx()]) {
+            if (face_handle(hfh) == fh) {
+                assert(!skipped);
+                if (idx.is_valid())
+                    return idx;
+                skipped = true;
+                continue;
             }
-            if(skipped && found) break;
+            if (incident_cell(hfh) == ch) {
+                assert(!idx.is_valid());
+                if (skipped)
+                    return hfh;
+                idx = hfh;
+            }
+            const auto opp_hfh = opposite_halfface_handle(hfh);
+            if (incident_cell(opp_hfh) == ch) {
+                assert(!idx.is_valid());
+                if (skipped)
+                    return opp_hfh;
+                idx = opp_hfh;
+            }
         }
-        if(skipped && found) break;
+        return InvalidHalfFaceHandle;
     }
-    return ((skipped && found) ? idx : InvalidHalfFaceHandle);
+
+
+    for(const auto &hfh: cell(ch).halffaces()) {
+        if(hfh == _halfFaceHandle) {
+            assert(!skipped);
+            skipped = true;
+            if (idx.is_valid()) {
+                return idx;
+            }
+        } else {
+            for (const auto &heh: face(face_handle(hfh)).halfedges()) {
+                if(edge_handle(heh) == eh) {
+                    assert(!idx.is_valid());
+                    if (skipped) {
+                        return hfh;
+                    } else {
+                        idx = hfh;
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+    return InvalidHalfFaceHandle;
 }
 
 //========================================================================================

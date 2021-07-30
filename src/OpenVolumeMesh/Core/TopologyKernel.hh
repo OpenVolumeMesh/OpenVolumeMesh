@@ -1010,6 +1010,8 @@ private:
 
 public:
 
+    // TODO: this should probably be "common edge", the halfedge direction is ignored.
+    //       but we probably also want a "common halfedge" API that may assume he \in hf
     /// \brief Get halfface that is adjacent (w.r.t. a common halfedge) within the same cell
     ///
     /// \return Handle of the adjacent half-face if \a _halfFaceHandle is not

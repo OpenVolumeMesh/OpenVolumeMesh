@@ -1190,7 +1190,9 @@ TEST_F(PolyhedralMeshBase, DeleteLastFaceTestNoBU) {
 
 TEST_F(HexahedralMeshBase, SimpleHexMeshNavigation) {
 
+    //mesh_.enable_bottom_up_incidences(false);
     generateHexahedralMesh(mesh_);
+    //mesh_.enable_bottom_up_incidences(true);
 
     EXPECT_EQ(12u, mesh_.n_vertices());
     EXPECT_EQ(20u, mesh_.n_edges());
@@ -1207,10 +1209,10 @@ TEST_F(HexahedralMeshBase, SimpleHexMeshNavigation) {
     EXPECT_HANDLE_EQ(HalfFaceHandle(12), mesh_.opposite_halfface_handle_in_cell(
             HalfFaceHandle(3), CellHandle(1)));
 
-    EXPECT_HANDLE_EQ(HalfFaceHandle(20), mesh_.adjacent_halfface_on_sheet(
-            HalfFaceHandle(9), HalfEdgeHandle(12)));
-    EXPECT_HANDLE_EQ(HalfFaceHandle(21), mesh_.adjacent_halfface_on_sheet(
-            HalfFaceHandle(8), HalfEdgeHandle(12)));
+    EXPECT_HANDLE_EQ(HalfFaceHandle(19), mesh_.adjacent_halfface_on_sheet(
+            HalfFaceHandle(9), HalfEdgeHandle(8)));
+    EXPECT_HANDLE_EQ(HalfFaceHandle(18), mesh_.adjacent_halfface_on_sheet(
+            HalfFaceHandle(8), HalfEdgeHandle(9)));
 
     HexahedralMesh::CellSheetCellIter csc_it = mesh_.csc_iter(CellHandle(0), HexahedralMesh::YF);
     EXPECT_HANDLE_EQ(CellHandle(1), *csc_it);
