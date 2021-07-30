@@ -86,7 +86,7 @@ public:
     using ptr::shared_ptr<PropT>::operator->;
     using ptr::shared_ptr<PropT>::operator bool;
 
-    const std::string& name() const override;
+    const std::string& name() const & override;
 
     void delete_element(size_t _idx) override;
 
@@ -121,7 +121,7 @@ public:
      bool anonymous() const override { return ptr::shared_ptr<PropT>::get()->name().empty(); }
 
 protected:
-    const std::string &internal_type_name() const override { return ptr::shared_ptr<PropT>::get()->internal_type_name(); }
+    const std::string &internal_type_name() const & override;
 
     void assign_values_from(const BaseProperty *other) override;
     void move_values_from(BaseProperty *other) override;

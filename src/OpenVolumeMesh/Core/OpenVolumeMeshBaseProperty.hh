@@ -101,11 +101,13 @@ public:
 	virtual OpenVolumeMeshBaseProperty* clone() const = 0;
 
 	/// Return the name of the property
-	const std::string& name() const {
+	const std::string& name() const && = delete;
+	const std::string& name() const & {
 		return name_;
 	}
 
-	const std::string& internal_type_name() const {
+	const std::string& internal_type_name() const && = delete;
+	const std::string& internal_type_name() const & {
 		return internal_type_name_;
 	}
 

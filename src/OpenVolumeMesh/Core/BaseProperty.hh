@@ -65,7 +65,8 @@ public:
 
     virtual ~BaseProperty();
 
-    virtual const std::string& name() const = 0;
+    virtual const std::string& name() const & = 0;
+    const std::string& name() const && = delete;
 
     virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const = 0;
 
@@ -93,7 +94,8 @@ public:
 
 protected:
 
-    virtual const std::string &internal_type_name() const = 0;
+    virtual const std::string &internal_type_name() const & = 0;
+    const std::string &internal_type_name() const && = delete;
 
     /// Copy data from other property. `other` MUST point to an object with the same type as `this`!
     /// Currently no type check is performed.

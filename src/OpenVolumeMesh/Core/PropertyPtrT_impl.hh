@@ -84,7 +84,9 @@ void PropertyPtr<PropT,Entity>::reserve(size_t _size) {
 }
 
 template <class PropT, typename Entity>
-const std::string& PropertyPtr<PropT,Entity>::name() const {
+const std::string& PropertyPtr<PropT,Entity>::name() const & {
+    // the string we return a reference to lives long enough, no warnings please:
+    // cppcheck-suppress returnTempReference
     return ptr::shared_ptr<PropT>::get()->name();
 }
 
@@ -113,6 +115,13 @@ OpenVolumeMeshHandle PropertyPtr<PropT,Entity>::handle() const {
     return ptr::shared_ptr<PropT>::get()->handle();
 }
 
+template <class PropT, typename Entity>
+const std::string &PropertyPtr<PropT,Entity>::internal_type_name() const &
+{
+    // the string we return a reference to lives long enough, no warnings please:
+    // cppcheck-suppress returnTempReference
+    return ptr::shared_ptr<PropT>::get()->internal_type_name();
+}
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::delete_multiple_entries(const std::vector<bool>& _tags) {
     ptr::shared_ptr<PropT>::get()->delete_multiple_entries(_tags);
