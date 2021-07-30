@@ -1157,27 +1157,13 @@ public:
     }
 
     static inline HalfEdgeHandle opposite_halfedge_handle(const HalfEdgeHandle& _h) {
-        // Is handle in range?
         assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidHalfEdgeHandle;
-
-        // Is handle even?
-        if(_h.idx() % 2 == 0) {
-            return HalfEdgeHandle(_h.idx() + 1);
-        }
-        return HalfEdgeHandle(_h.idx() - 1);
+        return HalfEdgeHandle(_h.idx() ^ 1);
     }
 
     static inline HalfFaceHandle opposite_halfface_handle(const HalfFaceHandle& _h) {
-        // Is handle in range?
         assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidHalfFaceHandle;
-
-        // Is handle even?
-        if(_h.idx() % 2 == 0) {
-            return HalfFaceHandle(_h.idx() + 1);
-        }
-        return HalfFaceHandle(_h.idx() - 1);
+        return HalfFaceHandle(_h.idx() ^ 1);
     }
 
     bool inline needs_garbage_collection() const {
