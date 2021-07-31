@@ -42,7 +42,6 @@
 #include <functional>
 
 #include "Entities.hh"
-#include "../System/FunctionalInclude.hh"
 #include "../System/Deprecation.hh"
 #include "OpenVolumeMesh/Config/Export.hh"
 
@@ -159,13 +158,9 @@ class HEHandleCorrection {
 public:
     explicit HEHandleCorrection(HalfEdgeHandle _thld) : thld_(_thld) {}
     void correctVecValue(std::vector<HalfEdgeHandle>& _vec) {
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-        for(std::vector<HalfEdgeHandle>::iterator it = _vec.begin(), end = _vec.end(); it != end; ++it) {
-            correctValue(*it);
+        for (auto &heh: _vec) {
+            correctValue(heh);
         }
-#else
-        std::for_each(_vec.begin(), _vec.end(), fun::bind(&HEHandleCorrection::correctValue, this, fun::placeholders::_1));
-#endif
     }
     void correctValue(HalfEdgeHandle& _h) {
         if(_h > thld_) _h.idx(_h.idx() - 2);
@@ -177,13 +172,9 @@ class HFHandleCorrection {
 public:
     explicit HFHandleCorrection(HalfFaceHandle _thld) : thld_(_thld) {}
     void correctVecValue(std::vector<HalfFaceHandle>& _vec) {
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-        for(std::vector<HalfFaceHandle>::iterator it = _vec.begin(), end = _vec.end(); it != end; ++it) {
-            correctValue(*it);
+        for (auto &hfh: _vec) {
+            correctValue(hfh);
         }
-#else
-        std::for_each(_vec.begin(), _vec.end(), fun::bind(&HFHandleCorrection::correctValue, this, fun::placeholders::_1));
-#endif
     }
     void correctValue(HalfFaceHandle& _h) {
         if(_h > thld_) _h.idx(_h.idx() - 2);
@@ -194,6 +185,11 @@ private:
 class CHandleCorrection {
 public:
     explicit CHandleCorrection(CellHandle _thld) : thld_(_thld) {}
+    void correctVecValue(std::vector<CellHandle>& _vec) {
+        for (auto &ch: _vec) {
+            correctValue(ch);
+        }
+    }
     void correctValue(CellHandle& _h) {
         if(_h > thld_) _h.idx(_h.idx() - 1);
     }
