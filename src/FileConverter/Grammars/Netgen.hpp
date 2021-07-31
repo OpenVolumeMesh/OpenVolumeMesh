@@ -25,6 +25,8 @@ public:
     {}
 
 private:
+    MeshGenerator& generator_;
+
     using Rule = qi::rule<Iterator>;
 
     Rule space {spirit::ascii::space - spirit::eol};
@@ -49,7 +51,4 @@ private:
                   element_section_header >> *element >>
                   face_section_header >> *face};
 
-
-
-    MeshGenerator& generator_;
 };
