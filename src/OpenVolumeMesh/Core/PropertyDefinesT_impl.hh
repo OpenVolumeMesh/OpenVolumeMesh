@@ -56,7 +56,7 @@ PropertyTT<T,Entity>::PropertyTT(OpenVolumeMeshPropertyT<T> *_prop, ResourceMana
 template<typename T, typename Entity>
 BaseProperty *PropertyTT<T,Entity>::clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const
 {
-    auto prop_clone = ptr::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
+    auto prop_clone = std::shared_ptr<OpenVolumeMeshPropertyT<T>>::get()->clone();
     return new PropertyTT<T, Entity>(prop_clone, _resMan, PropertyHandleT(_handle.idx()));
 }
 

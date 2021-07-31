@@ -42,8 +42,8 @@ namespace OpenVolumeMesh {
 
 template <class PropT, typename Entity>
 PropertyPtr<PropT,Entity>::PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle) :
-    ptr::shared_ptr<PropT>(_ptr), BaseProperty(&_resMan) {
-    ptr::shared_ptr<PropT>::get()->set_handle(_handle);
+    std::shared_ptr<PropT>(_ptr), BaseProperty(&_resMan) {
+    std::shared_ptr<PropT>::get()->set_handle(_handle);
 }
 
 template <class PropT, typename Entity>
@@ -54,7 +54,7 @@ PropertyPtr<PropT,Entity>::~PropertyPtr() {
      * remove it, since the resource manager is the
      * only one who stores the property.
      */
-    if(resMan_ && !persistent() && ptr::shared_ptr<PropT>::use_count() == 2) {
+    if(resMan_ && !persistent() && std::shared_ptr<PropT>::use_count() == 2) {
         resMan_->release_property(PropHandleT<Entity>(handle().idx()));
     }
 }
@@ -63,56 +63,56 @@ template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::assign_values_from(const BaseProperty *other) {
     auto _other = static_cast<const PropertyPtr<PropT,Entity>*>(other);
     // FIXME: would be nice to perform a type check here
-    ptr::shared_ptr<PropT>::get()->data_vector() = _other->get()->data_vector();
+    std::shared_ptr<PropT>::get()->data_vector() = _other->get()->data_vector();
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::move_values_from(BaseProperty *other) {
     auto _other = static_cast<PropertyPtr<PropT,Entity>*>(other);
     // FIXME: would be nice to perform a type check here
-    ptr::shared_ptr<PropT>::get()->data_vector() = std::move(_other->get()->data_vector());
+    std::shared_ptr<PropT>::get()->data_vector() = std::move(_other->get()->data_vector());
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::resize(size_t _size) {
-    ptr::shared_ptr<PropT>::get()->resize(_size);
+    std::shared_ptr<PropT>::get()->resize(_size);
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::reserve(size_t _size) {
-    ptr::shared_ptr<PropT>::get()->reserve(_size);
+    std::shared_ptr<PropT>::get()->reserve(_size);
 }
 
 template <class PropT, typename Entity>
 const std::string& PropertyPtr<PropT,Entity>::name() const & {
     // the string we return a reference to lives long enough, no warnings please:
     // cppcheck-suppress returnTempReference
-    return ptr::shared_ptr<PropT>::get()->name();
+    return std::shared_ptr<PropT>::get()->name();
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::delete_element(size_t _idx) {
-    ptr::shared_ptr<PropT>::get()->delete_element(_idx);
+    std::shared_ptr<PropT>::get()->delete_element(_idx);
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::swap_elements(size_t _idx0, size_t _idx1) {
-    ptr::shared_ptr<PropT>::get()->swap(_idx0, _idx1);
+    std::shared_ptr<PropT>::get()->swap(_idx0, _idx1);
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::copy(size_t _src_idx, size_t _dst_idx) {
-    ptr::shared_ptr<PropT>::get()->copy(_src_idx, _dst_idx);
+    std::shared_ptr<PropT>::get()->copy(_src_idx, _dst_idx);
 }
 
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::set_handle(const OpenVolumeMeshHandle& _handle) {
-    return ptr::shared_ptr<PropT>::get()->set_handle(_handle);
+    return std::shared_ptr<PropT>::get()->set_handle(_handle);
 }
 
 template <class PropT, typename Entity>
 OpenVolumeMeshHandle PropertyPtr<PropT,Entity>::handle() const {
-    return ptr::shared_ptr<PropT>::get()->handle();
+    return std::shared_ptr<PropT>::get()->handle();
 }
 
 template <class PropT, typename Entity>
@@ -120,11 +120,11 @@ const std::string &PropertyPtr<PropT,Entity>::internal_type_name() const &
 {
     // the string we return a reference to lives long enough, no warnings please:
     // cppcheck-suppress returnTempReference
-    return ptr::shared_ptr<PropT>::get()->internal_type_name();
+    return std::shared_ptr<PropT>::get()->internal_type_name();
 }
 template <class PropT, typename Entity>
 void PropertyPtr<PropT,Entity>::delete_multiple_entries(const std::vector<bool>& _tags) {
-    ptr::shared_ptr<PropT>::get()->delete_multiple_entries(_tags);
+    std::shared_ptr<PropT>::get()->delete_multiple_entries(_tags);
 }
 
 } // Namespace OpenVolumeMesh

@@ -36,11 +36,11 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "PropertyHandles.hh"
 #include "BaseProperty.hh"
 #include "OpenVolumeMeshHandle.hh"
-#include "../System/MemoryInclude.hh"
 #include "../System/Deprecation.hh"
 
 namespace OpenVolumeMesh {
@@ -56,7 +56,7 @@ class ResourceManager;
  */
 
 template <class PropT, typename Entity>
-class PropertyPtr : protected ptr::shared_ptr<PropT>, public BaseProperty {
+class PropertyPtr : protected std::shared_ptr<PropT>, public BaseProperty {
 public:
 
     friend class ResourceManager;
@@ -82,9 +82,9 @@ public:
     PropertyPtr<PropT, Entity>& operator=(const PropertyPtr<PropT, Entity>&) = default;
     PropertyPtr<PropT, Entity>& operator=(PropertyPtr<PropT, Entity>&&) = default;
 
-    using ptr::shared_ptr<PropT>::operator*;
-    using ptr::shared_ptr<PropT>::operator->;
-    using ptr::shared_ptr<PropT>::operator bool;
+    using std::shared_ptr<PropT>::operator*;
+    using std::shared_ptr<PropT>::operator->;
+    using std::shared_ptr<PropT>::operator bool;
 
     const std::string& name() const & override;
 
@@ -94,31 +94,31 @@ public:
 
     void copy(size_t _src_idx, size_t _dst_idx) override;
 
-    const_iterator begin() const { return ptr::shared_ptr<PropT>::get()->begin(); }
-    iterator begin() { return ptr::shared_ptr<PropT>::get()->begin(); }
-    size_t size() const override { return ptr::shared_ptr<PropT>::get()->size(); }
+    const_iterator begin() const { return std::shared_ptr<PropT>::get()->begin(); }
+    iterator begin() { return std::shared_ptr<PropT>::get()->begin(); }
+    size_t size() const override { return std::shared_ptr<PropT>::get()->size(); }
 
-    const_iterator end() const { return ptr::shared_ptr<PropT>::get()->end(); }
-    iterator end() { return ptr::shared_ptr<PropT>::get()->end(); }
+    const_iterator end() const { return std::shared_ptr<PropT>::get()->end(); }
+    iterator end() { return std::shared_ptr<PropT>::get()->end(); }
 
 #if OVM_ENABLE_DEPRECATED_APIS
     OVM_DEPRECATED("use handles to index properties")
-    reference operator[](size_t _idx) { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
+    reference operator[](size_t _idx) { return (*std::shared_ptr<PropT>::get())[_idx]; }
     OVM_DEPRECATED("use handles to index properties")
-    const_reference operator[](size_t _idx) const { return (*ptr::shared_ptr<PropT>::get())[_idx]; }
+    const_reference operator[](size_t _idx) const { return (*std::shared_ptr<PropT>::get())[_idx]; }
 #endif
 
-    reference operator[](const EntityHandleT& _h) { return (*ptr::shared_ptr<PropT>::get())[_h.uidx()]; }
-    const_reference operator[](const EntityHandleT& _h) const { return (*ptr::shared_ptr<PropT>::get())[_h.uidx()]; }
+    reference operator[](const EntityHandleT& _h) { return (*std::shared_ptr<PropT>::get())[_h.uidx()]; }
+    const_reference operator[](const EntityHandleT& _h) const { return (*std::shared_ptr<PropT>::get())[_h.uidx()]; }
 
-    void serialize(std::ostream& _ostr) const override { ptr::shared_ptr<PropT>::get()->serialize(_ostr); }
-    void deserialize(std::istream& _istr) override { ptr::shared_ptr<PropT>::get()->deserialize(_istr); }
+    void serialize(std::ostream& _ostr) const override { std::shared_ptr<PropT>::get()->serialize(_ostr); }
+    void deserialize(std::istream& _istr) override { std::shared_ptr<PropT>::get()->deserialize(_istr); }
 
     OpenVolumeMeshHandle handle() const override;
 
-     bool persistent() const override { return ptr::shared_ptr<PropT>::get()->persistent(); }
+     bool persistent() const override { return std::shared_ptr<PropT>::get()->persistent(); }
 
-     bool anonymous() const override { return ptr::shared_ptr<PropT>::get()->name().empty(); }
+     bool anonymous() const override { return std::shared_ptr<PropT>::get()->name().empty(); }
 
 protected:
     const std::string &internal_type_name() const & override;
