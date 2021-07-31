@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,10 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-
-#ifndef NORMALATTRIB_HH_
-#define NORMALATTRIB_HH_
 
 #include <cassert>
 
@@ -115,8 +112,5 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(NORMALATTRIBT_CC)
 #include "NormalAttribT_impl.hh"
-#endif
 
-#endif /* NORMALATTRIB_HH_ */

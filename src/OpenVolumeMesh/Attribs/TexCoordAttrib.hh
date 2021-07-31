@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,10 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-
-#ifndef TEXCOORDATTRIB_HH_
-#define TEXCOORDATTRIB_HH_
 
 #include <cassert>
 
@@ -88,8 +85,5 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(TEXCOORDATTRIBT_CC)
 #include "TexCoordAttribT_impl.hh"
-#endif
 
-#endif /* TEXCOORDATTRIB_HH_ */

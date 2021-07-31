@@ -88,8 +88,6 @@ target_compile_options(OpenVolumeMesh PUBLIC
     "$<$<CXX_COMPILER_ID:MSVC>:/wd4711>"
     )
 
-target_compile_definitions(OpenVolumeMesh PUBLIC "INCLUDE_TEMPLATES")
-
 target_include_directories(OpenVolumeMesh
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

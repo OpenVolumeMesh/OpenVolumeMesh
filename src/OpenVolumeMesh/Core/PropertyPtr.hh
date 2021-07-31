@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -33,7 +34,6 @@
 \*===========================================================================*/
 
 
-#pragma once
 
 #include <string>
 #include <memory>
@@ -136,7 +136,5 @@ protected:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(PROPERTYPTRT_CC)
 #include "PropertyPtrT_impl.hh"
-#endif
 

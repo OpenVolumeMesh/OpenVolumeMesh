@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,7 +33,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-#pragma once
 
 #include <iosfwd>
 #include <stdexcept>
@@ -119,6 +119,4 @@ template<typename T> using MeshPropertyT     = PropertyTT<T, Entity::Mesh>;
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(PROPERTYDEFINEST_CC)
 #include "PropertyDefinesT_impl.hh"
-#endif

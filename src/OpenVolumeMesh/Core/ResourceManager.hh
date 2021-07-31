@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,7 +33,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-#pragma once
 
 #ifndef NDEBUG
 #include <iostream>
@@ -372,7 +372,5 @@ private:
 
 }
 
-#if defined(INCLUDE_TEMPLATES) && !defined(RESOURCEMANAGERT_CC)
 #include "ResourceManagerT_impl.hh"
-#endif
 

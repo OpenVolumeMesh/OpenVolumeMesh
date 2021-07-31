@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,11 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-
-
-#ifndef SERIALIZERS_HH
-#define SERIALIZERS_HH
 
 #include <iostream>
 #include <map>
@@ -79,8 +75,4 @@ std::istream& operator>>(std::istream& is, std::vector< bool >& rhs);
 
 }
 
-#if defined(INCLUDE_TEMPLATES) && !defined(SERIALIZERST_CC)
 #include "SerializersT_impl.hh"
-#endif
-
-#endif // SERIALIZERS_HH
