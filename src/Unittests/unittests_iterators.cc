@@ -52,7 +52,6 @@ TEST_F(TetrahedralMeshBase, VertexVertexIteratorTest) {
 
     }
 
-#if __cplusplus >= 201103L || _MSC_VER >= 1800 // C++11
     {
 
       std::set<VertexHandle> onering;
@@ -74,7 +73,6 @@ TEST_F(TetrahedralMeshBase, VertexVertexIteratorTest) {
       EXPECT_EQ(onering.end(), std::find(onering.begin(), onering.end(), VertexHandle(-1)));
 
     }
-#endif
 
 }
 
@@ -109,7 +107,6 @@ TEST_F(TetrahedralMeshBase, VertexFaceIteratorTest) {
 
     }
 
-#if __cplusplus >= 201103L || _MSC_VER >= 1800 // C++11
     {
 
       std::set<VertexHandle> onering;
@@ -131,11 +128,9 @@ TEST_F(TetrahedralMeshBase, VertexFaceIteratorTest) {
       EXPECT_EQ(onering.end(), std::find(onering.begin(), onering.end(), VertexHandle(-1)));
 
     }
-#endif
 
 }
 
-#if __cplusplus >= 201103L || _MSC_VER >= 1800 // C++11
 TEST_F(HexahedralMeshBase, RangeForTest) {
     // no EXPECTs here, if it compiles, it'll work.
     generateHexahedralMesh(mesh_);
@@ -144,4 +139,3 @@ TEST_F(HexahedralMeshBase, RangeForTest) {
     const auto& constref = mesh_;
     for (const auto& vh: constref.vertices()) { _dummy = vh;}
 }
-#endif
