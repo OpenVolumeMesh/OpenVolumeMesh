@@ -1,3 +1,14 @@
+Version 2.2 (2021/08/??)
+
+    API changes:
+        - add_{face,edge,cell} take std::vector instead of a const reference
+        - add_face(std::vector<HalfEdgeHandle>): A closed loop of halfedges in the correct order is required
+        - adjacent_halfface_in_cell(): the given half-edge must belong to an edge of the given cell
+    Improvements:
+        - Various performance optimizations, targeted at faster ovm file loading
+    Bugfixes:
+        - Fix some dangling references
+
 Version 2.1 (2019/09/09)
 - Modern target-based CMake 3 build system
 - !!!Break compatiblity with C++98, require C++11 as mininum!!!
