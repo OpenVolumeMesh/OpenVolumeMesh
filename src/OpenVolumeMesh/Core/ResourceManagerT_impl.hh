@@ -86,7 +86,7 @@ template<typename T, typename EntityTag>
 PropertyTT<T, EntityTag>* ResourceManager::internal_find_property(const std::string& _name)
 {
     using PropT = PropertyTT<T, EntityTag>;
-    auto type_name = get_type_name<T>();
+    auto type_name = get_type_name(typeid(T));
     auto &propVec = entity_props<EntityTag>();
 
     if(!_name.empty()) {
@@ -105,7 +105,7 @@ PropertyTT<T, EntityTag>* ResourceManager::internal_find_property(const std::str
 template<class T, class EntityTag>
 PropertyTT<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def)
 {
-    auto type_name = get_type_name<T>();
+    auto type_name = get_type_name(typeid(T));
     auto &propVec = entity_props<EntityTag>();
     auto handle = PropHandleT<EntityTag>::from_unsigned(propVec.size());
     auto prop = new PropertyTT<T, EntityTag>(_name, type_name, *this, handle, _def);

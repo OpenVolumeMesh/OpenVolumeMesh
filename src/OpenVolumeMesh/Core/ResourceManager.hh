@@ -248,7 +248,7 @@ private:
     template <class FullPropT, class PropIterT>
     bool property_exists(const PropIterT& _begin, const PropIterT& _end, const std::string& _name) const
     {
-        auto type_name = get_type_name<typename FullPropT::value_type>();
+        auto type_name = get_type_name(typeid(typename FullPropT::value_type));
 
         if(_name.empty()) {
 #ifndef NDEBUG
