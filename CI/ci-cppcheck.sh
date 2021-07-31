@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit script on any error
-set -e 
+set -e
 
 #=====================================
 # Color Settings:
@@ -13,6 +13,7 @@ WARNING='\033[0;93m'
 BUILDPATH="build-cppcheck"
 mkdir -p "${BUILDPATH}"
 cd "${BUILDPATH}"
+ABS_BUILDPATH="${pwd}"
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 cd ..
 
@@ -30,11 +31,13 @@ echo "Please Wait ..."
 # for the public library interface)
 cppcheck \
     --project=${BUILDPATH}/compile_commands.json \
+    -i '*/_deps/*' \
     --force \
     --enable=warning,performance,portability,information,missingInclude \
-    --suppress=missingIncludeSystem \
     --suppress=unmatchedSuppression \
+    --suppress=missingIncludeSystem \
     --inline-suppr \
+    -U_MSC_VER -DOVM_STATIC_DEFINE=1 -D__PIC__=1 \
     --quiet \
     2>&1 | tee cppcheck.log
 
