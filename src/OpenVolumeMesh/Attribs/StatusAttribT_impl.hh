@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,9 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-
-#define STATUSATTRIBT_CC
 
 #include "StatusAttrib.hh"
 
@@ -366,4 +364,4 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
         }
     }
 }
-} // Namespace OpenVolumeMesh
+} // namespace OpenVolumeMesh

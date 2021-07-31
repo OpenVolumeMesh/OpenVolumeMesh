@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,10 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-
-#ifndef BASEENTITIES_HH_
-#define BASEENTITIES_HH_
 
 #include <vector>
 
@@ -140,4 +137,3 @@ std::ostream& operator<<(std::ostream& _os, const OpenVolumeMeshCell& _cell);
 
 } // Namespace OpenVolumeMesh
 
-#endif /* BASEENTITIES_HH_ */

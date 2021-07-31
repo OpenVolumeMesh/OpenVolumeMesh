@@ -1,9 +1,4 @@
-/*
- * Tetmesh.hpp
- *
- *  Created on: Mar 20, 2012
- *      Author: kremer
- */
+#pragma once
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -12,9 +7,6 @@
 #include "../MeshGenerator.hpp"
 
 #include <iostream>
-
-#ifndef TETMESH_HPP_
-#define TETMESH_HPP_
 
 namespace qi = boost::spirit::qi;
 namespace spirit = boost::spirit;
@@ -45,5 +37,3 @@ private:
                   qi::int_[boost::bind(&MeshGenerator::add_cell_vertex, &generator_, ::_1)]};
     Rule content {node_section_header >> *node >> element_section_header >> *element};
 };
-
-#endif /* TETMESH_HPP_ */

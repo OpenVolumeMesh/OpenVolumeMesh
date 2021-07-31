@@ -1,12 +1,4 @@
-/*
- * MeshGenerator.hh
- *
- *  Created on: Mar 15, 2012
- *      Author: kremer
- */
-
-#ifndef MESHGENERATOR_HH_
-#define MESHGENERATOR_HH_
+#pragma once
 
 #include <vector>
 #include <set>
@@ -216,5 +208,3 @@ private:
 
     boost::shared_ptr<boost::progress_display> progress_;
 };
-
-#endif /* MESHGENERATOR_HH_ */

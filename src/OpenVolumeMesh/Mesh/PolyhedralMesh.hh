@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -33,9 +34,6 @@
 \*===========================================================================*/
 
 
-#ifndef POLYHEDRALMESH_HH_
-#define POLYHEDRALMESH_HH_
-
 #include "../Core/GeometryKernel.hh"
 
 namespace OpenVolumeMesh {
@@ -66,4 +64,3 @@ typedef TopologyKernel TopologicPolyhedralMesh;
 
 } // Namespace OpenVolumeMesh
 
-#endif /* POLYHEDRALMESH_HH_ */

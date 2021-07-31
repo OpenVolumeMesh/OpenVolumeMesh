@@ -1,6 +1,4 @@
-#ifndef INCLUDE_UNITTESTS_COMMON_HH
-#define INCLUDE_UNITTESTS_COMMON_HH
-
+#pragma once
 
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/HexahedralMesh.hh>
@@ -151,4 +149,3 @@ private:
   bool mute_;
 };
 
-#endif // INCLUDE GUARD
