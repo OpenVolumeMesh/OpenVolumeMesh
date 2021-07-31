@@ -1,3 +1,4 @@
+#pragma once
 /* ========================================================================= *
  *                                                                           *
  *                            OPENVOLUMEMESHMesh                                 *
@@ -39,9 +40,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.              *
  *                                                                           *
  * ========================================================================= */
-
-#ifndef OPENVOLUMEMESH_SRC_OPENVOLUMEMESH_GEOMETRY_VECTOR11T_HH_
-#define OPENVOLUMEMESH_SRC_OPENVOLUMEMESH_GEOMETRY_VECTOR11T_HH_
 
 #include <array>
 #include <utility>
@@ -867,5 +865,3 @@ template <> OVM_EXPORT const std::string typeName<Vec4ui>();
 
 } // namespace OpenVolumeMesh
 
-
-#endif /* OPENVOLUMEMESH_SRC_OPENVOLUMEMESH_GEOMETRY_VECTOR11T_HH_ */

@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -40,8 +41,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-#ifndef STATUSATTRIB_HH_
-#define STATUSATTRIB_HH_
 
 #include <cassert>
 
@@ -281,8 +280,6 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(STATUSATTRIBT_CC)
-#include "StatusAttribT_impl.hh"
-#endif
 
-#endif /* STATUSATTRIB_HH_ */
+#include "StatusAttribT_impl.hh"
+

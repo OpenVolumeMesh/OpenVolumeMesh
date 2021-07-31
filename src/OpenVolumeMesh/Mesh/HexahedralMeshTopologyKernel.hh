@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,9 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef HEXAHEDRALMESHTOPOLOGYKERNEL_HH
-#define HEXAHEDRALMESHTOPOLOGYKERNEL_HH
 
 #ifndef NDEBUG
 #include <iostream>
@@ -377,4 +375,3 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* HEXAHEDRALMESHTOPOLOGYKERNEL_HH */

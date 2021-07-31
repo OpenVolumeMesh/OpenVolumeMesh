@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -39,9 +40,6 @@
  *   $LastChangedBy$                                                *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef TETRAHEDRALGEOMETRYKERNEL_HH_
-#define TETRAHEDRALGEOMETRYKERNEL_HH_
 
 #include <cassert>
 #include <iostream>
@@ -100,4 +98,3 @@ protected:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* TETRAHEDRALGEOMETRYKERNEL_HH_ */

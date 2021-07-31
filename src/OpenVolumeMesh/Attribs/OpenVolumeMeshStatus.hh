@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,9 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef STATUS_HH_
-#define STATUS_HH_
 
 #include <iosfwd>
 #include "OpenVolumeMesh/Config/Export.hh"
@@ -83,4 +81,3 @@ std::istream& operator>>(std::istream& _istr, OpenVolumeMeshStatus& _status);
 
 } // Namespace OpenVolumeMesh
 
-#endif /* STATUS_HH_ */

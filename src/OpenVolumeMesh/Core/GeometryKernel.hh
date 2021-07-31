@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,9 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef GEOMETRYKERNEL_HH_
-#define GEOMETRYKERNEL_HH_
 
 #include <cassert>
 #include <iostream>
@@ -262,4 +260,3 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* GEOMETRYKERNEL_HH_ */

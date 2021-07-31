@@ -1,12 +1,4 @@
-/*
- * Netgen.hpp
- *
- *  Created on: Apr 16, 2012
- *      Author: kremer
- */
-
-#ifndef NETGEN_HPP_
-#define NETGEN_HPP_
+#pragma once
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -60,5 +52,3 @@ private:
                   face_section_header >> *face};
 
 };
-
-#endif /* NETGEN_HPP_ */

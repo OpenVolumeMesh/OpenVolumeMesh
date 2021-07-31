@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -40,8 +41,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-#ifndef FILEMANAGER_HH_
-#define FILEMANAGER_HH_
 
 #include <string>
 #include <fstream>
@@ -184,8 +183,4 @@ private:
 
 } // Namespace FileManager
 
-#if defined(INCLUDE_TEMPLATES) && !defined(FILEMANAGERT_CC)
 #include "FileManagerT_impl.hh"
-#endif
-
-#endif /* FILEMANAGER_HH_ */

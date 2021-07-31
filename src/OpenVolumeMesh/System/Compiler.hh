@@ -1,3 +1,4 @@
+#pragma once
 #include "OpenVolumeMesh/Config/Version.hh"
 
 // C++ version when compiling (e.g. client code),

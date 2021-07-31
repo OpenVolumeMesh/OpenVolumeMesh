@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,8 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-#define PROPERTYPTRT_CC
 
 #include "PropertyPtr.hh"
 #include "ResourceManager.hh"

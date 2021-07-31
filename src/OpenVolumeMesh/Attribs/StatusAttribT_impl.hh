@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,15 +33,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 36 $                                                         *
- *   $Date: 2012-01-10 18:00:06 +0100 (Di, 10 Jan 2012) $                    *
- *   $LastChangedBy: kremer $                                                *
- *                                                                           *
-\*===========================================================================*/
 
-#define STATUSATTRIBT_CC
 
 #include "StatusAttrib.hh"
 
@@ -373,4 +366,4 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
         }
     }
 }
-} // Namespace OpenVolumeMesh
+} // namespace OpenVolumeMesh

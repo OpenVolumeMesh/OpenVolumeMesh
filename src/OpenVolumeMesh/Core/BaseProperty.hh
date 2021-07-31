@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,9 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef BASEPROPERTY_HH_
-#define BASEPROPERTY_HH_
 
 #include <string>
 
@@ -116,4 +114,3 @@ protected:
 
 } // Namespace OpenVolumeMesh
 
-#endif /* BASEPROPERTY_HH_ */

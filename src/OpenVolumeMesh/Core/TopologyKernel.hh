@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -31,9 +32,6 @@
  *  see <http://www.gnu.org/licenses/>.                                      *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef TOPOLOGYKERNEL_HH_
-#define TOPOLOGYKERNEL_HH_
 
 #include <cassert>
 #include <set>
@@ -1216,4 +1214,3 @@ protected:
 
 }
 
-#endif /* TOPOLOGYKERNEL_HH_ */

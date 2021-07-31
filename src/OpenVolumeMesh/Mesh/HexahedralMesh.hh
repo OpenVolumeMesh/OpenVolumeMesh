@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -40,9 +41,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-#ifndef HEXAHEDRALMESH_HH_
-#define HEXAHEDRALMESH_HH_
-
 #include "HexahedralMeshTopologyKernel.hh"
 #include "../Core/GeometryKernel.hh"
 
@@ -74,4 +72,3 @@ typedef HexahedralMeshTopologyKernel TopologicHexahedralMesh;
 
 } // Namespace OpenVolumeMesh
 
-#endif /* HEXAHEDRALMESH_HH_ */

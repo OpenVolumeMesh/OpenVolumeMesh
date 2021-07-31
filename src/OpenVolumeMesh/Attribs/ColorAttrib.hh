@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -39,9 +40,6 @@
  *   $LastChangedBy: kremer $                                                *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef COLORATTRIB_HH_
-#define COLORATTRIB_HH_
 
 #include <cassert>
 
@@ -186,8 +184,4 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(COLORATTRIBT_CC)
 #include "ColorAttribT_impl.hh"
-#endif
-
-#endif /* COLORATTRIB_HH_ */

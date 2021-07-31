@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -32,16 +33,6 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
-#ifndef BASEENTITIES_HH_
-#define BASEENTITIES_HH_
 
 #include <vector>
 
@@ -145,6 +136,4 @@ private:
 // Stream operator for cells
 std::ostream& operator<<(std::ostream& _os, const OpenVolumeMeshCell& _cell);
 
-} // Namespace OpenVolumeMesh
-
-#endif /* BASEENTITIES_HH_ */
+} // namespace OpenVolumeMesh

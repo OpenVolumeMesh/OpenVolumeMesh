@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -39,9 +40,6 @@
  *   $LastChangedBy$                                                *
  *                                                                           *
 \*===========================================================================*/
-
-#ifndef ITERATORS_HH_
-#define ITERATORS_HH_
 
 #include <iterator>
 #include <set>
@@ -1625,5 +1623,3 @@ typedef BoundaryItemIter<CellIter, CellHandle> BoundaryCellIter;
 //===========================================================================
 
 } // Namespace OpenVolumeMesh
-
-#endif /* ITERATORS_HH_ */

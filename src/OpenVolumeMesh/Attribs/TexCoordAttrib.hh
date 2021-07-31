@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -95,8 +96,6 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(TEXCOORDATTRIBT_CC)
-#include "TexCoordAttribT_impl.hh"
-#endif
 
-#endif /* TEXCOORDATTRIB_HH_ */
+#include "TexCoordAttribT_impl.hh"
+

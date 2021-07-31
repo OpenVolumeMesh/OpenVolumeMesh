@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -39,8 +40,6 @@
  *   $LastChangedBy: kremer $                                                *
  *                                                                           *
 \*===========================================================================*/
-
-#define TEXCOORDATTRIBT_CC
 
 #include "TexCoordAttrib.hh"
 
