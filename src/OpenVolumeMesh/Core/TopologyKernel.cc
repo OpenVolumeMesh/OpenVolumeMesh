@@ -562,22 +562,16 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
     Cell& c = cell(_ch);
 
     if(has_face_bottom_up_incidences()) {
-
-        const std::vector<HalfFaceHandle>& hfs = c.halffaces();
-        for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin(),
-                hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
-
-            incident_cell_per_hf_[hf_it->idx()] = InvalidCellHandle;
+        for (const auto &hfh: c.halffaces()) {
+            incident_cell_per_hf_[hfh.idx()] = InvalidCellHandle;
         }
-
-        for(std::vector<HalfFaceHandle>::const_iterator hf_it = _hfs.begin(),
-                hf_end = _hfs.end(); hf_it != hf_end; ++hf_it) {
-
-            incident_cell_per_hf_[hf_it->idx()] = _ch;
+        for (const auto &hfh: _hfs) {
+            incident_cell_per_hf_[hfh.idx()] = _ch;
         }
     }
 
     c.set_halffaces(_hfs);
+    // TODO: possibly reorder incident halffaces of the edges of the "new" cell
 }
 
 //========================================================================================
