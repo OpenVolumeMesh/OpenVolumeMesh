@@ -63,7 +63,6 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     std::stringstream sstr;
     std::string line;
     std::string s_tmp;
-    uint64_t c = 0u;
     typedef typename MeshT::PointT Point;
     Point v = Point(0.0, 0.0, 0.0);
 
@@ -119,6 +118,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
     }
 
+    size_t n_vertices = 0;
     sstr >> s_tmp;
     std::transform(s_tmp.begin(), s_tmp.end(), s_tmp.begin(), ::toupper);
     if(s_tmp != "VERTICES") {
@@ -132,12 +132,12 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
-        sstr >> c;
+        sstr >> n_vertices;
 
-        _mesh.reserve_vertices(c);
+        _mesh.reserve_vertices(n_vertices);
 
         // Read in vertices
-        for(uint64_t i = 0u; i < c; ++i) {
+        for(uint64_t i = 0u; i < n_vertices; ++i) {
 
             getCleanLine(_istream, line);
             sstr.clear();
@@ -152,6 +152,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
     /*
      * Edges
      */
+    size_t n_edges = 0;
     getCleanLine(_istream, line);
     sstr.clear();
     sstr.str(line);
@@ -168,12 +169,12 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
-        sstr >> c;
+        sstr >> n_edges;
 
-        _mesh.reserve_edges(c);
+        _mesh.reserve_edges(n_edges);
 
         // Read in edges
-        for(uint64_t i = 0u; i < c; ++i) {
+        for(uint64_t i = 0u; i < n_edges; ++i) {
 
             unsigned int v1 = 0;
             unsigned int v2 = 0;
@@ -182,14 +183,21 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr.str(line);
             sstr >> v1;
             sstr >> v2;
+            if (v1 >= n_vertices || v2 >= n_vertices) {
+                std::cerr << "OVM file loading error: invalid vertex for edge #" << i
+                          << " = (" << v1 << ", " << v2 << ") - there are only" << n_vertices << " vertices." << std::endl;
+                return false;
+            }
             // TODO: check index validity
             _mesh.add_edge(VertexHandle(v1), VertexHandle(v2), true);
         }
     }
 
+    size_t n_halfedges = 2 * n_edges;
     /*
      * Faces
      */
+    size_t n_faces = 0;
     getCleanLine(_istream, line);
     sstr.clear();
     sstr.str(line);
@@ -206,14 +214,14 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
-        sstr >> c;
+        sstr >> n_faces;
 
-        _mesh.reserve_faces(c);
+        _mesh.reserve_faces(n_faces);
 
         std::vector<HalfEdgeHandle> hes;
 
         // Read in faces
-        for(uint64_t i = 0u; i < c; ++i) {
+        for(uint64_t i = 0u; i < n_faces; ++i) {
 
             getCleanLine(_istream, line);
             sstr.clear();
@@ -231,6 +239,12 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
 
                 unsigned int v1 = 0;
                 sstr >> v1;
+                if (v1 >= n_halfedges) {
+                    std::cerr << "OVM File loading error: invalid halfedge #" << v1 << " in face #" << i
+                              << " - there are only" << n_halfedges << " halfedges." << std::endl;
+                    return false;
+
+                }
                 // TODO: check index validity
                 hes.emplace_back(v1);
             }
@@ -238,10 +252,12 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             _mesh.add_face(hes, _topologyCheck);
         }
     }
+    size_t n_halffaces = 2 * n_faces;
 
     /*
      * Cells
      */
+    size_t n_cells;
     getCleanLine(_istream, line);
     sstr.clear();
     sstr.str(line);
@@ -258,13 +274,13 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         getCleanLine(_istream, line);
         sstr.clear();
         sstr.str(line);
-        sstr >> c;
+        sstr >> n_cells;
 
-        _mesh.reserve_cells(c);
+        _mesh.reserve_cells(n_cells);
 
         std::vector<HalfFaceHandle> hfs;
         // Read in cells
-        for(uint64_t i = 0u; i < c; ++i) {
+        for(uint64_t i = 0u; i < n_cells; ++i) {
 
             getCleanLine(_istream, line);
             sstr.clear();
@@ -283,6 +299,12 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
 
                 unsigned int v1 = 0;
                 sstr >> v1;
+                if (v1 >= n_halffaces) {
+                    std::cerr << "OVM File loading error: invalid halfface #" << v1 << " in cell #" << i
+                              << " - there are only" << n_halffaces << " halffaces." << std::endl;
+                    return false;
+
+                }
                 // TODO: check index validity
                 hfs.emplace_back(v1);
             }
