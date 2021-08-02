@@ -277,7 +277,7 @@ public:
 
 private:
 
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 
@@ -340,7 +340,7 @@ public:
 
 private:
 
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -398,7 +398,7 @@ public:
 	HalfEdgeHalfFaceIter& operator--();
 
 private:
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -456,7 +456,7 @@ public:
 
 private:
     std::vector<FaceHandle> faces_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -514,7 +514,7 @@ public:
 
 private:
     std::vector<CellHandle> cells_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 class OVM_EXPORT HalfEdgeCellIter : public BaseCirculator<
@@ -574,7 +574,7 @@ private:
 
 private:
     std::vector<CellHandle> cells_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -632,7 +632,7 @@ public:
 
 private:
 	std::vector<VertexHandle> incident_vertices_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -690,7 +690,7 @@ public:
 
 private:
     std::vector<CellHandle> adjacent_cells_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -748,7 +748,7 @@ public:
 
 private:
     std::vector<VertexHandle> vertices_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -808,7 +808,7 @@ public:
 private:
     std::vector<HalfFaceHandle> neighbor_halffaces_;
     std::vector<EdgeHandle> common_edges_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -862,7 +862,7 @@ public:
 	VertexIter& operator--();
 
 private:
-    int cur_index_;
+    int cur_index_ = 0;
 };
 
 //===========================================================================
@@ -916,7 +916,7 @@ public:
 	EdgeIter& operator--();
 
 private:
-    int cur_index_;
+    int cur_index_ = 0;
 };
 
 //===========================================================================
@@ -970,7 +970,7 @@ public:
 	HalfEdgeIter& operator--();
 
 private:
-    int cur_index_;
+    int cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1024,7 +1024,7 @@ public:
 	FaceIter& operator--();
 
 private:
-    int cur_index_;
+    int cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1078,7 +1078,7 @@ public:
 	HalfFaceIter& operator--();
 
 private:
-    int cur_index_;
+    int cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1132,7 +1132,7 @@ public:
 	CellIter& operator--();
 
 private:
-    int cur_index_;
+    int cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1188,7 +1188,7 @@ public:
 
 private:
     std::vector<HalfFaceHandle> halffaces_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1206,7 +1206,7 @@ public:
 
 private:
     std::vector<FaceHandle> faces_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1224,7 +1224,7 @@ public:
 
 private:
     std::vector<HalfFaceHandle> halffaces_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1261,7 +1261,7 @@ public:
     HalfFaceHalfEdgeIterImpl& operator--();
 
 private:
-    size_t cur_index_;
+    size_t cur_index_ = 0;
     std::vector<HalfEdgeHandle> hes_;
 };
 
@@ -1279,7 +1279,7 @@ public:
     HalfFaceEdgeIterImpl& operator--();
 
 private:
-    size_t cur_index_;
+    size_t cur_index_ = 0;
     std::vector<HalfEdgeHandle> hes_;
 };
 
@@ -1328,7 +1328,7 @@ public:
 
 private:
     std::vector<HalfEdgeHandle> halfedges_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
@@ -1346,7 +1346,7 @@ public:
 
 private:
     std::vector<EdgeHandle> edges_;
-    size_t cur_index_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
