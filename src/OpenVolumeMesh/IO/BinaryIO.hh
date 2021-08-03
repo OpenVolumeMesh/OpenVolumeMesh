@@ -222,16 +222,19 @@ public:
     BufferReader(std::unique_ptr<uint8_t[]> _data, size_t _size)
         : data_(std::move(_data))
         , size_(_size)
+        , cur_(data_.get())
+        , end_(cur_ + size_)
     {}
     ~BufferReader();
 public:
 // file position handling:
     inline size_t size() const {return size_;};
     size_t remaining_bytes() const;
-    inline size_t pos() const {return pos_;}
+    inline size_t pos() const {return cur_ - data_.get();}
     void seek(size_t off);
     inline void skip() {seek(size());};
 
+    void need(size_t n);
 // basic types
     uint8_t  u8();
     uint16_t u16();
@@ -261,7 +264,8 @@ public:
 
     std::unique_ptr<uint8_t[]> data_;
     size_t size_;
-    size_t pos_ = 0;
+    uint8_t *cur_;
+    uint8_t *end_;
 };
 
 template<size_t N>

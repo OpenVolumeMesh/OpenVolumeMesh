@@ -10,97 +10,91 @@ static const std::array<uint8_t, 8> ovmb_magic {'O', 'V', 'M', 'B', '\n', '\r', 
 
 uint8_t BufferReader::u8()
 {
-    std::array<uint8_t, 1> buf;
-    read(buf);
-    return buf[0];
+    return *(cur_++);
 
 }
 uint16_t BufferReader::u16()
 {
-    std::array<uint8_t, 2> buf;
-    read(buf);
-    return (buf[0] + (uint16_t(buf[1]) << 8));
-
+    uint16_t res = (cur_[0] + (uint16_t(cur_[1]) << 8));
+    cur_ += 2;
+    return res;
 }
 uint32_t BufferReader::u32()
 {
-    std::array<uint8_t, 4> buf;
-    read(buf);
-    return (buf[0]
-            + (uint32_t(buf[1]) << 8)
-            + (uint32_t(buf[2]) << 16)
-            + (uint32_t(buf[3]) << 24));
-
+    uint32_t res =  (cur_[0]
+            + (uint32_t(cur_[1]) << 8)
+            + (uint32_t(cur_[2]) << 16)
+            + (uint32_t(cur_[3]) << 24));
+    cur_ += 4;
+    return res;
 }
 
 uint64_t BufferReader::u64()
 {
-    std::array<uint8_t, 8> buf;
-    read(buf);
-    return (buf[0]
-            + (uint64_t(buf[1]) << 8)
-            + (uint64_t(buf[2]) << 16)
-            + (uint64_t(buf[3]) << 24)
-            + (uint64_t(buf[4]) << 32)
-            + (uint64_t(buf[5]) << 40)
-            + (uint64_t(buf[6]) << 48)
-            + (uint64_t(buf[7]) << 56)
+    uint64_t res = (cur_[0]
+            + (uint64_t(cur_[1]) << 8)
+            + (uint64_t(cur_[2]) << 16)
+            + (uint64_t(cur_[3]) << 24)
+            + (uint64_t(cur_[4]) << 32)
+            + (uint64_t(cur_[5]) << 40)
+            + (uint64_t(cur_[6]) << 48)
+            + (uint64_t(cur_[7]) << 56)
             );
+    cur_ += 8;
+    return res;
 }
 
 double BufferReader::dbl()
 {
-    std::array<uint8_t, 8> buf;
-    read(buf);
-    double ret;
-    std::memcpy(&ret, buf.data(), sizeof(double));
+    double ret = 0.;
+    read(reinterpret_cast<uint8_t*>(&ret), sizeof(double));
     return ret;
 }
 
 float BufferReader::flt()
 {
-    std::array<uint8_t, 4> buf;
-    read(buf);
-    float ret;
-    std::memcpy(&ret, buf.data(), sizeof(float));
+    float ret = 0.;
+    read(reinterpret_cast<uint8_t*>(&ret), sizeof(float));
     return ret;
 }
 
 
 void BufferReader::read(uint8_t *s, size_t n)
 {
-    if (n <= remaining_bytes()) {
-        std::memcpy(s, &data_[pos_], n);
-        pos_ += n;
-    } else {
-        std::runtime_error("end of buffer!");
-    }
+    std::memcpy(s, cur_, n);
+    cur_ += n;
 }
 
 
 BufferReader::~BufferReader() {
-    assert (pos_ == size());
+    assert (cur_ == end_);
 }
 
 uint64_t BufferReader::remaining_bytes() const {
-    assert (pos_ < size());
-    return size() - pos_;
+    assert (cur_ < end_);
+    return end_ - cur_;
 }
 
 void BufferReader::seek(size_t off) {
     assert(off <= size());
-    pos_ = off;
+    cur_ = data_.get() + off;
+}
+
+void BufferReader::need(size_t n)
+{
+   if (remaining_bytes() < n) {
+       throw std::runtime_error("read beyond buffer");
+   }
 }
 
 void BufferReader::padding(uint8_t n)
 {
-    std::array<uint8_t, 256> buf;
-    read(buf.data(), n);
     for (int i = 0; i < n; ++i) {
-        if (buf[i] != 0) {
+        if (cur_[i] != 0) {
             throw std::runtime_error("padding not 0");
         }
     }
+    cur_ += n;
 }
 
 
