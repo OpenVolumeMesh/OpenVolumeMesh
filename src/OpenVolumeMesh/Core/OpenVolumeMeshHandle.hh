@@ -78,7 +78,7 @@ public:
 	inline const int& idx() const { return idx_; }
 
     /// return unsigned idx - handle must be valid
-    inline size_t uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
+    inline unsigned int uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
 
 	void idx(const int& _idx) { idx_ = _idx; }
 

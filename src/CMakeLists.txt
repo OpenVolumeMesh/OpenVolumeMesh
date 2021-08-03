@@ -6,6 +6,8 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Attribs/StatusAttrib.cc
     OpenVolumeMesh/Geometry/Vector.cc
     OpenVolumeMesh/FileManager/FileManager.cc
+    OpenVolumeMesh/IO/BinaryIO.cc
+    OpenVolumeMesh/IO/BinaryFileReader.cc
     OpenVolumeMesh/Core/PropertyDefines.cc
     OpenVolumeMesh/Core/OpenVolumeMeshHandle.cc
     OpenVolumeMesh/Core/ResourceManager.cc
