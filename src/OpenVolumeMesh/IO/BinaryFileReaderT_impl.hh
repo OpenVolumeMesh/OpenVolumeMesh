@@ -161,7 +161,7 @@ void BinaryFileReader<MeshT>::read_chunk()
 }
 
 template<typename MeshT>
-void BinaryFileReader<MeshT>::readVerticesChunk(StreamReader &reader)
+void BinaryFileReader<MeshT>::readVerticesChunk(BufferReader &reader)
 {
     VertexChunkHeader header;
     reader.read(header);
@@ -202,7 +202,7 @@ void BinaryFileReader<MeshT>::readVerticesChunk(StreamReader &reader)
 }
 
 template<typename MeshT>
-void BinaryFileReader<MeshT>::readEdgesChunk(StreamReader &reader)
+void BinaryFileReader<MeshT>::readEdgesChunk(BufferReader &reader)
 {
     TopoChunkHeader header;
     reader.read(header);
@@ -244,7 +244,7 @@ void BinaryFileReader<MeshT>::readEdgesChunk(StreamReader &reader)
 }
 
 template<typename MeshT>
-void BinaryFileReader<MeshT>::readFacesChunk(StreamReader &reader)
+void BinaryFileReader<MeshT>::readFacesChunk(BufferReader &reader)
 {
     TopoChunkHeader header;
     reader.read(header);
@@ -282,7 +282,7 @@ void BinaryFileReader<MeshT>::readFacesChunk(StreamReader &reader)
 }
 
 template<typename MeshT>
-void BinaryFileReader<MeshT>::readCellsChunk(StreamReader &reader)
+void BinaryFileReader<MeshT>::readCellsChunk(BufferReader &reader)
 {
     TopoChunkHeader header;
     reader.read(header);
@@ -337,7 +337,7 @@ bool BinaryFileReader<MeshT>::validate_span(uint64_t total, uint64_t read, uint6
 }
 
 template<typename MeshT>
-std::vector<uint32_t> BinaryFileReader<MeshT>::read_valences(StreamReader &reader, size_t count)
+std::vector<uint32_t> BinaryFileReader<MeshT>::read_valences(BufferReader &reader, size_t count)
 {
     IntEncoding enc;
     reader.read(enc);
@@ -369,7 +369,7 @@ std::vector<uint32_t> BinaryFileReader<MeshT>::read_valences(StreamReader &reade
 template<typename MeshT>
 template<typename HandleT, typename ReadFunc, typename AddFunc>
 void BinaryFileReader<MeshT>::readFacesOrCells(
-        StreamReader &reader,
+        BufferReader &reader,
         TopoChunkHeader const &header,
         uint8_t fixed_valence,
         uint64_t n,

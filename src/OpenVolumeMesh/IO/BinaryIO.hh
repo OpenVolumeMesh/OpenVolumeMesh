@@ -4,6 +4,7 @@
 #include <ostream>
 #include <array>
 #include <cstdint>
+#include <memory>
 
 namespace OpenVolumeMesh::IO {
 
@@ -216,22 +217,20 @@ private:
     std::ostream &s_;
 };
 
-class StreamReader {
+class BufferReader {
 public:
-    StreamReader(std::istream &_s,
-                 uint64_t _size,
-                 uint64_t _base_off = 0)
-        : s_(_s)
+    BufferReader(std::unique_ptr<uint8_t[]> _data, size_t _size)
+        : data_(std::move(_data))
         , size_(_size)
-        , base_off_(_base_off)
     {}
-    ~StreamReader();
+    ~BufferReader();
 public:
 // file position handling:
-    void skip();
+    inline size_t size() const {return size_;};
     size_t remaining_bytes() const;
-    uint64_t pos() const {return pos_;}
-    void seek(uint64_t off);
+    inline size_t pos() const {return pos_;}
+    void seek(size_t off);
+    inline void skip() {seek(size());};
 
 // basic types
     uint8_t  u8();
@@ -245,7 +244,7 @@ public:
     void     padding(uint8_t n);
     template<uint8_t N> void reserved();
     template<size_t N> void read(std::array<uint8_t, N> &arr);
-    void read(char *s, size_t n);
+    void read(uint8_t *s, size_t n);
 
 // ovmb types
     void read(EntityType &);
@@ -260,20 +259,15 @@ public:
     void read(VertexChunkHeader &);
     void read(TopoChunkHeader &);
 
-private:
-    void use(size_t n);
-
-    std::istream &s_;
-    const uint64_t size_;
-    const uint64_t base_off_;
-    uint64_t pos_ = 0;
+    std::unique_ptr<uint8_t[]> data_;
+    size_t size_;
+    size_t pos_ = 0;
 };
 
 template<size_t N>
-void StreamReader::read(std::array<uint8_t, N> &arr)
+void BufferReader::read(std::array<uint8_t, N> &arr)
 {
-    use(N);
-    s_.read(reinterpret_cast<char*>(arr.data()), arr.size());
+    read(arr.data(), arr.size());
 }
 template<size_t N>
 void StreamWriter::write(const std::array<uint8_t, N> &arr)
@@ -288,7 +282,7 @@ void StreamWriter::reserved()
     s_.write(zero_buf.data(), N);
 }
 template<uint8_t N>
-void StreamReader::reserved()
+void BufferReader::reserved()
 {
     std::array<uint8_t, N> buf;
     read(buf);
@@ -301,29 +295,22 @@ void StreamReader::reserved()
 
 class BinaryIStream {
 public:
-    explicit BinaryIStream(std::istream &_s)
-        : s_(_s)
-    {
-        s_.seekg(0, std::ios_base::end);
-        size_ = s_.tellg();
-        s_.seekg(0, std::ios_base::beg);
-    }
+    explicit BinaryIStream(std::istream &_s);
     BinaryIStream(std::istream &_s,
-                 uint64_t _size)
-        : s_(_s)
-        , size_(_size)
-    {}
+                 uint64_t _size);
     size_t remaining_bytes() const {
         return size_ - pos_;
     }
     /// sub-readers share their istream; do not interleave use!
-    StreamReader make_reader(size_t n)
+    BufferReader make_reader(size_t n)
     {
         if (remaining_bytes() < n) {
             throw std::runtime_error("make_reader: not enough bytes left.");
         }
+        auto buf = std::make_unique<uint8_t[]>(n);
+        s_.read(reinterpret_cast<char*>(buf.get()), n);
         pos_ += n;
-        return StreamReader(s_, n);
+        return BufferReader(std::move(buf), n);
     }
 private:
     std::istream &s_;

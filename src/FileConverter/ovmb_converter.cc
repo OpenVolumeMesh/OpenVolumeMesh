@@ -33,7 +33,7 @@ int main(int argc, char**argv) {
     bool topo_check = false;
     bool bottom_up = false;
 
-    std::ifstream stream_in(fname_in);
+    std::ifstream stream_in(fname_in, std::ios::binary);
 
     if (in_binary) {
         OVM::IO::BinaryFileReader reader(stream_in, mesh);

@@ -8,29 +8,21 @@ namespace OpenVolumeMesh::IO {
 
 static const std::array<uint8_t, 8> ovmb_magic {'O', 'V', 'M', 'B', '\n', '\r', '\n', 0xff};
 
-void StreamReader::seek(uint64_t off) {
-    if (off > size_) {
-        throw std::runtime_error("make_reader fail");
-    }
-    s_.seekg(base_off_ + off);
-    pos_ = off;
-}
-
-uint8_t StreamReader::u8()
+uint8_t BufferReader::u8()
 {
     std::array<uint8_t, 1> buf;
     read(buf);
     return buf[0];
 
 }
-uint16_t StreamReader::u16()
+uint16_t BufferReader::u16()
 {
     std::array<uint8_t, 2> buf;
     read(buf);
     return (buf[0] + (uint16_t(buf[1]) << 8));
 
 }
-uint32_t StreamReader::u32()
+uint32_t BufferReader::u32()
 {
     std::array<uint8_t, 4> buf;
     read(buf);
@@ -41,7 +33,7 @@ uint32_t StreamReader::u32()
 
 }
 
-uint64_t StreamReader::u64()
+uint64_t BufferReader::u64()
 {
     std::array<uint8_t, 8> buf;
     read(buf);
@@ -56,7 +48,7 @@ uint64_t StreamReader::u64()
             );
 }
 
-double StreamReader::dbl()
+double BufferReader::dbl()
 {
     std::array<uint8_t, 8> buf;
     read(buf);
@@ -65,7 +57,7 @@ double StreamReader::dbl()
     return ret;
 }
 
-float StreamReader::flt()
+float BufferReader::flt()
 {
     std::array<uint8_t, 4> buf;
     read(buf);
@@ -75,38 +67,34 @@ float StreamReader::flt()
 }
 
 
-void StreamReader::read(char *s, size_t n)
+void BufferReader::read(uint8_t *s, size_t n)
 {
-    use(n);
-    s_.read(s, n);
-}
-
-void StreamReader::use(size_t n)
-{
-    if (n > size_ || pos_ > size_ - n) {
-        throw std::runtime_error("reading too far!");
+    if (n <= remaining_bytes()) {
+        std::memcpy(s, &data_[pos_], n);
+        pos_ += n;
+    } else {
+        std::runtime_error("end of buffer!");
     }
-    pos_ += n;
 }
 
 
-StreamReader::~StreamReader() {
-    assert (pos_ == size_);
+BufferReader::~BufferReader() {
+    assert (pos_ == size());
 }
 
-void StreamReader::skip()
+uint64_t BufferReader::remaining_bytes() const {
+    assert (pos_ < size());
+    return size() - pos_;
+}
+
+void BufferReader::seek(size_t off) {
+    assert(off <= size());
+    pos_ = off;
+}
+
+void BufferReader::padding(uint8_t n)
 {
-   seek(size_);
-}
-
-uint64_t StreamReader::remaining_bytes() const {
-    assert (pos_ < size_);
-    return size_ - pos_;
-}
-
-void StreamReader::padding(uint8_t n)
-{
-    std::array<char, 256> buf;
+    std::array<uint8_t, 256> buf;
     read(buf.data(), n);
     for (int i = 0; i < n; ++i) {
         if (buf[i] != 0) {
@@ -117,7 +105,7 @@ void StreamReader::padding(uint8_t n)
 
 
 
-void StreamReader::read(EntityType &_entity_type)
+void BufferReader::read(EntityType &_entity_type)
 {
     auto v = u8();
     if (v > 6) {
@@ -130,28 +118,28 @@ void StreamWriter::write(EntityType val)
 { u8(static_cast<uint8_t>(val)); }
 
 
-void StreamReader::read(ChunkType &_chunk_type)
+void BufferReader::read(ChunkType &_chunk_type)
 { _chunk_type = static_cast<ChunkType>(u32()); }
 
 void StreamWriter::write(ChunkType val)
 { u32(static_cast<uint32_t>(val)); }
 
 
-void StreamReader::read(VertexEncoding &_enc)
+void BufferReader::read(VertexEncoding &_enc)
 { _enc = static_cast<VertexEncoding>(u8()); }
 
 void StreamWriter::write(VertexEncoding val)
 { u8(static_cast<uint8_t>(val)); }
 
 
-void StreamReader::read(IntEncoding &_enc)
+void BufferReader::read(IntEncoding &_enc)
 { _enc = static_cast<IntEncoding>(u8()); }
 
 void StreamWriter::write(IntEncoding val)
 { u8(static_cast<uint8_t>(val)); }
 
 
-void StreamReader::read(VertexChunkHeader &_out)
+void BufferReader::read(VertexChunkHeader &_out)
 {
     _out.base = u64();
     _out.count = u32();
@@ -168,7 +156,7 @@ void StreamWriter::write(const VertexChunkHeader & val)
 }
 
 
-void StreamReader::read(TopoChunkHeader &_out)
+void BufferReader::read(TopoChunkHeader &_out)
 {
     _out.base = u64();
     _out.count = u32();
@@ -187,7 +175,7 @@ void StreamWriter::write(const TopoChunkHeader & val)
     u64(val.handle_offset);
 }
 
-void StreamReader::read(ChunkHeader &header) {
+void BufferReader::read(ChunkHeader &header) {
     read(header.type);
     header.version = u8();
     header.padding_bytes = u8();
@@ -207,7 +195,7 @@ void StreamWriter::write(const ChunkHeader &header) {
     u64(header.file_length);
 }
 
-bool StreamReader::read(FileHeader &_file_header)
+bool BufferReader::read(FileHeader &_file_header)
 {
     std::array<uint8_t, 8> magic_buf;
     read(magic_buf);
@@ -312,6 +300,24 @@ IntEncoding suitable_int_encoding(uint32_t max_value)
    if (max_value <= std::numeric_limits<uint8_t>::max())  return IntEncoding::U8;
    if (max_value <= std::numeric_limits<uint16_t>::max())  return IntEncoding::U16;
    return IntEncoding::U32;
+}
+
+static uint64_t stream_length(std::istream &_s) {
+    auto orig = _s.tellg();
+    _s.seekg(0, std::ios_base::end);
+    auto res =_s.tellg();
+    _s.seekg(orig, std::ios_base::beg);
+    return res;
+}
+BinaryIStream::BinaryIStream(std::istream &_s)
+    : BinaryIStream(_s, stream_length(_s))
+{
+}
+
+BinaryIStream::BinaryIStream(std::istream &_s, uint64_t _size)
+    : s_(_s)
+    , size_(_size)
+{
 }
 
 } // namespace OpenVolumeMesh::IO

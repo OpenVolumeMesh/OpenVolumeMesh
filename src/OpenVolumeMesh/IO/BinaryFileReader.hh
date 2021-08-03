@@ -56,12 +56,12 @@ public:
 private:
     void read_header();
     void read_chunk();
-    void readVerticesChunk(StreamReader &reader);
-    void readEdgesChunk(StreamReader &reader);
-    void readFacesChunk(StreamReader &reader);
-    void readCellsChunk(StreamReader &reader);
+    void readVerticesChunk(BufferReader &reader);
+    void readEdgesChunk(BufferReader &reader);
+    void readFacesChunk(BufferReader &reader);
+    void readCellsChunk(BufferReader &reader);
     template<typename HandleT, typename ReadFunc, typename AddFunc>
-    void readFacesOrCells(StreamReader &reader,
+    void readFacesOrCells(BufferReader &reader,
                           TopoChunkHeader const &header,
                           uint8_t fixed_valence,
                           uint64_t n,
@@ -69,7 +69,7 @@ private:
                           AddFunc add_entity);
     bool validate_span(uint64_t total, uint64_t read, uint64_t base, uint64_t count);
 
-    std::vector<uint32_t> read_valences(StreamReader &reader, size_t count);
+    std::vector<uint32_t> read_valences(BufferReader &reader, size_t count);
 
 private:
     BinaryIStream stream_;
