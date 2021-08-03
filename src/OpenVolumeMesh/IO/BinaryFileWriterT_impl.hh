@@ -23,12 +23,11 @@ static void write_valences (StreamWriter &writer,
         return;
     }
     writer.u8(0); // variable valences
-    writer.reserved<3>();
-    IntEncoding enc = suitable_int_encoding(maxval);
-    writer.write(enc);
-    writer.reserved<3>();
+    IntEncoding valence_enc = suitable_int_encoding(maxval);
+    writer.write(valence_enc);
+    writer.reserved<2>();
 
-    uint64_t bytes_required = 4 + valences.size() * elem_size(enc);
+    uint64_t bytes_required = 4 + valences.size() * elem_size(valence_enc);
 
     auto write_all = [&](auto write_one) {
         for (const auto val: valences) {
@@ -36,7 +35,7 @@ static void write_valences (StreamWriter &writer,
         }
     };
 
-    call_with_encoder(enc, write_all);
+    call_with_encoder(valence_enc, write_all);
 }
 
 template<typename MeshT>

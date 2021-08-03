@@ -64,12 +64,13 @@ private:
     void readFacesOrCells(BufferReader &reader,
                           TopoChunkHeader const &header,
                           uint8_t fixed_valence,
+                          IntEncoding valence_enc,
                           uint64_t n,
                           ReadFunc read_handle,
                           AddFunc add_entity);
     bool validate_span(uint64_t total, uint64_t read, uint64_t base, uint64_t count);
 
-    std::vector<uint32_t> read_valences(BufferReader &reader, size_t count);
+    std::vector<uint32_t> read_valences(BufferReader &reader, IntEncoding enc, size_t count);
 
 private:
     BinaryIStream stream_;

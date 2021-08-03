@@ -250,7 +250,8 @@ void BinaryFileReader<MeshT>::readFacesChunk(BufferReader &reader)
     reader.read(header);
 
     uint32_t fixed_valence = reader.u8();
-    reader.reserved<3>();
+    IntEncoding valence_enc; reader.read(valence_enc);
+    reader.reserved<2>();
 
     if (!is_valid(header.enc)) {
         state_ = ReadState::ErrorInvalidEncoding;
@@ -269,7 +270,7 @@ void BinaryFileReader<MeshT>::readFacesChunk(BufferReader &reader)
     auto read_all = [&](auto read_one)
     {
         readFacesOrCells<HalfEdgeHandle>(
-                    reader, header, fixed_valence, mesh_.n_halfedges(),
+                    reader, header, fixed_valence, valence_enc, mesh_.n_halfedges(),
                     read_one, [&](auto handles) {mesh_.add_face(handles, topology_check_);});
     };
 
@@ -288,7 +289,8 @@ void BinaryFileReader<MeshT>::readCellsChunk(BufferReader &reader)
     reader.read(header);
 
     uint32_t fixed_valence = reader.u8();
-    reader.reserved<3>();
+    IntEncoding valence_enc; reader.read(valence_enc);
+    reader.reserved<2>();
 
     if (!is_valid(header.enc)) {
         state_ = ReadState::ErrorInvalidEncoding;
@@ -310,7 +312,7 @@ void BinaryFileReader<MeshT>::readCellsChunk(BufferReader &reader)
     auto read_all = [&](auto read_one)
     {
         readFacesOrCells<HalfFaceHandle>(
-                    reader, header, fixed_valence, mesh_.n_halffaces(),
+                    reader, header, fixed_valence, valence_enc, mesh_.n_halffaces(),
                     read_one, [&](auto handles) {mesh_.add_cell(handles, topology_check_);});
     };
 
@@ -337,12 +339,8 @@ bool BinaryFileReader<MeshT>::validate_span(uint64_t total, uint64_t read, uint6
 }
 
 template<typename MeshT>
-std::vector<uint32_t> BinaryFileReader<MeshT>::read_valences(BufferReader &reader, size_t count)
+std::vector<uint32_t> BinaryFileReader<MeshT>::read_valences(BufferReader &reader, IntEncoding enc, size_t count)
 {
-    IntEncoding enc;
-    reader.read(enc);
-    reader.reserved<3>();
-
     if (!is_valid(enc)) {
         state_ = ReadState::ErrorInvalidEncoding;
         return {};
@@ -372,6 +370,8 @@ void BinaryFileReader<MeshT>::readFacesOrCells(
         BufferReader &reader,
         TopoChunkHeader const &header,
         uint8_t fixed_valence,
+        IntEncoding valence_enc,
+
         uint64_t n,
         ReadFunc read_handle,
         AddFunc add_entity)
@@ -404,7 +404,7 @@ void BinaryFileReader<MeshT>::readFacesOrCells(
     auto esize = elem_size(header.enc);
 
     if (fixed_valence == 0) {
-        auto valences = read_valences(reader, header.count);
+        auto valences = read_valences(reader, valence_enc, header.count);
         auto max_valence = *std::max_element(valences.begin(), valences.end());
         auto total_handles = std::accumulate(valences.begin(), valences.end(), 0ULL);
         if (reader.remaining_bytes() != total_handles * esize) {
