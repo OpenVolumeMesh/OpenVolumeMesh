@@ -132,7 +132,7 @@ void BinaryFileWriter<MeshT>::write_edges(uint64_t first, uint32_t count)
     TopoChunkHeader header = {
         .base = first,
         .count = count,
-        .enc = IntEncoding::U32,
+        .enc = suitable_int_encoding(mesh_.n_vertices()),
         .handle_offset = 0};
 
     size_t payload_length = ovmb_size<TopoChunkHeader>
@@ -168,7 +168,7 @@ void BinaryFileWriter<MeshT>::write_faces(uint64_t first, uint32_t count)
     TopoChunkHeader header = {
         .base = first,
         .count = count,
-        .enc = IntEncoding::U32,
+        .enc = suitable_int_encoding(mesh_.n_halfedges()),
         .handle_offset = 0};
     buf_writer.write(header);
 
@@ -211,7 +211,7 @@ void BinaryFileWriter<MeshT>::write_cells(uint64_t first, uint32_t count)
     TopoChunkHeader header = {
         .base = first,
         .count = count,
-        .enc = IntEncoding::U32,
+        .enc = suitable_int_encoding(mesh_.n_halffaces()),
         .handle_offset = 0};
     buf_writer.write(header);
 
