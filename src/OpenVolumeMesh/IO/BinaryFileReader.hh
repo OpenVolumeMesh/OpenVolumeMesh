@@ -4,6 +4,9 @@
 
 #include <vector>
 #include <limits>
+#include <limits>
+#include <any>
+#include <functional>
 
 
 namespace OpenVolumeMesh::IO {
@@ -60,6 +63,8 @@ private:
     void readEdgesChunk(BufferReader &reader);
     void readFacesChunk(BufferReader &reader);
     void readCellsChunk(BufferReader &reader);
+    void readPropDirChunk(BufferReader &reader);
+    void readPropChunk(BufferReader &reader);
     template<typename HandleT, typename ReadFunc, typename AddFunc>
     void readFacesOrCells(BufferReader &reader,
                           TopoChunkHeader const &header,
@@ -85,7 +90,15 @@ private:
     uint64_t n_faces_read_ = 0;
     uint64_t n_cells_read_ = 0;
 
+    struct Property {
+        PropertyEntity entity;
+        std::function<bool(BufferReader&, size_t base, size_t count)> read_func = nullptr;
+    };
+
+    std::vector<Property> props_;
+
 };
+
 } // namespace OpenVolumeMesh::IO
 
 

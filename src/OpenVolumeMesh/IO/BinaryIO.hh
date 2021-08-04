@@ -5,22 +5,57 @@
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <vector>
+#include <limits>
 
 namespace OpenVolumeMesh::IO {
 
 template<typename T>
-static inline size_t ovmb_size;
+extern size_t ovmb_size;
 
-enum class EntityType : uint8_t {
-    Vertex = 0,
-    Edge = 1,
-    Face = 2,
-    Cell = 3,
+enum class PropertyEntity : uint8_t {
+    Vertex   = 0,
+    Edge     = 1,
+    Face     = 2,
+    Cell     = 3,
     HalfEdge = 4,
     HalfFace = 5,
-    Mesh = 6
+    Mesh     = 6
 };
-template<> inline size_t ovmb_size<EntityType> = 1;
+template<> inline size_t ovmb_size<PropertyEntity> = 1;
+
+#if 0
+enum class PropertyDataType : uint8_t {
+    Bool    =  0,
+    U8      =  1,
+    U16     =  2,
+    U32     =  3,
+    U64     =  4,
+    S8      =  5,
+    S16     =  6,
+    S32     =  7,
+    S64     =  8,
+    Float   =  9,
+    Float2  = 10,
+    Float3  = 11,
+    Float4  = 12,
+    Double  = 13,
+    Double2 = 14,
+    Double3 = 15,
+    Double4 = 16,
+    String  = 17,
+    // complex type serialization:
+    CistaPP = 0xff,
+};
+#endif
+
+struct PropertyInfo {
+    PropertyEntity entity_type;
+    //PropertyDataType data_type;
+    std::string name;
+    std::string data_type_name; // for non-standard data types, empty otherwise
+    std::vector<uint8_t> serialized_default;
+};
 
 enum class TopoType : uint8_t {
     Polyhedral  = 0,
@@ -55,7 +90,8 @@ enum class ChunkType : uint32_t{
     Edges             = FOURCC("EDGE"),
     Faces             = FOURCC("FACE"),
     Cells             = FOURCC("CELL"),
-    Property          = FOURCC("PROP")
+    PropertyDirectory = FOURCC("DIRP"),
+    Property          = FOURCC("PROP"),
 };
 #undef FOURCC
 
@@ -167,6 +203,13 @@ inline uint8_t elem_size(VertexEncoding enc) {
     }
 }
 
+struct PropChunkHeader {
+    uint64_t base;
+    uint32_t count;
+    uint32_t idx; // which property from property dir?
+};
+template<> inline size_t ovmb_size<PropChunkHeader> = 8 + 4 + 4;
+
 struct VertexChunkHeader {
     uint64_t base;
     uint32_t count;
@@ -195,27 +238,54 @@ public:
     void u64(uint64_t);
     void dbl(double);
     void flt(float);
+    inline void write(uint8_t  v) {u8(v);}
+    inline void write(uint16_t v) {u16(v);}
+    inline void write(uint32_t v) {u32(v);}
+    inline void write(uint64_t v) {u64(v);}
+    inline void write(float v)    {flt(v);}
+    inline void write(double v)   {dbl(v);}
 
     // helpers
     void padding(size_t n);
     template<uint8_t N> void reserved();
     template<size_t N> void write(std::array<uint8_t, N> const &arr);
+    void write(const uint8_t *s, size_t n);
     void write(const char *s, size_t n);
 
+    template<typename LengthT, typename Vec>
+    void writeVec(Vec const &vec);
+
     // ovmb types
-    void write(EntityType);
+    //void write(PropertyDataType);
+    void write(PropertyEntity);
     void write(ChunkType);
     void write(VertexEncoding);
     void write(IntEncoding);
     // ovmb structures
     void write(FileHeader const&);
     void write(ChunkHeader const&);
+    void write(PropChunkHeader const&);
     void write(VertexChunkHeader const&);
     void write(TopoChunkHeader const&);
+    void write(PropertyInfo const&);
 
 private:
     std::ostream &s_;
 };
+
+
+template<size_t N>
+void StreamWriter::write(const std::array<uint8_t, N> &arr)
+{
+    s_.write(reinterpret_cast<const char*>(arr.data()), arr.size());
+}
+
+extern const std::array<uint8_t, 256> zero_buf;
+template<uint8_t N>
+void StreamWriter::reserved()
+{
+    write(zero_buf.data(), N);
+}
 
 class BufferReader {
 public:
@@ -225,9 +295,9 @@ public:
         , cur_(data_.get())
         , end_(cur_ + size_)
     {}
-    ~BufferReader();
 public:
 // file position handling:
+    bool finished() const {return cur_ == end_;}
     inline size_t size() const {return size_;};
     size_t remaining_bytes() const;
     inline size_t pos() const {return cur_ - data_.get();}
@@ -235,56 +305,81 @@ public:
     inline void skip() {seek(size());};
 
     void need(size_t n);
-// basic types
+
+// basic types, WARNING: length unchecked!
     uint8_t  u8();
     uint16_t u16();
     uint32_t u32();
     uint64_t u64();
     double   dbl();
     float    flt();
+    inline void read(uint8_t  &v) {v = u8();}
+    inline void read(uint16_t &v) {v = u16();}
+    inline void read(uint32_t &v) {v = u32();}
+    inline void read(uint64_t &v) {v = u64();}
+    inline void read(double &v)   {v = dbl();}
+    inline void read(float &v)    {v = flt();}
 
-// helpers
+// basic types, WARNING: length unchecked!
     void     padding(uint8_t n);
     template<uint8_t N> void reserved();
     template<size_t N> void read(std::array<uint8_t, N> &arr);
     void read(uint8_t *s, size_t n);
+    void read(char *s, size_t n);
 
-// ovmb types
-    void read(EntityType &);
+
+// basic types, WARNING: length unchecked!
+    template<typename LengthT, typename Vec>
+    void readVec(Vec &vec);
+    //void read(PropertyDataType &);
+    void read(PropertyEntity &);
     void read(ChunkType &);
     void read(VertexEncoding &);
     void read(IntEncoding &);
 
-// ovmb structures
+// ovmb structures, length checked!
     /// return true iff the magic number was correct
     bool read(FileHeader &);
     void read(ChunkHeader &);
+    void read(PropChunkHeader &);
     void read(VertexChunkHeader &);
     void read(TopoChunkHeader &);
+    void read(PropertyInfo &);
 
     std::unique_ptr<uint8_t[]> data_;
     size_t size_;
     uint8_t *cur_;
     uint8_t *end_;
 };
+template<typename LengthT, typename Vec>
+void BufferReader::readVec(Vec &vec)
+{
+    need(sizeof(LengthT));
+    LengthT len = 0;
+    read(len);
+    need(len);
+    vec.resize(len);
+    read(vec.data(), len);
+}
+
+template<typename LengthT, typename Vec>
+void StreamWriter::writeVec(Vec const &vec)
+{
+    if (vec.size() > std::numeric_limits<LengthT>::max()) {
+        throw std::runtime_error("vector too long for length data type");
+        // TODO: maybe just truncate?
+    }
+    auto len = static_cast<LengthT>(vec.size());
+    write(len);
+    write(vec.data(), len);
+}
 
 template<size_t N>
 void BufferReader::read(std::array<uint8_t, N> &arr)
 {
     read(arr.data(), arr.size());
 }
-template<size_t N>
-void StreamWriter::write(const std::array<uint8_t, N> &arr)
-{
-    s_.write(reinterpret_cast<const char*>(arr.data()), arr.size());
-}
 
-extern const std::array<char, 256> zero_buf;
-template<uint8_t N>
-void StreamWriter::reserved()
-{
-    s_.write(zero_buf.data(), N);
-}
 template<uint8_t N>
 void BufferReader::reserved()
 {

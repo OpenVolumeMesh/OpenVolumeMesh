@@ -65,10 +65,12 @@ void BufferReader::read(uint8_t *s, size_t n)
     cur_ += n;
 }
 
-
-BufferReader::~BufferReader() {
-    assert (cur_ == end_);
+void BufferReader::read(char *s, size_t n)
+{
+    std::memcpy(s, cur_, n);
+    cur_ += n;
 }
+
 
 uint64_t BufferReader::remaining_bytes() const {
     assert (cur_ < end_);
@@ -99,17 +101,26 @@ void BufferReader::padding(uint8_t n)
 
 
 
-void BufferReader::read(EntityType &_entity_type)
+void BufferReader::read(PropertyEntity &_entity_type)
 {
     auto v = u8();
     if (v > 6) {
         throw std::runtime_error("unsupported entity type");
     }
-    _entity_type = static_cast<EntityType>(v);
+    _entity_type = static_cast<PropertyEntity>(v);
 }
-
-void StreamWriter::write(EntityType val)
+void StreamWriter::write(PropertyEntity val)
 { u8(static_cast<uint8_t>(val)); }
+
+#if 0
+void BufferReader::read(PropertyDataType &_val)
+{ _val = static_cast<PropertyDataType>(u32()); }
+
+void StreamWriter::write(PropertyDataType val)
+{ u8(static_cast<uint8_t>(val)); }
+#endif
+
+
 
 
 void BufferReader::read(ChunkType &_chunk_type)
@@ -133,8 +144,26 @@ void StreamWriter::write(IntEncoding val)
 { u8(static_cast<uint8_t>(val)); }
 
 
+void BufferReader::read(PropChunkHeader &_out)
+{
+    need(ovmb_size<PropChunkHeader>);
+    _out.base = u64();
+    _out.count = u32();
+    _out.idx = u32();
+}
+
+void StreamWriter::write(const PropChunkHeader & val)
+{
+    u64(val.base);
+    u32(val.count);
+    u32(val.idx);
+}
+
+
+
 void BufferReader::read(VertexChunkHeader &_out)
 {
+    need(ovmb_size<VertexChunkHeader>);
     _out.base = u64();
     _out.count = u32();
     read(_out.enc);
@@ -152,13 +181,13 @@ void StreamWriter::write(const VertexChunkHeader & val)
 
 void BufferReader::read(TopoChunkHeader &_out)
 {
+    need(ovmb_size<TopoChunkHeader>);
     _out.base = u64();
     _out.count = u32();
     read(_out.enc);
     reserved<3>();
     _out.handle_offset = u64();
 }
-
 
 void StreamWriter::write(const TopoChunkHeader & val)
 {
@@ -169,7 +198,27 @@ void StreamWriter::write(const TopoChunkHeader & val)
     u64(val.handle_offset);
 }
 
+void BufferReader::read(PropertyInfo &_out)
+{
+    need(2+1+2+4);
+    read(_out.entity_type);
+    //read(_out.data_type);
+    readVec<uint8_t>(_out.name);
+    readVec<uint16_t>(_out.data_type_name);
+    readVec<uint32_t>(_out.serialized_default);
+}
+
+
+void StreamWriter::write(PropertyInfo const &val) {
+    write(val.entity_type);
+    //write(val.data_type);
+    writeVec<uint8_t>(val.name);
+    writeVec<uint16_t>(val.data_type_name);
+    writeVec<uint32_t>(val.serialized_default);
+}
+
 void BufferReader::read(ChunkHeader &header) {
+    need(ovmb_size<ChunkHeader>);
     read(header.type);
     header.version = u8();
     header.padding_bytes = u8();
@@ -191,6 +240,7 @@ void StreamWriter::write(const ChunkHeader &header) {
 
 bool BufferReader::read(FileHeader &_file_header)
 {
+    need(ovmb_size<FileHeader>);
     std::array<uint8_t, 8> magic_buf;
     read(magic_buf);
 
@@ -272,14 +322,19 @@ void StreamWriter::flt(float val)
     write(data);
 }
 
-const std::array<char, 256> zero_buf = {0};
+const std::array<uint8_t, 256> zero_buf = {0};
 
 void StreamWriter::padding(size_t n)
 {
     if (n > zero_buf.size()) {
         throw std::runtime_error("too much padding!");
     }
-    s_.write(zero_buf.data(), n);
+    write(zero_buf.data(), n);
+}
+
+void StreamWriter::write(const uint8_t *s, size_t n)
+{
+    s_.write(reinterpret_cast<const char*>(s), n);
 }
 
 void StreamWriter::write(const char *s, size_t n)

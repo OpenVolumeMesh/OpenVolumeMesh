@@ -135,6 +135,12 @@ void BinaryFileReader<MeshT>::read_chunk()
 
         switch(header.type)
         {
+        case ChunkType::PropertyDirectory:
+            readPropDirChunk(chunk_reader);
+            break;
+        case ChunkType::Property:
+            readPropChunk(chunk_reader);
+            break;
         case ChunkType::Vertices:
             readVerticesChunk(chunk_reader);
             break;
@@ -156,6 +162,9 @@ void BinaryFileReader<MeshT>::read_chunk()
             break;
         }
     }
+    if (state_ != ReadState::ReadingChunks)
+        return;
+    assert(chunk_reader.finished());
     // TODO: this is ugly
     stream_.make_reader(header.padding_bytes).padding(header.padding_bytes);
 }
@@ -423,6 +432,68 @@ void BinaryFileReader<MeshT>::readFacesOrCells(
     }
 }
 
+template<typename MeshT>
+void BinaryFileReader<MeshT>::readPropDirChunk(BufferReader &reader)
+{
+    reader.need(4);
+    uint32_t count = reader.u32();
+
+    if (props_.size() != 0) {
+        // we can only have one property directory!
+        state_ = ReadState::Error; // TODO more specific error
+        return;
+    }
+
+    if (count == 0) {
+        state_ = ReadState::ErrorEmptyList;
+        return;
+    }
+    reader.need(count * 8);
+    props_.reserve(count);
+    while (stream_.remaining_bytes() > 0)
+    {
+        PropertyInfo prop_info;
+        reader.read(prop_info);
+        props_.push_back(Property{prop_info.entity_type});
+    }
+}
+
+template<typename MeshT>
+void BinaryFileReader<MeshT>::readPropChunk(BufferReader &reader)
+{
+    PropChunkHeader header;
+    reader.read(header);
+    if (header.idx >= props_.size()) {
+        state_ = ReadState::Error; // TODO more specific error
+        return;
+    }
+    Property const &prop = props_[header.idx];
+    if (prop.read_func == nullptr) {
+        reader.skip();
+        return;
+    }
+    uint64_t n = 0;
+    switch (prop.entity) {
+        case OpenVolumeMesh::IO::PropertyEntity::Vertex:   n = n_verts_read_; break;
+        case OpenVolumeMesh::IO::PropertyEntity::Edge:     n = n_edges_read_; break;
+        case OpenVolumeMesh::IO::PropertyEntity::Face:     n = n_faces_read_; break;
+        case OpenVolumeMesh::IO::PropertyEntity::Cell:     n = n_cells_read_; break;
+        case OpenVolumeMesh::IO::PropertyEntity::HalfEdge: n = 2 * n_edges_read_; break;
+        case OpenVolumeMesh::IO::PropertyEntity::HalfFace: n = 2 * n_faces_read_; break;
+        case OpenVolumeMesh::IO::PropertyEntity::Mesh:     n = 1; break;
+    }
+    if (header.base >= n || n - header.base < header.count) {
+        state_ = ReadState::ErrorHandleRange;
+        return;
+    }
+
+    bool success = prop.read_func(reader, header.base, header.count);
+    if (!success) {
+        std::cerr << "Warning: failed to read property chunk for prop " << header.idx << std::endl;
+        reader.skip();
+        return;
+    }
+}
 
 
 

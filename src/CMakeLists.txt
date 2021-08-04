@@ -7,6 +7,7 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Geometry/Vector.cc
     OpenVolumeMesh/FileManager/FileManager.cc
     OpenVolumeMesh/IO/BinaryIO.cc
+    OpenVolumeMesh/IO/PropertySerialization.cc
     OpenVolumeMesh/IO/BinaryFileReader.cc
     OpenVolumeMesh/Core/PropertyDefines.cc
     OpenVolumeMesh/Core/OpenVolumeMeshHandle.cc

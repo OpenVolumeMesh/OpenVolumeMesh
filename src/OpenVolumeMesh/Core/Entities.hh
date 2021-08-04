@@ -16,6 +16,10 @@ namespace Entity {
     struct OVM_EXPORT Mesh     { Mesh()     = delete;};
 }
 
+enum class EntityType {
+    Vertex, Edge, HalfEdge, Face, HalfFace, Cell, Mesh
+};
+
 template<typename T>
 struct is_entity : std::false_type {};
 
