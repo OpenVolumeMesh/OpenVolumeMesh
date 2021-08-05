@@ -71,7 +71,7 @@ public:
         }
     }
 
-    operator bool() const {return resMan() != nullptr;}
+    operator bool() const {return ptr_->resMan() != nullptr;}
 
     friend class ResourceManager;
 
