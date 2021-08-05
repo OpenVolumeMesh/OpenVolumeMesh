@@ -45,10 +45,15 @@
 
 #include "PropertyStorageBase.hh"
 #include "PropertyDefines.hh"
+#include "BaseProperty.hh"
 
 #include "Serializers.hh"
 
 namespace OpenVolumeMesh {
+
+
+template <class T, typename EntityTag>
+class PropertyPtr;
 
 //== CLASS DEFINITION =========================================================
 
@@ -76,8 +81,9 @@ public:
 	explicit PropertyStorageT(
             const std::string& _name,
             const std::string& _internal_type_name,
+            EntityType _entity_type,
             const T &_def = T())
-        : PropertyStorageBase(_name, _internal_type_name),
+        : PropertyStorageBase(_name, _internal_type_name, _entity_type),
           def_(_def)
     {}
 
@@ -175,6 +181,11 @@ public:
     typename vector_type::iterator end() { return data_.end(); }
 
     std::string typeNameWrapper() const override {return OpenVolumeMesh::typeName<T>();}
+
+    // defined in PropertyPtr.hh to avoid circular dependencies
+    operator std::unique_ptr<BaseProperty>() override;
+    //template<typename EntityTag>
+    //operator PropertyPtr<T, EntityTag>();
 
 protected:
 

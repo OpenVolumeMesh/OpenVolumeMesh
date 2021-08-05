@@ -44,6 +44,7 @@
 namespace OpenVolumeMesh {
 
 class ResourceManager;
+class BaseProperty;
 
 /** \class OpenVolumeMeshBaseProperty
 
@@ -65,11 +66,12 @@ public:
 
     explicit PropertyStorageBase(
             const std::string& _name,
-            const std::string& _internal_type_name)
+            const std::string& _internal_type_name,
+            EntityType _entity_type)
         : name_(_name),
           internal_type_name_(_internal_type_name),
-          persistent_(false),
-          handle_(-1)
+          entity_type_(_entity_type),
+          persistent_(false)
     {}
 
     virtual ~PropertyStorageBase() = default;
@@ -127,30 +129,28 @@ public:
 	/// Number of elements in property
 	virtual size_t n_elements() const = 0;
 
-	const OpenVolumeMeshHandle& handle() const { return handle_; }
-
-	void set_handle(const OpenVolumeMeshHandle& _handle) { handle_.idx(_handle.idx()); }
-
     virtual std::string typeNameWrapper() const = 0;
+
+    virtual operator std::unique_ptr<BaseProperty>() = 0;
 
 protected:
 
 	/// Delete multiple entries in list
     virtual void delete_multiple_entries(const std::vector<bool>&) = 0;
+
     void setResMan(ResourceManager *resMan) { resMan_ = resMan;}
     ResourceManager *resMan() { return resMan_;}
 
+    EntityType entity_type() const {return entity_type_;}
+
 private:
-    auto shared_ptr() {return shared_from_this();}
 
     ResourceManager* resMan_ = nullptr;
 
 	std::string name_;
 	std::string internal_type_name_;
-
+    EntityType entity_type_;
 	bool persistent_;
-
-	OpenVolumeMeshHandle handle_;
 };
 
 } // Namespace OpenVolumeMesh

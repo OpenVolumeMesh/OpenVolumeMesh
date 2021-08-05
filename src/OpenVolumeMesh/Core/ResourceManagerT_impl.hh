@@ -117,7 +117,7 @@ ResourceManager::internal_find_property(const std::string& _name) const
             && prop->internal_type_name() == type_name)
         {
             auto ps = std::static_pointer_cast<PropertyStorageT<T>>(
-                        prop->shared_ptr());
+                        prop->shared_from_this());
             return PropertyPtr<T, EntityTag>(std::move(ps));
         }
     }
@@ -129,7 +129,7 @@ PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::s
 {
     auto type_name = get_type_name(typeid(T));
     auto &propVec = all_props_.get<EntityTag>();
-    auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, _def);
+    auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, EntityTag::type(), _def);
     storage->resize(n<EntityTag>());
     storage->setResMan(this);
     propVec.insert(storage.get());

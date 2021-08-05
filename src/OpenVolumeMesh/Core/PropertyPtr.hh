@@ -74,6 +74,7 @@ public:
     operator bool() const {return ptr_->resMan() != nullptr;}
 
     friend class ResourceManager;
+    friend class PropertyStorageT<T>;
 
     using PropStorageT = PropertyStorageT<T>;
 
@@ -124,6 +125,25 @@ protected:
      {}
      std::shared_ptr<PropStorageT> const &ptr() const {return ptr_;}
      std::shared_ptr<PropStorageT> ptr_;
+};
+
+template<typename T>
+PropertyStorageT<T>::operator std::unique_ptr<BaseProperty>()
+{
+    auto sp = std::static_pointer_cast<PropertyStorageT<T>>(shared_from_this());
+    // unfortunately we cannot use make_unique due to our protected constructor
+    BaseProperty *ptr = nullptr;
+    switch (entity_type()) {
+    // TODO: we need some dynamic dispatch helper function
+    case EntityType::Vertex:   ptr = new PropertyPtr<T, Entity::Vertex>(std::move(sp)); break;
+    case EntityType::Edge:     ptr = new PropertyPtr<T, Entity::Edge>(std::move(sp)); break;
+    case EntityType::HalfEdge: ptr = new PropertyPtr<T, Entity::HalfEdge>(std::move(sp)); break;
+    case EntityType::Face:     ptr = new PropertyPtr<T, Entity::Face>(std::move(sp)); break;
+    case EntityType::HalfFace: ptr = new PropertyPtr<T, Entity::HalfFace>(std::move(sp)); break;
+    case EntityType::Cell:     ptr = new PropertyPtr<T, Entity::Cell>(std::move(sp)); break;
+    case EntityType::Mesh:     ptr = new PropertyPtr<T, Entity::Mesh>(std::move(sp)); break;
+    }
+    return std::unique_ptr<BaseProperty>(ptr);
 };
 
 template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
