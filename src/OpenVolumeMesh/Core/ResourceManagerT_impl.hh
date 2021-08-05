@@ -183,15 +183,6 @@ void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _fla
     sptr->set_persistent(_flag);
 }
 
-template<class StdVecT>
-void ResourceManager::remove_property(StdVecT& _vec, size_t _idx)
-{
-    auto prop_ptr = _vec[_idx];
-    prop_ptr->setResMan(nullptr);
-    delete prop_ptr;
-    _vec.erase(_vec.begin() + _idx);
-    updatePropHandles(_vec);
-}
 
 template<class EntityTag>
 void ResourceManager::delete_multiple_entities(const std::vector<bool>& _tags)
@@ -201,16 +192,16 @@ void ResourceManager::delete_multiple_entities(const std::vector<bool>& _tags)
     }
 }
 
-template<class StdVecT>
-void ResourceManager::resize_props(StdVecT& _vec, size_t _n)
+template<class Container>
+void ResourceManager::resize_props(Container& _vec, size_t _n)
 {
     for (auto &prop: _vec) {
         prop->resize(_n);
     }
 }
 
-template<class StdVecT>
-void ResourceManager::reserve_props(StdVecT& _vec, size_t _n)
+template<class Container>
+void ResourceManager::reserve_props(Container& _vec, size_t _n)
 {
     for (auto &prop: _vec) {
         prop->reserve(_n);
@@ -218,8 +209,8 @@ void ResourceManager::reserve_props(StdVecT& _vec, size_t _n)
 }
 
 
-template<class StdVecT>
-void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h) {
+template<class Container>
+void ResourceManager::entity_deleted(Container& _vec, const OpenVolumeMeshHandle& _h) {
 
     for (auto &prop: _vec) {
         prop->delete_element(_h.uidx());

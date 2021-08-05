@@ -42,6 +42,7 @@
 #include <memory>
 #include <set>
 #include <type_traits>
+#include <optional>
 
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include "OpenVolumeMesh/Config/Export.hh"
@@ -50,9 +51,6 @@
 #include "TypeName.hh"
 #include "ForwardDeclarations.hh"
 
-#if OVM_CXX_17
-#include <optional>
-#endif
 
 namespace OpenVolumeMesh {
 
@@ -251,26 +249,20 @@ protected:
     void delete_multiple_entities(const std::vector<bool>& _tags);
 
     void delete_multiple_vertex_props(const std::vector<bool>& _tags);
-
     void delete_multiple_edge_props(const std::vector<bool>& _tags);
-
     void delete_multiple_face_props(const std::vector<bool>& _tags);
-
     void delete_multiple_cell_props(const std::vector<bool>& _tags);
 
 private:
 
-    template<class StdVecT>
-    void resize_props(StdVecT& _vec, size_t _n);
+    template<class Container>
+    void resize_props(Container& _vec, size_t _n);
 
-    template<class StdVecT>
-    void reserve_props(StdVecT& _vec, size_t _n);
+    template<class Container>
+    void reserve_props(Container& _vec, size_t _n);
 
-    template<class StdVecT>
-    void entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h);
-
-    template<class StdVecT>
-    void remove_property(StdVecT& _vec, size_t _idx);
+    template<class Container>
+    void entity_deleted(Container& _vec, const OpenVolumeMeshHandle& _h);
 
     template<typename T, typename EntityTag>
     std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;
