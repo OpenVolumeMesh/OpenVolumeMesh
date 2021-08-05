@@ -44,7 +44,6 @@
 #include <type_traits>
 
 #include <OpenVolumeMesh/Core/Entities.hh>
-#include "../System/Compiler.hh"
 #include "OpenVolumeMesh/Config/Export.hh"
 #include "PropertyStorageT.hh"
 #include "PropertyHandles.hh"
@@ -204,7 +203,6 @@ public:
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
 
-#if OVM_CXX_17
     /** Create new property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
@@ -214,7 +212,6 @@ public:
      */
     template<typename T, typename EntityTag>
     std::optional<PropertyPtr<T, EntityTag>> get_property(const std::string& _name = std::string());
-#endif
 
     template<class T> VertexPropertyT<T> request_vertex_property(const std::string& _name = std::string(), const T _def = T());
 
