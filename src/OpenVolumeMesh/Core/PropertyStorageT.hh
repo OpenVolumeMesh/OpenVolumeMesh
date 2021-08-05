@@ -80,7 +80,6 @@ public:
         : PropertyStorageBase(_name, _internal_type_name),
           def_(_def)
     {}
-    virtual ~PropertyStorageBase() = default;
 
 public:
     void reserve(size_t _n) override{

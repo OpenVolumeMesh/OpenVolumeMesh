@@ -72,7 +72,8 @@ public:
           handle_(-1)
     {}
 
-    //PropertyStorageBase(const PropertyStorageBase& _rhs) = default;
+    virtual ~PropertyStorageBase() = default;
+
 
 public:
 
