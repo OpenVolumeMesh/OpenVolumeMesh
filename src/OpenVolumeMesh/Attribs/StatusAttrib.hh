@@ -35,7 +35,7 @@
 
 #include <cassert>
 
-#include "../Core/OpenVolumeMeshProperty.hh"
+#include "../Core/PropertyStorageT.hh"
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "OpenVolumeMeshStatus.hh"
 #include "../Core/PropertyDefines.hh"

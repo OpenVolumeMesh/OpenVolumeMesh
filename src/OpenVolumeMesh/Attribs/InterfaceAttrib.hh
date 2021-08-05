@@ -33,7 +33,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "../Core/OpenVolumeMeshProperty.hh"
+#include "../Core/PropertyStorageT.hh"
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "../Core/PropertyDefines.hh"
 #include "OpenVolumeMesh/Config/Export.hh"

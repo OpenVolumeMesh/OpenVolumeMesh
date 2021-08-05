@@ -42,78 +42,24 @@ namespace OpenVolumeMesh {
 
 class ResourceManager;
 
+
+/// \interface BaseProperty
+/// Abstract base class for PropertyPtr
+
 class OVM_EXPORT BaseProperty {
 public:
     friend class ResourceManager;
-
-    explicit BaseProperty(ResourceManager* _resMan) : resMan_(_resMan) {}
-
-    BaseProperty(const BaseProperty& _other) = default;
-    BaseProperty& operator=(const BaseProperty& _cpy) = delete;
-    BaseProperty(BaseProperty&& _other) {
-        resMan_ = _other.resMan_;
-        _other.resMan_ = nullptr;
-    }
-    BaseProperty& operator=(BaseProperty&& _other) {
-        resMan_ = _other.resMan_;
-        _other.resMan_ = nullptr;
-        return *this;
-    }
-
 
     virtual ~BaseProperty();
 
     virtual const std::string& name() const & = 0;
     const std::string& name() const && = delete;
 
-    virtual BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const = 0;
-
-    virtual void delete_element(size_t _idx) = 0;
-
-    virtual void swap_elements(size_t _idx0, size_t _idx1) = 0;
-
-    virtual void copy(size_t _src_idx, size_t _dst_idx) = 0;
-
     virtual void serialize(std::ostream& _ostr) const = 0;
-
     virtual void deserialize(std::istream& _istr) = 0;
 
-    virtual OpenVolumeMeshHandle handle() const = 0;
-
     virtual bool persistent() const = 0;
-
     virtual bool anonymous() const = 0;
-
-    virtual const std::string entityType() const = 0;
-
-    virtual const std::string typeNameWrapper() const = 0;
-
-    virtual size_t size() const = 0;
-
-protected:
-
-    virtual const std::string &internal_type_name() const & = 0;
-    const std::string &internal_type_name() const && = delete;
-
-    /// Copy data from other property. `other` MUST point to an object with the same type as `this`!
-    /// Currently no type check is performed.
-    virtual void assign_values_from(const BaseProperty *other) = 0;
-
-    /// Move data from other property. `other` MUST point to an object with the same type as `this`!
-    /// Currently no type check is performed.
-    virtual void move_values_from(BaseProperty *other) = 0;
-
-    virtual void delete_multiple_entries(const std::vector<bool>& _tags) = 0;
-
-    virtual void resize(size_t _size) = 0;
-
-    virtual void reserve(size_t _size) = 0;
-
-    virtual void set_handle(const OpenVolumeMeshHandle& /*_handle*/) = 0;
-
-    void setResMan(ResourceManager *resMan) { resMan_ = resMan;}
-
-    ResourceManager* resMan_;
 };
 
 } // Namespace OpenVolumeMesh

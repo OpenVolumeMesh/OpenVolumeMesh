@@ -17,7 +17,7 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/TopologyKernel.cc
     OpenVolumeMesh/Core/Serializers.cc
     OpenVolumeMesh/Core/Iterators.cc
-    OpenVolumeMesh/Core/OpenVolumeMeshBaseProperty.cc
+    OpenVolumeMesh/Core/PropertyStorageBase.cc
     OpenVolumeMesh/Core/TypeName.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/HexahedralMeshIterators.cc

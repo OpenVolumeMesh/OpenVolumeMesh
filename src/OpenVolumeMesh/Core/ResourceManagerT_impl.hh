@@ -37,6 +37,7 @@
 #include "ResourceManager.hh"
 #include "PropertyDefines.hh"
 #include "TypeName.hh"
+#include "PropertyPtr.hh"
 
 namespace OpenVolumeMesh {
 
@@ -83,41 +84,45 @@ MeshPropertyT<T> ResourceManager::request_mesh_property(const std::string& _name
 }
 
 template<typename T, typename EntityTag>
-PropertyTT<T, EntityTag>* ResourceManager::internal_find_property(const std::string& _name)
+std::optional<PropertyPtr<T, EntityTag>>
+ResourceManager::internal_find_property(const std::string& _name) const
 {
-    using PropT = PropertyTT<T, EntityTag>;
-    auto type_name = get_type_name(typeid(T));
-    auto &propVec = entity_props<EntityTag>();
+    if(_name.empty()) {
+        return {};
+    }
 
-    if(!_name.empty()) {
-        for(auto &prop: propVec)
-        {
+    auto type_name = get_type_name(typeid(T));
+
+    for(auto &weak_prop: entity_props<EntityTag>())
+    {
+        if (auto prop = weak_prop.lock()) {
             if(prop->name() == _name
                 && prop->internal_type_name() == type_name)
             {
-                return static_cast<PropT*>(prop);
+                auto ps = std::static_pointer_cast<PropertyStorageT<T>>(prop);
+                return PropertyPtr<T, EntityTag>(std::move(ps));
             }
         }
     }
-    return nullptr;
+    return {};
 }
 
 template<class T, class EntityTag>
-PropertyTT<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def)
+PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def)
 {
     auto type_name = get_type_name(typeid(T));
     auto &propVec = entity_props<EntityTag>();
-    auto handle = PropHandleT<EntityTag>::from_unsigned(propVec.size());
-    auto prop = new PropertyTT<T, EntityTag>(_name, type_name, *this, handle, _def);
-    prop->resize(n<EntityTag>());
-    propVec.push_back(prop);
-    return *prop;
+    auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, _def);
+    storage->resize(n_entities<EntityTag>());
+    storage->setResMan(this);
+    propVec.emplace_back(storage);
+    return PropertyPtr<T, EntityTag>(std::move(storage));
 }
 
 template<typename T, typename EntityTag>
-PropertyTT<T, EntityTag> ResourceManager::request_property(const std::string& _name, const T _def)
+PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _name, const T _def)
 {
-    auto *prop = internal_find_property<T, EntityTag>(_name);
+    auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return *prop;
     return internal_create_property<T, EntityTag>(_name, _def);
@@ -126,7 +131,7 @@ PropertyTT<T, EntityTag> ResourceManager::request_property(const std::string& _n
 #if OVM_CXX_17
 
 template<typename T, typename EntityTag>
-std::optional<PropertyTT<T, EntityTag>>
+std::optional<PropertyPtr<T, EntityTag>>
 ResourceManager::create_property(const std::string& _name, const T _def)
 {
     auto *prop = internal_find_property<T, EntityTag>(_name);
@@ -136,7 +141,7 @@ ResourceManager::create_property(const std::string& _name, const T _def)
 }
 
 template<typename T, typename EntityTag>
-std::optional<PropertyTT<T, EntityTag>>
+std::optional<PropertyPtr<T, EntityTag>>
 ResourceManager::get_property(const std::string& _name)
 {
     auto *prop = internal_find_property<T, EntityTag>(_name);
@@ -148,15 +153,22 @@ ResourceManager::get_property(const std::string& _name)
 
 
 template<typename T, class EntityTag>
-void ResourceManager::set_persistent(PropertyTT<T, EntityTag>& _prop, bool _flag)
+void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _flag)
 {
-    if(_flag == _prop->persistent()) return;
-    _prop->set_persistent(_flag);
+    if(_flag == _prop.persistent()) return;
+
+    auto sptr = std::static_pointer_cast<PropertyStorageBase>(_prop.ptr());
+    if (_flag) {
+        persistent_props_.get<EntityTag>().insert(sptr);
+    } else {
+        persistent_props_.get<EntityTag>().erase(sptr);
+    }
+    sptr->set_persistent(_flag);
 }
 
 template<class StdVecT>
-void ResourceManager::remove_property(StdVecT& _vec, size_t _idx) {
-
+void ResourceManager::remove_property(StdVecT& _vec, size_t _idx)
+{
     auto prop_ptr = _vec[_idx];
     prop_ptr->setResMan(nullptr);
     delete prop_ptr;
@@ -165,20 +177,33 @@ void ResourceManager::remove_property(StdVecT& _vec, size_t _idx) {
 }
 
 template<class StdVecT>
-void ResourceManager::resize_props(StdVecT& _vec, size_t _n) {
-
-    for(typename StdVecT::iterator it = _vec.begin();
-            it != _vec.end(); ++it) {
-        (*it)->resize(_n);
+void ResourceManager::delete_multiple_entities(
+        StdVecT const& _vec, const std::vector<bool>& _tags)
+{
+    for (auto &weak_prop: _vec) {
+        if (auto prop = weak_prop.lock()) {
+            prop->delete_multiple_entries(_tags);
+        }
     }
 }
 
 template<class StdVecT>
-void ResourceManager::reserve_props(StdVecT& _vec, size_t _n) {
+void ResourceManager::resize_props(StdVecT& _vec, size_t _n)
+{
+    for (auto &weak_prop: _vec) {
+        if (auto prop = weak_prop.lock()) {
+            prop->resize(_n);
+        }
+    }
+}
 
-    for(typename StdVecT::iterator it = _vec.begin();
-            it != _vec.end(); ++it) {
-        (*it)->reserve(_n);
+template<class StdVecT>
+void ResourceManager::reserve_props(StdVecT& _vec, size_t _n)
+{
+    for (auto &weak_prop: _vec) {
+        if (auto prop = weak_prop.lock()) {
+            prop->reserve(_n);
+        }
     }
 }
 
@@ -186,29 +211,29 @@ void ResourceManager::reserve_props(StdVecT& _vec, size_t _n) {
 template<class StdVecT>
 void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h) {
 
-    for(typename StdVecT::iterator it = _vec.begin();
-            it != _vec.end(); ++it) {
-        (*it)->delete_element(_h.uidx());
+    for (auto &weak_prop: _vec) {
+        if (auto prop = weak_prop.lock()) {
+            prop->delete_element(_h.uidx());
+        }
     }
 }
 
 template<class StdVecT>
 void ResourceManager::clearVec(StdVecT& _vec) {
 
-    for (auto prop: _vec) {
-        prop->setResMan(nullptr);
-        delete prop;
+    for (auto &weak_prop: _vec) {
+        if (auto prop = weak_prop.lock()) {
+            prop->setResMan(nullptr);
+        }
     }
     _vec.clear();
 }
 
-template<class StdVecT>
-void ResourceManager::updatePropHandles(StdVecT &_vec)
+
+template <class T, typename Entity>
+PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def)
 {
-    size_t n = _vec.size();
-    for(size_t i = 0; i < n; ++i) {
-        _vec[i]->set_handle(OpenVolumeMeshHandle(static_cast<int>(i)));
-    }
+    *this = mesh->request_property<T, Entity>(_name, _def);
 }
 
 } // Namespace OpenVolumeMesh

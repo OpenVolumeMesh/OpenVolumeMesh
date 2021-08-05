@@ -141,87 +141,46 @@ void ResourceManager::cell_deleted(const CellHandle& _h) {
     entity_deleted(cell_props_, _h);
 }
 
-void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2){
-
-    swap_property_elements(cell_props_begin(), cell_props_end(), _h1, _h2);
+void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2)
+{
+    swap_property_elements<Entity::Cell>(_h1, _h2);
 }
 
-void ResourceManager::swap_face_properties(FaceHandle _h1, FaceHandle _h2){
-
-    swap_property_elements(face_props_begin(), face_props_end(), _h1, _h2);
+void ResourceManager::swap_face_properties(FaceHandle _h1, FaceHandle _h2)
+{
+    swap_property_elements<Entity::Face>(_h1, _h2);
 }
 
-void ResourceManager::swap_halfface_properties(HalfFaceHandle _h1, HalfFaceHandle _h2){
-
-    swap_property_elements(halfface_props_begin(), halfface_props_end(), _h1, _h2);
+void ResourceManager::swap_halfface_properties(HalfFaceHandle _h1, HalfFaceHandle _h2)
+{
+    swap_property_elements<Entity::HalfFace>(_h1, _h2);
 }
 
-void ResourceManager::swap_edge_properties(EdgeHandle _h1, EdgeHandle _h2){
-
-    swap_property_elements(edge_props_begin(), edge_props_end(), _h1, _h2);
+void ResourceManager::swap_edge_properties(EdgeHandle _h1, EdgeHandle _h2)
+{
+    swap_property_elements<Entity::Edge>(_h1, _h2);
 }
 
 void ResourceManager::swap_halfedge_properties(HalfEdgeHandle _h1, HalfEdgeHandle _h2){
 
-    swap_property_elements(halfedge_props_begin(), halfedge_props_end(), _h1, _h2);
+    swap_property_elements<Entity::HalfEdge>(_h1, _h2);
 }
 
 void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2){
 
-    swap_property_elements(vertex_props_begin(), vertex_props_end(), _h1, _h2);
+    swap_property_elements<Entity::Vertex>(_h1, _h2);
 }
 
-void ResourceManager::release_property(VertexPropHandle _handle) {
-
-    remove_property(vertex_props_, _handle.uidx());
+void ResourceManager::delete_multiple_vertex_props(const std::vector<bool>& _tags)
+{
+    delete_multiple_entities(vertex_props_, _tags);
 }
 
-void ResourceManager::release_property(EdgePropHandle _handle) {
+void ResourceManager::delete_multiple_edge_props(const std::vector<bool>& _tags)
+{
+    delete_multiple_entities(edge_props_, _tags);
 
-    remove_property(edge_props_, _handle.uidx());
-}
-
-void ResourceManager::release_property(HalfEdgePropHandle _handle) {
-
-    remove_property(halfedge_props_, _handle.uidx());
-}
-
-void ResourceManager::release_property(FacePropHandle _handle) {
-
-    remove_property(face_props_, _handle.uidx());
-}
-
-void ResourceManager::release_property(HalfFacePropHandle _handle) {
-
-    remove_property(halfface_props_, _handle.uidx());
-}
-
-void ResourceManager::release_property(CellPropHandle _handle) {
-
-    remove_property(cell_props_, _handle.uidx());
-}
-
-void ResourceManager::release_property(MeshPropHandle _handle) {
-
-    remove_property(mesh_props_, _handle.idx());
-}
-
-void ResourceManager::delete_multiple_vertex_props(const std::vector<bool>& _tags) {
-
-    Properties::iterator vp_it = vertex_props_.begin();
-    Properties::iterator vp_end = vertex_props_.end();
-    for(; vp_it != vp_end; ++vp_it) {
-        (*vp_it)->delete_multiple_entries(_tags);
-    }
-}
-
-void ResourceManager::delete_multiple_edge_props(const std::vector<bool>& _tags) {
-
-    Properties::iterator ep_it = edge_props_.begin();
-    Properties::iterator ep_end = edge_props_.end();
-    for(; ep_it != ep_end; ++ep_it) {
-        (*ep_it)->delete_multiple_entries(_tags);
-    }
+    // TODO OPTI: remove_if stuff? see delete_multiple_face_props too
     // Create tags vector for halfedges
     std::vector<bool> hetags;
     for(std::vector<bool>::const_iterator t_it = _tags.begin(),
@@ -229,20 +188,14 @@ void ResourceManager::delete_multiple_edge_props(const std::vector<bool>& _tags)
         hetags.push_back(*t_it);
         hetags.push_back(*t_it);
     }
-    Properties::iterator hep_it = halfedge_props_.begin();
-    Properties::iterator hep_end = halfedge_props_.end();
-    for(; hep_it != hep_end; ++hep_it) {
-        (*hep_it)->delete_multiple_entries(hetags);
-    }
+    delete_multiple_entities(halfedge_props_, hetags);
 }
 
-void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags) {
+void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags)
+{
 
-    Properties::iterator fp_it = face_props_.begin();
-    Properties::iterator fp_end = face_props_.end();
-    for(; fp_it != fp_end; ++fp_it) {
-        (*fp_it)->delete_multiple_entries(_tags);
-    }
+    delete_multiple_entities(face_props_, _tags);
+
     // Create tags vector for halffaces
     std::vector<bool> hftags;
     for(std::vector<bool>::const_iterator t_it = _tags.begin(),
@@ -250,26 +203,20 @@ void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags)
         hftags.push_back(*t_it);
         hftags.push_back(*t_it);
     }
-    Properties::iterator hfp_it = halfface_props_.begin();
-    Properties::iterator hfp_end = halfface_props_.end();
-    for(; hfp_it != hfp_end; ++hfp_it) {
-        (*hfp_it)->delete_multiple_entries(hftags);
-    }
+    delete_multiple_entities(halfface_props_, hftags);
 }
 
-void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags) {
-
-    Properties::iterator cp_it = cell_props_.begin();
-    Properties::iterator cp_end = cell_props_.end();
-    for(; cp_it != cp_end; ++cp_it) {
-        (*cp_it)->delete_multiple_entries(_tags);
-    }
+void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
+{
+    delete_multiple_entities(cell_props_, _tags);
 }
 
 template<bool Move>
 void ResourceManager::assignProperties(typename std::conditional<Move, Properties&, const Properties&>::type src,
                       Properties &dest)
 {
+    throw std::runtime_error("unimplemented!");
+#if 0
     // If possible, re-use existing properties instead of copying
     // everything blindly.
     Properties out;
@@ -302,6 +249,7 @@ void ResourceManager::assignProperties(typename std::conditional<Move, Propertie
     }
     updatePropHandles(out);
     dest = std::move(out);
+#endif
 }
 
 template<bool Move>
@@ -318,43 +266,43 @@ void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, Re
 
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Vertex>()
+ResourceManager::entity_props<Entity::Vertex>() const
 {
     return vertex_props_;
 }
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Edge>()
+ResourceManager::entity_props<Entity::Edge>() const
 {
     return edge_props_;
 }
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::HalfEdge>()
+ResourceManager::entity_props<Entity::HalfEdge>() const
 {
     return halfedge_props_;
 }
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Face>()
+ResourceManager::entity_props<Entity::Face>() const
 {
     return face_props_;
 }
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::HalfFace>()
+ResourceManager::entity_props<Entity::HalfFace>() const
 {
     return halfface_props_;
 }
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Cell>()
+ResourceManager::entity_props<Entity::Cell>() const
 {
     return cell_props_;
 }
 template<>
 ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Mesh>()
+ResourceManager::entity_props<Entity::Mesh>() const
 {
     return mesh_props_;
 }

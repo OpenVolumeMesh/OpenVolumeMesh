@@ -42,7 +42,8 @@
 #include <string>
 #include <vector>
 
-#include "OpenVolumeMeshBaseProperty.hh"
+#include "PropertyStorageBase.hh"
+#include "PropertyDefines.hh"
 
 #include "Serializers.hh"
 
@@ -50,7 +51,7 @@ namespace OpenVolumeMesh {
 
 //== CLASS DEFINITION =========================================================
 
-/** \class OpenVolumeMeshPropertyT
+/** \class PropertyStorageT
  *
  *  \brief Default property class for any type T.
  *
@@ -58,7 +59,7 @@ namespace OpenVolumeMesh {
  */
 
 template<class T>
-class OpenVolumeMeshPropertyT: public OpenVolumeMeshBaseProperty {
+class PropertyStorageT: public PropertyStorageBase {
 public:
 
     template <class PropT, class Entity> friend class PropertyPtr;
@@ -71,19 +72,18 @@ public:
 
 public:
 
-	explicit OpenVolumeMeshPropertyT(
+	explicit PropertyStorageT(
             const std::string& _name,
             const std::string& _internal_type_name,
             const T &_def = T())
-        : OpenVolumeMeshBaseProperty(_name, _internal_type_name),
+        : PropertyStorageBase(_name, _internal_type_name),
           def_(_def)
     {}
 
 
-	OpenVolumeMeshPropertyT(const OpenVolumeMeshPropertyT& _rhs) = default;
+	PropertyStorageT(const PropertyStorageT& _rhs) = default;
 
 public:
-    // inherited from OpenVolumeMeshBaseProperty
     void reserve(size_t _n) override{
 		data_.reserve(_n);
 	}
@@ -115,14 +115,6 @@ public:
 	size_t n_elements() const override {
 		return data_.size();
 	}
-
-#ifndef DOXY_IGNORE_THIS
-	struct plus {
-		size_t operator ()(size_t _b, const T& /*_v*/) {
-			return _b + sizeof(T);
-		}
-	};
-#endif
 
 	// Function to serialize a property
     void serialize(std::ostream& _ostr) const override {
@@ -170,8 +162,8 @@ public:
 	}
 
 	/// Make a copy of self.
-	OpenVolumeMeshPropertyT<T>* clone() const override {
-		OpenVolumeMeshPropertyT<T>* p = new OpenVolumeMeshPropertyT<T>(*this);
+	PropertyStorageT<T>* clone() const override {
+		PropertyStorageT<T>* p = new PropertyStorageT<T>(*this);
 		return p;
 	}
 
@@ -182,6 +174,8 @@ public:
 	typename vector_type::const_iterator end() const { return data_.end(); }
 
     typename vector_type::iterator end() { return data_.end(); }
+
+    std::string typeNameWrapper() const override {return OpenVolumeMesh::typeName<T>();}
 
 protected:
 
@@ -214,7 +208,7 @@ private:
 //-----------------------------------------------------------------------------
 
 template<>
-inline void OpenVolumeMeshPropertyT<bool>::swap(size_t _i0, size_t _i1)
+inline void PropertyStorageT<bool>::swap(size_t _i0, size_t _i1)
 {
     // std::vector<bool>::swap(reference x, reference y) exists, but
     // on libstdc++ with _GLIBCXX_DEBUG it doesn't compile
@@ -227,7 +221,7 @@ inline void OpenVolumeMeshPropertyT<bool>::swap(size_t _i0, size_t _i1)
 
 
 template<>
-inline void OpenVolumeMeshPropertyT<bool>::deserialize(std::istream& _istr)
+inline void PropertyStorageT<bool>::deserialize(std::istream& _istr)
 {
     for(unsigned int i = 0; i < n_elements(); ++i) {
         value_type val;

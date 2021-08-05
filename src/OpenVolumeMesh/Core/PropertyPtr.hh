@@ -42,6 +42,7 @@
 #include "BaseProperty.hh"
 #include "OpenVolumeMeshHandle.hh"
 #include "../System/Deprecation.hh"
+#include "PropertyStorageT.hh"
 
 namespace OpenVolumeMesh {
 
@@ -50,91 +51,76 @@ class ResourceManager;
 /**
  * \class PropertyPtr
  *
- * A smart-pointer-like class that counts the encapsulated
- * object's references and automatically deletes the memory
- * as soon as the object is not used anymore.
+ * Provides user access to property contents.
  */
 
-template <class PropT, typename Entity>
-class PropertyPtr : protected std::shared_ptr<PropT>, public BaseProperty {
+template <class T, typename Entity>
+class PropertyPtr : public BaseProperty
+{
+    static_assert(is_entity<Entity>::value);
 public:
+    // defined in ResourceManagerT_impl to avoid circular references
+    PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
 
     friend class ResourceManager;
 
-    typedef typename PropT::value_type                  value_type;
-    typedef typename PropT::vector_type::const_iterator const_iterator;
-    typedef typename PropT::vector_type::iterator       iterator;
-    typedef typename PropT::reference                   reference;
-    typedef typename PropT::const_reference             const_reference;
+    using PropStorageT = PropertyStorageT<T>;
+
+    typedef typename PropStorageT::value_type                  value_type;
+    typedef typename PropStorageT::vector_type::const_iterator const_iterator;
+    typedef typename PropStorageT::vector_type::iterator       iterator;
+    typedef typename PropStorageT::reference                   reference;
+    typedef typename PropStorageT::const_reference             const_reference;
 
     using EntityHandleT = HandleT<Entity>;
 
-    /// Constructor
-    PropertyPtr() : BaseProperty(nullptr) {}
-    /// Constructor
-    PropertyPtr(PropT* _ptr, ResourceManager& _resMan, PropHandleT<Entity> _handle);
+    const std::string& name() const & override {
+        // the string we return a reference to lives long enough, no warnings please:
+        // cppcheck-suppress returnTempReference
+        return ptr_->name();
+    }
 
-    /// Destructor
-    ~PropertyPtr() override;
+    const_iterator begin() const { return ptr_->begin(); }
+    iterator begin() { return ptr_->begin(); }
+    size_t size() const { return ptr_->size(); }
 
-    PropertyPtr(const PropertyPtr<PropT, Entity>&) = default;
-    PropertyPtr(PropertyPtr<PropT, Entity>&&) = default;
-    PropertyPtr<PropT, Entity>& operator=(const PropertyPtr<PropT, Entity>&) = default;
-    PropertyPtr<PropT, Entity>& operator=(PropertyPtr<PropT, Entity>&&) = default;
+    const_iterator end() const { return ptr_->end(); }
+    iterator end() { return ptr_->end(); }
 
-    using std::shared_ptr<PropT>::operator*;
-    using std::shared_ptr<PropT>::operator->;
-    using std::shared_ptr<PropT>::operator bool;
+    /// No range check performed!
+    reference operator[](const EntityHandleT& _h) { return (*ptr_)[_h.uidx()]; }
 
-    const std::string& name() const & override;
+    /// No range check performed!
+    const_reference operator[](const EntityHandleT& _h) const { return (*ptr_)[_h.uidx()]; }
 
-    void delete_element(size_t _idx) override;
+    // TODO: implement at()
 
-    void swap_elements(size_t _idx0, size_t _idx1) override;
+    void serialize(std::ostream& _ostr) const override { ptr_->serialize(_ostr); }
+    void deserialize(std::istream& _istr) override { ptr_->deserialize(_istr); }
 
-    void copy(size_t _src_idx, size_t _dst_idx) override;
+    bool persistent() const override { return ptr_->persistent(); }
+    bool anonymous() const override { return ptr_->anonymous(); }
+    size_t n_elements() const { return ptr_->n_elements(); }
 
-    const_iterator begin() const { return std::shared_ptr<PropT>::get()->begin(); }
-    iterator begin() { return std::shared_ptr<PropT>::get()->begin(); }
-    size_t size() const override { return std::shared_ptr<PropT>::get()->size(); }
-
-    const_iterator end() const { return std::shared_ptr<PropT>::get()->end(); }
-    iterator end() { return std::shared_ptr<PropT>::get()->end(); }
-
-#if OVM_ENABLE_DEPRECATED_APIS
-    OVM_DEPRECATED("use handles to index properties")
-    reference operator[](size_t _idx) { return (*std::shared_ptr<PropT>::get())[_idx]; }
-    OVM_DEPRECATED("use handles to index properties")
-    const_reference operator[](size_t _idx) const { return (*std::shared_ptr<PropT>::get())[_idx]; }
-#endif
-
-    reference operator[](const EntityHandleT& _h) { return (*std::shared_ptr<PropT>::get())[_h.uidx()]; }
-    const_reference operator[](const EntityHandleT& _h) const { return (*std::shared_ptr<PropT>::get())[_h.uidx()]; }
-
-    void serialize(std::ostream& _ostr) const override { std::shared_ptr<PropT>::get()->serialize(_ostr); }
-    void deserialize(std::istream& _istr) override { std::shared_ptr<PropT>::get()->deserialize(_istr); }
-
-    OpenVolumeMeshHandle handle() const override;
-
-     bool persistent() const override { return std::shared_ptr<PropT>::get()->persistent(); }
-
-     bool anonymous() const override { return std::shared_ptr<PropT>::get()->name().empty(); }
+    [[deprecated]]
+    void copy(const EntityHandleT &_src, const EntityHandleT &_dst) {
+        (*this)[_dst] = (*this)[_src];
+    }
 
 protected:
-    const std::string &internal_type_name() const & override;
-
-    void assign_values_from(const BaseProperty *other) override;
-    void move_values_from(BaseProperty *other) override;
-
-    void delete_multiple_entries(const std::vector<bool>& _tags) override;
-
-    void resize(size_t _size) override;
-    void reserve(size_t _size) override;
-
-    void set_handle(const OpenVolumeMeshHandle& _handle) override;
+     PropertyPtr(std::shared_ptr<PropStorageT> &&_ptr)
+         : ptr_(std::move(_ptr))
+     {}
+     std::shared_ptr<PropStorageT> const &ptr() const {return ptr_;}
+     std::shared_ptr<PropStorageT> ptr_;
 };
 
+template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
+template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;
+template<typename T> using HalfEdgePropertyT = PropertyPtr<T, Entity::HalfEdge>;
+template<typename T> using FacePropertyT     = PropertyPtr<T, Entity::Face>;
+template<typename T> using HalfFacePropertyT = PropertyPtr<T, Entity::HalfFace>;
+template<typename T> using CellPropertyT     = PropertyPtr<T, Entity::Cell>;
+template<typename T> using MeshPropertyT     = PropertyPtr<T, Entity::Mesh>;
+
 } // Namespace OpenVolumeMesh
-
-#include "PropertyPtrT_impl.hh"
-

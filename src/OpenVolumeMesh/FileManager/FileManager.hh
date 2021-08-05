@@ -119,6 +119,7 @@ public:
   template <class MeshT>
   void writeStream(std::ostream &_ostream, const MeshT& _mesh) const;
 
+
   /**
    * \brief Write a mesh to a file
    *
@@ -146,6 +147,7 @@ public:
 
 private:
 
+
   // Read property
   template <class MeshT>
   void readProperty(std::istream& _iff, MeshT& _mesh) const;
@@ -154,9 +156,11 @@ private:
   void generateGenericProperty(const std::string& _entity_t, const std::string& _name,
                                std::istream& _iff, MeshT& _mesh) const;
 
+  template<typename EntityTag, class MeshT>
+  void writeProps(std::ostream &_ostream, const MeshT& _mesh) const;
   // Write props
   template<class IteratorT>
-  void writeProps(std::ostream& _ostr, const IteratorT& _begin, const IteratorT& _end) const;
+  void writeProps(std::ostream& _ostr, const IteratorT& _begin, const IteratorT& _end, std::string const &_entityType) const;
 
   // Remove leading and trailing whitespaces
   void trimString(std::string& _string) const;

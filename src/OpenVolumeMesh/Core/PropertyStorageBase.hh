@@ -42,13 +42,15 @@
 
 namespace OpenVolumeMesh {
 
+class ResourceManager;
+
 /** \class OpenVolumeMeshBaseProperty
 
  Abstract class defining the basic interface of a dynamic property.
 
  **/
 
-class OVM_EXPORT OpenVolumeMeshBaseProperty {
+class OVM_EXPORT PropertyStorageBase {
 public:
 
     friend class ResourceManager;
@@ -59,7 +61,7 @@ public:
 
 public:
 
-	explicit OpenVolumeMeshBaseProperty(
+    explicit PropertyStorageBase(
             const std::string& _name,
             const std::string& _internal_type_name)
         : name_(_name),
@@ -68,9 +70,9 @@ public:
           handle_(-1)
     {}
 
-	OpenVolumeMeshBaseProperty(const OpenVolumeMeshBaseProperty& _rhs) = default;
+    PropertyStorageBase(const PropertyStorageBase& _rhs) = default;
 
-	virtual ~OpenVolumeMeshBaseProperty() {}
+    virtual ~PropertyStorageBase() {}
 
 public:
 
@@ -96,13 +98,14 @@ public:
 	virtual void delete_element(size_t _idx) = 0;
 
 	/// Return a deep copy of self.
-	virtual OpenVolumeMeshBaseProperty* clone() const = 0;
+    virtual PropertyStorageBase* clone() const = 0;
 
 	/// Return the name of the property
 	const std::string& name() const && = delete;
 	const std::string& name() const & {
 		return name_;
 	}
+    bool anonymous() const {return name_.empty();}
 
 	const std::string& internal_type_name() const && = delete;
 	const std::string& internal_type_name() const & {
@@ -127,12 +130,17 @@ public:
 
 	void set_handle(const OpenVolumeMeshHandle& _handle) { handle_.idx(_handle.idx()); }
 
+    virtual std::string typeNameWrapper() const = 0;
+
 protected:
 
 	/// Delete multiple entries in list
     virtual void delete_multiple_entries(const std::vector<bool>&) = 0;
+    void setResMan(ResourceManager *resMan) { resMan_ = resMan;}
 
 private:
+
+    ResourceManager* resMan_ = nullptr;
 
 	std::string name_;
 	std::string internal_type_name_;

@@ -36,7 +36,7 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
 
         VertexPropertyT<float> v_prop3 = v_prop;
 
-        EXPECT_EQ(12u, v_prop3->n_elements());
+        EXPECT_EQ(12u, v_prop3.n_elements());
 
         EXPECT_EQ(2u, mesh_.n_vertex_props());
 
@@ -65,11 +65,11 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
 
     HalfEdgePropertyT<int> he_prop = mesh_.request_halfedge_property<int>("MyHEProp");
 
-    EXPECT_EQ(40u, he_prop->n_elements());
+    EXPECT_EQ(40u, he_prop.n_elements());
 
     mesh_.add_edge(VertexHandle(0), VertexHandle(2));
 
-    EXPECT_EQ(42u, he_prop->n_elements());
+    EXPECT_EQ(42u, he_prop.n_elements());
 }
 
 TEST_F(HexahedralMeshBase, PropertySmartPointerPersistencyTest1) {
@@ -157,14 +157,4 @@ TEST_F(PolyhedralMeshBase, StatusTest) {
     EXPECT_EQ(12u, mesh_.n_vertices());
 
     StatusAttrib status(mesh_);
-}
-
-TEST_F(PolyhedralMeshBase, PropValueCopyTest) {
-
-    generatePolyhedralMesh(mesh_);
-    VertexPropertyT<int> prop = mesh_.request_vertex_property<int>();
-    prop[VertexHandle(0)] = 1234;
-    prop[VertexHandle(1)] = 2345;
-    prop.copy(0, 1);
-    EXPECT_EQ(prop[VertexHandle(1)], 1234);
 }
