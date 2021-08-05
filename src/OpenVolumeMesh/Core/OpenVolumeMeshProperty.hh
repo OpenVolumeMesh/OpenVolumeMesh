@@ -83,8 +83,8 @@ public:
 	OpenVolumeMeshPropertyT(const OpenVolumeMeshPropertyT& _rhs) = default;
 
 public:
-	// inherited from OpenVolumeMeshBaseProperty
-	void reserve(size_t _n) override{
+    // inherited from OpenVolumeMeshBaseProperty
+    void reserve(size_t _n) override{
 		data_.reserve(_n);
 	}
 	void resize(size_t _n) override {
@@ -95,7 +95,6 @@ public:
 	}
 	void clear() override {
 		data_.clear();
-		vector_type().swap(data_);
 	}
 	void push_back() override {
 		data_.push_back(def_);
