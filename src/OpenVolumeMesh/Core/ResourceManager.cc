@@ -78,15 +78,15 @@ void ResourceManager::vertex_deleted(const VertexHandle& _h) {
 void ResourceManager::edge_deleted(const EdgeHandle& _h) {
 
     entity_deleted(all_props_.get<Entity::Edge>(), _h);
-    entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
     entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
+    entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
 }
 
 void ResourceManager::face_deleted(const FaceHandle& _h)
 {
     entity_deleted(all_props_.get<Entity::Face>(), _h);
-    entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
     entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
+    entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
 }
 
 void ResourceManager::cell_deleted(const CellHandle& _h) {
