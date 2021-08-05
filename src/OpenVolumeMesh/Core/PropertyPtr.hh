@@ -71,6 +71,8 @@ public:
         }
     }
 
+    operator bool() const {return resMan() != nullptr;}
+
     friend class ResourceManager;
 
     using PropStorageT = PropertyStorageT<T>;
