@@ -38,7 +38,6 @@
 #include <string>
 #include <memory>
 
-#include "PropertyHandles.hh"
 #include "BaseProperty.hh"
 #include "OpenVolumeMeshHandle.hh"
 #include "../System/Deprecation.hh"

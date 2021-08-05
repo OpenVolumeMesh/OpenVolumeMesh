@@ -37,7 +37,7 @@
 
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "OpenVolumeMeshStatus.hh"
-#include "../Core/PropertyDefines.hh"
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 #include "../Core/TopologyKernel.hh"
 
 namespace OpenVolumeMesh {

@@ -35,7 +35,7 @@
 
 #include "../Core/PropertyStorageT.hh"
 #include "../Core/OpenVolumeMeshHandle.hh"
-#include "../Core/PropertyDefines.hh"
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 #include "OpenVolumeMesh/Config/Export.hh"
 #include "../Core/TopologyKernel.hh"
 

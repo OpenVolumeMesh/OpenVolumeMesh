@@ -38,7 +38,7 @@
 #include "../Core/PropertyStorageT.hh"
 #include "../Core/OpenVolumeMeshHandle.hh"
 #include "OpenVolumeMeshStatus.hh"
-#include "../Core/PropertyDefines.hh"
+#include "../Core/PropertyPtr.hh"
 #include "OpenVolumeMesh/Config/Export.hh"
 
 namespace OpenVolumeMesh {

@@ -47,7 +47,6 @@
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include "OpenVolumeMesh/Config/Export.hh"
 #include "PropertyStorageT.hh"
-#include "PropertyHandles.hh"
 #include "TypeName.hh"
 #include "ForwardDeclarations.hh"
 
@@ -83,10 +82,8 @@ class BaseProperty;
 class OVM_EXPORT ResourceManager {
 public:
     virtual ~ResourceManager() = default;
-private:
     using Properties = std::set<PropertyStorageBase*>;
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
-
 
 protected:
     /// Change size of stored vertex properties
@@ -192,6 +189,7 @@ public:
 
     // TODO: - make custom iterator to hide underlying container
     //       - implement iteration over props for all entities
+    //       - PropertyPtr *iterator!
 
     template<typename EntityTag>
     PersistentProperties::const_iterator persistent_props_begin() const

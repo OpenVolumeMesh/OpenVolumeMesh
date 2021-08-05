@@ -36,7 +36,7 @@
 #include "StatusAttrib.hh"
 
 #include "../Core/TopologyKernel.hh"
-#include "../Core/PropertyDefines.hh"
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 
 #include <map>
 
