@@ -53,6 +53,28 @@
 
 namespace OpenVolumeMesh {
 
+template<typename Iter>
+class PropertyIterator {
+    //static_assert(std::is_same_v<typename Iter::value_type, const PropertyStorageBase*>);
+    using value_type = std::unique_ptr<BaseProperty>;
+public:
+    PropertyIterator(Iter _it)
+        : it_(_it)
+    {}
+    value_type operator*() {
+        return **it_;
+    }
+    PropertyIterator<Iter> operator++() {
+        it_++;
+        return *this;
+    }
+    bool operator!=(PropertyIterator<Iter> const &other) {
+        return it_ != other.it_;
+    }
+private:
+    Iter it_;
+};
+
 template<typename T>
 class PerEntity
 {
@@ -192,12 +214,40 @@ public:
     //       - PropertyPtr *iterator!
 
     template<typename EntityTag>
-    PersistentProperties::const_iterator persistent_props_begin() const
+    PropertyIterator<PersistentProperties::const_iterator>
+    persistent_props_begin() const
         {return persistent_props_.get<EntityTag>().cbegin();}
 
     template<typename EntityTag>
-    PersistentProperties::const_iterator persistent_props_end() const
+    PropertyIterator<PersistentProperties::const_iterator>
+    persistent_props_end() const
         {return persistent_props_.get<EntityTag>().cend();}
+
+    template<typename EntityTag>
+    PropertyIterator<Properties::const_iterator>
+    all_props_begin() const
+        {return all_props_.get<EntityTag>().cbegin();}
+
+    template<typename EntityTag>
+    PropertyIterator<Properties::const_iterator>
+    all_props_end() const
+        {return all_props_.get<EntityTag>().cend();}
+
+    auto vertex_props_begin() const {return all_props_begin<Entity::Vertex>();}
+    auto vertex_props_end()   const {return all_props_end  <Entity::Vertex>();}
+    auto edge_props_begin() const {return all_props_begin<Entity::Edge>();}
+    auto edge_props_end()   const {return all_props_end  <Entity::Edge>();}
+    auto halfedge_props_begin() const {return all_props_begin<Entity::HalfEdge>();}
+    auto halfedge_props_end()   const {return all_props_end  <Entity::HalfEdge>();}
+    auto face_props_begin() const {return all_props_begin<Entity::Face>();}
+    auto face_props_end()   const {return all_props_end  <Entity::Face>();}
+    auto halfface_props_begin() const {return all_props_begin<Entity::HalfFace>();}
+    auto halfface_props_end()   const {return all_props_end  <Entity::HalfFace>();}
+    auto cell_props_begin() const {return all_props_begin<Entity::Cell>();}
+    auto cell_props_end()   const {return all_props_end  <Entity::Cell>();}
+    auto mesh_props_begin() const {return all_props_begin<Entity::Mesh>();}
+    auto mesh_props_end()   const {return all_props_end  <Entity::Mesh>();}
+
 
 public:
     template <class PropT, class EntityTag>

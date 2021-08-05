@@ -113,6 +113,8 @@ public:
     bool anonymous() const override { return ptr_->anonymous(); }
     size_t n_elements() const { return ptr_->n_elements(); }
 
+    std::string typeNameWrapper() const override {return ptr_->typeNameWrapper(); }
+
     [[deprecated]]
     void copy(const EntityHandleT &_src, const EntityHandleT &_dst) {
         (*this)[_dst] = (*this)[_src];
@@ -143,7 +145,7 @@ PropertyStorageT<T>::operator std::unique_ptr<BaseProperty>()
     case EntityType::Mesh:     ptr = new PropertyPtr<T, Entity::Mesh>(std::move(sp)); break;
     }
     return std::unique_ptr<BaseProperty>(ptr);
-};
+}
 
 template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
 template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;

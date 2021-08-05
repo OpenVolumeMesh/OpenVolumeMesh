@@ -60,6 +60,7 @@ public:
 
     virtual bool persistent() const = 0;
     virtual bool anonymous() const = 0;
+    virtual std::string typeNameWrapper() const = 0;
 };
 
 } // Namespace OpenVolumeMesh
