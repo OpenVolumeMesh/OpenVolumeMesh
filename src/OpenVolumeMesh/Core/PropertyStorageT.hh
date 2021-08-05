@@ -41,6 +41,7 @@
 #include <numeric>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "PropertyStorageBase.hh"
 #include "PropertyDefines.hh"

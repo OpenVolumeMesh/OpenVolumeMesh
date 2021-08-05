@@ -278,11 +278,8 @@ private:
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T());
 
-    PerEntity<Properties> weak_props_;
+    PerEntity<Properties> all_props_;
     PerEntity<PersistentProperties> persistent_props_;
-
-    template<typename Entity>
-    Properties &entity_props() const;
 
     template<typename Entity>
     size_t n();
@@ -294,7 +291,7 @@ private:
 
     template<typename EntityTag>
     void property_deleted(PropertyStorageBase *ptr) {
-        weak_props_.get<EntityTag>().erase(ptr);
+        all_props_.get<EntityTag>().erase(ptr);
     }
 };
 

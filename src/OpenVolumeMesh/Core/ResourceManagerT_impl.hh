@@ -45,21 +45,18 @@ namespace OpenVolumeMesh {
 template<typename EntityTag>
 void ResourceManager::clear_props()
 {
-    for (auto &weak_prop: entity_props<EntityTag>()) {
-        if (auto prop = weak_prop.lock()) {
-            prop->setResMan(nullptr);
-        }
+    for (auto &prop: all_props_.get<EntityTag>()) {
+        prop->setResMan(nullptr);
     }
+    all_props_.get<EntityTag>().clear();
     persistent_props_.get<EntityTag>().clear();
 }
 
 template <typename EntityTag>
 void ResourceManager::swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b)
 {
-    for (auto &weak_prop: entity_props<EntityTag>()) {
-        if (auto prop = weak_prop.lock()) {
-            prop->swap(_idx_a.uidx(), _idx_b.uidx());
-        }
+    for (auto &prop: all_props_.get<EntityTag>()) {
+        prop->swap(_idx_a.uidx(), _idx_b.uidx());
     }
 }
 
@@ -114,15 +111,14 @@ ResourceManager::internal_find_property(const std::string& _name) const
 
     auto type_name = get_type_name(typeid(T));
 
-    for(auto &weak_prop: entity_props<EntityTag>())
+    for(auto &prop: all_props_.get<EntityTag>())
     {
-        if (auto prop = weak_prop.lock()) {
-            if(prop->name() == _name
-                && prop->internal_type_name() == type_name)
-            {
-                auto ps = std::static_pointer_cast<PropertyStorageT<T>>(prop);
-                return PropertyPtr<T, EntityTag>(std::move(ps));
-            }
+        if(prop->name() == _name
+            && prop->internal_type_name() == type_name)
+        {
+            auto ps = std::static_pointer_cast<PropertyStorageT<T>>(
+                        prop->shared_ptr());
+            return PropertyPtr<T, EntityTag>(std::move(ps));
         }
     }
     return {};
@@ -132,11 +128,11 @@ template<class T, class EntityTag>
 PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def)
 {
     auto type_name = get_type_name(typeid(T));
-    auto &propVec = entity_props<EntityTag>();
+    auto &propVec = all_props_.get<EntityTag>();
     auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, _def);
     storage->resize(n<EntityTag>());
     storage->setResMan(this);
-    propVec.emplace_back(storage);
+    propVec.insert(storage.get());
     return PropertyPtr<T, EntityTag>(std::move(storage));
 }
 
@@ -200,30 +196,24 @@ void ResourceManager::remove_property(StdVecT& _vec, size_t _idx)
 template<class EntityTag>
 void ResourceManager::delete_multiple_entities(const std::vector<bool>& _tags)
 {
-    for (auto &weak_prop: weak_props_.get<EntityTag>()) {
-        if (auto prop = weak_prop.lock()) {
-            prop->delete_multiple_entries(_tags);
-        }
+    for (auto &prop: all_props_.get<EntityTag>()) {
+        prop->delete_multiple_entries(_tags);
     }
 }
 
 template<class StdVecT>
 void ResourceManager::resize_props(StdVecT& _vec, size_t _n)
 {
-    for (auto &weak_prop: _vec) {
-        if (auto prop = weak_prop.lock()) {
-            prop->resize(_n);
-        }
+    for (auto &prop: _vec) {
+        prop->resize(_n);
     }
 }
 
 template<class StdVecT>
 void ResourceManager::reserve_props(StdVecT& _vec, size_t _n)
 {
-    for (auto &weak_prop: _vec) {
-        if (auto prop = weak_prop.lock()) {
-            prop->reserve(_n);
-        }
+    for (auto &prop: _vec) {
+        prop->reserve(_n);
     }
 }
 
@@ -231,12 +221,18 @@ void ResourceManager::reserve_props(StdVecT& _vec, size_t _n)
 template<class StdVecT>
 void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h) {
 
-    for (auto &weak_prop: _vec) {
-        if (auto prop = weak_prop.lock()) {
-            prop->delete_element(_h.uidx());
-        }
+    for (auto &prop: _vec) {
+        prop->delete_element(_h.uidx());
     }
 }
+
+
+template<typename EntityTag>
+size_t ResourceManager::n_props() const {
+    auto const &props = all_props_.get<EntityTag>();
+    return props.size();
+}
+
 
 
 template <class T, typename Entity>
@@ -244,5 +240,4 @@ PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T 
 {
     *this = mesh->request_property<T, Entity>(_name, _def);
 }
-
 } // Namespace OpenVolumeMesh

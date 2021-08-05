@@ -35,6 +35,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <memory>
 #include <vector>
 
 #include "OpenVolumeMeshHandle.hh"
@@ -50,7 +51,8 @@ class ResourceManager;
 
  **/
 
-class OVM_EXPORT PropertyStorageBase {
+class OVM_EXPORT PropertyStorageBase : public std::enable_shared_from_this<PropertyStorageBase>
+{
 public:
 
     friend class ResourceManager;
@@ -138,6 +140,7 @@ protected:
     ResourceManager *resMan() { return resMan_;}
 
 private:
+    auto shared_ptr() {return shared_from_this();}
 
     ResourceManager* resMan_ = nullptr;
 

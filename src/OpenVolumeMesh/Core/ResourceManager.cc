@@ -38,59 +38,59 @@
 namespace OpenVolumeMesh {
 
 void ResourceManager::resize_vprops(size_t _nv) {
-    resize_props(weak_props_.get<Entity::Vertex>(), _nv);
+    resize_props(all_props_.get<Entity::Vertex>(), _nv);
 }
 
 void ResourceManager::resize_eprops(size_t _ne) {
-    resize_props(weak_props_.get<Entity::Edge>(), _ne);
-    resize_props(weak_props_.get<Entity::HalfEdge>(), 2 * _ne);
+    resize_props(all_props_.get<Entity::Edge>(), _ne);
+    resize_props(all_props_.get<Entity::HalfEdge>(), 2 * _ne);
 }
 
 void ResourceManager::resize_fprops(size_t _nf) {
-    resize_props(weak_props_.get<Entity::Face>(), _nf);
-    resize_props(weak_props_.get<Entity::HalfFace>(), 2 * _nf);
+    resize_props(all_props_.get<Entity::Face>(), _nf);
+    resize_props(all_props_.get<Entity::HalfFace>(), 2 * _nf);
 }
 
 void ResourceManager::resize_cprops(size_t _nc) {
-    resize_props(weak_props_.get<Entity::Cell>(), _nc);
+    resize_props(all_props_.get<Entity::Cell>(), _nc);
 }
 
 void ResourceManager::reserve_vprops(size_t _n) {
-    reserve_props(weak_props_.get<Entity::Vertex>(), _n);
+    reserve_props(all_props_.get<Entity::Vertex>(), _n);
 }
 void ResourceManager::reserve_eprops(size_t _n) {
-    reserve_props(weak_props_.get<Entity::Edge>(), _n);
-    reserve_props(weak_props_.get<Entity::HalfEdge>(), 2 * _n);
+    reserve_props(all_props_.get<Entity::Edge>(), _n);
+    reserve_props(all_props_.get<Entity::HalfEdge>(), 2 * _n);
 }
 void ResourceManager::reserve_fprops(size_t _n) {
-    reserve_props(weak_props_.get<Entity::Face>(), _n);
-    reserve_props(weak_props_.get<Entity::HalfFace>(), 2 * _n);
+    reserve_props(all_props_.get<Entity::Face>(), _n);
+    reserve_props(all_props_.get<Entity::HalfFace>(), 2 * _n);
 }
 void ResourceManager::reserve_cprops(size_t _n) {
-    reserve_props(weak_props_.get<Entity::Cell>(), _n);
+    reserve_props(all_props_.get<Entity::Cell>(), _n);
 }
 
 
 void ResourceManager::vertex_deleted(const VertexHandle& _h) {
-    entity_deleted(weak_props_.get<Entity::Vertex>(), _h);
+    entity_deleted(all_props_.get<Entity::Vertex>(), _h);
 }
 
 void ResourceManager::edge_deleted(const EdgeHandle& _h) {
 
-    entity_deleted(weak_props_.get<Entity::Edge>(), _h);
-    entity_deleted(weak_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
-    entity_deleted(weak_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
+    entity_deleted(all_props_.get<Entity::Edge>(), _h);
+    entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
+    entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
 }
 
 void ResourceManager::face_deleted(const FaceHandle& _h)
 {
-    entity_deleted(weak_props_.get<Entity::Face>(), _h);
-    entity_deleted(weak_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
-    entity_deleted(weak_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
+    entity_deleted(all_props_.get<Entity::Face>(), _h);
+    entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
+    entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
 }
 
 void ResourceManager::cell_deleted(const CellHandle& _h) {
-    entity_deleted(weak_props_.get<Entity::Cell>(), _h);
+    entity_deleted(all_props_.get<Entity::Cell>(), _h);
 }
 
 void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2)
@@ -155,7 +155,7 @@ void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags)
         hftags.push_back(*t_it);
         hftags.push_back(*t_it);
     }
-    delete_multiple_entities<Entity::HalfFace>(_tags);
+    delete_multiple_entities<Entity::HalfFace>(hftags);
 }
 
 void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
@@ -163,11 +163,6 @@ void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
     delete_multiple_entities<Entity::Cell>(_tags);
 }
 
-template<typename EntityTag>
-size_t ResourceManager::n_props() const {
-    auto &props = weak_props_.get<EntityTag>();
-    return props.size();
-}
 
 template<>
 size_t ResourceManager::n<Entity::Vertex>()
