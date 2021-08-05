@@ -145,7 +145,6 @@ PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _
     return internal_create_property<T, EntityTag>(_name, _def);
 }
 
-#if OVM_CXX_17
 
 template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
@@ -166,7 +165,6 @@ ResourceManager::get_property(const std::string& _name)
         return {*prop};
     return {};
 }
-#endif
 
 
 template<typename T, class EntityTag>
