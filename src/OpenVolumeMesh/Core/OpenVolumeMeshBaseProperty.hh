@@ -123,21 +123,6 @@ public:
 	/// Number of elements in property
 	virtual size_t n_elements() const = 0;
 
-	/// Size of one element in bytes or UnknownSize if not known.
-	virtual size_t element_size() const = 0;
-
-	/// Return size of property in bytes
-	virtual size_t size_of() const {
-		return size_of(n_elements());
-	}
-
-	/// Estimated size of property if it has _n_elem elements.
-	/// The member returns UnknownSize if the size cannot be estimated.
-	virtual size_t size_of(size_t _n_elem) const {
-		return (element_size() != UnknownSize) ? (_n_elem * element_size())
-				: UnknownSize;
-	}
-
 	const OpenVolumeMeshHandle& handle() const { return handle_; }
 
 	void set_handle(const OpenVolumeMeshHandle& _handle) { handle_.idx(_handle.idx()); }

@@ -116,10 +116,6 @@ public:
 	size_t n_elements() const override {
 		return data_.size();
 	}
-	size_t element_size() const override {
-        return sizeof(T);
-    }
-
 
 #ifndef DOXY_IGNORE_THIS
 	struct plus {
@@ -128,16 +124,6 @@ public:
 		}
 	};
 #endif
-
-    size_t size_of() const override {
-        if (element_size() != OpenVolumeMeshBaseProperty::UnknownSize)
-            return this->OpenVolumeMeshBaseProperty::size_of(n_elements());
-        return std::accumulate(data_.begin(), data_.end(), size_t(0), plus());
-    }
-
-	size_t size_of(size_t _n_elem) const override {
-		return this->OpenVolumeMeshBaseProperty::size_of(_n_elem);
-	}
 
 	// Function to serialize a property
     void serialize(std::ostream& _ostr) const override {
@@ -240,23 +226,6 @@ inline void OpenVolumeMeshPropertyT<bool>::swap(size_t _i0, size_t _i1)
     data_[_i1] = tmp;
 }
 
-template<>
-inline size_t OpenVolumeMeshPropertyT<bool>::size_of(size_t _n_elem) const
-{
-    return _n_elem / 8 + ((_n_elem % 8) != 0);
-}
-
-template<>
-inline size_t OpenVolumeMeshPropertyT<bool>::size_of() const
-{
-    return size_of(n_elements());
-}
-
-template<>
-inline size_t OpenVolumeMeshPropertyT<bool>::element_size() const
-{
-    return OpenVolumeMeshBaseProperty::UnknownSize;
-}
 
 template<>
 inline void OpenVolumeMeshPropertyT<bool>::deserialize(std::istream& _istr)
@@ -268,30 +237,6 @@ inline void OpenVolumeMeshPropertyT<bool>::deserialize(std::istream& _istr)
     }
 }
 
-
-//-----------------------------------------------------------------------------
-// Property specialization for std::string type.
-//-----------------------------------------------------------------------------
-template<>
-inline size_t OpenVolumeMeshPropertyT<std::string>::size_of(size_t) const
-{
-    return OpenVolumeMeshBaseProperty::UnknownSize;
-}
-
-template<>
-inline size_t OpenVolumeMeshPropertyT<std::string>::size_of() const
-{
-    return sizeof(data_);
-}
-
-template<>
-inline size_t OpenVolumeMeshPropertyT<std::string>::element_size() const
-{
-    return OpenVolumeMeshBaseProperty::UnknownSize;
-}
-
-
-//-----------------------------------------------------------------------------
 
 } // Namespace OpenVolumeMesh
 
