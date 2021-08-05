@@ -56,17 +56,11 @@ namespace OpenVolumeMesh {
 template<typename Iter>
 class PropertyIterator {
     using value_type = BaseProperty;
-    using pointer = BaseProperty*;
-    using reference = BaseProperty&;
 public:
     PropertyIterator(Iter _it)
         : it_(_it)
     {}
-    reference operator*() {
-        cur_ = std::unique_ptr<BaseProperty>(**it_);
-        return *cur_;
-    }
-    pointer operator->() {
+    BaseProperty * operator*() {
         cur_ = std::unique_ptr<BaseProperty>(**it_);
         return cur_.get();
     }
