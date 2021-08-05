@@ -580,10 +580,10 @@ void FileManager::writeProps(
         ) const {
 
     // write props
-    for(IteratorT p_it = _begin;
-            p_it != _end; ++p_it) {
-        if(!(*p_it)->persistent()) continue;
-        if((*p_it)->anonymous()) {
+    for(IteratorT p_it = _begin; p_it != _end; ++p_it) {
+        auto &prop = *p_it;
+        if(!prop.persistent()) continue;
+        if(prop.anonymous()) {
             if (verbosity_level_ >= 2) {
                 std::cerr << "Serialization of anonymous properties is not supported!" << std::endl;
             }
@@ -592,18 +592,18 @@ void FileManager::writeProps(
 
         std::string type_name;
         try {
-            type_name = (*p_it)->typeNameWrapper();
+            type_name = prop.typeNameWrapper();
         } catch (std::runtime_error &e) { // type not serializable
             if (verbosity_level_ >= 1) {
-                std::cerr << "Failed to save property " << (*p_it)->name() << " , skipping: " << e.what() << std::endl;
+                std::cerr << "Failed to save property " << prop.name() << " , skipping: " << e.what() << std::endl;
             }
             continue;
         }
         _ostr << _entityType << " ";
         _ostr << type_name << " ";
-        _ostr << "\"" << (*p_it)->name() << "\"" << std::endl;
+        _ostr << "\"" << prop.name() << "\"" << std::endl;
 
-        (*p_it)->serialize(_ostr);
+        prop.serialize(_ostr);
     }
 }
 

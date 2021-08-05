@@ -55,14 +55,20 @@ namespace OpenVolumeMesh {
 
 template<typename Iter>
 class PropertyIterator {
-    //static_assert(std::is_same_v<typename Iter::value_type, const PropertyStorageBase*>);
-    using value_type = std::unique_ptr<BaseProperty>;
+    using value_type = BaseProperty;
+    using pointer = BaseProperty*;
+    using reference = BaseProperty&;
 public:
     PropertyIterator(Iter _it)
         : it_(_it)
     {}
-    value_type operator*() {
-        return **it_;
+    reference operator*() {
+        cur_ = std::unique_ptr<BaseProperty>(**it_);
+        return *cur_;
+    }
+    pointer operator->() {
+        cur_ = std::unique_ptr<BaseProperty>(**it_);
+        return cur_.get();
     }
     PropertyIterator<Iter> operator++() {
         it_++;
@@ -72,6 +78,7 @@ public:
         return it_ != other.it_;
     }
 private:
+    std::shared_ptr<BaseProperty> cur_ = nullptr;
     Iter it_;
 };
 
