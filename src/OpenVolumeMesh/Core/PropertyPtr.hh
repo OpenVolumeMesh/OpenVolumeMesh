@@ -54,13 +54,22 @@ class ResourceManager;
  * Provides user access to property contents.
  */
 
-template <class T, typename Entity>
+template <class T, typename EntityTag>
 class PropertyPtr : public BaseProperty
 {
-    static_assert(is_entity<Entity>::value);
+    static_assert(is_entity<EntityTag>::value);
 public:
     // defined in ResourceManagerT_impl to avoid circular references
     PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
+
+    ~PropertyPtr() {
+        auto resman = ptr_->resMan();
+        if (resman != nullptr) {
+            if (ptr_.use_count() == 1) {
+                resman->template property_deleted<EntityTag>(ptr_.get());
+            }
+        }
+    }
 
     friend class ResourceManager;
 
@@ -72,7 +81,7 @@ public:
     typedef typename PropStorageT::reference                   reference;
     typedef typename PropStorageT::const_reference             const_reference;
 
-    using EntityHandleT = HandleT<Entity>;
+    using EntityHandleT = HandleT<EntityTag>;
 
     const std::string& name() const & override {
         // the string we return a reference to lives long enough, no warnings please:

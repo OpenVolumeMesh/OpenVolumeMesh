@@ -1714,7 +1714,6 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
     swap_edge_properties(_h1, _h2);
     swap_halfedge_properties(halfedge_handle(_h1, 0), halfedge_handle(_h2, 0));
     swap_halfedge_properties(halfedge_handle(_h1, 1), halfedge_handle(_h2, 1));
-
 }
 
 void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)

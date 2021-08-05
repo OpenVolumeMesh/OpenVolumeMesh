@@ -80,9 +80,6 @@ public:
           def_(_def)
     {}
 
-
-	PropertyStorageT(const PropertyStorageT& _rhs) = default;
-
 public:
     void reserve(size_t _n) override{
 		data_.reserve(_n);

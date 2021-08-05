@@ -84,15 +84,13 @@ class BaseProperty;
 
 class OVM_EXPORT ResourceManager {
 public:
-    ResourceManager() = default;
-    ResourceManager(const ResourceManager &other);
-    ResourceManager(ResourceManager &&other);
-    ResourceManager& operator=(const ResourceManager &other);
-    ResourceManager& operator=(ResourceManager &&other);
-    virtual ~ResourceManager();
+    virtual ~ResourceManager() = default;
+private:
+    using Properties = std::set<PropertyStorageBase*>;
+    using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
-    template <class PropT, class HandleT> friend class PropertyPtr;
 
+protected:
     /// Change size of stored vertex properties
     void resize_vprops(size_t _nv);
 
@@ -110,54 +108,30 @@ public:
     void reserve_fprops(size_t n);
     void reserve_cprops(size_t n);
 
-protected:
-
     void vertex_deleted(const VertexHandle& _h);
-
     void edge_deleted(const EdgeHandle& _h);
-
     void face_deleted(const FaceHandle& _h);
-
     void cell_deleted(const CellHandle& _h);
 
     void swap_cell_properties(CellHandle _h1, CellHandle _h2);
-
     void swap_face_properties(FaceHandle _h1, FaceHandle _h2);
-
     void swap_halfface_properties(HalfFaceHandle _h1, HalfFaceHandle _h2);
-
     void swap_edge_properties(EdgeHandle _h1, EdgeHandle _h2);
-
     void swap_halfedge_properties(HalfEdgeHandle _h1, HalfEdgeHandle _h2);
-
     void swap_vertex_properties(VertexHandle _h1, VertexHandle _h2);
 
     template <typename EntityTag>
-    void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b)
-    {
-        for (auto &weak_prop: entity_props<EntityTag>()) {
-            if (auto prop = weak_prop.lock()) {
-                prop->swap(_idx_a.uidx(), _idx_b.uidx());
-            }
-        }
-    }
-
+    void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b);
 
 public:
-
-    void clear_vertex_props() { clearVec(vertex_props_); }
-
-    void clear_edge_props() { clearVec(edge_props_); }
-
-    void clear_halfedge_props() { clearVec(halfedge_props_); }
-
-    void clear_face_props() { clearVec(face_props_); }
-
-    void clear_halfface_props() { clearVec(halfface_props_); }
-
-    void clear_cell_props() { clearVec(cell_props_); }
-
-    void clear_mesh_props() { clearVec(mesh_props_); }
+    template<typename EntityTag> void clear_props();
+    inline void clear_vertex_props()   { clear_props<Entity::Vertex>();}
+    inline void clear_edge_props()     { clear_props<Entity::Edge>();}
+    inline void clear_halfedge_props() { clear_props<Entity::HalfEdge>();}
+    inline void clear_face_props()     { clear_props<Entity::Face>();}
+    inline void clear_halfface_props() { clear_props<Entity::HalfFace>();}
+    inline void clear_cell_props()     { clear_props<Entity::Cell>();}
+    inline void clear_mesh_props()     { clear_props<Entity::Mesh>();}
 
     /// Get number of vertices in mesh
     virtual size_t n_vertices() const = 0;
@@ -171,32 +145,6 @@ public:
     virtual size_t n_halffaces() const = 0;
     /// Get number of cells in mesh
     virtual size_t n_cells() const = 0;
-
-    template<typename EntityTag>
-    size_t n_entities() const {
-        if constexpr (std::is_same_v<EntityTag, Entity::Vertex>) {
-            return n_vertices();
-        }
-        if constexpr (std::is_same_v<EntityTag, Entity::Edge>) {
-            return n_edges();
-        }
-        if constexpr (std::is_same_v<EntityTag, Entity::HalfEdge>) {
-            return n_halfedges();
-        }
-        if constexpr (std::is_same_v<EntityTag, Entity::Face>) {
-            return n_faces();
-        }
-        if constexpr (std::is_same_v<EntityTag, Entity::HalfFace>) {
-            return n_halffaces();
-        }
-        if constexpr (std::is_same_v<EntityTag, Entity::Cell>) {
-            return n_cells();
-        }
-        if constexpr (std::is_same_v<EntityTag, Entity::Mesh>) {
-            return 1;
-        }
-    }
-
 
     /** Get or create property: if the property does not exist yet, create it.
      */
@@ -227,23 +175,10 @@ public:
 
     template<class T> MeshPropertyT<T> request_mesh_property(const std::string& _name = std::string(), const T _def = T());
 
-private:
-    template<typename VecT>
-    void remove_expired_pointers(VecT &vec) const
-    {
-        vec.erase(std::remove_if(vec.begin(), vec.end(),
-                                 [](auto weak){return weak.expired();}),
-                  vec.end());
-    }
 
 public:
 
-    template<typename EntityTag>
-    size_t n_props() const {
-        auto &props = entity_props<EntityTag>();
-        remove_expired_pointers(props);
-        return props.size();
-    }
+    template<typename EntityTag> size_t n_props() const;
 
     size_t n_vertex_props() const   { return n_props<Entity::Vertex>();}
     size_t n_edge_props() const     { return n_props<Entity::Edge>();}
@@ -256,8 +191,6 @@ public:
     template<typename T, class EntityTag>
     void set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _flag = true);
 
-    using Properties = std::vector<std::weak_ptr<PropertyStorageBase>>;
-    using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
     // TODO: - make custom iterator to hide underlying container
     //       - implement iteration over props for all entities
@@ -270,23 +203,12 @@ public:
     PersistentProperties::const_iterator persistent_props_end() const
         {return persistent_props_.get<EntityTag>().cend();}
 
-
-#if 0
-    PersistentProperties::const_iterator vertex_props_begin() const
-    { return persistent_props_begin<Entity::Vertex>(); }
-    PersistentProperties::const_iterator vertex_props_end()const
-    { return persistent_props_end<Entity::Vertex>(); }
-#endif
-
-private:
-
+public:
     template <class PropT, class EntityTag>
     bool property_exists(const std::string& _name) const
     {
         return internal_find_property<PropT, EntityTag>(_name).has_value();
     }
-
-public:
 
     template <class PropT>
     bool vertex_property_exists(const std::string& _name) const {
@@ -325,8 +247,8 @@ public:
 
 protected:
 
-    template<typename StdVecT>
-    void delete_multiple_entities(StdVecT const &_vec, const std::vector<bool>& _tags);
+    template<typename EntityTag>
+    void delete_multiple_entities(const std::vector<bool>& _tags);
 
     void delete_multiple_vertex_props(const std::vector<bool>& _tags);
 
@@ -356,26 +278,7 @@ private:
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T());
 
-    template<class StdVecT>
-    void clearVec(StdVecT& _vec);
-
-    template<bool Move>
-    void assignProperties(typename std::conditional<Move, Properties&, const Properties&>::type src,
-                          Properties &dest);
-    template<bool Move>
-    void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager*, const ResourceManager*>::type src);
-
-    // TODO: use PerEntity here too:
-    // TODO: we need to clean out weak_ptrs sometimes.
-    mutable Properties vertex_props_;
-    mutable Properties edge_props_;
-    mutable Properties halfedge_props_;
-    mutable Properties face_props_;
-    mutable Properties halfface_props_;
-    mutable Properties cell_props_;
-    mutable Properties mesh_props_;
-
-
+    PerEntity<Properties> weak_props_;
     PerEntity<PersistentProperties> persistent_props_;
 
     template<typename Entity>
@@ -383,6 +286,16 @@ private:
 
     template<typename Entity>
     size_t n();
+
+
+private:
+    template<typename T, typename EntityTag>
+    friend class PropertyPtr;
+
+    template<typename EntityTag>
+    void property_deleted(PropertyStorageBase *ptr) {
+        weak_props_.get<EntityTag>().erase(ptr);
+    }
 };
 
 }

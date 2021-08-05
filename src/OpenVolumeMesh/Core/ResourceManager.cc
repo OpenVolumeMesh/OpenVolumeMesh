@@ -37,108 +37,60 @@
 
 namespace OpenVolumeMesh {
 
-ResourceManager::ResourceManager(const ResourceManager &other)
-{
-   *this = other;
-}
-
-ResourceManager::ResourceManager(ResourceManager &&other)
-{
-   *this = std::move(other);
-}
-
-ResourceManager& ResourceManager::operator=(const ResourceManager &other)
-{
-    if (this == &other)
-        return *this;
-
-    assignAllPropertiesFrom<false>(&other);
-
-    return *this;
-}
-
-ResourceManager& ResourceManager::operator=(ResourceManager &&other)
-{
-    if (this == &other)
-        return *this;
-
-    assignAllPropertiesFrom<true>(&other);
-
-    return *this;
-}
-
-ResourceManager::~ResourceManager() {
-
-    // Delete persistent props
-    clearVec(vertex_props_);
-    clearVec(edge_props_);
-    clearVec(halfedge_props_);
-    clearVec(face_props_);
-    clearVec(halfface_props_);
-    clearVec(cell_props_);
-    clearVec(mesh_props_);
-}
-
 void ResourceManager::resize_vprops(size_t _nv) {
-
-    resize_props(vertex_props_, _nv);
+    resize_props(weak_props_.get<Entity::Vertex>(), _nv);
 }
 
 void ResourceManager::resize_eprops(size_t _ne) {
-
-    resize_props(edge_props_, _ne);
-    resize_props(halfedge_props_, _ne*2u);
+    resize_props(weak_props_.get<Entity::Edge>(), _ne);
+    resize_props(weak_props_.get<Entity::HalfEdge>(), 2 * _ne);
 }
 
 void ResourceManager::resize_fprops(size_t _nf) {
-
-    resize_props(face_props_, _nf);
-    resize_props(halfface_props_, _nf*2u);
+    resize_props(weak_props_.get<Entity::Face>(), _nf);
+    resize_props(weak_props_.get<Entity::HalfFace>(), 2 * _nf);
 }
 
 void ResourceManager::resize_cprops(size_t _nc) {
-
-    resize_props(cell_props_, _nc);
+    resize_props(weak_props_.get<Entity::Cell>(), _nc);
 }
 
 void ResourceManager::reserve_vprops(size_t _n) {
-    reserve_props(vertex_props_, _n);
+    reserve_props(weak_props_.get<Entity::Vertex>(), _n);
 }
 void ResourceManager::reserve_eprops(size_t _n) {
-    reserve_props(halfedge_props_, _n);
-    reserve_props(edge_props_, _n);
+    reserve_props(weak_props_.get<Entity::Edge>(), _n);
+    reserve_props(weak_props_.get<Entity::HalfEdge>(), 2 * _n);
 }
 void ResourceManager::reserve_fprops(size_t _n) {
-    reserve_props(halfface_props_, _n);
-    reserve_props(face_props_, _n);
+    reserve_props(weak_props_.get<Entity::Face>(), _n);
+    reserve_props(weak_props_.get<Entity::HalfFace>(), 2 * _n);
 }
 void ResourceManager::reserve_cprops(size_t _n) {
-    reserve_props(cell_props_, _n);
+    reserve_props(weak_props_.get<Entity::Cell>(), _n);
 }
 
 
 void ResourceManager::vertex_deleted(const VertexHandle& _h) {
-
-    entity_deleted(vertex_props_, _h);
+    entity_deleted(weak_props_.get<Entity::Vertex>(), _h);
 }
 
 void ResourceManager::edge_deleted(const EdgeHandle& _h) {
 
-    entity_deleted(edge_props_, _h);
-    entity_deleted(halfedge_props_, OpenVolumeMeshHandle(_h.idx()*2 + 1));
-    entity_deleted(halfedge_props_, OpenVolumeMeshHandle(_h.idx()*2));
+    entity_deleted(weak_props_.get<Entity::Edge>(), _h);
+    entity_deleted(weak_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
+    entity_deleted(weak_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
 }
 
-void ResourceManager::face_deleted(const FaceHandle& _h) {
-
-    entity_deleted(face_props_, _h);
-    entity_deleted(halfface_props_, OpenVolumeMeshHandle(_h.idx()*2 + 1));
-    entity_deleted(halfface_props_, OpenVolumeMeshHandle(_h.idx()*2));
+void ResourceManager::face_deleted(const FaceHandle& _h)
+{
+    entity_deleted(weak_props_.get<Entity::Face>(), _h);
+    entity_deleted(weak_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
+    entity_deleted(weak_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
 }
 
 void ResourceManager::cell_deleted(const CellHandle& _h) {
-
-    entity_deleted(cell_props_, _h);
+    entity_deleted(weak_props_.get<Entity::Cell>(), _h);
 }
 
 void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2)
@@ -173,12 +125,12 @@ void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2)
 
 void ResourceManager::delete_multiple_vertex_props(const std::vector<bool>& _tags)
 {
-    delete_multiple_entities(vertex_props_, _tags);
+    delete_multiple_entities<Entity::Vertex>(_tags);
 }
 
 void ResourceManager::delete_multiple_edge_props(const std::vector<bool>& _tags)
 {
-    delete_multiple_entities(edge_props_, _tags);
+    delete_multiple_entities<Entity::Edge>(_tags);
 
     // TODO OPTI: remove_if stuff? see delete_multiple_face_props too
     // Create tags vector for halfedges
@@ -188,13 +140,13 @@ void ResourceManager::delete_multiple_edge_props(const std::vector<bool>& _tags)
         hetags.push_back(*t_it);
         hetags.push_back(*t_it);
     }
-    delete_multiple_entities(halfedge_props_, hetags);
+    delete_multiple_entities<Entity::HalfEdge>(hetags);
 }
 
 void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags)
 {
 
-    delete_multiple_entities(face_props_, _tags);
+    delete_multiple_entities<Entity::Face>(_tags);
 
     // Create tags vector for halffaces
     std::vector<bool> hftags;
@@ -203,108 +155,18 @@ void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags)
         hftags.push_back(*t_it);
         hftags.push_back(*t_it);
     }
-    delete_multiple_entities(halfface_props_, hftags);
+    delete_multiple_entities<Entity::HalfFace>(_tags);
 }
 
 void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
 {
-    delete_multiple_entities(cell_props_, _tags);
+    delete_multiple_entities<Entity::Cell>(_tags);
 }
 
-template<bool Move>
-void ResourceManager::assignProperties(typename std::conditional<Move, Properties&, const Properties&>::type src,
-                      Properties &dest)
-{
-    throw std::runtime_error("unimplemented!");
-#if 0
-    // If possible, re-use existing properties instead of copying
-    // everything blindly.
-    Properties out;
-    out.reserve(src.size());
-    for (BaseProperty *srcprop: src) {
-        bool found = false;
-        for (auto it = dest.begin(); it != dest.end(); ++it) {
-            auto dstprop = *it;
-            if (dstprop->name() == srcprop->name()
-                    && dstprop->internal_type_name() == srcprop->internal_type_name())
-            {
-                out.push_back(dstprop);
-                dest.erase(it);
-                if (Move) {
-                    dstprop->move_values_from(srcprop);
-                } else {
-                    dstprop->assign_values_from(srcprop);
-                }
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            if (Move) {
-                out.push_back(srcprop);
-            } else {
-                out.push_back(srcprop->clone(*this, OpenVolumeMeshHandle(-1)));
-            }
-        }
-    }
-    updatePropHandles(out);
-    dest = std::move(out);
-#endif
-}
-
-template<bool Move>
-void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager*, const ResourceManager*>::type other)
-{
-    assignProperties<Move>(other->vertex_props_,   vertex_props_);
-    assignProperties<Move>(other->edge_props_,     edge_props_);
-    assignProperties<Move>(other->halfedge_props_, halfedge_props_);
-    assignProperties<Move>(other->face_props_,     face_props_);
-    assignProperties<Move>(other->halfface_props_, halfface_props_);
-    assignProperties<Move>(other->cell_props_,     cell_props_);
-    assignProperties<Move>(other->mesh_props_,     mesh_props_);
-}
-
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Vertex>() const
-{
-    return vertex_props_;
-}
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Edge>() const
-{
-    return edge_props_;
-}
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::HalfEdge>() const
-{
-    return halfedge_props_;
-}
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Face>() const
-{
-    return face_props_;
-}
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::HalfFace>() const
-{
-    return halfface_props_;
-}
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Cell>() const
-{
-    return cell_props_;
-}
-template<>
-ResourceManager::Properties&
-ResourceManager::entity_props<Entity::Mesh>() const
-{
-    return mesh_props_;
+template<typename EntityTag>
+size_t ResourceManager::n_props() const {
+    auto &props = weak_props_.get<EntityTag>();
+    return props.size();
 }
 
 template<>

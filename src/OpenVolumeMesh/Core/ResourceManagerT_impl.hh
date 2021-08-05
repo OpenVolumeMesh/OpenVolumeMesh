@@ -42,6 +42,27 @@
 namespace OpenVolumeMesh {
 
 
+template<typename EntityTag>
+void ResourceManager::clear_props()
+{
+    for (auto &weak_prop: entity_props<EntityTag>()) {
+        if (auto prop = weak_prop.lock()) {
+            prop->setResMan(nullptr);
+        }
+    }
+    persistent_props_.get<EntityTag>().clear();
+}
+
+template <typename EntityTag>
+void ResourceManager::swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b)
+{
+    for (auto &weak_prop: entity_props<EntityTag>()) {
+        if (auto prop = weak_prop.lock()) {
+            prop->swap(_idx_a.uidx(), _idx_b.uidx());
+        }
+    }
+}
+
 template<class T>
 VertexPropertyT<T> ResourceManager::request_vertex_property(const std::string& _name, const T _def) {
 
@@ -113,7 +134,7 @@ PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::s
     auto type_name = get_type_name(typeid(T));
     auto &propVec = entity_props<EntityTag>();
     auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, _def);
-    storage->resize(n_entities<EntityTag>());
+    storage->resize(n<EntityTag>());
     storage->setResMan(this);
     propVec.emplace_back(storage);
     return PropertyPtr<T, EntityTag>(std::move(storage));
@@ -176,11 +197,10 @@ void ResourceManager::remove_property(StdVecT& _vec, size_t _idx)
     updatePropHandles(_vec);
 }
 
-template<class StdVecT>
-void ResourceManager::delete_multiple_entities(
-        StdVecT const& _vec, const std::vector<bool>& _tags)
+template<class EntityTag>
+void ResourceManager::delete_multiple_entities(const std::vector<bool>& _tags)
 {
-    for (auto &weak_prop: _vec) {
+    for (auto &weak_prop: weak_props_.get<EntityTag>()) {
         if (auto prop = weak_prop.lock()) {
             prop->delete_multiple_entries(_tags);
         }
@@ -216,17 +236,6 @@ void ResourceManager::entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& 
             prop->delete_element(_h.uidx());
         }
     }
-}
-
-template<class StdVecT>
-void ResourceManager::clearVec(StdVecT& _vec) {
-
-    for (auto &weak_prop: _vec) {
-        if (auto prop = weak_prop.lock()) {
-            prop->setResMan(nullptr);
-        }
-    }
-    _vec.clear();
 }
 
 
