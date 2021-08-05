@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "VectorT.hh"
+#include <OpenVolumeMesh/Geometry/VectorT.hh>
 
 namespace OpenVolumeMesh {
 

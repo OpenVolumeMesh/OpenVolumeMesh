@@ -34,10 +34,10 @@
 
 #define RESOURCEMANAGERT_CC
 
-#include "ResourceManager.hh"
-#include "PropertyDefines.hh"
-#include "TypeName.hh"
-#include "PropertyPtr.hh"
+#include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
+#include <OpenVolumeMesh/Core/TypeName.hh>
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 
 namespace OpenVolumeMesh {
 

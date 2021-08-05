@@ -1,4 +1,4 @@
-#include "BinaryIO.hh"
+#include <OpenVolumeMesh/IO/BinaryIO.hh>
 
 #include <cassert>
 #include <cstring>

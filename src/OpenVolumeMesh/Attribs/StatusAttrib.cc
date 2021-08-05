@@ -37,8 +37,8 @@
 #include <iostream>
 #endif
 
-#include "../Core/TopologyKernel.hh"
-#include "StatusAttrib.hh"
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
+#include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
 
 namespace OpenVolumeMesh {
 

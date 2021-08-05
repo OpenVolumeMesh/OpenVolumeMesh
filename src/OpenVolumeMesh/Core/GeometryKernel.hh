@@ -37,8 +37,8 @@
 #include <iostream>
 #include <type_traits>
 
-#include "../Geometry/VectorT.hh"
-#include "TopologyKernel.hh"
+#include <OpenVolumeMesh/Geometry/VectorT.hh>
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

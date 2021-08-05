@@ -35,7 +35,7 @@
 
 #include <limits>
 
-#include "PropertyStorageBase.hh"
+#include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
 
 namespace OpenVolumeMesh {
 

@@ -32,8 +32,8 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "ResourceManager.hh"
-#include "BaseProperty.hh"
+#include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <OpenVolumeMesh/Core/BaseProperty.hh>
 
 namespace OpenVolumeMesh {
 

@@ -45,10 +45,10 @@
 #include <optional>
 
 #include <OpenVolumeMesh/Core/Entities.hh>
-#include "OpenVolumeMesh/Config/Export.hh"
-#include "PropertyStorageT.hh"
-#include "TypeName.hh"
-#include "ForwardDeclarations.hh"
+#include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
+#include <OpenVolumeMesh/Core/TypeName.hh>
+#include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
 
 
 namespace OpenVolumeMesh {
@@ -338,5 +338,5 @@ private:
 
 }
 
-#include "ResourceManagerT_impl.hh"
+#include <OpenVolumeMesh/Core/ResourceManagerT_impl.hh>
 

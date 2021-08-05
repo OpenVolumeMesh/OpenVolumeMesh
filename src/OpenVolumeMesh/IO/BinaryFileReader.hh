@@ -102,4 +102,4 @@ private:
 } // namespace OpenVolumeMesh::IO
 
 
-#include "BinaryFileReaderT_impl.hh"
+#include <OpenVolumeMesh/IO/BinaryFileReaderT_impl.hh>

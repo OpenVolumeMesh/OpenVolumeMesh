@@ -35,7 +35,7 @@
 
 #include <istream>
 
-#include "BaseEntities.hh"
+#include <OpenVolumeMesh/Core/BaseEntities.hh>
 
 namespace OpenVolumeMesh {
 

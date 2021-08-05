@@ -33,11 +33,11 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "../Core/PropertyStorageT.hh"
-#include "../Core/OpenVolumeMeshHandle.hh"
+#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Core/PropertyPtr.hh>
-#include "OpenVolumeMesh/Config/Export.hh"
-#include "../Core/TopologyKernel.hh"
+#include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

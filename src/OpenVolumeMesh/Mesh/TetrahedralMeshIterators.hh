@@ -33,8 +33,8 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "../Core/Iterators.hh"
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Core/Iterators.hh>
+#include <OpenVolumeMesh/Config/Export.hh>
 
 #include <array>
 

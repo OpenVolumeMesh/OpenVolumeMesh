@@ -33,9 +33,9 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "StatusAttrib.hh"
+#include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
 
-#include "../Core/TopologyKernel.hh"
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 #include <OpenVolumeMesh/Core/PropertyPtr.hh>
 
 #include <map>

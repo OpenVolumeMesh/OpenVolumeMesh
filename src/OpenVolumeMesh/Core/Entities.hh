@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Config/Export.hh>
 #include <type_traits>
 
 namespace OpenVolumeMesh {

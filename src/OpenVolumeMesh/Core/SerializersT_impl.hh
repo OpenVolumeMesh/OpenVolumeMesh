@@ -35,7 +35,7 @@
 
 #define SERIALIZERST_CC
 
-#include "Serializers.hh"
+#include <OpenVolumeMesh/Core/Serializers.hh>
 
 namespace OpenVolumeMesh
 {

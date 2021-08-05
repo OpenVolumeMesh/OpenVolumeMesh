@@ -33,7 +33,7 @@
 \*===========================================================================*/
 
 
-#include "PropertyDefines.hh"
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
 
 namespace OpenVolumeMesh {
 

@@ -43,11 +43,11 @@
 #include <vector>
 #include <memory>
 
-#include "PropertyStorageBase.hh"
-#include "PropertyDefines.hh"
-#include "BaseProperty.hh"
+#include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
+#include <OpenVolumeMesh/Core/BaseProperty.hh>
 
-#include "Serializers.hh"
+#include <OpenVolumeMesh/Core/Serializers.hh>
 
 namespace OpenVolumeMesh {
 

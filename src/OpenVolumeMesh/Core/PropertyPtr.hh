@@ -38,10 +38,10 @@
 #include <string>
 #include <memory>
 
-#include "BaseProperty.hh"
-#include "OpenVolumeMeshHandle.hh"
-#include "../System/Deprecation.hh"
-#include "PropertyStorageT.hh"
+#include <OpenVolumeMesh/Core/BaseProperty.hh>
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/System/Deprecation.hh>
+#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
 
 namespace OpenVolumeMesh {
 

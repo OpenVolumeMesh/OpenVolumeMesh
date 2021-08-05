@@ -34,7 +34,7 @@
 \*===========================================================================*/
 
 #include <iosfwd>
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 

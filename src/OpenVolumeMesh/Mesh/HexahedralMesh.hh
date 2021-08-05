@@ -34,8 +34,8 @@
 \*===========================================================================*/
 
 
-#include "HexahedralMeshTopologyKernel.hh"
-#include "../Core/GeometryKernel.hh"
+#include <OpenVolumeMesh/Mesh/HexahedralMeshTopologyKernel.hh>
+#include <OpenVolumeMesh/Core/GeometryKernel.hh>
 
 namespace OpenVolumeMesh {
 

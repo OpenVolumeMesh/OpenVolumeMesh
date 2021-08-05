@@ -1,4 +1,4 @@
-#include "BinaryFileReader.hh"
+#include <OpenVolumeMesh/IO/BinaryFileReader.hh>
 
 #include <array>
 

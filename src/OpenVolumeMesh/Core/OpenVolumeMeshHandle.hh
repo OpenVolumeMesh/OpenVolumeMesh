@@ -41,9 +41,9 @@
 #include <limits>
 #include <functional>
 
-#include "Entities.hh"
-#include "../System/Deprecation.hh"
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Core/Entities.hh>
+#include <OpenVolumeMesh/System/Deprecation.hh>
+#include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 

@@ -30,4 +30,4 @@ private:
 
 } // namespace OpenVolumeMesh::IO
 
-#include "BinaryFileWriterT_impl.hh"
+#include <OpenVolumeMesh/IO/BinaryFileWriterT_impl.hh>

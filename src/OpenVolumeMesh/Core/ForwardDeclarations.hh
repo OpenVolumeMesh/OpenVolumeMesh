@@ -1,5 +1,5 @@
 #pragma once
-#include "Entities.hh"
+#include <OpenVolumeMesh/Core/Entities.hh>
 
 namespace OpenVolumeMesh {
 

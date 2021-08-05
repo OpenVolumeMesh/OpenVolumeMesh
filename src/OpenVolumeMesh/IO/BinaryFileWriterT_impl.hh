@@ -1,5 +1,5 @@
 #pragma once
-#include "BinaryFileWriter.hh"
+#include <OpenVolumeMesh/IO/BinaryFileWriter.hh>
 
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <sstream>

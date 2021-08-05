@@ -32,7 +32,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "TetrahedralMeshTopologyKernel.hh"
+#include <OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.hh>
 
 #include <iostream>
 

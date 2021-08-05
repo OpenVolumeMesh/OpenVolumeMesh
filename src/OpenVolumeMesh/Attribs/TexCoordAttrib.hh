@@ -35,10 +35,10 @@
 
 #include <cassert>
 
-#include "../Core/OpenVolumeMeshHandle.hh"
-#include "OpenVolumeMeshStatus.hh"
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
 #include <OpenVolumeMesh/Core/PropertyPtr.hh>
-#include "../Core/TopologyKernel.hh"
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 
@@ -85,5 +85,5 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#include "TexCoordAttribT_impl.hh"
+#include <OpenVolumeMesh/Attribs/TexCoordAttribT_impl.hh>
 

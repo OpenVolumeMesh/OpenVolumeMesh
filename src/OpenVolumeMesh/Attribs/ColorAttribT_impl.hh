@@ -35,7 +35,7 @@
 
 #define COLORATTRIBT_CC
 
-#include "ColorAttrib.hh"
+#include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
 
 namespace OpenVolumeMesh {
 

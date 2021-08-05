@@ -35,7 +35,7 @@
 
 
 
-#include "Serializers.hh"
+#include <OpenVolumeMesh/Core/Serializers.hh>
 
 namespace OpenVolumeMesh
 {
