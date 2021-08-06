@@ -1,6 +1,10 @@
 #include <fstream>
 #include <sstream>
 
+// silence boost-internal warnings
+// cf. https://stackoverflow.com/questions/37372867/deprecated-warnings-while-using-boost-spirit
+#define BOOST_ALLOW_DEPRECATED_HEADERS
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS
 #include <boost/spirit/include/qi.hpp>
 
 #include <OpenVolumeMesh/FileManager/FileManager.hh>
