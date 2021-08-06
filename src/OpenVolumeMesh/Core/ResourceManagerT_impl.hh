@@ -248,9 +248,9 @@ void ResourceManager::assignProperties(typename std::conditional<Move, ResourceM
                 out.insert(dstprop);
                 dst_all.erase(it);
                 if (Move) {
-                    dstprop->assign_values_from(srcprop);
-                } else {
                     dstprop->move_values_from(srcprop);
+                } else {
+                    dstprop->assign_values_from(srcprop);
                 }
                 dstprop->setResMan(this);
                 dstprop->set_persistent(srcprop->persistent());
