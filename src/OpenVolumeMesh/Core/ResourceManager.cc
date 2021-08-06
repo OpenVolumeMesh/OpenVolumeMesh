@@ -191,39 +191,39 @@ void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
 
 
 template<>
-size_t ResourceManager::n<Entity::Vertex>()
+size_t ResourceManager::n<Entity::Vertex>() const
 {
     return n_vertices();
 }
 template<>
-size_t ResourceManager::n<Entity::Edge>()
+size_t ResourceManager::n<Entity::Edge>() const
 {
     return n_edges();
 }
 template<>
-size_t ResourceManager::n<Entity::HalfEdge>()
+size_t ResourceManager::n<Entity::HalfEdge>() const
 {
     return n_halfedges();
 }
 template<>
-size_t ResourceManager::n<Entity::Face>()
+size_t ResourceManager::n<Entity::Face>() const
 {
     return n_faces();
 }
 template<>
-size_t ResourceManager::n<Entity::HalfFace>()
+size_t ResourceManager::n<Entity::HalfFace>() const
 {
     return n_halffaces();
 }
 
 template<>
-size_t ResourceManager::n<Entity::Cell>()
+size_t ResourceManager::n<Entity::Cell>() const
 {
     return n_cells();
 }
 
 template<>
-size_t ResourceManager::n<Entity::Mesh>()
+size_t ResourceManager::n<Entity::Mesh>() const
 {
     return 1;
 }

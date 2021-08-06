@@ -158,3 +158,17 @@ TEST_F(PolyhedralMeshBase, StatusTest) {
 
     StatusAttrib status(mesh_);
 }
+
+TEST_F(PolyhedralMeshBase, PropertyOnConstMesh)
+{
+    auto test = [](auto const &mesh) {
+        auto prop = mesh.template create_anonymous_property<int, Entity::Vertex>();
+    };
+
+
+    generatePolyhedralMesh(mesh_);
+    test(mesh_);
+}
+
+
+

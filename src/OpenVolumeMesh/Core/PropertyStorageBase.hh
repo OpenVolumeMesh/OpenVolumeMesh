@@ -145,14 +145,14 @@ protected:
 	/// Delete multiple entries in list
     virtual void delete_multiple_entries(const std::vector<bool>&) = 0;
 
-    void setResMan(ResourceManager *resMan) { resMan_ = resMan;}
-    ResourceManager *resMan() { return resMan_;}
+    void setResMan(const ResourceManager *resMan) { resMan_ = resMan;}
+    const ResourceManager *resMan() { return resMan_;}
 
     EntityType entity_type() const {return entity_type_;}
 
 private:
 
-    ResourceManager* resMan_ = nullptr;
+    const ResourceManager* resMan_ = nullptr;
 
 	std::string name_;
 	std::string internal_type_name_;

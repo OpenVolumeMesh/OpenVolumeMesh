@@ -125,14 +125,13 @@ ResourceManager::internal_find_property(const std::string& _name) const
 }
 
 template<class T, class EntityTag>
-PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def)
+PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def) const
 {
     auto type_name = get_type_name(typeid(T));
-    auto &propVec = all_props_.get<EntityTag>();
     auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, EntityTag::type(), _def);
     storage->resize(n<EntityTag>());
     storage->setResMan(this);
-    propVec.insert(storage.get());
+    all_props_.get<EntityTag>().insert(storage.get());
     return PropertyPtr<T, EntityTag>(std::move(storage));
 }
 
@@ -153,7 +152,13 @@ ResourceManager::create_property(const std::string& _name, const T _def)
     auto *prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    return {*internal_create_property<T, EntityTag>(_name, _def)};
+    return internal_create_property<T, EntityTag>(_name, _def);
+}
+template<typename T, typename EntityTag>
+PropertyPtr<T, EntityTag>
+ResourceManager::create_anonymous_property(const T _def) const
+{
+    return internal_create_property<T, EntityTag>("", _def);
 }
 
 template<typename T, typename EntityTag>
@@ -299,4 +304,6 @@ PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T 
 {
     *this = mesh->request_property<T, Entity>(_name, _def);
 }
+
+
 } // Namespace OpenVolumeMesh

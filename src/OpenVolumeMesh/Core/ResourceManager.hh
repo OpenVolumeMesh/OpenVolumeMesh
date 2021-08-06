@@ -182,6 +182,11 @@ public:
     template<typename T, typename EntityTag>
     std::optional<PropertyPtr<T, EntityTag>> create_property(const std::string& _name = std::string(), const T _def = T());
 
+    /** Create anonymous property - useful for const meshes
+     */
+    template<typename T, typename EntityTag>
+    PropertyPtr<T, EntityTag> create_anonymous_property(const T _def = T()) const;
+
     /** Get existing property: if the property does not exist, return no value.
      */
     template<typename T, typename EntityTag>
@@ -325,10 +330,10 @@ private:
     std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;
 
     template<typename T, typename EntityTag>
-    PropertyPtr<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T());
+    PropertyPtr<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T()) const;
 
     template<typename Entity>
-    size_t n();
+    size_t n() const;
 
 
 private:
@@ -336,7 +341,7 @@ private:
     friend class PropertyPtr;
 
     template<typename EntityTag>
-    void property_deleted(PropertyStorageBase *ptr) {
+    void property_deleted(PropertyStorageBase *ptr) const {
         all_props_.get<EntityTag>().erase(ptr);
     }
     template<bool Move, typename EntityTag>
@@ -345,7 +350,7 @@ private:
     void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
 
 private:
-    PerEntity<Properties> all_props_;
+    mutable PerEntity<Properties> all_props_;
     PerEntity<PersistentProperties> persistent_props_;
 
 
