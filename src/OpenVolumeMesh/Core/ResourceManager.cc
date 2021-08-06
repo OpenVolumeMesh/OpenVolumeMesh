@@ -190,43 +190,13 @@ void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
 }
 
 
-template<>
-size_t ResourceManager::n<Entity::Vertex>() const
-{
-    return n_vertices();
-}
-template<>
-size_t ResourceManager::n<Entity::Edge>() const
-{
-    return n_edges();
-}
-template<>
-size_t ResourceManager::n<Entity::HalfEdge>() const
-{
-    return n_halfedges();
-}
-template<>
-size_t ResourceManager::n<Entity::Face>() const
-{
-    return n_faces();
-}
-template<>
-size_t ResourceManager::n<Entity::HalfFace>() const
-{
-    return n_halffaces();
-}
-
-template<>
-size_t ResourceManager::n<Entity::Cell>() const
-{
-    return n_cells();
-}
-
-template<>
-size_t ResourceManager::n<Entity::Mesh>() const
-{
-    return 1;
-}
+template<> size_t ResourceManager::n<Entity::Vertex>()   const { return n_vertices(); }
+template<> size_t ResourceManager::n<Entity::Edge>()     const { return n_edges(); }
+template<> size_t ResourceManager::n<Entity::HalfEdge>() const { return n_halfedges(); }
+template<> size_t ResourceManager::n<Entity::Face>()     const { return n_faces(); }
+template<> size_t ResourceManager::n<Entity::HalfFace>() const { return n_halffaces(); }
+template<> size_t ResourceManager::n<Entity::Cell>()     const { return n_cells(); }
+template<> size_t ResourceManager::n<Entity::Mesh>()     const { return 1; }
 
 
 

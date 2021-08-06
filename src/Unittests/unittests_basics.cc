@@ -678,7 +678,7 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
 
     VertexPropertyT<Vec3d> vp = mesh_.request_vertex_property<Vec3d>("VProp");
 
-    EXPECT_TRUE(mesh_.vertex_property_exists<Vec3d>("VProp"));
+    EXPECT_TRUE((mesh_.property_exists<Vec3d, Entity::Vertex>("VProp")));
 
     for(VertexIter v_it = mesh_.v_iter(); v_it.valid(); ++v_it) {
         vp[*v_it] = Vec3d(1.0, 0.0, 0.0);
@@ -701,7 +701,7 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
 
     EdgePropertyT<unsigned int> ep = mesh_.request_edge_property<unsigned int>("EProp");
 
-    EXPECT_TRUE(mesh_.edge_property_exists<unsigned int>("EProp"));
+    EXPECT_TRUE((mesh_.property_exists<unsigned int, Entity::Edge>("EProp")));
 
     unsigned int i = 0;
     for(EdgeIter e_it = mesh_.e_iter(); e_it.valid(); ++e_it) {
@@ -715,7 +715,7 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
 
     HalfFacePropertyT<bool> hfp = mesh_.request_halfface_property<bool>("HFProp");
 
-    EXPECT_TRUE(mesh_.halfface_property_exists<bool>("HFProp"));
+    EXPECT_TRUE((mesh_.property_exists<bool, Entity::HalfFace>("HFProp")));
 
     bool b = false;
     for(HalfFaceIter hf_it = mesh_.hf_iter(); hf_it.valid(); ++hf_it) {
@@ -732,7 +732,7 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
     // Request halfface properties
     CellPropertyT<std::string> cp = mesh_.request_cell_property<std::string>("CProp");
 
-    EXPECT_TRUE(mesh_.cell_property_exists<std::string>("CProp"));
+    EXPECT_TRUE((mesh_.property_exists<std::string, Entity::Cell>("CProp")));
 
     for(CellIter c_it = mesh_.c_iter(); c_it.valid(); ++c_it) {
         cp[*c_it] = std::string("MyTestString");
@@ -742,8 +742,8 @@ TEST_F(PolyhedralMeshBase, PolyhedralMeshProperties) {
         EXPECT_EQ(std::string("MyTestString"), cp[*c_it]);
     }
 
-    EXPECT_FALSE(mesh_.halfedge_property_exists<unsigned char>("HEProp"));
-    EXPECT_FALSE(mesh_.vertex_property_exists<size_t>(""));
+    EXPECT_FALSE((mesh_.property_exists<unsigned char, Entity::HalfEdge>("HEProp")));
+    EXPECT_FALSE((mesh_.property_exists<size_t, Entity::Vertex>("")));
 }
 
 TEST_F(PolyhedralMeshBase, STLCompliance) {
