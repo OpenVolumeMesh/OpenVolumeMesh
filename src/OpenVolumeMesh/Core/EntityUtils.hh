@@ -1,7 +1,9 @@
 #pragma once
 
 #include <OpenVolumeMesh/Core/Entities.hh>
+#include <stdexcept>
 #include <algorithm>
+#include <array>
 
 
 namespace OpenVolumeMesh {
