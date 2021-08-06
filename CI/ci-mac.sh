@@ -14,14 +14,6 @@ OPTIONS="${OPTIONS} -DGTEST_LIBRARY=${HOME}/sw/gtest-1.7.0/lib/libgtest.a"
 OPTIONS="${OPTIONS} -DGTEST_INCLUDE_DIR=${HOME}/sw/gtest-1.7.0/include/"
 OPTIONS="${OPTIONS} -DGTEST_MAIN_LIBRARY=${HOME}/sw/gtest-1.7.0/lib/libgtest_main.a"
 
-if [ "$LANGUAGE" == "C++98" ]; then
-  echo "Building with C++98";
-elif [ "$LANGUAGE" == "C++11" ]; then
-  echo "Building with C++11";
-  OPTIONS="$OPTIONS -DCMAKE_CXX_FLAGS='-std=c++11' "
-fi
-
-
 #########################################
 # Build release version
 #########################################

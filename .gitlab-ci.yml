@@ -1,15 +1,15 @@
-gcc-c++11:
-  script: "CI/ci-linux.sh gcc C++11"
+gcc:
+  script: "CI/ci-linux.sh gcc"
   tags:
     - Linux
 
-clang-c++11:
-  script: "CI/ci-linux.sh clang C++11"
+clang:
+  script: "CI/ci-linux.sh clang"
   tags:
     - Linux
 
-macos-c++11:
-  script: "CI/ci-mac.sh C++11"
+macos-xcode:
+  script: "CI/ci-mac.sh"
   tags:
     - Apple
 
