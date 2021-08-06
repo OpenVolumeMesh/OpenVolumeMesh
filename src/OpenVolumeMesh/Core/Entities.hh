@@ -2,22 +2,24 @@
 
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <type_traits>
+#include <cstddef>
 
 namespace OpenVolumeMesh {
 
 enum class EntityType {
     Vertex, Edge, HalfEdge, Face, HalfFace, Cell, Mesh
 };
+inline static const size_t n_entity_types = 7;
 
 /// EntityTag:
 namespace Entity {
-struct OVM_EXPORT Vertex   { Vertex()   = delete; static EntityType type() {return EntityType::Vertex;}};
-struct OVM_EXPORT Edge     { Edge()     = delete; static EntityType type() {return EntityType::Edge;}};
-struct OVM_EXPORT HalfEdge { HalfEdge() = delete; static EntityType type() {return EntityType::HalfEdge;}};
-struct OVM_EXPORT Face     { Face()     = delete; static EntityType type() {return EntityType::Face;}};
-struct OVM_EXPORT HalfFace { HalfFace() = delete; static EntityType type() {return EntityType::HalfFace;}};
-struct OVM_EXPORT Cell     { Cell()     = delete; static EntityType type() {return EntityType::Cell;}};
-struct OVM_EXPORT Mesh     { Mesh()     = delete; static EntityType type() {return EntityType::Mesh;}};
+struct OVM_EXPORT Vertex   { static EntityType type() {return EntityType::Vertex;}};
+struct OVM_EXPORT Edge     { static EntityType type() {return EntityType::Edge;}};
+struct OVM_EXPORT HalfEdge { static EntityType type() {return EntityType::HalfEdge;}};
+struct OVM_EXPORT Face     { static EntityType type() {return EntityType::Face;}};
+struct OVM_EXPORT HalfFace { static EntityType type() {return EntityType::HalfFace;}};
+struct OVM_EXPORT Cell     { static EntityType type() {return EntityType::Cell;}};
+struct OVM_EXPORT Mesh     { static EntityType type() {return EntityType::Mesh;}};
 } // namespace Entity
 
 

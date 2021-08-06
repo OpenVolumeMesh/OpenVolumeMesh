@@ -44,8 +44,9 @@
 #include <type_traits>
 #include <optional>
 
-#include <OpenVolumeMesh/Core/Entities.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/Entities.hh>
+#include <OpenVolumeMesh/Core/EntityUtils.hh>
 #include <OpenVolumeMesh/Core/PropertyStorageT.hh>
 #include <OpenVolumeMesh/Core/TypeName.hh>
 #include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
@@ -74,29 +75,6 @@ public:
 private:
     std::shared_ptr<BaseProperty> cur_ = nullptr;
     Iter it_;
-};
-
-template<typename T>
-class PerEntity
-{
-public:
-    template<typename EntityTag>
-    inline T const & get() const {return get(EntityTag::type());}
-    template<typename EntityTag>
-    inline T &get() {return get(EntityTag::type());}
-
-    inline T &get(EntityType type) {
-        return data_[static_cast<size_t>(type)];
-    }
-    inline T const &get(EntityType type) const {
-        return data_[static_cast<size_t>(type)];
-    }
-    template<typename F>
-    auto for_each(F &f) {
-        std::for_each(data_.begin(), data_.end(), f);
-    }
-private:
-    std::array<T, 7> data_;
 };
 
 // Forward declarations
@@ -150,6 +128,7 @@ protected:
     void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b);
 
 public:
+    void clear_all_props();
     template<typename EntityTag> void clear_props();
     [[deprecated("Use clear_props<Entity::Vertex>() instead.")]]
     inline void clear_vertex_props()   { clear_props<Entity::Vertex>();}

@@ -148,6 +148,10 @@ void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2)
 
     swap_property_elements<Entity::Vertex>(_h1, _h2);
 }
+void ResourceManager::clear_all_props()
+{
+    for_each_entity([this](auto entity_tag){ clear_props<decltype(entity_tag)>();});
+}
 
 void ResourceManager::delete_multiple_vertex_props(const std::vector<bool>& _tags)
 {

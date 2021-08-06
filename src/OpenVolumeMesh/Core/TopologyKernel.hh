@@ -857,16 +857,8 @@ public:
         n_vertices_ = 0;
 
         if(_clearProps) {
-
             // Delete all property data
-            clear_vertex_props();
-            clear_edge_props();
-            clear_halfedge_props();
-            clear_face_props();
-            clear_halfface_props();
-            clear_cell_props();
-            clear_mesh_props();
-
+            clear_all_props();
         } else {
             // Resize props
             resize_vprops(0u);
