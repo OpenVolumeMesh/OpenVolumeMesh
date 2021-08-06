@@ -133,6 +133,8 @@ public:
 
     virtual operator std::unique_ptr<BaseProperty>() = 0;
 
+    EntityType entity_type() const {return entity_type_;}
+
 protected:
 
     /// Copy data from other property. `other` must point to an object with the same derived type as `this`!
@@ -148,7 +150,6 @@ protected:
     void setResMan(const ResourceManager *resMan) { resMan_ = resMan;}
     const ResourceManager *resMan() { return resMan_;}
 
-    EntityType entity_type() const {return entity_type_;}
 
 private:
 

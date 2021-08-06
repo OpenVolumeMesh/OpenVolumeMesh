@@ -114,6 +114,7 @@ public:
     size_t n_elements() const { return ptr_->n_elements(); }
 
     std::string typeNameWrapper() const override {return ptr_->typeNameWrapper(); }
+    EntityType entity_type() const {return ptr_->entity_type();}
 
     [[deprecated]]
     void copy(const EntityHandleT &_src, const EntityHandleT &_dst) {
