@@ -3,20 +3,38 @@
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <algorithm>
 
+
 namespace OpenVolumeMesh {
 
 
 /// Call templated function with a dummy argument of each entity type
-template<typename F>
-inline void for_each_entity(F fun) {
-    fun(Entity::Vertex());
-    fun(Entity::Edge());
-    fun(Entity::HalfEdge());
-    fun(Entity::Face());
-    fun(Entity::HalfFace());
-    fun(Entity::Cell());
-    fun(Entity::Mesh());
+template<typename F, typename ... Ts>
+inline void for_each_entity(F fun, Ts... args) {
+    fun(Entity::Vertex(),   std::forward<Ts>(args)...);
+    fun(Entity::Edge(),     std::forward<Ts>(args)...);
+    fun(Entity::HalfEdge(), std::forward<Ts>(args)...);
+    fun(Entity::Face(),     std::forward<Ts>(args)...);
+    fun(Entity::HalfFace(), std::forward<Ts>(args)...);
+    fun(Entity::Cell(),     std::forward<Ts>(args)...);
+    fun(Entity::Mesh(),     std::forward<Ts>(args)...);
 }
+
+/// Call templated function with a dummy argument of the dynamic entity type
+template<typename F, typename ... Ts>
+inline auto entitytag_dispatch(EntityType type, F fun, Ts... args)
+{
+    switch (type) {
+    case EntityType::Vertex:   return fun(Entity::Vertex(),   std::forward<Ts>(args)...);
+    case EntityType::Edge:     return fun(Entity::Edge(),     std::forward<Ts>(args)...);
+    case EntityType::HalfEdge: return fun(Entity::HalfEdge(), std::forward<Ts>(args)...);
+    case EntityType::Face:     return fun(Entity::Face(),     std::forward<Ts>(args)...);
+    case EntityType::HalfFace: return fun(Entity::HalfFace(), std::forward<Ts>(args)...);
+    case EntityType::Cell:     return fun(Entity::Cell(),     std::forward<Ts>(args)...);
+    case EntityType::Mesh:     return fun(Entity::Mesh(),     std::forward<Ts>(args)...);
+    }
+    throw std::runtime_error("entitytag_dispatch(): unknown entity.");
+}
+
 
 template<typename T>
 class PerEntity
