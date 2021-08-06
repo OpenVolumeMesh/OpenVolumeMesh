@@ -187,8 +187,13 @@ public:
 
     // defined in PropertyPtr.hh to avoid circular dependencies
     operator std::unique_ptr<BaseProperty>() override;
-    //template<typename EntityTag>
-    //operator PropertyPtr<T, EntityTag>();
+
+    T const& def() const {return def_;}
+
+    void fill(T const&val) {
+        std::fill(data_.begin(), data_.end(), val);
+    }
+
 
 protected:
     void assign_values_from(const PropertyStorageBase *_other) override

@@ -121,6 +121,13 @@ public:
         (*this)[_dst] = (*this)[_src];
     }
 
+    /// get default value.
+    T const &def() const {return ptr_->def();}
+
+    /// set all values to `val`.
+    void fill(T const&val) { ptr_->fill(val); }
+
+
 protected:
      PropertyPtr(std::shared_ptr<PropStorageT> &&_ptr)
          : ptr_(std::move(_ptr))
