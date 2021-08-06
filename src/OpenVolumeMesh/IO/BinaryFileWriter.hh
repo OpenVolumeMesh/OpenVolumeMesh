@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenVolumeMesh/IO/BinaryIO.hh>
+#include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <vector>
 #include <string>
 
@@ -22,9 +23,14 @@ public:
     void write_faces   (uint64_t first, uint32_t count);
     void write_cells   (uint64_t first, uint32_t count);
 
+    void write_propdir();
+    void write_all_props();
+
 private:
     StreamWriter writer_;
     MeshT const &mesh_;
+
+    std::vector<PropertyStorageBase*> props_;
 };
 
 

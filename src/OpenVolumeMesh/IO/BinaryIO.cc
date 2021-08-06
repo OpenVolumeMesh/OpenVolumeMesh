@@ -384,4 +384,18 @@ EntityType as_entity_type(PropertyEntity pe)
     throw std::runtime_error("unknown property entity.");
 }
 
+PropertyEntity as_prop_entity(EntityType pe)
+{
+    switch (pe) {
+    case EntityType::Vertex:   return PropertyEntity::Vertex;
+    case EntityType::Edge:     return PropertyEntity::Edge;
+    case EntityType::Face:     return PropertyEntity::Face;
+    case EntityType::Cell:     return PropertyEntity::Cell;
+    case EntityType::HalfEdge: return PropertyEntity::HalfEdge;
+    case EntityType::HalfFace: return PropertyEntity::HalfFace;
+    case EntityType::Mesh:     return PropertyEntity::Mesh;
+    }
+    throw std::runtime_error("unknown entity type.");
+}
+
 } // namespace OpenVolumeMesh::IO

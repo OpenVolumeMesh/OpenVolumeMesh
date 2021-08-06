@@ -1,7 +1,10 @@
 #pragma once
 #include <OpenVolumeMesh/IO/BinaryFileWriter.hh>
+#include <OpenVolumeMesh/IO/PropertySerialization.hh>
 
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <OpenVolumeMesh/Core/EntityUtils.hh>
 #include <sstream>
 
 namespace OpenVolumeMesh {
@@ -62,10 +65,12 @@ bool BinaryFileWriter<MeshT>::write()
         .n_faces = mesh_.n_faces(),
         .n_cells = mesh_.n_cells()};
     writer_.write(header);
+    write_propdir();
     write_vertices(0, header.n_verts);
     write_edges(0, header.n_edges);
     write_faces(0, header.n_faces);
     write_cells(0, header.n_cells);
+    write_all_props();
     return true;
 }
 
@@ -241,6 +246,86 @@ void BinaryFileWriter<MeshT>::write_cells(uint64_t first, uint32_t count)
     uint8_t pad = write_chunk_header(ChunkType::Cells, buf.size());
     writer_.write(buf.data(), buf.size());
     writer_.padding(pad);
+}
+
+template<typename PropIter>
+void write_propdir_entries(StreamWriter &writer, PropIter begin, PropIter end, std::vector<PropertyStorageBase*> &props)
+{
+    for (auto prop_it = begin; prop_it != end; ++prop_it)
+    {
+        PropertyStorageBase *base = *prop_it;
+        auto enc_it = property_enc.find(base->internal_type_name());
+        if (enc_it == property_enc.end()) {
+            std::cerr << "Could not find encoder for property '" << base->name()
+                      << "' of type '" << base->internal_type_name()
+                      << "', ignoring."
+                      << std::endl;
+            continue;
+        }
+        props.push_back(base);
+
+        auto encoder = enc_it->second.get();
+
+        std::ostringstream ss;
+        std::vector<uint8_t> serialized_default;
+
+        auto def_writer = StreamWriter(ss);
+        encoder->serialize_default(base, def_writer);
+        auto str = ss.str();
+        serialized_default.resize(str.size());
+        std::copy(str.begin(), str.end(), serialized_default.begin());
+
+        PropertyInfo prop_info;
+        prop_info.entity_type = as_prop_entity(base->entity_type());
+        prop_info.serialized_default = std::move(serialized_default);
+        prop_info.name = base->name();
+        prop_info.data_type_name = encoder->ovmb_type_name();
+        writer.write(prop_info);
+    }
+}
+
+template<typename MeshT>
+void BinaryFileWriter<MeshT>::write_propdir()
+{
+    std::ostringstream ss;
+    auto buf_writer = StreamWriter(ss);
+    ResourceManager const &resman = mesh_;
+    for_each_entity([&](auto entity_tag){
+        const auto begin = resman.persistent_props_begin<decltype(entity_tag)>();
+        const auto end   = resman.persistent_props_end<decltype(entity_tag)>();
+        write_propdir_entries(buf_writer, begin, end, props_);
+    });
+
+    auto buf = ss.str();
+    uint8_t pad = write_chunk_header(ChunkType::PropertyDirectory, buf.size());
+    writer_.write(buf.data(), buf.size());
+    writer_.padding(pad);
+}
+
+template<typename MeshT>
+void BinaryFileWriter<MeshT>::write_all_props()
+{
+    uint32_t idx = 0;
+    for (auto base: props_)
+    {
+        std::ostringstream ss;
+        auto buf_writer = StreamWriter(ss);
+
+        PropChunkHeader chunk_header;
+        chunk_header.idx = idx++;
+        chunk_header.base = 0;
+        chunk_header.count = base->size();
+        buf_writer.write(chunk_header);
+
+        auto enc_it = property_enc.find(base->internal_type_name());
+        PropertyEncoderBase *encoder = enc_it->second.get();
+        encoder->serialize(base, buf_writer, chunk_header.base, chunk_header.base + chunk_header.count);
+
+        auto buf = ss.str();
+        uint8_t pad = write_chunk_header(ChunkType::Property, buf.size());
+        writer_.write(buf.data(), buf.size());
+        writer_.padding(pad);
+    }
 }
 
 } // namespace OpenVolumeMesh::IO

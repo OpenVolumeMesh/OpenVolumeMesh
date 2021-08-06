@@ -15,9 +15,16 @@ namespace OpenVolumeMesh::IO {
 
 class PropertyEncoderBase {
 public:
+    PropertyEncoderBase(std::string _ovmb_type_name)
+        : ovmb_type_name_(std::move(_ovmb_type_name))
+    {}
     virtual ~PropertyEncoderBase() = default;
     //virtual void get_prop(ResourceManager &resman, EntityType type, std::string const &name) = 0;
+    virtual void serialize_default(PropertyStorageBase *prop, StreamWriter&) = 0;
     virtual void serialize(PropertyStorageBase *prop, StreamWriter&, size_t idx_begin, size_t idx_end) = 0;
+    std::string const &ovmb_type_name() {return ovmb_type_name_;};
+private:
+    std::string ovmb_type_name_;
 };
 
 class PropertyDecoderBase {
@@ -32,7 +39,7 @@ public:
 };
 
 template<typename T, typename Codec>
-void register_prop_codec(std::string const &name);
+void register_prop_codec(std::string const &ovmb_type_name);
 
 
 } // namespace OpenVolumeMesh::IO

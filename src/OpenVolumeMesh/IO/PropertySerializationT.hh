@@ -13,6 +13,9 @@ extern std::map<std::string, std::unique_ptr<PropertyEncoderBase>> property_enc;
 template<typename T, typename Codec>
 class PropertyEncoderT : public PropertyEncoderBase {
 public:
+    PropertyEncoderT(std::string _ovmb_type_name)
+        : PropertyEncoderBase(std::move(_ovmb_type_name))
+    {}
     //void get_prop(ResourceManager &resman, EntityType type, std::string const &name) override;
     void serialize(PropertyStorageBase *prop, StreamWriter&, size_t idx_begin, size_t idx_end) override;
 private:
@@ -45,7 +48,9 @@ void PropertyDecoderT<T, Codec>::request_prop(
 
     prop_ = entitytag_dispatch(type, [&](auto entity_tag)
     {
-        return resman.request_property<T, decltype(entity_tag)>(name, def);
+        auto prop = resman.request_property<T, decltype(entity_tag)>(name, def);
+        resman.set_persistent(prop);
+        return prop;
     });
 }
 
@@ -76,10 +81,10 @@ void PropertyEncoderT<T, Codec>::serialize(
 
 
 template<typename T, typename Codec>
-void register_prop_codec(std::string &public_name)
+void register_prop_codec(std::string const &ovmb_type_name)
 {
-    property_enc[get_type_name<T>()] = std::make_unique<PropertyEncoderT<T, Codec>>();
-    property_dec[public_name] = std::make_unique<PropertyDecoderT<T, Codec>>();
+    property_enc[get_type_name<T>()] = std::make_unique<PropertyEncoderT<T, Codec>>(ovmb_type_name);
+    property_dec[ovmb_type_name] = std::make_unique<PropertyDecoderT<T, Codec>>();
 }
 
 } // namespace OpenVolumeMesh::IO

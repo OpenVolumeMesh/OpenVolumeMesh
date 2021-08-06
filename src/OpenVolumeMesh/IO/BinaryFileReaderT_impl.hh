@@ -436,21 +436,11 @@ void BinaryFileReader<MeshT>::readFacesOrCells(
 template<typename MeshT>
 void BinaryFileReader<MeshT>::readPropDirChunk(BufferReader &reader)
 {
-    reader.need(4);
-    uint32_t count = reader.u32();
-
     if (props_.size() != 0) {
         // we can only have one property directory!
         state_ = ReadState::Error; // TODO more specific error
         return;
     }
-
-    if (count == 0) {
-        state_ = ReadState::ErrorEmptyList;
-        return;
-    }
-    reader.need(count * 8);
-    props_.reserve(count);
     while (stream_.remaining_bytes() > 0)
     {
         PropertyInfo prop_info;

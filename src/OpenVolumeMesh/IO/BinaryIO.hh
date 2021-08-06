@@ -27,9 +27,10 @@ enum class PropertyEntity : uint8_t {
     HalfFace = 5,
     Mesh     = 6
 };
+template<> inline size_t ovmb_size<PropertyEntity> = 1;
 
 EntityType as_entity_type(PropertyEntity pe);
-template<> inline size_t ovmb_size<PropertyEntity> = 1;
+PropertyEntity as_prop_entity(EntityType pe);
 
 #if 0
 enum class PropertyDataType : uint8_t {
