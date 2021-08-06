@@ -177,7 +177,7 @@ void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _fla
 {
     if(_flag == _prop.persistent()) return;
 
-    auto sptr = std::static_pointer_cast<PropertyStorageBase>(_prop.ptr());
+    auto sptr = std::static_pointer_cast<PropertyStorageBase>(_prop.storage());
     if (_flag) {
         persistent_props_.get<EntityTag>().insert(sptr);
     } else {
@@ -306,6 +306,7 @@ void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, Re
 
 template <class T, typename Entity>
 PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def)
+    : PropertyStoragePtr<T> (nullptr)
 {
     *this = mesh->request_property<T, Entity>(_name, _def);
 }

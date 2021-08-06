@@ -46,14 +46,80 @@
 #include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
 #include <OpenVolumeMesh/Core/PropertyDefines.hh>
 #include <OpenVolumeMesh/Core/BaseProperty.hh>
+#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 #include <OpenVolumeMesh/Core/Serializers.hh>
 
 namespace OpenVolumeMesh {
 
 
+
+template <class T>
+class PropertyStorageT;
+
+template <typename T>
+class PropertyStoragePtr : public BaseProperty
+                         , public detail::Tracked<PropertyStoragePtr<T>>
+{
+public:
+    using PropStorageT = PropertyStorageT<T>;
+    typedef typename PropStorageT::value_type                  value_type;
+    typedef typename PropStorageT::vector_type::const_iterator const_iterator;
+    typedef typename PropStorageT::vector_type::iterator       iterator;
+    typedef typename PropStorageT::reference                   reference;
+    typedef typename PropStorageT::const_reference             const_reference;
+
+    const_iterator begin() const { return storage()->begin(); }
+    const_iterator end() const   { return storage()->end(); }
+    iterator begin() { return storage()->begin(); }
+    iterator end()   { return storage()->end(); }
+    size_t size() const { return storage()->size(); }
+    operator bool() const {return storage()->resMan() != nullptr;}
+
+    void serialize(std::ostream& _ostr) const override { storage()->serialize(_ostr); }
+    void deserialize(std::istream& _istr) override { storage()->deserialize(_istr); }
+
+    bool persistent() const override { return storage()->persistent(); }
+    bool anonymous() const override { return storage()->anonymous(); }
+    size_t n_elements() const { return storage()->n_elements(); }
+
+    std::string typeNameWrapper() const override {return storage()->typeNameWrapper(); }
+    EntityType entity_type() const {return storage()->entity_type();}
+
+    const std::string& name() const & override {
+        // the string we return a reference to lives long enough, no warnings please:
+        // cppcheck-suppress returnTempReference
+        return storage()->name();
+    }
+
+    /// get default value.
+    T const &def() const {return storage()->def();}
+
+    /// set all values to `val`.
+    void fill(T const&val) { storage()->fill(val); }
+
+
+
+    ~PropertyStoragePtr() override;
+protected:
+    PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr);
+
+    std::shared_ptr<PropertyStorageT<T>> &storage();
+    std::shared_ptr<PropertyStorageT<T>> const &storage() const;
+
+    friend PropertyStorageT<T>;
+    void set_storage(std::shared_ptr<PropertyStorageT<T>> &&_ptr);
+
+
+private:
+    std::shared_ptr<PropertyStorageT<T>> storage_;
+    // TODO: for non-bool props: store span of actual data, use Tracker/Tracked to update on reallocations
+    //     - then use this instead of ptr() indirection in PropertyPtr
+};
+
 template <class T, typename EntityTag>
 class PropertyPtr;
+
 
 //== CLASS DEFINITION =========================================================
 
@@ -69,6 +135,7 @@ class PropertyStorageT: public PropertyStorageBase {
 public:
 
     template <class PropT, class Entity> friend class PropertyPtr;
+    template <class PropT> friend class PropertyStoragePtr;
 
     typedef T                                         Value;
     typedef typename std::vector<T>                   vector_type;
@@ -107,13 +174,13 @@ public:
         std::swap(data_[_i0], data_[_i1]);
     }
 
-	virtual void copy(size_t _src_idx, size_t _dst_idx) {
+    virtual void copy(size_t _src_idx, size_t _dst_idx) {
 		data_[_dst_idx] = data_[_src_idx];
-	}
+    }
 	void delete_element(size_t _idx) override {
         assert(_idx < data_.size());
 		data_.erase(data_.begin() + static_cast<long>(_idx));
-	}
+    }
 
 public:
 
@@ -234,6 +301,9 @@ protected:
         data_.swap(new_data);
     }
 
+protected:
+    detail::Tracker<PropertyStoragePtr<T>> pointer_tracker;
+
 private:
 
 	vector_type data_;
@@ -268,6 +338,27 @@ inline void PropertyStorageT<bool>::deserialize(std::istream& _istr)
         data_[i] = val;
     }
 }
+
+template<typename T>
+PropertyStoragePtr<T>::PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T> > &&_ptr)
+    : detail::Tracked<PropertyStoragePtr<T>>(&_ptr->pointer_tracker)
+    , storage_(std::move(_ptr))
+{}
+
+template<typename T>
+void PropertyStoragePtr<T>::set_storage(std::shared_ptr<PropertyStorageT<T> > &&_ptr)
+{
+    storage_ = std::move(_ptr);
+}
+
+template<typename T>
+PropertyStoragePtr<T>::~PropertyStoragePtr() = default;
+
+template<typename T>
+std::shared_ptr<PropertyStorageT<T> > &PropertyStoragePtr<T>::storage() {return storage_;}
+
+template<typename T>
+const std::shared_ptr<PropertyStorageT<T> > &PropertyStoragePtr<T>::storage() const {return storage_;}
 
 
 } // Namespace OpenVolumeMesh

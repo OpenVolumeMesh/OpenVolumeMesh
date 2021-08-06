@@ -42,6 +42,7 @@
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/System/Deprecation.hh>
 #include <OpenVolumeMesh/Core/PropertyStorageT.hh>
+#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 
 namespace OpenVolumeMesh {
@@ -51,90 +52,70 @@ class ResourceManager;
 /**
  * \class PropertyPtr
  *
- * Provides user access to property contents.
+ * Provides handle-type-safe user access to property contents.
  */
 
-template <class T, typename EntityTag>
-class PropertyPtr : public BaseProperty
+template <typename T, typename EntityTag>
+class PropertyPtr : public PropertyStoragePtr<T>
 {
     static_assert(is_entity<EntityTag>::value);
+    using PropertyStoragePtr<T>::storage;
 public:
+    using PropertyStoragePtr<T>::begin;
+    using PropertyStoragePtr<T>::end;
+    using PropertyStoragePtr<T>::size;
+    using PropertyStoragePtr<T>::serialize;
+    using PropertyStoragePtr<T>::deserialize;
+    using PropertyStoragePtr<T>::persistent;
+    using PropertyStoragePtr<T>::anonymous;
+    using PropertyStoragePtr<T>::n_elements;
+    using PropertyStoragePtr<T>::typeNameWrapper;
+    using PropertyStoragePtr<T>::entity_type;
+    using PropertyStoragePtr<T>::operator bool;
+    using PropertyStoragePtr<T>::def;
+    using PropertyStoragePtr<T>::fill;
+    using PropertyStoragePtr<T>::name;
+    using reference = typename PropertyStoragePtr<T>::reference;
+    using const_reference = typename PropertyStoragePtr<T>::const_reference;
+
     // defined in ResourceManagerT_impl to avoid circular references
     PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
 
     ~PropertyPtr() {
-        auto resman = ptr_->resMan();
+        // TODO: move this to extra parent class, then implement default assignment ops and copy constructors
+        auto resman = storage()->resMan();
         if (resman != nullptr) {
-            if (ptr_.use_count() == 1) {
-                resman->template property_deleted<EntityTag>(ptr_.get());
+            if (storage().use_count() == 1) {
+                resman->template property_deleted<EntityTag>(storage().get());
             }
         }
     }
 
-    operator bool() const {return ptr_->resMan() != nullptr;}
-
     friend class ResourceManager;
     friend class PropertyStorageT<T>;
 
-    using PropStorageT = PropertyStorageT<T>;
-
-    typedef typename PropStorageT::value_type                  value_type;
-    typedef typename PropStorageT::vector_type::const_iterator const_iterator;
-    typedef typename PropStorageT::vector_type::iterator       iterator;
-    typedef typename PropStorageT::reference                   reference;
-    typedef typename PropStorageT::const_reference             const_reference;
-
     using EntityHandleT = HandleT<EntityTag>;
 
-    const std::string& name() const & override {
-        // the string we return a reference to lives long enough, no warnings please:
-        // cppcheck-suppress returnTempReference
-        return ptr_->name();
-    }
-
-    const_iterator begin() const { return ptr_->begin(); }
-    const_iterator end() const   { return ptr_->end(); }
-    iterator begin() { return ptr_->begin(); }
-    iterator end()   { return ptr_->end(); }
-    size_t size() const { return ptr_->size(); }
+    /// No range check performed!
+    reference operator[](const EntityHandleT& _h) { return (*storage())[_h.uidx()]; }
 
     /// No range check performed!
-    reference operator[](const EntityHandleT& _h) { return (*ptr_)[_h.uidx()]; }
+    const_reference operator[](const EntityHandleT& _h) const { return (*storage())[_h.uidx()]; }
 
-    /// No range check performed!
-    const_reference operator[](const EntityHandleT& _h) const { return (*ptr_)[_h.uidx()]; }
+    reference       at(const EntityHandleT& _h) { return storage()->at(_h.uidx()); }
+    const_reference at(const EntityHandleT& _h) const { return storage()->at(_h.uidx()); }
 
-    reference       at(const EntityHandleT& _h) { return ptr_->at(_h.uidx()); }
-    const_reference at(const EntityHandleT& _h) const { return ptr_->at(_h.uidx()); }
-
-    void serialize(std::ostream& _ostr) const override { ptr_->serialize(_ostr); }
-    void deserialize(std::istream& _istr) override { ptr_->deserialize(_istr); }
-
-    bool persistent() const override { return ptr_->persistent(); }
-    bool anonymous() const override { return ptr_->anonymous(); }
-    size_t n_elements() const { return ptr_->n_elements(); }
-
-    std::string typeNameWrapper() const override {return ptr_->typeNameWrapper(); }
-    EntityType entity_type() const {return ptr_->entity_type();}
 
     [[deprecated]]
     void copy(const EntityHandleT &_src, const EntityHandleT &_dst) {
         (*this)[_dst] = (*this)[_src];
     }
 
-    /// get default value.
-    T const &def() const {return ptr_->def();}
-
-    /// set all values to `val`.
-    void fill(T const&val) { ptr_->fill(val); }
-
 
 protected:
-     PropertyPtr(std::shared_ptr<PropStorageT> &&_ptr)
-         : ptr_(std::move(_ptr))
+     PropertyPtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr)
+         : PropertyStoragePtr<T>(std::move(_ptr))
      {}
-     std::shared_ptr<PropStorageT> const &ptr() const {return ptr_;}
-     std::shared_ptr<PropStorageT> ptr_;
 };
 
 template<typename T>
