@@ -54,9 +54,7 @@ public:
     }
 
     void add_vertex() {
-
-        OpenVolumeMesh::VertexHandle vh = mesh_.add_vertex(vertex_);
-        //std::cerr << "Added vertex " << mesh_.vertex(vh) << std::endl;
+        mesh_.add_vertex(vertex_);
         v_component_ = 0;
     }
 
