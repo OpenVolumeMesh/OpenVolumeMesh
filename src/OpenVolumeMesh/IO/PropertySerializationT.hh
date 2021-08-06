@@ -75,7 +75,7 @@ void PropertyEncoderT<T, Codec>::serialize(
     assert (idx_begin >=0 && idx_begin < prop->size());
     assert (idx_begin <= idx_end && idx_end <= prop->size());
     for (size_t idx = idx_begin; idx < idx_end; ++idx) {
-        Codec::encode_one(writer,  (*prop)[idx]);
+        Codec::encode_one(writer,  (*prop)[idx]); // TODO: this does not work for compact storage of bool props
     }
 }
 
