@@ -40,11 +40,15 @@
 
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/TypeName.hh>
 
 namespace OpenVolumeMesh {
 
 class ResourceManager;
 class BaseProperty;
+
+template<typename T>
+class PropertyStorageT;
 
 /** \class OpenVolumeMeshBaseProperty
 
@@ -134,6 +138,15 @@ public:
     virtual operator std::unique_ptr<BaseProperty>() = 0;
 
     EntityType entity_type() const {return entity_type_;}
+
+    template<typename T>
+    PropertyStorageT<T>* cast_to_StorageT()
+    {
+        if (get_type_name<T>() != internal_type_name()) {
+            throw std::bad_cast();
+        }
+        return static_cast<PropertyStorageT<T>*>(this);
+    }
 
 protected:
 

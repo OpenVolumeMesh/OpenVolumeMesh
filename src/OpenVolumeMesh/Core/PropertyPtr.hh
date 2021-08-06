@@ -42,7 +42,6 @@
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/System/Deprecation.hh>
 #include <OpenVolumeMesh/Core/PropertyStorageT.hh>
-#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 
 namespace OpenVolumeMesh {

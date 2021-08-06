@@ -127,8 +127,7 @@ ResourceManager::internal_find_property(const std::string& _name) const
 template<class T, class EntityTag>
 PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def) const
 {
-    auto type_name = get_type_name(typeid(T));
-    auto storage = std::make_shared<PropertyStorageT<T>>(_name, type_name, EntityTag::type(), _def);
+    auto storage = std::make_shared<PropertyStorageT<T>>(_name, EntityTag::type(), _def);
     storage->resize(n<EntityTag>());
     storage->setResMan(this);
     all_props_.get<EntityTag>().insert(storage.get());

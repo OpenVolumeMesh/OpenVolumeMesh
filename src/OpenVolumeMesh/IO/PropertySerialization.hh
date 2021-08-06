@@ -5,43 +5,57 @@
 #include <OpenVolumeMesh/IO/BinaryIO.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
+#include <OpenVolumeMesh/Core/EntityUtils.hh>
+#include <any>
 
 namespace OpenVolumeMesh::IO {
 
 
-#if 0
-class PropertyEncoder {
-    virtual bool read(StreamWriter&, size_t base, size_t count);
+class PropertyEncoderBase {
+public:
+    virtual ~PropertyEncoderBase() = default;
+    //virtual void get_prop(ResourceManager &resman, EntityType type, std::string const &name) = 0;
+    virtual bool serialize(PropertyStorageBase *prop, StreamWriter&, size_t idx_begin, size_t idx_end) = 0;
+};
+
+class PropertyDecoderBase {
+public:
+    virtual ~PropertyDecoderBase() = default;
+    virtual void request_prop(
+            ResourceManager &resman,
+            EntityType type,
+            std::string const &name,
+            const std::vector<uint8_t> &encoded_def) = 0;
+    virtual bool deserialize(BufferReader&, size_t idx_begin, size_t idx_end) = 0;
+};
+
+template<typename T, typename Codec>
+class PropertyEncoderT : public PropertyEncoderBase {
+public:
+    //void get_prop(ResourceManager &resman, EntityType type, std::string const &name) override;
+    bool serialize(PropertyStorageBase *prop, StreamWriter&, size_t idx_begin, size_t idx_end) override;
 private:
-    const std::string data_type_name_;
+    std::unique_ptr<PropertyStoragePtr<T>> prop_;
 };
 
-class PropertyDecoder {
-    virtual bool create_prop(ResourceManager &resman, EntityType type, std::string const &name) = 0;
-    virtual bool read(BufferReader&, size_t base, size_t count);
+
+template<typename T, typename Codec>
+class PropertyDecoderT : public PropertyDecoderBase {
+public:
+    void request_prop(ResourceManager &resman,
+                      EntityType type,
+                      std::string const &name,
+                      const std::vector<uint8_t> &encoded_def) override;
+    bool deserialize(BufferReader&, size_t idx_begin, size_t idx_end) override;
 private:
+    std::unique_ptr<PropertyStoragePtr<T>> prop_;
 };
 
-template<typename T>
-class PropertyDecoderT : public PropertyDecoder {
-    bool create_prop(ResourceManager &resman, EntityType type, std::string const &name) override;
-    bool read(BufferReader&, size_t base, size_t count) override;
-private:
-    // ref to prop
 
-};
-
-class PropertyEncoderFactory {
-    template<typename MeshT>
-    PropertyEncoder make(const MeshT &mesh, property...);
-};
-
-class PropertyDecoderFactory {
-};
-
-template<typename T>
-void register_prop_codec(std::string name);
-#endif
+template<typename T, typename Codec>
+void register_prop_codec(std::string const &name);
 
 
 } // namespace OpenVolumeMesh::IO

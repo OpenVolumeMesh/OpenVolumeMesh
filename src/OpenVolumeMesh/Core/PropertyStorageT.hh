@@ -46,12 +46,11 @@
 #include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
 #include <OpenVolumeMesh/Core/PropertyDefines.hh>
 #include <OpenVolumeMesh/Core/BaseProperty.hh>
-#include <OpenVolumeMesh/Core/detail/Tracking.hh>
+//#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 #include <OpenVolumeMesh/Core/Serializers.hh>
 
 namespace OpenVolumeMesh {
-
 
 
 template <class T>
@@ -59,7 +58,7 @@ class PropertyStorageT;
 
 template <typename T>
 class PropertyStoragePtr : public BaseProperty
-                         , public detail::Tracked<PropertyStoragePtr<T>>
+                         //, public detail::Tracked<PropertyStoragePtr<T>>
 {
 public:
     using PropStorageT = PropertyStorageT<T>;
@@ -113,13 +112,9 @@ protected:
 
 private:
     std::shared_ptr<PropertyStorageT<T>> storage_;
-    // TODO: for non-bool props: store span of actual data, use Tracker/Tracked to update on reallocations
-    //     - then use this instead of ptr() indirection in PropertyPtr
 };
-
 template <class T, typename EntityTag>
 class PropertyPtr;
-
 
 //== CLASS DEFINITION =========================================================
 
@@ -147,10 +142,9 @@ public:
 
 	explicit PropertyStorageT(
             const std::string& _name,
-            const std::string& _internal_type_name,
             EntityType _entity_type,
             const T &_def = T())
-        : PropertyStorageBase(_name, _internal_type_name, _entity_type),
+        : PropertyStorageBase(_name, get_type_name<T>(), _entity_type),
           def_(_def)
     {}
 
@@ -174,13 +168,13 @@ public:
         std::swap(data_[_i0], data_[_i1]);
     }
 
-    virtual void copy(size_t _src_idx, size_t _dst_idx) {
+	virtual void copy(size_t _src_idx, size_t _dst_idx) {
 		data_[_dst_idx] = data_[_src_idx];
-    }
+	}
 	void delete_element(size_t _idx) override {
         assert(_idx < data_.size());
 		data_.erase(data_.begin() + static_cast<long>(_idx));
-    }
+	}
 
 public:
 
@@ -302,8 +296,7 @@ protected:
     }
 
 protected:
-    detail::Tracker<PropertyStoragePtr<T>> pointer_tracker;
-
+    //detail::Tracker<PropertyStoragePtr<T>> pointer_tracker;
 private:
 
 	vector_type data_;
@@ -338,11 +331,11 @@ inline void PropertyStorageT<bool>::deserialize(std::istream& _istr)
         data_[i] = val;
     }
 }
-
 template<typename T>
 PropertyStoragePtr<T>::PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T> > &&_ptr)
-    : detail::Tracked<PropertyStoragePtr<T>>(&_ptr->pointer_tracker)
-    , storage_(std::move(_ptr))
+    :
+      //detail::Tracked<PropertyStoragePtr<T>>(&_ptr->pointer_tracker) ,
+      storage_(std::move(_ptr))
 {}
 
 template<typename T>

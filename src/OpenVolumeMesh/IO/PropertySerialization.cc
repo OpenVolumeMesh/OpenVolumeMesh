@@ -3,14 +3,11 @@
 
 namespace OpenVolumeMesh::IO {
 
-#if 0
-/// public type name -> serializer
-static std::map<std::string, PropertyDecoder> property_enc;
+/// public (filename) type name -> serializer
+std::map<std::string, std::unique_ptr<PropertyDecoderBase>> property_dec;
 
 /// internal type name -> serializer
-static std::map<std::string, PropertyEncoder> property_dec;
-
-#endif
+std::map<std::string, std::unique_ptr<PropertyEncoderBase>> property_enc;
 
 } // namespace OpenVolumeMesh::IO
 
