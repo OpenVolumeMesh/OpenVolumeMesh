@@ -4,10 +4,35 @@
 
 namespace OpenVolumeMesh::IO {
 
+/// public (filename) name -> decoder
 extern std::map<std::string, std::unique_ptr<PropertyDecoderBase>> property_dec;
 
-/// internal type name -> serializer
+/// internal type name -> encoder
 extern std::map<std::string, std::unique_ptr<PropertyEncoderBase>> property_enc;
+
+template<typename T, typename Codec>
+class PropertyEncoderT : public PropertyEncoderBase {
+public:
+    //void get_prop(ResourceManager &resman, EntityType type, std::string const &name) override;
+    void serialize(PropertyStorageBase *prop, StreamWriter&, size_t idx_begin, size_t idx_end) override;
+private:
+    std::unique_ptr<PropertyStoragePtr<T>> prop_;
+};
+
+
+template<typename T, typename Codec>
+class PropertyDecoderT : public PropertyDecoderBase {
+public:
+    void request_prop(ResourceManager &resman,
+                      EntityType type,
+                      std::string const &name,
+                      const std::vector<uint8_t> &encoded_def) override;
+    void deserialize(BufferReader&, size_t idx_begin, size_t idx_end) override;
+private:
+    std::unique_ptr<PropertyStoragePtr<T>> prop_;
+};
+
+
 
 template<typename T, typename Codec>
 void PropertyDecoderT<T, Codec>::request_prop(
@@ -25,7 +50,7 @@ void PropertyDecoderT<T, Codec>::request_prop(
 }
 
 template<typename T, typename Codec>
-bool PropertyDecoderT<T, Codec>::deserialize(BufferReader &reader, size_t idx_begin, size_t idx_end)
+void PropertyDecoderT<T, Codec>::deserialize(BufferReader &reader, size_t idx_begin, size_t idx_end)
 {
     assert (idx_begin >=0 && idx_begin < prop_.size());
     assert (idx_begin <= idx_end && idx_end <= prop_.size());
@@ -35,7 +60,7 @@ bool PropertyDecoderT<T, Codec>::deserialize(BufferReader &reader, size_t idx_be
 }
 
 template<typename T, typename Codec>
-bool PropertyEncoderT<T, Codec>::serialize(
+void PropertyEncoderT<T, Codec>::serialize(
         PropertyStorageBase *prop_base,
         StreamWriter& writer,
         size_t idx_begin,

@@ -8,6 +8,11 @@
 #include <vector>
 #include <limits>
 
+
+namespace OpenVolumeMesh {
+enum class EntityType;
+}
+
 namespace OpenVolumeMesh::IO {
 
 template<typename T>
@@ -22,6 +27,8 @@ enum class PropertyEntity : uint8_t {
     HalfFace = 5,
     Mesh     = 6
 };
+
+EntityType as_entity_type(PropertyEntity pe);
 template<> inline size_t ovmb_size<PropertyEntity> = 1;
 
 #if 0

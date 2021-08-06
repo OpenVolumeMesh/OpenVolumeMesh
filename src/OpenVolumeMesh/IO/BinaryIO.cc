@@ -1,4 +1,5 @@
 #include <OpenVolumeMesh/IO/BinaryIO.hh>
+#include <OpenVolumeMesh/Core/Entities.hh>
 
 #include <cassert>
 #include <cstring>
@@ -367,6 +368,20 @@ BinaryIStream::BinaryIStream(std::istream &_s, uint64_t _size)
     : s_(_s)
     , size_(_size)
 {
+}
+
+EntityType as_entity_type(PropertyEntity pe)
+{
+    switch (pe) {
+    case PropertyEntity::Vertex:   return EntityType::Vertex;
+    case PropertyEntity::Edge:     return EntityType::Edge;
+    case PropertyEntity::Face:     return EntityType::Face;
+    case PropertyEntity::Cell:     return EntityType::Cell;
+    case PropertyEntity::HalfEdge: return EntityType::HalfEdge;
+    case PropertyEntity::HalfFace: return EntityType::HalfFace;
+    case PropertyEntity::Mesh:     return EntityType::Mesh;
+    }
+    throw std::runtime_error("unknown property entity.");
 }
 
 } // namespace OpenVolumeMesh::IO

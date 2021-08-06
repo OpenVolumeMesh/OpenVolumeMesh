@@ -11,6 +11,8 @@
 
 namespace OpenVolumeMesh::IO {
 
+class PropertyDecoderBase;
+
 enum class ReadCompatibility {
     Ok,
     MeshVertexDimensionIncompatible,
@@ -92,10 +94,10 @@ private:
 
     struct Property {
         PropertyEntity entity;
-        std::function<bool(BufferReader&, size_t base, size_t count)> read_func = nullptr;
+        PropertyDecoderBase *decoder;
     };
 
-    std::vector<Property> props_;
+    std::vector<std::optional<Property>> props_;
 
 };
 

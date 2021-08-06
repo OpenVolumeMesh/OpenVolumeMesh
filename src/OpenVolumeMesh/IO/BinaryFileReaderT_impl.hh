@@ -1,6 +1,7 @@
 #pragma once
 
 #include <OpenVolumeMesh/IO/BinaryFileReader.hh>
+#include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <istream>
 #include <cassert>
 #include <numeric>
@@ -454,7 +455,17 @@ void BinaryFileReader<MeshT>::readPropDirChunk(BufferReader &reader)
     {
         PropertyInfo prop_info;
         reader.read(prop_info);
-        props_.push_back(Property{prop_info.entity_type});
+        auto dec_it = property_dec.find(prop_info.data_type_name);
+        if (dec_it == property_dec.end()) {
+            std::cerr << "Could not find decoder for type " << prop_info.data_type_name
+                      << ", ignoring."
+                      << std::endl;
+            props_.push_back({}); // important to have the right indices
+            continue;
+        }
+        PropertyDecoderBase *decoder = dec_it->second.get();
+        decoder->request_prop(mesh_, as_entity_type(prop_info.entity_type), prop_info.name, prop_info.serialized_default);
+        props_.emplace_back(Property{prop_info.entity_type, decoder});
     }
 }
 
@@ -467,32 +478,27 @@ void BinaryFileReader<MeshT>::readPropChunk(BufferReader &reader)
         state_ = ReadState::Error; // TODO more specific error
         return;
     }
-    Property const &prop = props_[header.idx];
-    if (prop.read_func == nullptr) {
+    auto opt_prop = props_[header.idx];
+    if (!opt_prop.has_value()) {
         reader.skip();
         return;
     }
+    Property prop = *opt_prop;
     uint64_t n = 0;
     switch (prop.entity) {
-        case OpenVolumeMesh::IO::PropertyEntity::Vertex:   n = n_verts_read_; break;
-        case OpenVolumeMesh::IO::PropertyEntity::Edge:     n = n_edges_read_; break;
-        case OpenVolumeMesh::IO::PropertyEntity::Face:     n = n_faces_read_; break;
-        case OpenVolumeMesh::IO::PropertyEntity::Cell:     n = n_cells_read_; break;
-        case OpenVolumeMesh::IO::PropertyEntity::HalfEdge: n = 2 * n_edges_read_; break;
-        case OpenVolumeMesh::IO::PropertyEntity::HalfFace: n = 2 * n_faces_read_; break;
-        case OpenVolumeMesh::IO::PropertyEntity::Mesh:     n = 1; break;
+        case PropertyEntity::Vertex:   n = n_verts_read_; break;
+        case PropertyEntity::Edge:     n = n_edges_read_; break;
+        case PropertyEntity::Face:     n = n_faces_read_; break;
+        case PropertyEntity::Cell:     n = n_cells_read_; break;
+        case PropertyEntity::HalfEdge: n = 2 * n_edges_read_; break;
+        case PropertyEntity::HalfFace: n = 2 * n_faces_read_; break;
+        case PropertyEntity::Mesh:     n = 1; break;
     }
     if (header.base >= n || n - header.base < header.count) {
         state_ = ReadState::ErrorHandleRange;
         return;
     }
-
-    bool success = prop.read_func(reader, header.base, header.count);
-    if (!success) {
-        std::cerr << "Warning: failed to read property chunk for prop " << header.idx << std::endl;
-        reader.skip();
-        return;
-    }
+    prop.decoder->deserialize(reader, header.base, header.base + header.count);
 }
 
 
