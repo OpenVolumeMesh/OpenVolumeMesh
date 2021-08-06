@@ -171,4 +171,19 @@ TEST_F(PolyhedralMeshBase, PropertyOnConstMesh)
 }
 
 
+TEST_F(PolyhedralMeshBase, PropertyAtAccess)
+{
+    generatePolyhedralMesh(mesh_);
+    auto prop = mesh_.create_anonymous_property<int, Entity::Vertex>();
+    prop.at(VertexHandle(1)) = 12345;
+    EXPECT_EQ(prop.at(VertexHandle(1)), 12345);
+    try {
+        prop.at(VertexHandle(654321)) = 1;
+        FAIL() << "Expected exception";
+    } catch (std::out_of_range &e) {
+    }
+
+}
+
+
 

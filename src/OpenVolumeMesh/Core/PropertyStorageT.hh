@@ -155,16 +155,19 @@ public:
 	}
 
 	/// Access the i'th element. No range check is performed!
-  reference operator[](size_t _idx) {
+    reference operator[](size_t _idx) {
     assert(_idx < data_.size());
 		return data_[_idx];
 	}
 
 	/// Const access to the i'th element. No range check is performed!
-  const_reference operator[](size_t _idx) const {
+    const_reference operator[](size_t _idx) const {
     assert(_idx < data_.size());
 		return data_[_idx];
 	}
+
+    const_reference at(size_t _idx) const { return data_.at(_idx); }
+    reference       at(size_t _idx)       { return data_.at(_idx); }
 
     std::shared_ptr<PropertyStorageBase> clone() const override {
         auto res = std::make_shared<PropertyStorageT<T>>(*this);

@@ -92,11 +92,10 @@ public:
     }
 
     const_iterator begin() const { return ptr_->begin(); }
+    const_iterator end() const   { return ptr_->end(); }
     iterator begin() { return ptr_->begin(); }
+    iterator end()   { return ptr_->end(); }
     size_t size() const { return ptr_->size(); }
-
-    const_iterator end() const { return ptr_->end(); }
-    iterator end() { return ptr_->end(); }
 
     /// No range check performed!
     reference operator[](const EntityHandleT& _h) { return (*ptr_)[_h.uidx()]; }
@@ -104,7 +103,8 @@ public:
     /// No range check performed!
     const_reference operator[](const EntityHandleT& _h) const { return (*ptr_)[_h.uidx()]; }
 
-    // TODO: implement at()
+    reference       at(const EntityHandleT& _h) { return ptr_->at(_h.uidx()); }
+    const_reference at(const EntityHandleT& _h) const { return ptr_->at(_h.uidx()); }
 
     void serialize(std::ostream& _ostr) const override { ptr_->serialize(_ostr); }
     void deserialize(std::istream& _istr) override { ptr_->deserialize(_istr); }
