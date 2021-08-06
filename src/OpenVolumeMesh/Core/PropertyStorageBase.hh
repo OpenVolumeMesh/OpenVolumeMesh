@@ -101,7 +101,7 @@ public:
 	virtual void delete_element(size_t _idx) = 0;
 
 	/// Return a deep copy of self.
-    virtual PropertyStorageBase* clone() const = 0;
+    virtual std::shared_ptr<PropertyStorageBase> clone() const = 0;
 
 	/// Return the name of the property
 	const std::string& name() const && = delete;
@@ -134,6 +134,13 @@ public:
     virtual operator std::unique_ptr<BaseProperty>() = 0;
 
 protected:
+
+    /// Copy data from other property. `other` must point to an object with the same derived type as `this`!
+    virtual void assign_values_from(const PropertyStorageBase *other) = 0;
+
+    /// Move data from other property. `other` must point to an object with the same derived type as `this`!
+    virtual void move_values_from(PropertyStorageBase *other) = 0;
+
 
 	/// Delete multiple entries in list
     virtual void delete_multiple_entries(const std::vector<bool>&) = 0;

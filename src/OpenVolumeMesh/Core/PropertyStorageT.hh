@@ -166,10 +166,10 @@ public:
 		return data_[_idx];
 	}
 
-	/// Make a copy of self.
-	PropertyStorageT<T>* clone() const override {
-		PropertyStorageT<T>* p = new PropertyStorageT<T>(*this);
-		return p;
+    std::shared_ptr<PropertyStorageBase> clone() const override {
+        auto res = std::make_shared<PropertyStorageT<T>>(*this);
+        res->setResMan(nullptr);
+        return res;
 	}
 
 	typename vector_type::const_iterator begin() const { return data_.begin(); }
@@ -188,6 +188,27 @@ public:
     //operator PropertyPtr<T, EntityTag>();
 
 protected:
+    void assign_values_from(const PropertyStorageBase *_other) override
+    {
+        if (_other->internal_type_name() != internal_type_name()) {
+            throw std::runtime_error("assign_values_from: incompatible types.");
+        }
+        const auto *other = static_cast<const PropertyStorageT<T>*>(_other);
+        data_ = other->data_;
+        def_ = other->def_;
+
+    }
+
+    void move_values_from(PropertyStorageBase *_other) override
+    {
+        if (_other->internal_type_name() != internal_type_name()) {
+            throw std::runtime_error("assign_values_from: incompatible types.");
+        }
+        auto *other = static_cast<PropertyStorageT<T>*>(_other);
+        data_ = std::move(other->data_);
+        def_ = std::move(other->def_);
+
+    }
 
     /// Delete multiple entries in list
     void delete_multiple_entries(const std::vector<bool>& _tags) override {
@@ -209,7 +230,7 @@ private:
 
 	vector_type data_;
 
-	const T def_;
+    T def_;
 };
 
 

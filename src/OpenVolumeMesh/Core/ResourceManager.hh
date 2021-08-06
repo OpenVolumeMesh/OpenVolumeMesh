@@ -104,11 +104,19 @@ class BaseProperty;
 
 class OVM_EXPORT ResourceManager {
 public:
-    virtual ~ResourceManager() = default;
     using Properties = std::set<PropertyStorageBase*>;
-    using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
+
+    ResourceManager() = default;
+    virtual ~ResourceManager() = default;
+
+    ResourceManager(const ResourceManager &other);
+    ResourceManager(ResourceManager &&other);
+    ResourceManager& operator=(const ResourceManager &other);
+    ResourceManager& operator=(ResourceManager &&other);
 
 protected:
+    using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
+
     /// Change size of stored vertex properties
     void resize_vprops(size_t _nv);
 
@@ -319,9 +327,6 @@ private:
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T());
 
-    PerEntity<Properties> all_props_;
-    PerEntity<PersistentProperties> persistent_props_;
-
     template<typename Entity>
     size_t n();
 
@@ -334,6 +339,17 @@ private:
     void property_deleted(PropertyStorageBase *ptr) {
         all_props_.get<EntityTag>().erase(ptr);
     }
+    template<bool Move, typename EntityTag>
+    void assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
+    template<bool Move>
+    void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
+
+private:
+    PerEntity<Properties> all_props_;
+    PerEntity<PersistentProperties> persistent_props_;
+
+
+
 };
 
 }

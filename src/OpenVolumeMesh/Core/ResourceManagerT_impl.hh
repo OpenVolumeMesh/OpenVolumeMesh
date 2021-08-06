@@ -222,6 +222,76 @@ size_t ResourceManager::n_props() const {
     return props.size();
 }
 
+template<bool Move, typename EntityTag>
+void ResourceManager::assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)
+{
+    auto &dst_all = all_props_.get<EntityTag>();
+    auto &src_all = src.all_props_.template get<EntityTag>();
+
+    // If possible, re-use existing properties instead of copying
+    // everything blindly.
+
+    PersistentProperties persist;
+
+
+    Properties out;
+    // TODO OPT: this will be slow for many props (quadratic) - we could do this in nlogn!
+    //           sort both sets by key (name, type), then traverse in parallel
+    for (PropertyStorageBase *srcprop: src_all) {
+        bool found = false;
+        for (auto it = dst_all.begin(); it != dst_all.end(); ++it)
+        {
+            PropertyStorageBase *dstprop = *it;
+            if (dstprop->name() == srcprop->name()
+                    && dstprop->internal_type_name() == srcprop->internal_type_name())
+            {
+                out.insert(dstprop);
+                dst_all.erase(it);
+                if (Move) {
+                    dstprop->assign_values_from(srcprop);
+                } else {
+                    dstprop->move_values_from(srcprop);
+                }
+                dstprop->setResMan(this);
+                dstprop->set_persistent(srcprop->persistent());
+                if (dstprop->persistent()) {
+                    persist.insert(dstprop->shared_from_this());
+                }
+                found = true;
+                break;
+            }
+        }
+        // non-persistent props that do not exist in dst would have no-one to keep them alive.
+        if (!found && srcprop->persistent())
+        {
+            std::shared_ptr<PropertyStorageBase> prop;
+            if (Move) {
+                prop = srcprop->shared_from_this();
+            } else {
+                prop = srcprop->clone();
+            }
+            prop->setResMan(this);
+            out.insert(prop.get());
+            persist.insert(std::move(prop));
+        }
+    }
+    dst_all = std::move(out);
+    persistent_props_.get<EntityTag>() = std::move(persist);
+}
+
+template<bool Move>
+void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)
+{
+    // TODO: we need some helper function to clean up this dispatch:
+    assignProperties<Move, Entity::Vertex>(src);
+    assignProperties<Move, Entity::Edge>(src);
+    assignProperties<Move, Entity::HalfEdge>(src);
+    assignProperties<Move, Entity::Face>(src);
+    assignProperties<Move, Entity::HalfFace>(src);
+    assignProperties<Move, Entity::Cell>(src);
+    assignProperties<Move, Entity::Mesh>(src);
+}
+
 
 
 template <class T, typename Entity>
