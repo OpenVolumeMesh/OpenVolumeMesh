@@ -56,6 +56,7 @@ template <class T>
 class PropertyStorageT;
 
 template <typename T>
+/// convenience access to properties through a shared_ptr
 class PropertyStoragePtr
                          //, public detail::Tracked<PropertyStoragePtr<T>>
 {
