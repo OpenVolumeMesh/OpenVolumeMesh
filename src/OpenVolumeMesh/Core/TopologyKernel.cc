@@ -381,15 +381,14 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
     if(_topologyCheck) {
 
         /*
-         * Test if all halffaces are connected and form a two-manifold
-         * => Cell is closed
-         *
-         * This test is simple: The number of involved half-edges has to be
-         * exactly twice the number of involved edges.
+         * We test the following necessary properties for a closed 2-manifold cell:
+         *   - each halfedge may only be used once (this implies a halfface may only be used once)
+         *   - if a halfedge is used, its opposite halfface must be used too
          */
 
-        size_t guess_n_halfedges = _halffaces.size() * valence(face_handle(_halffaces[0]));
+        // collect a vector of all used halfedges
         std::vector<HalfEdgeHandle> incidentHalfedges;
+        size_t guess_n_halfedges = _halffaces.size() * valence(face_handle(_halffaces[0]));
         // actually, use double the guess, better to allocate a bit more than
         // risk reallocation.
         incidentHalfedges.reserve(2 * guess_n_halfedges);
@@ -407,11 +406,17 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
             }
         }
         std::sort(incidentHalfedges.begin(), incidentHalfedges.end());
-        auto he_end = std::unique(incidentHalfedges.begin(), incidentHalfedges.end());
-        auto n_halfedges = std::distance(incidentHalfedges.begin(), he_end);
-        auto e_end = std::unique(incidentHalfedges.begin(), he_end,
+        auto duplicate = std::adjacent_find(incidentHalfedges.begin(), incidentHalfedges.end());
+        if (duplicate != incidentHalfedges.end()) {
+#ifndef NDEBUG
+            std::cerr << "add_cell(): Halfedge #" << duplicate->idx() << " is contained in more than 1 halfface." << std::endl;
+#endif
+            return InvalidCellHandle;
+        }
+        size_t n_halfedges = incidentHalfedges.size();
+        auto e_end = std::unique(incidentHalfedges.begin(), incidentHalfedges.end(),
                 [](HalfEdgeHandle a, HalfEdgeHandle b) {return a.idx()/2 == b.idx()/2;});
-        auto n_edges = std::distance(incidentHalfedges.begin(), e_end);
+        auto n_edges = static_cast<size_t>(std::distance(incidentHalfedges.begin(), e_end));
 
         if(n_halfedges != 2u * n_edges) {
 #ifndef NDEBUG
