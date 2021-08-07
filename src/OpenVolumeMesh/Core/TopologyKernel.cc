@@ -1724,38 +1724,30 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     if (_h1 == _h2)
         return;
 
-    std::vector<unsigned int> ids;
-    ids.push_back(_h1.idx());
-    ids.push_back(_h2.idx());
-
-
-    // correct pointers to those vertices
+    auto swap_edge_indices = [=](Edge &e) {
+        if (e.from_vertex() == _h1)
+            e.set_from_vertex(_h2);
+        else if (e.from_vertex() == _h2)
+            e.set_from_vertex(_h1);
+        if (e.to_vertex() == _h1)
+            e.set_to_vertex(_h2);
+        else if (e.to_vertex() == _h2)
+            e.set_to_vertex(_h1);
+    };
 
     if (has_vertex_bottom_up_incidences())
     {
-        for (unsigned int i = 0; i < 2; ++i) // For both swapped vertices
+        std::set<EdgeHandle> processed_edges; // to ensure ids are only swapped once (in the case that the two swapped vertices are connected by an edge)
+        for (const auto vh: {_h1, _h2})
         {
-            std::set<unsigned int> processed_edges; // to ensure ids are only swapped once (in the case that the two swapped vertices are connected by an edge)
-            std::vector<HalfEdgeHandle>& outgoing_hes = outgoing_hes_per_vertex_[ids[i]];
-            for (unsigned int k = 0; k < outgoing_hes.size(); ++k) // for each outgoing halfedge
+            for (const auto &heh: outgoing_halfedges(vh))
             {
-                unsigned int e_id = outgoing_hes[k].idx() / 2;
-
-                if (processed_edges.find(e_id) == processed_edges.end())
-                {
-                    Edge& e = edges_[e_id];
-                    if (e.from_vertex().idx() == (int)ids[0])
-                        e.set_from_vertex(VertexHandle(ids[1]));
-                    else if (e.from_vertex().idx() == (int)ids[1])
-                        e.set_from_vertex(VertexHandle(ids[0]));
-
-                    if (e.to_vertex().idx() == (int)ids[0])
-                        e.set_to_vertex(VertexHandle(ids[1]));
-                    else if (e.to_vertex().idx() == (int)ids[1])
-                        e.set_to_vertex(VertexHandle(ids[0]));
-
-                    processed_edges.insert(e_id);
+                EdgeHandle eh = edge_handle(heh);
+                if (processed_edges.find(eh) == processed_edges.end()) {
+                    continue;
                 }
+                swap_edge_indices(edge(eh));
+                processed_edges.insert(eh);
             }
         }
 
@@ -1763,27 +1755,14 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     else
     {
         // search for all edges containing a swapped vertex
-
-        for (unsigned int i = 0; i < edges_.size(); ++i)
-        {
-            Edge& e = edges_[i];
-            if (e.from_vertex().idx() == (int)ids[0])
-                e.set_from_vertex(VertexHandle(ids[1]));
-            else if (e.from_vertex().idx() == (int)ids[1])
-                e.set_from_vertex(VertexHandle(ids[0]));
-
-            if (e.to_vertex().idx() == (int)ids[0])
-                e.set_to_vertex(VertexHandle(ids[1]));
-            else if (e.to_vertex().idx() == (int)ids[1])
-                e.set_to_vertex(VertexHandle(ids[0]));
+        for (const auto &eh: edges()) {
+            swap_edge_indices(edge(eh));
         }
     }
 
     // swap vector entries
-    bool tmp = vertex_deleted_[ids[0]];
-    vertex_deleted_[ids[0]] = vertex_deleted_[ids[1]];
-    vertex_deleted_[ids[1]] = tmp;
-    std::swap(outgoing_hes_per_vertex_[ids[0]], outgoing_hes_per_vertex_[ids[1]]);
+    std::swap(vertex_deleted_[_h1.uidx()], vertex_deleted_[_h2.uidx()]);
+    std::swap(outgoing_hes_per_vertex_[_h1.uidx()], outgoing_hes_per_vertex_[_h2.uidx()]);
     swap_vertex_properties(_h1, _h2);
 }
 
