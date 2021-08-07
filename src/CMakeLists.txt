@@ -13,7 +13,6 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/OpenVolumeMeshHandle.cc
     OpenVolumeMesh/Core/ResourceManager.cc
     OpenVolumeMesh/Core/BaseEntities.cc
-    OpenVolumeMesh/Core/BaseProperty.cc
     OpenVolumeMesh/Core/TopologyKernel.cc
     OpenVolumeMesh/Core/Serializers.cc
     OpenVolumeMesh/Core/Iterators.cc

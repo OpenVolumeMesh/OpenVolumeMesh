@@ -75,8 +75,6 @@ private:
     Iter it_;
 };
 
-// Forward declarations
-class BaseProperty;
 
 class OVM_EXPORT ResourceManager {
 public:

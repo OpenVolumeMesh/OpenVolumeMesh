@@ -38,7 +38,6 @@
 #include <string>
 #include <memory>
 
-#include <OpenVolumeMesh/Core/BaseProperty.hh>
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/System/Deprecation.hh>
 #include <OpenVolumeMesh/Core/PropertyStorageT.hh>

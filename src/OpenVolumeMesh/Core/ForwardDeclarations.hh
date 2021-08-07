@@ -3,8 +3,6 @@
 
 namespace OpenVolumeMesh {
 
-class BaseProperty;
-
 template <class T>
 class PropertyStorageT;
 

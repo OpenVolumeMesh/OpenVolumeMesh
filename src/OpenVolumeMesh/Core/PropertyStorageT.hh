@@ -45,7 +45,6 @@
 
 #include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
 #include <OpenVolumeMesh/Core/PropertyDefines.hh>
-#include <OpenVolumeMesh/Core/BaseProperty.hh>
 //#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 #include <OpenVolumeMesh/Core/Serializers.hh>
@@ -57,7 +56,7 @@ template <class T>
 class PropertyStorageT;
 
 template <typename T>
-class PropertyStoragePtr : public BaseProperty
+class PropertyStoragePtr
                          //, public detail::Tracked<PropertyStoragePtr<T>>
 {
 public:
@@ -68,6 +67,9 @@ public:
     typedef typename PropStorageT::reference                   reference;
     typedef typename PropStorageT::const_reference             const_reference;
 
+
+    virtual ~PropertyStoragePtr();
+
     const_iterator begin() const { return storage()->begin(); }
     const_iterator end() const   { return storage()->end(); }
     iterator begin() { return storage()->begin(); }
@@ -75,17 +77,17 @@ public:
     size_t size() const { return storage()->size(); }
     operator bool() const {return storage()->resMan() != nullptr;}
 
-    void serialize(std::ostream& _ostr) const override { storage()->serialize(_ostr); }
-    void deserialize(std::istream& _istr) override { storage()->deserialize(_istr); }
+    void serialize(std::ostream& _ostr) const { storage()->serialize(_ostr); }
+    void deserialize(std::istream& _istr) { storage()->deserialize(_istr); }
 
-    bool persistent() const override { return storage()->persistent(); }
-    bool anonymous() const override { return storage()->anonymous(); }
+    bool persistent() const { return storage()->persistent(); }
+    bool anonymous() const { return storage()->anonymous(); }
     size_t n_elements() const { return storage()->n_elements(); }
 
-    std::string typeNameWrapper() const override {return storage()->typeNameWrapper(); }
+    std::string typeNameWrapper() const {return storage()->typeNameWrapper(); }
     EntityType entity_type() const {return storage()->entity_type();}
 
-    const std::string& name() const & override {
+    const std::string& name() const & {
         // the string we return a reference to lives long enough, no warnings please:
         // cppcheck-suppress returnTempReference
         return storage()->name();
@@ -99,7 +101,6 @@ public:
 
 
 
-    ~PropertyStoragePtr() override;
 protected:
     PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr);
 

@@ -45,14 +45,13 @@
 namespace OpenVolumeMesh {
 
 class ResourceManager;
-class BaseProperty;
 
 template<typename T>
 class PropertyStorageT;
 
-/** \class OpenVolumeMeshBaseProperty
+/** \class PropertyStorageBase
 
- Abstract class defining the basic interface of a dynamic property.
+ Abstract class defining the type-independent interface of a dynamic property.
 
  **/
 
