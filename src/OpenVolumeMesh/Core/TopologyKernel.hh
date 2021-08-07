@@ -966,11 +966,11 @@ public:
 
 
     void enable_deferred_deletion(bool _enable = true);
-    bool deferred_deletion_enabled() const { return deferred_deletion; }
+    bool deferred_deletion_enabled() const { return deferred_deletion_; }
 
 
-    void enable_fast_deletion(bool _enable = true) { fast_deletion = _enable; }
-    bool fast_deletion_enabled() const { return fast_deletion; }
+    void enable_fast_deletion(bool _enable = true) { fast_deletion_ = _enable; }
+    bool fast_deletion_enabled() const { return fast_deletion_; }
 
 
 protected:
@@ -999,9 +999,9 @@ private:
 
     bool f_bottom_up_ = true;
 
-    bool deferred_deletion = true;
+    bool deferred_deletion_ = true;
 
-    bool fast_deletion = true;
+    bool fast_deletion_ = true;
 
     //=====================================================================
     // Connectivity

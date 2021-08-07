@@ -84,7 +84,7 @@ VertexHandle TopologyKernel::add_vertex() {
     vertex_deleted_.push_back(false);
 
     // Create item for vertex bottom-up incidences
-    if(v_bottom_up_) {
+    if(has_vertex_bottom_up_incidences()) {
         outgoing_hes_per_vertex_.resize(n_vertices_);
     }
 
@@ -109,7 +109,7 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
 
     // Test if edge does not exist, yet
     if(!_allowDuplicates) {
-        if(v_bottom_up_) {
+        if(has_vertex_bottom_up_incidences()) {
 
             assert((size_t)_fromVertex.idx() < outgoing_hes_per_vertex_.size());
             std::vector<HalfEdgeHandle>& ohes = outgoing_hes_per_vertex_[_fromVertex.idx()];
@@ -139,7 +139,7 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
     EdgeHandle eh((int)edges_.size()-1);
 
     // Update vertex bottom-up incidences
-    if(v_bottom_up_) {
+    if(has_vertex_bottom_up_incidences()) {
         assert((size_t)_fromVertex.idx() < outgoing_hes_per_vertex_.size());
         assert((size_t)_toVertex.idx() < outgoing_hes_per_vertex_.size());
 
@@ -148,7 +148,7 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
     }
 
     // Create item for edge bottom-up incidences
-    if(e_bottom_up_) {
+    if(has_edge_bottom_up_incidences()) {
         incident_hfs_per_he_.resize(n_halfedges());
     }
 
@@ -220,7 +220,7 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
     resize_fprops(n_faces());
 
     // Update edge bottom-up incidences
-    if(e_bottom_up_) {
+    if(has_edge_bottom_up_incidences()) {
 
         const auto &face_halfedges = faces_[fh.idx()].halfedges();
         for (const auto heh: face_halfedges) {
@@ -235,7 +235,7 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
     }
 
     // Create item for face bottom-up incidences
-    if(f_bottom_up_) {
+    if(has_face_bottom_up_incidences()) {
         incident_cell_per_hf_.resize(n_halffaces(), InvalidCellHandle);
     }
 
@@ -431,7 +431,7 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
     CellHandle ch((int)cells_.size()-1);
 
     // Update face bottom-up incidences
-    if(f_bottom_up_) {
+    if(has_face_bottom_up_incidences()) {
 
         const auto &cell_halffaces = cells_[ch.idx()].halffaces();
         std::set<EdgeHandle> cell_edges;
@@ -460,7 +460,7 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
             }
         }
 
-        if(e_bottom_up_) {
+        if(has_edge_bottom_up_incidences()) {
 
             // Try to reorder all half-faces w.r.t.
             // their incident half-edges such that all
@@ -732,7 +732,7 @@ void TopologyKernel::collect_garbage()
     if (!deferred_deletion_enabled() || !needs_garbage_collection())
         return; // nothing todo
 
-    deferred_deletion = false;
+    deferred_deletion_ = false;
 
     for (int i = (int)n_cells(); i > 0; --i) {
         if (is_deleted(CellHandle(i - 1))) {
@@ -766,7 +766,7 @@ void TopologyKernel::collect_garbage()
     }
     n_deleted_vertices_ = 0;
 
-    deferred_deletion = true;
+    deferred_deletion_ = true;
 
 }
 
@@ -778,7 +778,7 @@ void TopologyKernel::get_incident_edges(const ContainerT& _vs,
 
     _es.clear();
 
-    if(v_bottom_up_) {
+    if(has_vertex_bottom_up_incidences()) {
 
         for(typename ContainerT::const_iterator v_it = _vs.begin(),
                 v_end = _vs.end(); v_it != v_end; ++v_it) {
@@ -816,7 +816,7 @@ void TopologyKernel::get_incident_faces(const ContainerT& _es,
 
     _fs.clear();
 
-    if(e_bottom_up_) {
+    if(has_edge_bottom_up_incidences()) {
 
         for(typename ContainerT::const_iterator e_it = _es.begin(),
                 e_end = _es.end(); e_it != e_end; ++e_it) {
@@ -860,7 +860,7 @@ void TopologyKernel::get_incident_cells(const ContainerT& _fs,
 
     _cs.clear();
 
-    if(f_bottom_up_) {
+    if(has_face_bottom_up_incidences()) {
 
         for(typename ContainerT::const_iterator f_it = _fs.begin(),
             f_end = _fs.end(); f_it != f_end; ++f_it) {
@@ -942,7 +942,7 @@ VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
     else
     {
         // 1)
-        if(v_bottom_up_) {
+        if(has_vertex_bottom_up_incidences()) {
 
             // Decrease all vertex handles >= _h in all edge definitions
             for(int i = h.idx(), end = (int)n_vertices(); i < end; ++i) {
@@ -978,7 +978,7 @@ VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
 
         // 2)
 
-        if(v_bottom_up_) {
+        if(has_vertex_bottom_up_incidences()) {
             assert((size_t)h.idx() < outgoing_hes_per_vertex_.size());
             outgoing_hes_per_vertex_.erase(outgoing_hes_per_vertex_.begin() + h.idx());
         }
@@ -1037,7 +1037,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 
 
     // 1)
-    if(v_bottom_up_) {
+    if(has_vertex_bottom_up_incidences()) {
 
         VertexHandle v0 = edge(h).from_vertex();
         VertexHandle v1 = edge(h).to_vertex();
@@ -1073,7 +1073,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
         if (!fast_deletion_enabled())
         {
             // 2)
-            if(e_bottom_up_) {
+            if(has_edge_bottom_up_incidences()) {
 
                 assert((size_t)halfedge_handle(h, 0).idx() < incident_hfs_per_he_.size());
 
@@ -1142,7 +1142,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 
         // 3)
 
-        if(e_bottom_up_) {
+        if(has_edge_bottom_up_incidences()) {
             assert((size_t)halfedge_handle(h, 1).idx() < incident_hfs_per_he_.size());
 
             incident_hfs_per_he_.erase(incident_hfs_per_he_.begin() + halfedge_handle(h, 1).idx());
@@ -1152,7 +1152,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
         if (!fast_deletion_enabled())
         {
             // 4)
-            if(v_bottom_up_) {
+            if(has_vertex_bottom_up_incidences()) {
                 HEHandleCorrection cor(halfedge_handle(h, 1));
     #if defined(__clang_major__) && (__clang_major__ >= 5)
                 for(std::vector<std::vector<HalfEdgeHandle> >::iterator it = outgoing_hes_per_vertex_.begin(),
@@ -1221,7 +1221,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
     }
 
     // 1)
-    if(e_bottom_up_) {
+    if(has_edge_bottom_up_incidences()) {
 
         const std::vector<HalfEdgeHandle>& hes = face(h).halfedges();
         for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(),
@@ -1260,7 +1260,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
         if (!fast_deletion_enabled())
         {
             // 2)
-            if(f_bottom_up_) {
+            if(has_face_bottom_up_incidences()) {
 
                 // Decrease all half-face handles > _h in all cells
                 // and delete all half-face handles == _h
@@ -1320,7 +1320,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
 
 
         // 3)
-        if(f_bottom_up_) {
+        if(has_face_bottom_up_incidences()) {
             assert((size_t)halfface_handle(h, 1).idx() < incident_cell_per_hf_.size());
 
             incident_cell_per_hf_.erase(incident_cell_per_hf_.begin() + halfface_handle(h, 1).idx());
@@ -1331,7 +1331,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
         if (!fast_deletion_enabled())
         {
             // 4)
-            if(e_bottom_up_) {
+            if(has_edge_bottom_up_incidences()) {
                 HFHandleCorrection cor(halfface_handle(h, 1));
 #if defined(__clang_major__) && (__clang_major__ >= 5)
                 for(std::vector<std::vector<HalfFaceHandle> >::iterator it = incident_hfs_per_he_.begin(), end = incident_hfs_per_he_.end(); it != end; ++it) {
@@ -1393,7 +1393,7 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
 
 
     // 1)
-    if(f_bottom_up_) {
+    if(has_face_bottom_up_incidences()) {
         const std::vector<HalfFaceHandle>& hfs = cell(h).halffaces();
         for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin(),
                 hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
@@ -1427,7 +1427,7 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
         // 2)
         if (!fast_deletion_enabled())
         {
-            if(f_bottom_up_) {
+            if(has_face_bottom_up_incidences()) {
                 CHandleCorrection cor(h);
 #if defined(__clang_major__) && (__clang_major__ >= 5)
                 for(std::vector<CellHandle>::iterator it = incident_cell_per_hf_.begin(),
@@ -1985,7 +1985,7 @@ CellIter TopologyKernel::delete_cell_range(const CellIter& _first, const CellIte
     std::vector<Cell>::iterator it = cells_.erase(cells_.begin() + _first->idx(), cells_.begin() + _last->idx());
 
     // Re-compute face bottom-up incidences if necessary
-    if(f_bottom_up_) {
+    if(has_face_bottom_up_incidences()) {
         f_bottom_up_ = false;
         enable_face_bottom_up_incidences(true);
     }
@@ -1995,10 +1995,10 @@ CellIter TopologyKernel::delete_cell_range(const CellIter& _first, const CellIte
 
 void TopologyKernel::enable_deferred_deletion(bool _enable)
 {
-    if (deferred_deletion && !_enable)
+    if (deferred_deletion_ && !_enable)
         collect_garbage();
 
-    deferred_deletion = _enable;
+    deferred_deletion_ = _enable;
 }
 
 //========================================================================================
