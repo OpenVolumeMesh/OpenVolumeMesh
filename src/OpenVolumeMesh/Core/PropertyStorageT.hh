@@ -246,9 +246,6 @@ public:
 
     std::string typeNameWrapper() const override {return OpenVolumeMesh::typeName<T>();}
 
-    // defined in PropertyPtr.hh to avoid circular dependencies
-    operator std::unique_ptr<BaseProperty>() override;
-
     T const& def() const {return def_;}
 
     void fill(T const&val) {

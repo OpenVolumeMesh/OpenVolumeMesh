@@ -117,18 +117,6 @@ protected:
      {}
 };
 
-template<typename T>
-PropertyStorageT<T>::operator std::unique_ptr<BaseProperty>()
-{
-    auto sp = std::static_pointer_cast<PropertyStorageT<T>>(shared_from_this());
-    return entitytag_dispatch(entity_type(), [](auto entity_tag, auto &&sp)
-    {
-    // unfortunately we cannot use make_unique due to our protected constructor
-            auto ptr = new PropertyPtr<T, decltype(entity_tag)>(std::move(sp));
-            return std::unique_ptr<BaseProperty>(ptr);
-    }, std::move(sp));
-}
-
 template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
 template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;
 template<typename T> using HalfEdgePropertyT = PropertyPtr<T, Entity::HalfEdge>;

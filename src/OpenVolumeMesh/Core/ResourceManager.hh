@@ -72,7 +72,6 @@ public:
         return it_ != other.it_;
     }
 private:
-    std::shared_ptr<BaseProperty> cur_ = nullptr;
     Iter it_;
 };
 

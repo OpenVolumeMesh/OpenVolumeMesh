@@ -135,8 +135,6 @@ public:
 
     virtual std::string typeNameWrapper() const = 0;
 
-    virtual operator std::unique_ptr<BaseProperty>() = 0;
-
     EntityType entity_type() const {return entity_type_;}
 
     template<typename T>
