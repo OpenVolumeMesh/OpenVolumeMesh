@@ -32,6 +32,7 @@
  *                                                                           *
 \*===========================================================================*/
 
+// TODO: rename to Handles.hh
 #pragma once
 
 #include <algorithm>

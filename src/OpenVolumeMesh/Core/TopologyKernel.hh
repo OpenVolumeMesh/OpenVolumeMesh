@@ -41,11 +41,15 @@
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 #include <OpenVolumeMesh/Core/Iterators.hh>
+#include <OpenVolumeMesh/Core/VertexEdgeIncidence.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 
-class OVM_EXPORT TopologyKernel : public ResourceManager {
+class OVM_EXPORT TopologyKernel
+        : public ResourceManager
+        , public VertexEdgeIncidence
+{
 public:
 
     TopologyKernel() = default;
@@ -674,10 +678,7 @@ public:
 
     /// Get valence of vertex (number of incident edges)
     inline size_t valence(const VertexHandle& _vh) const {
-        assert(has_vertex_bottom_up_incidences());
-        assert(_vh.is_valid() && _vh.uidx() < outgoing_hes_per_vertex_.size());
-
-        return outgoing_hes_per_vertex_[_vh.uidx()].size();
+        return VertexEdgeIncidence::valence(_vh);
     }
 
     /// Get valence of edge (number of incident faces)
@@ -849,7 +850,6 @@ public:
         n_deleted_edges_ = 0;
         n_deleted_faces_ = 0;
         n_deleted_cells_ = 0;
-        outgoing_hes_per_vertex_.clear();
         incident_hfs_per_he_.clear();
         incident_cell_per_hf_.clear();
         n_vertices_ = 0;
@@ -879,19 +879,9 @@ public:
         enable_face_bottom_up_incidences(_enable);
     }
 
-    void enable_vertex_bottom_up_incidences(bool _enable = true) {
-
-        if(_enable && !v_bottom_up_) {
-            // Vertex bottom-up incidences have to be
-            // recomputed for the whole mesh
-            compute_vertex_bottom_up_incidences();
-        }
-
-        if(!_enable) {
-            outgoing_hes_per_vertex_.clear();
-        }
-
-        v_bottom_up_ = _enable;
+    void enable_vertex_bottom_up_incidences(bool _enable = true)
+    {
+        VertexEdgeIncidence::setEnabled(_enable);
     }
 
     void enable_edge_bottom_up_incidences(bool _enable = true) {
@@ -973,9 +963,6 @@ protected:
     void compute_face_bottom_up_incidences();
 
     void reorder_incident_halffaces(const EdgeHandle& _eh);
-
-    // Outgoing halfedges per vertex
-    std::vector<std::vector<HalfEdgeHandle> > outgoing_hes_per_vertex_;
 
     // Incident halffaces per (directed) halfedge
     std::vector<std::vector<HalfFaceHandle> > incident_hfs_per_he_;
@@ -1156,6 +1143,12 @@ public:
 
     bool inline needs_garbage_collection() const {
         return n_deleted_vertices_ > 0 || n_deleted_edges_ > 0 || n_deleted_faces_ > 0 || n_deleted_cells_ > 0;
+    }
+
+public:
+    template<typename Entity>
+    bool is_valid(HandleT<Entity> _h) const {
+        return _h.uidx() < n<Entity>();
     }
 
 protected:

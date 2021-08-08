@@ -340,6 +340,7 @@ private:
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T()) const;
 
+public:
     template<typename Entity>
     size_t n() const;
 

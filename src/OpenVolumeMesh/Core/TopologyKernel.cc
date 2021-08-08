@@ -138,14 +138,7 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
 
     EdgeHandle eh((int)edges_.size()-1);
 
-    // Update vertex bottom-up incidences
-    if(has_vertex_bottom_up_incidences()) {
-        assert((size_t)_fromVertex.idx() < outgoing_hes_per_vertex_.size());
-        assert((size_t)_toVertex.idx() < outgoing_hes_per_vertex_.size());
-
-        outgoing_hes_per_vertex_[_fromVertex.idx()].push_back(halfedge_handle(eh, 0));
-        outgoing_hes_per_vertex_[_toVertex.idx()].push_back(halfedge_handle(eh, 1));
-    }
+    VertexEdgeIncidence::add_edge(eh, edges_.back());
 
     // Create item for edge bottom-up incidences
     if(has_edge_bottom_up_incidences()) {
@@ -493,28 +486,10 @@ void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVe
 
     Edge& e = edge(_eh);
 
-    // Update bottom-up entries
-    if(has_vertex_bottom_up_incidences()) {
-
-        const VertexHandle& fv = e.from_vertex();
-        const VertexHandle& tv = e.to_vertex();
-
-        const HalfEdgeHandle heh0 = halfedge_handle(_eh, 0);
-        const HalfEdgeHandle heh1 = halfedge_handle(_eh, 1);
-
-        std::vector<HalfEdgeHandle>::iterator h_end =
-        		std::remove(outgoing_hes_per_vertex_[fv.idx()].begin(), outgoing_hes_per_vertex_[fv.idx()].end(), heh0);
-        outgoing_hes_per_vertex_[fv.idx()].resize(h_end - outgoing_hes_per_vertex_[fv.idx()].begin());
-
-        h_end = std::remove(outgoing_hes_per_vertex_[tv.idx()].begin(), outgoing_hes_per_vertex_[tv.idx()].end(), heh1);
-        outgoing_hes_per_vertex_[tv.idx()].resize(h_end - outgoing_hes_per_vertex_[tv.idx()].begin());
-
-        outgoing_hes_per_vertex_[_fromVertex.idx()].push_back(heh0);
-        outgoing_hes_per_vertex_[_toVertex.idx()].push_back(heh1);
-    }
-
+    VertexEdgeIncidence::delete_edge(_eh, e);
     e.set_from_vertex(_fromVertex);
     e.set_to_vertex(_toVertex);
+    VertexEdgeIncidence::add_edge(_eh, e);
 }
 
 //========================================================================================
@@ -960,27 +935,7 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
         h = last_edge;
     }
 
-
-    // 1)
-    if(has_vertex_bottom_up_incidences()) {
-
-        VertexHandle v0 = edge(h).from_vertex();
-        VertexHandle v1 = edge(h).to_vertex();
-        assert(v0.is_valid() && (size_t)v0.idx() < outgoing_hes_per_vertex_.size());
-        assert(v1.is_valid() && (size_t)v1.idx() < outgoing_hes_per_vertex_.size());
-
-        outgoing_hes_per_vertex_[v0.idx()].erase(
-                std::remove(outgoing_hes_per_vertex_[v0.idx()].begin(),
-                            outgoing_hes_per_vertex_[v0.idx()].end(),
-                            halfedge_handle(h, 0)),
-                            outgoing_hes_per_vertex_[v0.idx()].end());
-
-        outgoing_hes_per_vertex_[v1.idx()].erase(
-                std::remove(outgoing_hes_per_vertex_[v1.idx()].begin(),
-                            outgoing_hes_per_vertex_[v1.idx()].end(),
-                            halfedge_handle(h, 1)),
-                            outgoing_hes_per_vertex_[v1.idx()].end());
-    }
+    VertexEdgeIncidence::delete_edge(h, edge(h));
 
     if (deferred_deletion_enabled())
     {
