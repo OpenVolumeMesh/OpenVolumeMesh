@@ -99,7 +99,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(EdgeHandle _eh) const
         if (!ch.is_valid() || topo()->is_deleted(ch))
             break;
 
-        cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh, true);
+        cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh);
         if(!cur_hf.is_valid()) {
             return;
         }
@@ -123,7 +123,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(EdgeHandle _eh) const
             if (!ch.is_valid() || topo()->is_deleted(ch))
                 break;
 
-            cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh, true);
+            cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh);
             if(!cur_hf.is_valid()) {
                 return;
             }
