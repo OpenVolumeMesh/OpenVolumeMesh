@@ -861,7 +861,7 @@ public:
     ///         at a boundary, \a InvalidHalfFaceHandle otherwise.
     ///
     /// \warning The mesh must have face bottom-up incidences.
-    HalfFaceHandle adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle, const HalfEdgeHandle& _halfEdgeHandle, bool without_he_hf_incidences = false) const;
+    HalfFaceHandle adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle, const HalfEdgeHandle& _halfEdgeHandle) const;
 
     /// Get cell that is incident to the given halfface
     CellHandle incident_cell(const HalfFaceHandle& _halfFaceHandle) const;

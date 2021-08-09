@@ -1405,8 +1405,7 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(const HalfEdgeHandle& _
 
 HalfFaceHandle
 TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
-                                          const HalfEdgeHandle& _halfEdgeHandle,
-                                          bool without_he_hf_incidences) const
+                                          const HalfEdgeHandle& _halfEdgeHandle) const
 {
 
     assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
@@ -1424,39 +1423,10 @@ TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
     HalfFaceHandle idx = InvalidHalfFaceHandle;
 
     const auto eh = edge_handle(_halfEdgeHandle);
-    const auto fh = face_handle(_halfFaceHandle);
-
-    // if we have bottom up incidences, looping through the incident faces of the halfedge should be faster.
-    if (!without_he_hf_incidences &&  has_edge_bottom_up_incidences()) {
-        for (const auto hfh: halfedge_halffaces(_halfEdgeHandle)) {
-            if (face_handle(hfh) == fh) {
-                assert(!skipped);
-                if (idx.is_valid())
-                    return idx;
-                skipped = true;
-                continue;
-            }
-            if (incident_cell(hfh) == ch) {
-                assert(!idx.is_valid());
-                if (skipped)
-                    return hfh;
-                idx = hfh;
-            }
-            const auto opp_hfh = opposite_halfface_handle(hfh);
-            if (incident_cell(opp_hfh) == ch) {
-                assert(!idx.is_valid());
-                if (skipped)
-                    return opp_hfh;
-                idx = opp_hfh;
-            }
-        }
-        return InvalidHalfFaceHandle;
-    }
-
 
     for(const auto &hfh: cell(ch).halffaces()) {
         if(hfh == _halfFaceHandle) {
-            assert(!skipped);
+            assert(!skipped); // a halfface may only appear once in a cell!
             skipped = true;
             if (idx.is_valid()) {
                 return idx;
@@ -1464,7 +1434,11 @@ TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
         } else {
             for (const auto &heh: face(face_handle(hfh)).halfedges()) {
                 if(edge_handle(heh) == eh) {
-                    assert(!idx.is_valid());
+                    if (idx.is_valid()) {
+                        // we found two(!) other halffaces that contain the given edge.
+                        // likely the given halfedge is not part of the given halfface
+                        return InvalidHalfFaceHandle;
+                    }
                     if (skipped) {
                         return hfh;
                     } else {
