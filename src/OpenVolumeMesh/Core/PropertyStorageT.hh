@@ -76,7 +76,10 @@ public:
     iterator begin() { return storage()->begin(); }
     iterator end()   { return storage()->end(); }
     size_t size() const { return storage()->size(); }
-    operator bool() const {return storage()->resMan() != nullptr;}
+
+    [[deprecated]]
+        // TODO: check if we have a  tracker
+    operator bool() const {return true;}
 
 
     /// No range check performed!
@@ -165,7 +168,7 @@ public:
 		data_.reserve(_n);
 	}
 	void resize(size_t _n) override {
-                data_.resize(_n, def_);
+        data_.resize(_n, def_);
 	}
 	size_t size() const override {
 		return data_.size();
@@ -184,7 +187,7 @@ public:
 	}
 	void delete_element(size_t _idx) override {
         assert(_idx < data_.size());
-		data_.erase(data_.begin() + static_cast<long>(_idx));
+        data_.erase(data_.begin() + static_cast<long>(_idx));
 	}
 
 public:
