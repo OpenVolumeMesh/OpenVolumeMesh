@@ -367,11 +367,17 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
         set_cell(ch, newHalffaces);
     }
 
+    auto survivingVertex = to_vh;
+    if (!deferred_deletion_tmp && to_vh.uidx() + 1  == n_vertices())
+    {
+        // from_vh will be swapped with last vertex in garbage collection (before return) and then deleted
+        survivingVertex = from_vh;
+    }
     delete_vertex(from_vh);
 
     enable_deferred_deletion(deferred_deletion_tmp);
 
-    return to_vh;
+    return survivingVertex;
 }
 
 // cppcheck-suppress unusedFunction ; public interface
