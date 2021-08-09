@@ -51,9 +51,52 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &, //vh_t
                                       std_API_Container_HHandlePointer &, // hh_to_update
                                       std_API_Container_HFHandlePointer &, // hfh_to_update
                                       std_API_Container_CHandlePointer &, // ch_to_update
-                                      bool _preserveManifoldness) {
+                                      bool _preserveManifoldness)
+{
+    const auto &status = *this;
+    kernel_.enable_deferred_deletion(true);
+    for (const auto vh: kernel_.vertices()) {
+        if (status[vh].deleted()) {
+            kernel_.delete_vertex(vh);
+        }
+    }
+    for (const auto eh: kernel_.edges()) {
+        if (status[eh].deleted() && !kernel_.is_deleted(eh)) {
+            kernel_.delete_edge(eh);
+        }
+    }
+    for (const auto fh: kernel_.faces()) {
+        if (status[fh].deleted() && !kernel_.is_deleted(fh)) {
+            kernel_.delete_face(fh);
+        }
+    }
+    for (const auto ch: kernel_.cells()) {
+        if (status[ch].deleted() && !kernel_.is_deleted(ch)) {
+            kernel_.delete_cell(ch);
+        }
+    }
 
-    throw std::runtime_error("not implemented anymore! Use TopologyKernel deferred deletion!");
+    kernel_.enable_bottom_up_incidences(true);
+
+    if (_preserveManifoldness) {
+        for (const auto fh: kernel_.faces()) {
+            if (kernel_.incident_cell(kernel_.halfface_handle(fh, 0)).is_valid()) continue;
+            if (kernel_.incident_cell(kernel_.halfface_handle(fh, 1)).is_valid()) continue;
+            kernel_.delete_face(fh);
+        }
+        for (const auto eh: kernel_.edges()) {
+            if (kernel_.valence(eh) == 0) {
+                kernel_.delete_edge(eh);
+            }
+        }
+        for (const auto vh: kernel_.vertices()) {
+            if (kernel_.valence(vh) == 0) {
+                kernel_.delete_vertex(vh);
+            }
+        }
+    }
+    kernel_.enable_deferred_deletion(false);
+
     // TODO: provide compatibility implementation
 #if 0
 

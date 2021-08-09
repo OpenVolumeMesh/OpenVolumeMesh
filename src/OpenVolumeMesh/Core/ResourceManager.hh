@@ -208,7 +208,11 @@ public:
 
 public:
 
+    /// number of tracked properties
     template<typename EntityTag> size_t n_props() const;
+
+    /// number of persistent properties
+    template<typename EntityTag> size_t n_persistent_props() const;
 
     [[deprecated("Use n_props<Entity::Vertex>() instead.")]]
     size_t n_vertex_props() const   { return n_props<Entity::Vertex>();}

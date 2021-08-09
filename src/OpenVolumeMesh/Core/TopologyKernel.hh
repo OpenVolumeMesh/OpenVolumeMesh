@@ -1010,7 +1010,7 @@ public:
 public:
     template<typename Entity>
     bool is_valid(HandleT<Entity> _h) const {
-        return _h.uidx() < n<Entity>() && !is_deleted(_h);
+        return _h.uidx() < n<Entity>();
     }
 
 protected:

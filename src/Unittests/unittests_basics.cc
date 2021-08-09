@@ -1242,7 +1242,7 @@ TEST_F(HexahedralMeshBase, BottomUpIncidenceUpdate1) {
     EXPECT_EQ(6, hv_it->idx()); ++hv_it;
     EXPECT_EQ(7, hv_it->idx()); ++hv_it;
     EXPECT_EQ(8, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(11, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(0, hv_it->idx()); ++hv_it;
     EXPECT_EQ(10, hv_it->idx()); ++hv_it;
     EXPECT_EQ(9, hv_it->idx());
 }
@@ -1280,14 +1280,15 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTest1) {
 
     hv_it = mesh_.hv_iter(CellHandle(0));
 
-    EXPECT_EQ(3, hv_it->idx()); ++hv_it;
     EXPECT_EQ(4, hv_it->idx()); ++hv_it;
     EXPECT_EQ(5, hv_it->idx()); ++hv_it;
     EXPECT_EQ(6, hv_it->idx()); ++hv_it;
     EXPECT_EQ(7, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(8, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(0, hv_it->idx()); ++hv_it;
     EXPECT_EQ(10, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(9, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(8, hv_it->idx());
+    EXPECT_EQ(9, hv_it->idx());
+
 
     status.garbage_collection(true);
 
@@ -1298,14 +1299,14 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTest1) {
 
     hv_it = mesh_.hv_iter(CellHandle(0));
 
-    EXPECT_EQ(0, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(1, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(2, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(3, hv_it->idx()); ++hv_it;
     EXPECT_EQ(4, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(7, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(5, hv_it->idx()); ++hv_it;
     EXPECT_EQ(6, hv_it->idx()); ++hv_it;
-    EXPECT_EQ(5, hv_it->idx());
+    EXPECT_EQ(7, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(1, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(0, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(3, hv_it->idx()); ++hv_it;
+    EXPECT_EQ(2, hv_it->idx());
 }
 
 TEST_F(HexahedralMeshBase, GarbageCollectionTest2) {

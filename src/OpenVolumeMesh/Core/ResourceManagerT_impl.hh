@@ -53,6 +53,9 @@ ResourceManager::storage_tracker() const
 template<typename EntityTag>
 void ResourceManager::clear_props()
 {
+    for (auto prop: persistent_props_.get<EntityTag>()) {
+        prop->set_persistent(false);
+    }
     persistent_props_.get<EntityTag>().clear();
 }
 
@@ -220,6 +223,12 @@ template<typename EntityTag>
 size_t ResourceManager::n_props() const {
     return storage_tracker<EntityTag>().size();
 }
+
+template<typename EntityTag>
+size_t ResourceManager::n_persistent_props() const {
+    return persistent_props_.get<EntityTag>().size();
+}
+
 
 template<bool Move, typename EntityTag>
 void ResourceManager::assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)

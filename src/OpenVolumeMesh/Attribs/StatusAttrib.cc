@@ -150,7 +150,7 @@ void StatusAttrib::garbage_collection(bool _preserveManifoldness) {
     std::vector<HalfFaceHandle*> hfh_empty;
     std::vector<CellHandle*> ch_empty;
 
-    //garbage_collection(vh_empty, hh_empty, hfh_empty, ch_empty, _preserveManifoldness);
+    garbage_collection(vh_empty, hh_empty, hfh_empty, ch_empty, _preserveManifoldness);
 }
 
 

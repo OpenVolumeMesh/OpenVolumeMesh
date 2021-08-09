@@ -1094,7 +1094,7 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
             for (const auto &heh: outgoing_halfedges(vh))
             {
                 EdgeHandle eh = edge_handle(heh);
-                if (processed_edges.find(eh) == processed_edges.end()) {
+                if (processed_edges.find(eh) != processed_edges.end()) {
                     continue;
                 }
                 swap_edge_indices(edge(eh));

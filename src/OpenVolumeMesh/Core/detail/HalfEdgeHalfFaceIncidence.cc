@@ -70,6 +70,8 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
      */
 
     assert(topo()->is_valid(_eh));
+    if (topo()->is_deleted(_eh)) return;
+
     HalfEdgeHandle heh = topo()->halfedge_handle(_eh, 0);
     auto &incident_hfs = incident(heh);
 
