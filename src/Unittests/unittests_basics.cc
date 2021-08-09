@@ -1493,7 +1493,8 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTestTrackVertexHandles) {
     status.garbage_collection(track_vhs, hh_empty, hfh_empty, ch_empty, false);
 
     EXPECT_HANDLE_EQ(vhs[0], VertexHandle(-1));
-    EXPECT_HANDLE_EQ(vhs[11], VertexHandle(10));
+    EXPECT_HANDLE_EQ(vhs[10], VertexHandle(10));
+    EXPECT_HANDLE_EQ(vhs[11], VertexHandle(0));
 
     EXPECT_EQ(1u, mesh_.n_cells());
     EXPECT_EQ(11u, mesh_.n_vertices());
@@ -1527,8 +1528,9 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTestTrackHalfedgeHandles) {
     EXPECT_HANDLE_EQ(hhs[9],  HalfFaceHandle( 9));
     EXPECT_HANDLE_EQ(hhs[10], HalfFaceHandle(-1));
     EXPECT_HANDLE_EQ(hhs[11], HalfFaceHandle(-1));
-    EXPECT_HANDLE_EQ(hhs[12], HalfFaceHandle(10));
-    EXPECT_HANDLE_EQ(hhs[39], HalfFaceHandle(37));
+    EXPECT_HANDLE_EQ(hhs[12], HalfFaceHandle(12));
+    EXPECT_HANDLE_EQ(hhs[39], HalfFaceHandle(11));
+    EXPECT_HANDLE_EQ(hhs[38], HalfFaceHandle(10));
 
     EXPECT_EQ(0u, mesh_.n_cells());
     EXPECT_EQ(8u, mesh_.n_faces());
@@ -1571,8 +1573,8 @@ TEST_F(HexahedralMeshBase, GarbageCollectionTestTrackHalffaceHandles) {
 
     EXPECT_HANDLE_EQ(hfhs[0],  HalfFaceHandle(-1));
     EXPECT_HANDLE_EQ(hfhs[1],  HalfFaceHandle(-1));
-    EXPECT_HANDLE_EQ(hfhs[2],  HalfFaceHandle(0));
-    EXPECT_HANDLE_EQ(hfhs[3],  HalfFaceHandle(1));
+    EXPECT_HANDLE_EQ(hfhs[2],  HalfFaceHandle(2));
+    EXPECT_HANDLE_EQ(hfhs[3],  HalfFaceHandle(3));
     EXPECT_HANDLE_EQ(hfhs[21], HalfFaceHandle(11));
 
 

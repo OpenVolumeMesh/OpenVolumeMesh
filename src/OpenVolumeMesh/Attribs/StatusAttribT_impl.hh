@@ -47,13 +47,14 @@ template<typename std_API_Container_VHandlePointer,
          typename std_API_Container_HHandlePointer,
          typename std_API_Container_HFHandlePointer,
          typename std_API_Container_CHandlePointer>
-void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &, //vh_to_update
-                                      std_API_Container_HHandlePointer &, // hh_to_update
-                                      std_API_Container_HFHandlePointer &, // hfh_to_update
-                                      std_API_Container_CHandlePointer &, // ch_to_update
+void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_update,
+                                      std_API_Container_HHandlePointer & hh_to_update,
+                                      std_API_Container_HFHandlePointer & hfh_to_update,
+                                      std_API_Container_CHandlePointer & ch_to_update,
                                       bool _preserveManifoldness)
 {
     const auto &status = *this;
+    auto def = kernel_.deferred_deletion_enabled();
     kernel_.enable_deferred_deletion(true);
     for (const auto vh: kernel_.vertices()) {
         if (status[vh].deleted()) {
@@ -76,9 +77,9 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &, //vh_t
         }
     }
 
-    kernel_.enable_bottom_up_incidences(true);
 
     if (_preserveManifoldness) {
+        kernel_.enable_bottom_up_incidences(true);
         for (const auto fh: kernel_.faces()) {
             if (kernel_.incident_cell(kernel_.halfface_handle(fh, 0)).is_valid()) continue;
             if (kernel_.incident_cell(kernel_.halfface_handle(fh, 1)).is_valid()) continue;
@@ -95,7 +96,47 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &, //vh_t
             }
         }
     }
-    kernel_.enable_deferred_deletion(false);
+    if (!vh_to_update.empty()
+            || !hh_to_update.empty()
+            || !hfh_to_update.empty()
+            || !ch_to_update.empty())
+    {
+        size_t nv = kernel_.n_vertices();
+        size_t nhe = kernel_.n_halfedges();
+        size_t nhf = kernel_.n_halffaces();
+        size_t nc = kernel_.n_cells();
+
+        auto old_vh = kernel_.request_vertex_property<int>();
+        for (size_t i = 0; i < nv; ++i) { old_vh[VertexHandle(i)] = i; }
+        auto old_heh = kernel_.request_halfedge_property<int>();
+        for (size_t i = 0; i < nhe; ++i) { old_heh[HalfEdgeHandle(i)] = i; }
+        auto old_hfh = kernel_.request_halfface_property<int>();
+        for (size_t i = 0; i < nhf; ++i) { old_hfh[HalfFaceHandle(i)] = i; }
+        auto old_ch = kernel_.request_cell_property<int>();
+        for (size_t i = 0; i < nc; ++i) { old_ch[CellHandle(i)] = i; }
+
+        kernel_.collect_garbage();
+
+        std::vector<VertexHandle> new_vh;    new_vh.resize(nv);
+        std::vector<CellHandle> new_ch;      new_ch.resize(nc);
+        std::vector<HalfEdgeHandle> new_heh; new_heh.resize(nhe);
+        std::vector<HalfFaceHandle> new_hfh; new_hfh.resize(nhf);
+
+        for (const auto vh: kernel_.vertices()) { new_vh[old_vh[vh]] = vh; }
+        for (const auto heh: kernel_.halfedges()) { new_heh[old_heh[heh]] = heh; }
+        for (const auto hfh: kernel_.halffaces()) { new_hfh[old_hfh[hfh]] = hfh; }
+        for (const auto ch: kernel_.cells()) { new_ch[old_ch[ch]] = ch; }
+
+        for (auto *vh: vh_to_update) { if (vh->is_valid()) *vh = new_vh[vh->idx()]; }
+        for (auto *heh: hh_to_update) { if (heh->is_valid()) *heh = new_heh[heh->idx()]; }
+        for (auto *hfh: hfh_to_update) { if (hfh->is_valid()) *hfh = new_hfh[hfh->idx()]; }
+        for (auto *ch: ch_to_update) { if (ch->is_valid()) *ch = new_ch[ch->idx()]; }
+
+    } else {
+        kernel_.collect_garbage();
+    }
+
+    kernel_.enable_deferred_deletion(def);
 
     // TODO: provide compatibility implementation
 #if 0
