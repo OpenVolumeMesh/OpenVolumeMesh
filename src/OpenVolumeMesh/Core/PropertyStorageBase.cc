@@ -39,7 +39,4 @@
 
 namespace OpenVolumeMesh {
 
-// Initialize constant
-const size_t PropertyStorageBase::UnknownSize = std::numeric_limits<size_t>::max();
-
 } // Namespace OpenVolumeMesh

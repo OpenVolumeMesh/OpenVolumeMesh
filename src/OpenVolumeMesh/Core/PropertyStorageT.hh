@@ -78,6 +78,14 @@ public:
     size_t size() const { return storage()->size(); }
     operator bool() const {return storage()->resMan() != nullptr;}
 
+
+    /// No range check performed!
+    reference operator[](size_t idx) { return (*storage())[idx];};
+    /// No range check performed!
+    const_reference operator[](size_t idx) const { return (*storage())[idx];};
+    reference at(size_t idx) { return storage()->at(idx);};
+    const_reference at(size_t idx) const { return storage()->at(idx);};
+
     void serialize(std::ostream& _ostr) const { storage()->serialize(_ostr); }
     void deserialize(std::istream& _istr) { storage()->deserialize(_istr); }
 
@@ -103,7 +111,7 @@ public:
 
 
 protected:
-    PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr);
+    PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr = nullptr);
 
     std::shared_ptr<PropertyStorageT<T>> &storage();
     std::shared_ptr<PropertyStorageT<T>> const &storage() const;
@@ -133,6 +141,7 @@ public:
 
     template <class PropT, class Entity> friend class PropertyPtr;
     template <class PropT> friend class PropertyStoragePtr;
+    friend class ResourceManager;
 
     typedef T                                         Value;
     typedef typename std::vector<T>                   vector_type;
@@ -170,8 +179,7 @@ public:
 	void swap(size_t _i0, size_t _i1) override {
         std::swap(data_[_i0], data_[_i1]);
     }
-
-	virtual void copy(size_t _src_idx, size_t _dst_idx) {
+    void copy(size_t _src_idx, size_t _dst_idx) override{
 		data_[_dst_idx] = data_[_src_idx];
 	}
 	void delete_element(size_t _idx) override {
@@ -256,13 +264,9 @@ public:
     }
 
 
-protected:
     void assign_values_from(const PropertyStorageBase *_other) override
     {
-        if (_other->internal_type_name() != internal_type_name()) {
-            throw std::runtime_error("assign_values_from: incompatible types.");
-        }
-        const auto *other = static_cast<const PropertyStorageT<T>*>(_other);
+        const auto *other = _other->cast_to_StorageT<T>();
         data_ = other->data_;
         def_ = other->def_;
 
@@ -270,21 +274,14 @@ protected:
 
     void move_values_from(PropertyStorageBase *_other) override
     {
-        if (_other->internal_type_name() != internal_type_name()) {
-            throw std::runtime_error("assign_values_from: incompatible types.");
-        }
-        auto *other = static_cast<PropertyStorageT<T>*>(_other);
+        const auto *other = _other->cast_to_StorageT<T>();
         data_ = std::move(other->data_);
         def_ = std::move(other->def_);
 
     }
 
-protected:
-    //detail::Tracker<PropertyStoragePtr<T>> pointer_tracker;
 private:
-
 	vector_type data_;
-
     T def_;
 };
 

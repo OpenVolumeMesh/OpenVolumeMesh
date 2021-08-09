@@ -11,11 +11,14 @@ class TopologyKernel;
 
 template<typename Derived> // CRDT
 class OVM_EXPORT HalfEdgeHalfFaceIncidence
-        : public IncidencesT<Entity::HalfEdge, std::vector<HalfFaceHandle>>
+        : public IncidencesT<Derived, Entity::HalfEdge, std::vector<HalfFaceHandle>>
 {
-public:
-    using IncidencesT::IncidencesT;
 protected:
+    using Parent = IncidencesT<Derived, Entity::HalfEdge, std::vector<HalfFaceHandle>>;
+    using Incidences = typename Parent::Incidences;
+    using Parent::incident;
+    using Parent::enabled;
+
     void add_face(FaceHandle _fh, OpenVolumeMeshFace const &_face);
     void delete_face(FaceHandle _fh, OpenVolumeMeshFace const &_face);
 
@@ -26,10 +29,9 @@ protected:
     void invalidate_order(const FaceHandle &) { /* TODO */ };
     void invalidate_order(const CellHandle &) { /* TODO */ };
 
-    using IncidencesT::swap;
     void swap(FaceHandle _h1, FaceHandle _h2);
 private:
-    const Derived *topo() const {return static_cast<const Derived*>(this);}
+    using Parent::topo;
     //std::vector<bool> order_valid_;
     void recompute() override;
     // TODO: maybe keep a prop<bool, EH> "ordered" to invalidate?

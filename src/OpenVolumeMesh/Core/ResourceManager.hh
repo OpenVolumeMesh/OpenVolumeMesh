@@ -90,7 +90,10 @@ public:
     ResourceManager& operator=(ResourceManager &&other);
 
 protected:
-    friend PropertyStorageBase;
+    friend class PropertyStorageBase;
+
+    template<typename T, typename EntityTag>
+    friend class PrivateProperty; // for access to storage_tracker
 
     template<typename EntityTag>
     detail::Tracker<PropertyStorageBase> & storage_tracker() const;

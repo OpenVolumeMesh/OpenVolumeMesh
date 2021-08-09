@@ -53,23 +53,16 @@ const CellHandle        TopologyKernel::InvalidCellHandle     = CellHandle(-1);
 
 const VertexHalfEdgeIncidence<TopologyKernel>::Incidences &
 TopologyKernel::
-outgoing_hes_per_vertex(VertexHandle vh)
+outgoing_hes_per_vertex(VertexHandle vh) const
 {
     return VertexHalfEdgeIncidence::incident(vh);
 }
 
 const HalfEdgeHalfFaceIncidence<TopologyKernel>::Incidences &
 TopologyKernel::
-incident_hfs_per_he(HalfEdgeHandle heh)
+incident_hfs_per_he(HalfEdgeHandle heh) const
 {
     return HalfEdgeHalfFaceIncidence::incident(heh);
-}
-
-const HalfFaceCellIncidence<TopologyKernel>::Incidences &
-TopologyKernel::
-incident_cell_per_hf(HalfFaceHandle hfh)
-{
-    return HalfFaceCellIncidence::incident(hfh);
 }
 
 void TopologyKernel::reserve_vertices(size_t n)
@@ -103,11 +96,6 @@ VertexHandle TopologyKernel::add_vertex() {
 
     ++n_vertices_;
     vertex_deleted_.push_back(false);
-
-    // Create item for vertex bottom-up incidences
-    if(has_vertex_bottom_up_incidences()) {
-        VertexHalfEdgeIncidence::resize(n_vertices_);
-    }
 
     // Resize vertex props
     resize_vprops(n_vertices_);
@@ -145,7 +133,6 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
     EdgeHandle eh((int)edges_.size()-1);
 
     VertexHalfEdgeIncidence::add_edge(eh, edges_.back());
-    HalfEdgeHalfFaceIncidence::resize(n_halfedges());
 
     // Get handle of recently created edge
     return eh;
@@ -188,7 +175,6 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
     resize_fprops(n_faces());
 
     HalfEdgeHalfFaceIncidence::add_face(fh, faces_.back());
-    HalfFaceCellIncidence::resize(n_halffaces());
 
     return fh;
 }
@@ -721,7 +707,6 @@ void TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
     --n_vertices_;
     vertex_deleted_.erase(vertex_deleted_.begin() + h.idx());
 
-    VertexHalfEdgeIncidence::resize(n_vertices());
     ResourceManager::vertex_deleted(h);
 
     return;
@@ -759,7 +744,6 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
         return;
     }
 
-    HalfEdgeHalfFaceIncidence::resize(n_halfedges());
 
     // 5)
     edges_.erase(edges_.begin() + h.idx());
@@ -804,7 +788,6 @@ void TopologyKernel::delete_face_core(const FaceHandle& _h) {
     faces_.erase(faces_.begin() + h.idx());
     face_deleted_.erase(face_deleted_.begin() + h.idx());
 
-    HalfFaceCellIncidence::resize(n_faces());
     ResourceManager::face_deleted(h);
 }
 
@@ -969,9 +952,6 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
     }
 
 
-    HalfFaceCellIncidence::swap(halfface_handle(_h1, 0), halfface_handle(_h2, 0));
-    HalfFaceCellIncidence::swap(halfface_handle(_h1, 1), halfface_handle(_h2, 1));
-
     // swap vector entries
     std::swap(faces_[ids[0]], faces_[ids[1]]);
     std::swap(face_deleted_[ids[0]], face_deleted_[ids[1]]);
@@ -1073,9 +1053,6 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 
     VertexHalfEdgeIncidence::swap(_h1, _h2);
 
-    HalfEdgeHalfFaceIncidence::swap(halfedge_handle(_h1, 0), halfedge_handle(_h2, 0));
-    HalfEdgeHalfFaceIncidence::swap(halfedge_handle(_h1, 1), halfedge_handle(_h2, 1));
-
     // swap vector entries
     std::swap(edges_[ids[0]], edges_[ids[1]]);
     std::swap(edge_deleted_[ids[0]], edge_deleted_[ids[1]]);
@@ -1131,7 +1108,6 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
 
     // swap vector entries
     std::swap(vertex_deleted_[_h1.uidx()], vertex_deleted_[_h2.uidx()]);
-    VertexHalfEdgeIncidence::swap(_h1, _h2);
     swap_vertex_properties(_h1, _h2);
 }
 

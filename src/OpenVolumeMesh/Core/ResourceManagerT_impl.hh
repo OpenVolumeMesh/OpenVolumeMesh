@@ -49,11 +49,6 @@ ResourceManager::storage_tracker() const
     return storage_trackers_.get<EntityTag>();
 }
 
-detail::Tracker<PropertyStorageBase> &
-ResourceManager::storage_tracker(EntityType type) const
-{
-    return storage_trackers_.get(type);
-}
 
 template<typename EntityTag>
 void ResourceManager::clear_props()
@@ -250,9 +245,9 @@ void ResourceManager::assignProperties(typename std::conditional<Move, ResourceM
                 // found a correspondence!
                 out.insert(dstprop);
                 if (Move) {
-                    dstprop->move_values_from(srcprop);
+                    dstprop->move_values_from(srcprop.get());
                 } else {
-                    dstprop->assign_values_from(srcprop);
+                    dstprop->assign_values_from(srcprop.get());
                 }
                 dst_all.erase(it);
                 found = true;
@@ -268,7 +263,7 @@ void ResourceManager::assignProperties(typename std::conditional<Move, ResourceM
             } else {
                 prop = srcprop->clone();
             }
-            prop->set_tracker(storage_tracker<EntityTag>());
+            prop->set_tracker(&storage_tracker<EntityTag>());
             out.insert(std::move(prop));
         }
     }
@@ -297,7 +292,6 @@ void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, Re
 
 template <class T, typename Entity>
 PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def)
-    : PropertyStoragePtr<T> (nullptr)
 {
     *this = mesh->request_property<T, Entity>(_name, _def);
 }

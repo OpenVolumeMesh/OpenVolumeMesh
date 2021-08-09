@@ -59,11 +59,6 @@ public:
     TopologyKernel() = default;
     ~TopologyKernel() override = default;
 
-
-    VertexHalfEdgeIncidence::Incidences const& outgoing_hes_per_vertex(VertexHandle vh);
-    HalfEdgeHalfFaceIncidence::Incidences const& incident_hfs_per_he(HalfEdgeHandle heh);
-    HalfFaceCellIncidence::Incidences const& incident_cell_per_hf(HalfFaceHandle hfh);
-
     /*
      * Defines and constants
      */
@@ -771,10 +766,6 @@ public:
         n_deleted_cells_ = 0;
         n_vertices_ = 0;
 
-        VertexHalfEdgeIncidence::clear();
-        HalfEdgeHalfFaceIncidence::clear();
-        HalfFaceCellIncidence::clear();
-
         if(_clearProps) {
             // Delete all property data
             clear_all_props();
@@ -855,6 +846,10 @@ private:
     //=====================================================================
 
 public:
+
+
+    VertexHalfEdgeIncidence::Incidences const& outgoing_hes_per_vertex(VertexHandle vh) const;
+    HalfEdgeHalfFaceIncidence::Incidences const& incident_hfs_per_he(HalfEdgeHandle heh) const;
 
     // TODO: this should probably be "common edge", the halfedge direction is ignored.
     //       but we probably also want a "common halfedge" API that may assume he \in hf

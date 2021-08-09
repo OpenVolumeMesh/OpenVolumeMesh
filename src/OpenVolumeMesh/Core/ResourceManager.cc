@@ -62,60 +62,66 @@ ResourceManager& ResourceManager::operator=(ResourceManager &&other)
     return *this;
 }
 
+detail::Tracker<PropertyStorageBase> &
+ResourceManager::storage_tracker(EntityType type) const
+{
+    return storage_trackers_.get(type);
+}
+
 void ResourceManager::resize_vprops(size_t _nv) {
-    resize_props(all_props_.get<Entity::Vertex>(), _nv);
+    resize_props(storage_tracker<Entity::Vertex>(), _nv);
 }
 
 void ResourceManager::resize_eprops(size_t _ne) {
-    resize_props(all_props_.get<Entity::Edge>(), _ne);
-    resize_props(all_props_.get<Entity::HalfEdge>(), 2 * _ne);
+    resize_props(storage_tracker<Entity::Edge>(), _ne);
+    resize_props(storage_tracker<Entity::HalfEdge>(), 2 * _ne);
 }
 
 void ResourceManager::resize_fprops(size_t _nf) {
-    resize_props(all_props_.get<Entity::Face>(), _nf);
-    resize_props(all_props_.get<Entity::HalfFace>(), 2 * _nf);
+    resize_props(storage_tracker<Entity::Face>(), _nf);
+    resize_props(storage_tracker<Entity::HalfFace>(), 2 * _nf);
 }
 
 void ResourceManager::resize_cprops(size_t _nc) {
-    resize_props(all_props_.get<Entity::Cell>(), _nc);
+    resize_props(storage_tracker<Entity::Cell>(), _nc);
 }
 
 void ResourceManager::reserve_vprops(size_t _n) {
-    reserve_props(all_props_.get<Entity::Vertex>(), _n);
+    reserve_props(storage_tracker<Entity::Vertex>(), _n);
 }
 void ResourceManager::reserve_eprops(size_t _n) {
-    reserve_props(all_props_.get<Entity::Edge>(), _n);
-    reserve_props(all_props_.get<Entity::HalfEdge>(), 2 * _n);
+    reserve_props(storage_tracker<Entity::Edge>(), _n);
+    reserve_props(storage_tracker<Entity::HalfEdge>(), 2 * _n);
 }
 void ResourceManager::reserve_fprops(size_t _n) {
-    reserve_props(all_props_.get<Entity::Face>(), _n);
-    reserve_props(all_props_.get<Entity::HalfFace>(), 2 * _n);
+    reserve_props(storage_tracker<Entity::Face>(), _n);
+    reserve_props(storage_tracker<Entity::HalfFace>(), 2 * _n);
 }
 void ResourceManager::reserve_cprops(size_t _n) {
-    reserve_props(all_props_.get<Entity::Cell>(), _n);
+    reserve_props(storage_tracker<Entity::Cell>(), _n);
 }
 
 
 void ResourceManager::vertex_deleted(const VertexHandle& _h) {
-    entity_deleted(all_props_.get<Entity::Vertex>(), _h);
+    entity_deleted(storage_tracker<Entity::Vertex>(), _h);
 }
 
 void ResourceManager::edge_deleted(const EdgeHandle& _h) {
 
-    entity_deleted(all_props_.get<Entity::Edge>(), _h);
-    entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
-    entity_deleted(all_props_.get<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
+    entity_deleted(storage_tracker<Entity::Edge>(), _h);
+    entity_deleted(storage_tracker<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
+    entity_deleted(storage_tracker<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
 }
 
 void ResourceManager::face_deleted(const FaceHandle& _h)
 {
-    entity_deleted(all_props_.get<Entity::Face>(), _h);
-    entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
-    entity_deleted(all_props_.get<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
+    entity_deleted(storage_tracker<Entity::Face>(), _h);
+    entity_deleted(storage_tracker<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
+    entity_deleted(storage_tracker<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
 }
 
 void ResourceManager::cell_deleted(const CellHandle& _h) {
-    entity_deleted(all_props_.get<Entity::Cell>(), _h);
+    entity_deleted(storage_tracker<Entity::Cell>(), _h);
 }
 
 void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2)

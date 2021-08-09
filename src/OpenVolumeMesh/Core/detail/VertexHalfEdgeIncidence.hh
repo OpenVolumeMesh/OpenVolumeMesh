@@ -11,17 +11,18 @@ class TopologyKernel;
 
 template<typename Derived> // CRDT
 class OVM_EXPORT VertexHalfEdgeIncidence
-        : public IncidencesT<Entity::Vertex, std::vector<HalfEdgeHandle>>
+        : public IncidencesT<Derived, Entity::Vertex, std::vector<HalfEdgeHandle>>
 {
-public:
-    using IncidencesT::IncidencesT;
 protected:
+    using Parent = IncidencesT<Derived, Entity::Vertex, std::vector<HalfEdgeHandle>>;
+    using Incidences = typename Parent::Incidences;
+    using Parent::incident;
+    using Parent::enabled;
     void add_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
     void delete_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
-    using IncidencesT::swap;
     void swap(EdgeHandle _h1, EdgeHandle _h2);
 private:
-    const Derived *topo() const {return static_cast<const Derived*>(this);}
+    using Parent::topo;
     void recompute() override;
 };
 

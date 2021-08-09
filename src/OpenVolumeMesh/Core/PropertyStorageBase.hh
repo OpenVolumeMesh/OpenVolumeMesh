@@ -99,6 +99,9 @@ public:
 	/// Let two elements swap their storage place.
 	virtual void swap(size_t _i0, size_t _i1) = 0;
 
+    /// Let two elements swap their storage place.
+    virtual void copy(size_t _i0, size_t _i1) = 0;
+
 	/// Erase an element of the vector
 	virtual void delete_element(size_t _idx) = 0;
 
@@ -144,7 +147,14 @@ public:
         return static_cast<PropertyStorageT<T>*>(this);
     }
 
-protected:
+    template<typename T>
+    const PropertyStorageT<T>* cast_to_StorageT() const
+    {
+        if (get_type_name<T>() != internal_type_name()) {
+            throw std::bad_cast();
+        }
+        return static_cast<const PropertyStorageT<T>*>(this);
+    }
 
     /// Copy data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void assign_values_from(const PropertyStorageBase *other) = 0;

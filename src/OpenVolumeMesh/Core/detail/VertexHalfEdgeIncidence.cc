@@ -9,12 +9,11 @@
 
 namespace OpenVolumeMesh {
 
-template class IncidencesT<Entity::Vertex, Entity::HalfEdge>;
+//template class IncidencesT<Entity::Vertex, Entity::HalfEdge>;
 
 template<typename Derived>
 void VertexHalfEdgeIncidence<Derived>::recompute()
 {
-    resize(topo()->n_vertices());
     // count
     std::vector<int> n_edges_per_vertex(topo()->n_vertices(), 0);
     for (const auto &eh: topo()->edges()) {
@@ -69,6 +68,7 @@ void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
 
 
 // instantiate for the only class that derives from this:
+template class IncidencesT<TopologyKernel, Entity::Vertex, std::vector<HalfEdgeHandle>>;
 template class VertexHalfEdgeIncidence<TopologyKernel>;
 
 } // namespace OpenVolumeMesh

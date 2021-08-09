@@ -11,18 +11,19 @@ class TopologyKernel;
 
 template<typename Derived> // CRDT
 class OVM_EXPORT HalfFaceCellIncidence
-        : public IncidencesT<Entity::HalfFace, CellHandle>
+        : public IncidencesT<Derived, Entity::HalfFace, CellHandle>
 {
-public:
-    using IncidencesT::IncidencesT;
 protected:
+    using Parent = IncidencesT<Derived, Entity::HalfFace, CellHandle>;
+    using Incidences = typename Parent::Incidences;
+    using Parent::incident;
+    using Parent::enabled;
     void add_cell(CellHandle _ch, OpenVolumeMeshCell const &_cell);
     void delete_cell(CellHandle _ch, OpenVolumeMeshCell const &_cell);
 
-    using IncidencesT::swap;
     void swap(CellHandle _h1, CellHandle _h2);
 private:
-    const Derived *topo() const {return static_cast<const Derived*>(this);}
+    using Parent::topo;
     void recompute() override;
 };
 

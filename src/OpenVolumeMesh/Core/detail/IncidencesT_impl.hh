@@ -4,49 +4,39 @@
 
 namespace OpenVolumeMesh {
 
-template<typename Entity, typename _Incidences>
+template<typename Derived, typename Entity, typename _Incidences>
 _Incidences &
-IncidencesT<Entity, _Incidences>::
+IncidencesT<Derived, Entity, _Incidences>::
 incident(Handle _h)
 {
-    assert(enabled_);
-    assert(_h.uidx() < incident_.size());
-    return incident_[_h.uidx()];
+    assert(enabled());
+    assert(_h.uidx() < incident_->size());
+    return (*incident_)[_h];
 }
 
-template<typename Entity, typename _Incidences>
+template<typename Derived, typename Entity, typename _Incidences>
 _Incidences const &
-IncidencesT<Entity, _Incidences>::
+IncidencesT<Derived, Entity, _Incidences>::
 incident(Handle _h) const
 {
-    assert(enabled_);
-    assert(_h.uidx() < incident_.size());
-    return incident_[_h.uidx()];
+    assert(enabled());
+    assert(_h.uidx() < incident_->size());
+    return (*incident_)[_h];
 }
 
-template<typename Entity, typename _Incidences>
+template<typename Derived, typename Entity, typename _Incidences>
 void
-IncidencesT<Entity, _Incidences>::
+IncidencesT<Derived, Entity, _Incidences>::
 setEnabled(bool enable)
 {
-    if (enabled_ == enable)
+    if (enabled() == enable)
         return;
-    enabled_ = enable;
     if (enable) {
-        assert(incident_.empty());
+        incident_ = PrivateProperty<Incidences, Entity>(topo());
         recompute();
     } else {
-        clear();
+        incident_ = {};
     }
-}
-
-template<typename Entity, typename _Incidences>
-void
-IncidencesT<Entity, _Incidences>::
-clear() {
-    // TODO: once we store incident_ as prop, we do not need clear()
-    // anymore
-    incident_.clear();
 }
 
 } // namespace OpenVolumeMesh

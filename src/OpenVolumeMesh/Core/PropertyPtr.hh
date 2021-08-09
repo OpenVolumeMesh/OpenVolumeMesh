@@ -42,6 +42,7 @@
 #include <OpenVolumeMesh/System/Deprecation.hh>
 #include <OpenVolumeMesh/Core/PropertyStorageT.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
+#include <OpenVolumeMesh/Core/Properties/AddEntityHandleAccess.hh>
 
 namespace OpenVolumeMesh {
 
@@ -54,7 +55,7 @@ class ResourceManager;
  */
 
 template <typename T, typename EntityTag>
-class PropertyPtr : public PropertyStoragePtr<T>
+class PropertyPtr : public AddEntityHandleAccess<EntityTag, PropertyStoragePtr<T>>
 {
     static_assert(is_entity<EntityTag>::value);
     using PropertyStoragePtr<T>::storage;
@@ -82,28 +83,8 @@ public:
     friend class ResourceManager;
     friend class PropertyStorageT<T>;
 
-    using EntityHandleT = HandleT<EntityTag>;
-
-    /// No range check performed!
-    reference operator[](const EntityHandleT& _h) { return (*storage())[_h.uidx()]; }
-
-    /// No range check performed!
-    const_reference operator[](const EntityHandleT& _h) const { return (*storage())[_h.uidx()]; }
-
-    reference       at(const EntityHandleT& _h) { return storage()->at(_h.uidx()); }
-    const_reference at(const EntityHandleT& _h) const { return storage()->at(_h.uidx()); }
-
-
-    [[deprecated]]
-    void copy(const EntityHandleT &_src, const EntityHandleT &_dst) {
-        (*this)[_dst] = (*this)[_src];
-    }
-
-
 protected:
-     PropertyPtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr)
-         : PropertyStoragePtr<T>(std::move(_ptr))
-     {}
+    using AddEntityHandleAccess<EntityTag, PropertyStoragePtr<T>>::AddEntityHandleAccess;
 };
 
 template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;

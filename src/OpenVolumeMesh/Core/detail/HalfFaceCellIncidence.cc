@@ -10,7 +10,7 @@
 
 namespace OpenVolumeMesh {
 
-template class IncidencesT<Entity::Vertex, Entity::HalfEdge>;
+//template class IncidencesT<Entity::Vertex, Entity::HalfEdge>;
 
 template<typename Derived>
 void HalfFaceCellIncidence<Derived>::add_cell(CellHandle _ch, const OpenVolumeMeshCell &_cell)
@@ -61,7 +61,6 @@ void HalfFaceCellIncidence<Derived>::swap(CellHandle _h1, CellHandle _h2) {
 template<typename Derived>
 void HalfFaceCellIncidence<Derived>::recompute()
 {
-    resize(topo()->n_halffaces());
     for (const auto ch: topo()->cells())
     {
         for (const auto hfh: topo()->cell_halffaces(ch)) {
@@ -79,6 +78,7 @@ void HalfFaceCellIncidence<Derived>::recompute()
 }
 
 // instantiate for the only class that derives from this:
+template class IncidencesT<TopologyKernel, Entity::HalfFace, CellHandle>;
 template class HalfFaceCellIncidence<TopologyKernel>;
 
 } // namespace OpenVolumeMesh

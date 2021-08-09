@@ -59,26 +59,24 @@ cur_index_(0) {
         return;
     }
 
-  if((unsigned int)_ref_h.idx() >= BaseIter::mesh()->outgoing_hes_per_vertex_.size()) {
-    BaseIter::valid(false);
-  }
+  assert(BaseIter::mesh()->is_valid(_ref_h));
 
   if(BaseIter::valid()) {
-    if((unsigned int)cur_index_ >= BaseIter::mesh()->outgoing_hes_per_vertex_[_ref_h.idx()].size()) {
+    if((unsigned int)cur_index_ >= BaseIter::mesh()->outgoing_hes_per_vertex(_ref_h).size()) {
       BaseIter::valid(false);
     }
   }
 
   if(BaseIter::valid()) {
     BaseIter::cur_handle((
-        BaseIter::mesh()->outgoing_hes_per_vertex_[_ref_h.idx()])[cur_index_]);
+        BaseIter::mesh()->outgoing_hes_per_vertex(_ref_h))[cur_index_]);
   }
 }
 
 
 VertexOHalfEdgeIter& VertexOHalfEdgeIter::operator--() {
 
-    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()].size();
+    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle()).size();
 
     if (cur_index_ == 0) {
         cur_index_ = n_outgoing_halfedges-1;
@@ -90,7 +88,7 @@ VertexOHalfEdgeIter& VertexOHalfEdgeIter::operator--() {
         --cur_index_;
     }
 
-    BaseIter::cur_handle((BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()])[cur_index_]);
+    BaseIter::cur_handle((BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle()))[cur_index_]);
 
   return *this;
 }
@@ -98,7 +96,7 @@ VertexOHalfEdgeIter& VertexOHalfEdgeIter::operator--() {
 
 VertexOHalfEdgeIter& VertexOHalfEdgeIter::operator++() {
 
-    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()].size();
+    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle()).size();
 
     ++cur_index_;
 
@@ -109,7 +107,7 @@ VertexOHalfEdgeIter& VertexOHalfEdgeIter::operator++() {
             BaseIter::valid(false);
     }
 
-    BaseIter::cur_handle((BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()])[cur_index_]);
+    BaseIter::cur_handle((BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle()))[cur_index_]);
 
   return *this;
 }
@@ -133,18 +131,16 @@ cur_index_(0) {
         return;
     }
 
-  if((size_t)_ref_h.idx() >= BaseIter::mesh()->outgoing_hes_per_vertex_.size()) {
-    BaseIter::valid(false);
-  }
+  assert(BaseIter::mesh()->is_valid(_ref_h));
 
   if(BaseIter::valid()) {
-    if((size_t)cur_index_ >= BaseIter::mesh()->outgoing_hes_per_vertex_[_ref_h.idx()].size()) {
+    if((size_t)cur_index_ >= BaseIter::mesh()->outgoing_hes_per_vertex(_ref_h).size()) {
       BaseIter::valid(false);
     }
   }
 
   if(BaseIter::valid()) {
-    HalfEdgeHandle heh = BaseIter::mesh()->outgoing_hes_per_vertex_[_ref_h.idx()][cur_index_];
+    HalfEdgeHandle heh = BaseIter::mesh()->outgoing_hes_per_vertex(_ref_h)[cur_index_];
     BaseIter::cur_handle(BaseIter::mesh()->halfedge(heh).to_vertex());
   }
 }
@@ -152,7 +148,7 @@ cur_index_(0) {
 
 VertexVertexIter& VertexVertexIter::operator--() {
 
-    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()].size();
+    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle()).size();
 
     if (cur_index_ == 0) {
         cur_index_ = n_outgoing_halfedges-1;
@@ -164,7 +160,7 @@ VertexVertexIter& VertexVertexIter::operator--() {
         --cur_index_;
     }
 
-    HalfEdgeHandle heh = BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()][cur_index_];
+    HalfEdgeHandle heh = BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle())[cur_index_];
     BaseIter::cur_handle(BaseIter::mesh()->halfedge(heh).to_vertex());
 
   return *this;
@@ -173,7 +169,7 @@ VertexVertexIter& VertexVertexIter::operator--() {
 
 VertexVertexIter& VertexVertexIter::operator++() {
 
-    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()].size();
+    size_t n_outgoing_halfedges = BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle()).size();
 
     ++cur_index_;
 
@@ -185,7 +181,7 @@ VertexVertexIter& VertexVertexIter::operator++() {
     }
 
 
-    HalfEdgeHandle heh = BaseIter::mesh()->outgoing_hes_per_vertex_[BaseIter::ref_handle().idx()][cur_index_];
+    HalfEdgeHandle heh = BaseIter::mesh()->outgoing_hes_per_vertex(BaseIter::ref_handle())[cur_index_];
     BaseIter::cur_handle(BaseIter::mesh()->halfedge(heh).to_vertex());
 
   return *this;
@@ -210,26 +206,24 @@ cur_index_(0) {
         return;
     }
 
-	if((unsigned int)_ref_h.idx() >= BaseIter::mesh()->incident_hfs_per_he_.size()) {
-		BaseIter::valid(false);
-	}
+    assert(BaseIter::mesh()->is_valid(_ref_h));
 
 	if(BaseIter::valid()) {
-		if((unsigned int)cur_index_ >= BaseIter::mesh()->incident_hfs_per_he_[_ref_h.idx()].size()) {
+		if((unsigned int)cur_index_ >= BaseIter::mesh()->incident_hfs_per_he(_ref_h).size()) {
 			BaseIter::valid(false);
 		}
 	}
 
 	if(BaseIter::valid()) {
 		BaseIter::cur_handle((
-				BaseIter::mesh()->incident_hfs_per_he_[_ref_h.idx()])[cur_index_]);
+				BaseIter::mesh()->incident_hfs_per_he(_ref_h))[cur_index_]);
 	}
 }
 
 
 HalfEdgeHalfFaceIter& HalfEdgeHalfFaceIter::operator--() {
 
-    size_t n_outgoing_halffaces = BaseIter::mesh()->incident_hfs_per_he_[BaseIter::ref_handle().idx()].size();
+    size_t n_outgoing_halffaces = BaseIter::mesh()->incident_hfs_per_he(BaseIter::ref_handle()).size();
 
     if (cur_index_ == 0) {
         cur_index_ = n_outgoing_halffaces-1;
@@ -241,7 +235,7 @@ HalfEdgeHalfFaceIter& HalfEdgeHalfFaceIter::operator--() {
         --cur_index_;
     }
 
-    BaseIter::cur_handle((BaseIter::mesh()->incident_hfs_per_he_[BaseIter::ref_handle().idx()])[cur_index_]);
+    BaseIter::cur_handle((BaseIter::mesh()->incident_hfs_per_he(BaseIter::ref_handle()))[cur_index_]);
 
     return *this;
 }
@@ -250,7 +244,7 @@ HalfEdgeHalfFaceIter& HalfEdgeHalfFaceIter::operator--() {
 HalfEdgeHalfFaceIter& HalfEdgeHalfFaceIter::operator++() {
 
 
-    size_t n_outgoing_halffaces = BaseIter::mesh()->incident_hfs_per_he_[BaseIter::ref_handle().idx()].size();
+    size_t n_outgoing_halffaces = BaseIter::mesh()->incident_hfs_per_he(BaseIter::ref_handle()).size();
 
     ++cur_index_;
 
@@ -261,7 +255,7 @@ HalfEdgeHalfFaceIter& HalfEdgeHalfFaceIter::operator++() {
             BaseIter::valid(false);
     }
 
-    BaseIter::cur_handle((BaseIter::mesh()->incident_hfs_per_he_[BaseIter::ref_handle().idx()])[cur_index_]);
+    BaseIter::cur_handle((BaseIter::mesh()->incident_hfs_per_he(BaseIter::ref_handle()))[cur_index_]);
 
     return *this;
 }
@@ -282,17 +276,13 @@ BaseIter(_mesh, _ref_h, _max_laps) {
         return;
     }
 
-    if((unsigned int)_ref_h.idx() >= BaseIter::mesh()->outgoing_hes_per_vertex_.size()) {
-        BaseIter::valid(false);
-        return;
-    }
+    assert(BaseIter::mesh()->is_valid(_ref_h));
 
     // Build up face list
-    const std::vector<HalfEdgeHandle>& incidentHalfedges = BaseIter::mesh()->outgoing_hes_per_vertex_[_ref_h.idx()];
+    const std::vector<HalfEdgeHandle>& incidentHalfedges = BaseIter::mesh()->outgoing_hes_per_vertex(_ref_h);
     for(std::vector<HalfEdgeHandle>::const_iterator it = incidentHalfedges.begin(); it != incidentHalfedges.end(); ++it) {
 
-        if(*it < 0 || (unsigned int)it->idx() >= BaseIter::mesh()->incident_hfs_per_he_.size()) continue;
-            const std::vector<HalfFaceHandle>& incidentHalfFaces = BaseIter::mesh()->incident_hfs_per_he_[it->idx()];
+        const std::vector<HalfFaceHandle>& incidentHalfFaces = BaseIter::mesh()->incident_hfs_per_he(*it);
 
         for (std::vector<HalfFaceHandle>::const_iterator hf_it = incidentHalfFaces.begin();
                 hf_it != incidentHalfFaces.end(); ++hf_it) {
@@ -361,26 +351,21 @@ BaseIter(_mesh, _ref_h, _max_laps) {
         return;
     }
 
-    if((unsigned int)_ref_h.idx() >= BaseIter::mesh()->outgoing_hes_per_vertex_.size()) {
-        BaseIter::valid(false);
-        return;
-    }
+    assert(BaseIter::mesh()->is_valid(_ref_h));
 
     // Build up cell list
-    const std::vector<HalfEdgeHandle>& incidentHalfedges = BaseIter::mesh()->outgoing_hes_per_vertex_[_ref_h.idx()];
+    const std::vector<HalfEdgeHandle>& incidentHalfedges = BaseIter::mesh()->outgoing_hes_per_vertex(_ref_h);
     for(std::vector<HalfEdgeHandle>::const_iterator it = incidentHalfedges.begin(); it != incidentHalfedges.end(); ++it) {
 
-    	if(*it < 0 || (unsigned int)it->idx() >= BaseIter::mesh()->incident_hfs_per_he_.size()) continue;
-        const std::vector<HalfFaceHandle>& incidentHalfFaces = BaseIter::mesh()->incident_hfs_per_he_[it->idx()];
+        const std::vector<HalfFaceHandle>& incidentHalfFaces = BaseIter::mesh()->incident_hfs_per_he(*it);
 
-    	for(std::vector<HalfFaceHandle>::const_iterator hf_it = incidentHalfFaces.begin();
-                hf_it != incidentHalfFaces.end(); ++hf_it) {
-    		if((unsigned int)hf_it->idx() < BaseIter::mesh()->incident_cell_per_hf_.size()) {
-    			CellHandle c_idx = BaseIter::mesh()->incident_cell_per_hf_[hf_it->idx()];
-    			if(c_idx != TopologyKernel::InvalidCellHandle)
-                    cells_.push_back(c_idx);
-    		}
-    	}
+        for(std::vector<HalfFaceHandle>::const_iterator hf_it = incidentHalfFaces.begin();
+                hf_it != incidentHalfFaces.end(); ++hf_it)
+        {
+            CellHandle c_idx = BaseIter::mesh()->incident_cell(*hf_it);
+            if(c_idx.is_valid())
+                cells_.push_back(c_idx);
+        }
     }
     // Remove all duplicate entries
     std::sort(cells_.begin(), cells_.end());
@@ -446,25 +431,10 @@ cur_index_(0) {
         return;
     }
 
-    if((unsigned int)_ref_h.idx() >= BaseIter::mesh()->incident_hfs_per_he_.size()) {
-
-        BaseIter::valid(false);
-        return;
-    }
-    if((unsigned int)cur_index_ >= BaseIter::mesh()->incident_hfs_per_he_[_ref_h.idx()].size()) {
-
-    	BaseIter::valid(false);
-    	return;
-    }
-    if((unsigned int)((BaseIter::mesh()->incident_hfs_per_he_[_ref_h.idx()])[cur_index_]).idx() >=
-    		BaseIter::mesh()->incident_cell_per_hf_.size()) {
-
-    	BaseIter::valid(false);
-    	return;
-    }
+    assert(BaseIter::mesh()->is_valid(_ref_h));
 
     // collect cell handles
-    const std::vector<HalfFaceHandle>& incidentHalffaces = BaseIter::mesh()->incident_hfs_per_he_[_ref_h.idx()];
+    const std::vector<HalfFaceHandle>& incidentHalffaces = BaseIter::mesh()->incident_hfs_per_he(_ref_h);
     std::set<CellHandle> cells;
     for (unsigned int i = 0; i < incidentHalffaces.size(); ++i)
     {
@@ -519,10 +489,10 @@ HalfEdgeCellIter& HalfEdgeCellIter::operator++() {
 
 CellHandle HalfEdgeCellIter::getCellHandle(int _cur_index) const
 {
-    const std::vector<HalfFaceHandle>& halffacehandles = BaseIter::mesh()->incident_hfs_per_he_[BaseIter::ref_handle().idx()];
+    const std::vector<HalfFaceHandle>& halffacehandles = BaseIter::mesh()->incident_hfs_per_he(BaseIter::ref_handle());
     HalfFaceHandle currentHalfface = halffacehandles[_cur_index];
     if(!currentHalfface.is_valid()) return CellHandle(-1);
-    CellHandle cellhandle = BaseIter::mesh()->incident_cell_per_hf_[currentHalfface.idx()];
+    CellHandle cellhandle = BaseIter::mesh()->incident_cell(currentHalfface);
     return cellhandle;
 }
 
@@ -610,7 +580,7 @@ BaseIter(_mesh, _ref_h, _max_laps) {
     for(; hf_iter != hf_end; ++hf_iter) {
 
 		HalfFaceHandle opp_hf = BaseIter::mesh()->opposite_halfface_handle(*hf_iter);
-		CellHandle ch = BaseIter::mesh()->incident_cell_per_hf_[opp_hf.idx()];
+		CellHandle ch = BaseIter::mesh()->incident_cell(opp_hf);
 		if(ch != TopologyKernel::InvalidCellHandle) {
             adjacent_cells_.push_back(ch);
 		}
