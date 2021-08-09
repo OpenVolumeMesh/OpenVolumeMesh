@@ -56,7 +56,7 @@ class OVM_EXPORT TopologyKernel
 {
 public:
 
-    TopologyKernel() = default;
+    TopologyKernel();
     ~TopologyKernel() override = default;
 
     /*
@@ -793,17 +793,17 @@ public:
 
     void enable_vertex_bottom_up_incidences(bool _enable = true)
     {
-        VertexHalfEdgeIncidence::setEnabled(_enable);
+        VertexHalfEdgeIncidence::set_enabled(_enable);
     }
 
     void enable_edge_bottom_up_incidences(bool _enable = true)
     {
-        HalfEdgeHalfFaceIncidence::setEnabled(_enable);
+        HalfEdgeHalfFaceIncidence::set_enabled(_enable);
     }
 
     void enable_face_bottom_up_incidences(bool _enable = true)
     {
-        HalfFaceCellIncidence::setEnabled(_enable);
+        HalfFaceCellIncidence::set_enabled(_enable);
     }
 
     bool has_full_bottom_up_incidences() const {

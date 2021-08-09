@@ -65,6 +65,11 @@ incident_hfs_per_he(HalfEdgeHandle heh) const
     return HalfEdgeHalfFaceIncidence::incident(heh);
 }
 
+TopologyKernel::TopologyKernel()
+{
+    enable_bottom_up_incidences(true);
+}
+
 void TopologyKernel::reserve_vertices(size_t n)
 {
     ResourceManager::reserve_vprops(n);

@@ -27,7 +27,7 @@ incident(Handle _h) const
 template<typename Derived, typename Entity, typename _Incidences>
 void
 IncidencesT<Derived, Entity, _Incidences>::
-setEnabled(bool enable)
+set_enabled(bool enable)
 {
     if (enabled() == enable)
         return;

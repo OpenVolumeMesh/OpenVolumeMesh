@@ -18,7 +18,10 @@ public:
         : AddEntityHandleAccess<EntityTag, PropertyStorageT<T>>(
         &resman->storage_tracker<EntityTag>(),
               "", EntityTag::type(), _def)
-    {}
+    {
+        PropertyStorageT<T>::resize(resman->n<EntityTag>());
+
+    }
 
 };
 } // namespace OpenVolumeMesh

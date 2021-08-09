@@ -15,6 +15,7 @@ namespace OpenVolumeMesh {
 template<typename Derived>
 void HalfFaceCellIncidence<Derived>::add_cell(CellHandle _ch, const OpenVolumeMeshCell &_cell)
 {
+    if (!enabled()) return;
     for (const auto &hfh: _cell.halffaces()) {
         incident(hfh) = _ch;
     }
@@ -24,6 +25,7 @@ void HalfFaceCellIncidence<Derived>::add_cell(CellHandle _ch, const OpenVolumeMe
 template<typename Derived>
 void HalfFaceCellIncidence<Derived>::delete_cell(CellHandle _ch, const OpenVolumeMeshCell &_cell)
 {
+    if (!enabled()) return;
     for (const auto &hfh: _cell.halffaces()) {
         if (incident(hfh) == _ch) {
             incident(hfh) = CellHandle{};

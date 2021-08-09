@@ -18,10 +18,11 @@ public:
     using Handle = HandleT<Entity>;
     using Incidences = _Incidences;
 
-    IncidencesT() = default;
+    IncidencesT() {}
 
     bool enabled() const {return incident_.has_value();}
-    void setEnabled(bool enable);
+    // TODO: rename to set_enabled
+    void set_enabled(bool enable);
 
     Incidences const& incident(Handle _h) const;
 

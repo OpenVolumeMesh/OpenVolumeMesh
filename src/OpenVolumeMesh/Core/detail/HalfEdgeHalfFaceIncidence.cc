@@ -14,6 +14,7 @@ namespace OpenVolumeMesh {
 template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::add_face(FaceHandle _fh, const OpenVolumeMeshFace &_face)
 {
+    if (!enabled()) return;
     auto hfh0 = topo()->halfface_handle(_fh, 0);
     auto hfh1 = topo()->halfface_handle(_fh, 1);
     for (const auto &heh: _face.halfedges()) {
@@ -28,6 +29,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::add_face(FaceHandle _fh, const OpenVolu
 template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::delete_face(FaceHandle _fh, const OpenVolumeMeshFace &_face)
 {
+    if (!enabled()) return;
     auto rm = [this](HalfEdgeHandle heh, HalfFaceHandle hfh)
     {
         Incidences &vec = incident(heh);
@@ -229,7 +231,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::recompute()
     // TODO: if we have hf->ch incidences, reorder halffaces
 }
 
-// instantiate for the only Derived class that derives from this:
+// instantiate for the only class that derives from this:
 template class IncidencesT<TopologyKernel, Entity::HalfEdge, std::vector<HalfFaceHandle>>;
 template class HalfEdgeHalfFaceIncidence<TopologyKernel>;
 

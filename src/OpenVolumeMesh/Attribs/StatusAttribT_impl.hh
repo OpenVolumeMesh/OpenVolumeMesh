@@ -47,16 +47,16 @@ template<typename std_API_Container_VHandlePointer,
          typename std_API_Container_HHandlePointer,
          typename std_API_Container_HFHandlePointer,
          typename std_API_Container_CHandlePointer>
-void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_update,
-                                      std_API_Container_HHandlePointer &hh_to_update,
-                                      std_API_Container_HFHandlePointer &hfh_to_update,
-                                      std_API_Container_CHandlePointer &ch_to_update,
+void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &, //vh_to_update
+                                      std_API_Container_HHandlePointer &, // hh_to_update
+                                      std_API_Container_HFHandlePointer &, // hfh_to_update
+                                      std_API_Container_CHandlePointer &, // ch_to_update
                                       bool _preserveManifoldness) {
 
     throw std::runtime_error("not implemented anymore! Use TopologyKernel deferred deletion!");
     // TODO: provide compatibility implementation
-
 #if 0
+
     /*
      * This is not a real garbage collection in its conventional
      * sense. What happens in this routine are the following steps:
