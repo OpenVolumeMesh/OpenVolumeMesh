@@ -709,14 +709,11 @@ public:
 
 public:
 
-    virtual VertexIter delete_vertex(const VertexHandle& _h);
-
-    virtual EdgeIter delete_edge(const EdgeHandle& _h);
-
-    virtual FaceIter delete_face(const FaceHandle& _h);
-
-    virtual CellIter delete_cell(const CellHandle& _h);
-
+    // TODO: no need to make these virtual:
+    virtual void delete_vertex(const VertexHandle& _h);
+    virtual void delete_edge(const EdgeHandle& _h);
+    virtual void delete_face(const FaceHandle& _h);
+    virtual void delete_cell(const CellHandle& _h);
     virtual void collect_garbage();
 
 
@@ -738,13 +735,10 @@ private:
     template <class ContainerT>
     void get_incident_cells(const ContainerT& _fs, std::set<CellHandle>& _cs) const;
 
-    VertexIter delete_vertex_core(const VertexHandle& _h);
-
-    EdgeIter delete_edge_core(const EdgeHandle& _h);
-
-    FaceIter delete_face_core(const FaceHandle& _h);
-
-    CellIter delete_cell_core(const CellHandle& _h);
+    void delete_vertex_core(const VertexHandle& _h);
+    void delete_edge_core(const EdgeHandle& _h);
+    void delete_face_core(const FaceHandle& _h);
+    void delete_cell_core(const CellHandle& _h);
 
 public:
 
@@ -964,8 +958,10 @@ public:
     bool deferred_deletion_enabled() const { return deferred_deletion_; }
 
 
-    void enable_fast_deletion(bool _enable = true) { fast_deletion_ = _enable; }
-    bool fast_deletion_enabled() const { return fast_deletion_; }
+    [[deprecated("Fast deletion is always enabled now.")]]
+    void enable_fast_deletion(bool _enable = true) {}
+    [[deprecated("Fast deletion is always enabled now.")]]
+    bool fast_deletion_enabled() const { return true; }
 
 
 protected:
@@ -995,8 +991,6 @@ private:
     bool f_bottom_up_ = true;
 
     bool deferred_deletion_ = true;
-
-    bool fast_deletion_ = true;
 
     //=====================================================================
     // Connectivity

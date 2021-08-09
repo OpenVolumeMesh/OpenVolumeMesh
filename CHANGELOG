@@ -1,6 +1,10 @@
-Version 2.2 (2021/08/??)
+version 3.0 (2021/08/??)
 
-    API changes:
+    Breaking changes:
+        - non-"fast" deletion is not supported anymore. It is much slower than "fast" deletion and its usecases were very slim and are probably best served by manual reordering.
+        - delete_*() does not return an iterator anymore. With fast deletion, it would always return a one-past-the-end iterator anyways, which is not too useful.
+
+    Smaller API changes:
         - add_{face,edge,cell} take std::vector instead of a const reference
         - add_face(std::vector<HalfEdgeHandle>): A closed loop of halfedges in the correct order is required
         - adjacent_halfface_in_cell(): the given half-edge must belong to an edge of the given cell

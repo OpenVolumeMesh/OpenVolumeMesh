@@ -93,19 +93,15 @@ public:
         return vertices_[_vh.uidx()];
     }
 
-    VertexIter delete_vertex(const VertexHandle& _h) override {
+    void delete_vertex(const VertexHandle& _h) override {
         assert(_h.idx() < (int)TopologyKernelT::n_vertices());
 
-        VertexIter nV = TopologyKernelT::delete_vertex(_h);
+        TopologyKernelT::delete_vertex(_h);
 
-        if (TopologyKernelT::deferred_deletion_enabled())
+        if (!TopologyKernelT::deferred_deletion_enabled())
         {
-
-        }
-        else
             vertices_.erase(vertices_.begin() + _h.idx());
-
-        return nV;
+        }
     }
 
     void collect_garbage() override
@@ -113,18 +109,8 @@ public:
         if (!TopologyKernelT::needs_garbage_collection())
             return;
 
-        if (TopologyKernelT::fast_deletion_enabled()) {
-            TopologyKernelT::collect_garbage();
-            vertices_.resize(TopologyKernel::n_vertices());
-        } else {
-            for (int i = (int)vertices_.size(); i > 0; --i)
-                if (TopologyKernelT::is_deleted(VertexHandle(i-1)))
-                {
-                    vertices_.erase(vertices_.begin() + (i-1));
-                }
-            TopologyKernelT::collect_garbage();
-        }
-
+        TopologyKernelT::collect_garbage();
+        vertices_.resize(TopologyKernel::n_vertices());
     }
 
     void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2) override

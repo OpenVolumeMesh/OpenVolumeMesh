@@ -593,7 +593,7 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
  *
  * @param _h The handle to the vertex to be deleted
  */
-VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
+void TopologyKernel::delete_vertex(const VertexHandle& _h) {
 
     assert(!is_deleted(_h));
 
@@ -628,7 +628,7 @@ VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
     }
 
     // Delete vertex
-    return delete_vertex_core(_h);
+    delete_vertex_core(_h);
 }
 
 //========================================================================================
@@ -645,7 +645,7 @@ VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
  *
  * @param _h The handle to the edge to be deleted
  */
-EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
+void TopologyKernel::delete_edge(const EdgeHandle& _h) {
 
     assert(!is_deleted(_h));
 
@@ -671,7 +671,7 @@ EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
     }
 
     // Delete edge
-    return delete_edge_core(_h);
+    delete_edge_core(_h);
 }
 
 //========================================================================================
@@ -688,7 +688,7 @@ EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
  *
  * @param _h The handle to the face to be deleted
  */
-FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
+void TopologyKernel::delete_face(const FaceHandle& _h) {
 
     assert(!is_deleted(_h));
 
@@ -705,7 +705,7 @@ FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
     }
 
     // Delete face
-    return delete_face_core(_h);
+    delete_face_core(_h);
 }
 
 //========================================================================================
@@ -719,10 +719,10 @@ FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
  *
  * @param _h The handle to the cell to be deleted
  */
-CellIter TopologyKernel::delete_cell(const CellHandle& _h) {
+void TopologyKernel::delete_cell(const CellHandle& _h) {
 
     assert(!is_deleted(_h));
-    return delete_cell_core(_h);
+    delete_cell_core(_h);
 }
 
 /**
@@ -903,102 +903,38 @@ void TopologyKernel::get_incident_cells(const ContainerT& _fs,
 /**
  * \brief Delete vertex from mesh
  *
- * After performing this operation, all vertices
- * following vertex _h in the array will be accessible
- * through their old handle decreased by one.
- * This function directly fixes the vertex links
- * in all edges. These steps are performed:
- *
- * 1) Decrease all vertex handles > _h in incident edges
- * 2) Delete entry in bottom-up list: V -> HE
- * 3) Delete vertex itself (not necessary here since
- *    a vertex is only represented by a number)
- * 4) Delete property entry
+ * There may be no more edges, faces, or cells incident to this edge.
  *
  * @param _h A vertex's handle
  */
-VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
+void TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
 
     VertexHandle h = _h;
     assert(h.is_valid() && (size_t)h.idx() < n_vertices());
-
-    if (fast_deletion_enabled() && !deferred_deletion_enabled()) // for fast deletion swap handle with last not deleted vertex
-    {
-        VertexHandle last_undeleted_vertex = VertexHandle((int)n_vertices()-1);
-        assert(!vertex_deleted_[last_undeleted_vertex.idx()]);
-        swap_vertex_indices(h, last_undeleted_vertex);
-        h = last_undeleted_vertex;
-    }
 
     if (deferred_deletion_enabled())
     {
         ++n_deleted_vertices_;
         vertex_deleted_[h.idx()] = true;
-//        deleted_vertices_.push_back(h);
-
-        // Iterator to next element in vertex list
-//        return (vertices_begin() + h.idx()+1);
-        return VertexIter(this, VertexHandle(h.idx()+1));
+        return;
     }
-    else
-    {
-        // 1)
-        if(has_vertex_bottom_up_incidences()) {
 
-            // Decrease all vertex handles >= _h in all edge definitions
-            for(int i = h.idx(), end = (int)n_vertices(); i < end; ++i) {
-                const std::vector<HalfEdgeHandle>& hes = outgoing_hes_per_vertex_[i];
-                for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(),
-                    he_end = hes.end(); he_it != he_end; ++he_it) {
+    VertexHandle last_undeleted_vertex = VertexHandle((int)n_vertices()-1);
+    assert(!vertex_deleted_[last_undeleted_vertex.idx()]);
+    swap_vertex_indices(h, last_undeleted_vertex);
+    h = last_undeleted_vertex;
 
-                    Edge& e = edge(edge_handle(*he_it));
-                    if(e.from_vertex().idx() == i) {
-                        e.set_from_vertex(VertexHandle(i-1));
-                    }
-                    if(e.to_vertex().idx() == i) {
-                        e.set_to_vertex(VertexHandle(i-1));
-                    }
-                }
-            }
-
-        } else {
-
-            // Iterate over all edges
-            for(EdgeIter e_it = edges_begin(), e_end = edges_end();
-                e_it != e_end; ++e_it) {
-
-                // Decrease all vertex handles in edge definitions that are greater than _h
-                if(edge(*e_it).from_vertex() > h) {
-                    edge(*e_it).set_from_vertex(VertexHandle(edge(*e_it).from_vertex().idx() - 1));
-                }
-                if(edge(*e_it).to_vertex() > h) {
-                    edge(*e_it).set_to_vertex(VertexHandle(edge(*e_it).to_vertex().idx() - 1));
-                }
-            }
-        }
-
-        // 2)
-
-        if(has_vertex_bottom_up_incidences()) {
-            assert((size_t)h.idx() < outgoing_hes_per_vertex_.size());
-            outgoing_hes_per_vertex_.erase(outgoing_hes_per_vertex_.begin() + h.idx());
-        }
-
-
-        // 3)
-
-        --n_vertices_;
-        vertex_deleted_.erase(vertex_deleted_.begin() + h.idx());
-
-        // 4)
-
-        vertex_deleted(h);
-
-        // Iterator to next element in vertex list
-//        return (vertices_begin() + h.idx());
-        return VertexIter(this, h);
-
+    if(has_vertex_bottom_up_incidences()) {
+        assert((size_t)h.idx() < outgoing_hes_per_vertex_.size());
+        outgoing_hes_per_vertex_.erase(outgoing_hes_per_vertex_.begin() + h.idx());
     }
+
+    --n_vertices_;
+    vertex_deleted_.erase(vertex_deleted_.begin() + h.idx());
+
+    ResourceManager::vertex_deleted(h);
+
+    return;
 }
 
 //========================================================================================
@@ -1006,29 +942,17 @@ VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
 /**
  * \brief Delete edge from mesh
  *
- * After performing this operation, all edges
- * following edge _h in the array will be accessible
- * through their old handle decreased by one.
- * This function directly fixes the edge links
- * in all faces. These steps are performed:
- *
- * 1) Delete bottom-up links from incident vertices
- * 2) Decrease all half-edge handles > _h in incident faces
- * 3) Delete entry in bottom-up list: HE -> HF
- * 4) Decrease all half-edge handles > 2*_h.idx() in
- *    vertex bottom-up list
- * 5) Delete edge itself
- * 6) Delete property entry
+ * There may be no more faces or cells incident to this edge.
  *
  * @param _h An edge's handle
  */
-EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
+void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 
     EdgeHandle h = _h;
 
     assert(h.is_valid() && (size_t)h.idx() < edges_.size());
 
-    if (fast_deletion_enabled() && !deferred_deletion_enabled()) // for fast deletion swap handle with last one
+    if (!deferred_deletion_enabled()) // for fast deletion swap handle with last one
     {
         EdgeHandle last_edge = EdgeHandle((int)edges_.size()-1);
         assert(!edge_deleted_[last_edge.idx()]);
@@ -1062,105 +986,24 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
     {
         ++n_deleted_edges_;
         edge_deleted_[h.idx()] = true;
-//        deleted_edges_.push_back(h);
-
-        // Return iterator to next element in list
-//        return (edges_begin() + h.idx()+1);
-        return EdgeIter(this, EdgeHandle(h.idx()+1));
+        return;
     }
-    else
-    {
 
-        if (!fast_deletion_enabled())
-        {
-            // 2)
-            if(has_edge_bottom_up_incidences()) {
+    if(has_edge_bottom_up_incidences()) {
+        assert((size_t)halfedge_handle(h, 1).idx() < incident_hfs_per_he_.size());
 
-                assert((size_t)halfedge_handle(h, 0).idx() < incident_hfs_per_he_.size());
-
-                // Decrease all half-edge handles > he and
-                // delete all half-edge handles == he in face definitions
-                // Get all faces that need updates
-                std::set<FaceHandle> update_faces;
-                for(std::vector<std::vector<HalfFaceHandle> >::const_iterator iit =
-                    (incident_hfs_per_he_.begin() + halfedge_handle(h, 0).idx()),
-                    iit_end = incident_hfs_per_he_.end(); iit != iit_end; ++iit) {
-                    for(std::vector<HalfFaceHandle>::const_iterator it = iit->begin(),
-                        end = iit->end(); it != end; ++it) {
-                        update_faces.insert(face_handle(*it));
-                    }
-                }
-                // Update respective handles
-                HEHandleCorrection cor(halfedge_handle(h, 1));
-                for(std::set<FaceHandle>::iterator f_it = update_faces.begin(),
-                    f_end = update_faces.end(); f_it != f_end; ++f_it) {
-
-                    std::vector<HalfEdgeHandle> hes = face(*f_it).halfedges();
-
-                    // Delete current half-edge from face's half-edge list
-                    hes.erase(std::remove(hes.begin(), hes.end(), halfedge_handle(h, 0)), hes.end());
-                    hes.erase(std::remove(hes.begin(), hes.end(), halfedge_handle(h, 1)), hes.end());
-
-                    cor.correctVecValue(hes);
-
-                    face(*f_it).set_halfedges(hes);
-                }
-            } else {
-
-                // Iterate over all faces
-                for(FaceIter f_it = faces_begin(), f_end = faces_end();
-                    f_it != f_end; ++f_it) {
-
-                    // Get face's half-edges
-                    std::vector<HalfEdgeHandle> hes = face(*f_it).halfedges();
-
-                    // Delete current half-edge from face's half-edge list
-                    hes.erase(std::remove(hes.begin(), hes.end(), halfedge_handle(h, 0)), hes.end());
-                    hes.erase(std::remove(hes.begin(), hes.end(), halfedge_handle(h, 1)), hes.end());
-
-                    // Decrease all half-edge handles greater than _h in face
-                    HEHandleCorrection cor(halfedge_handle(h, 1));
-                    cor.correctVecValue(hes);
-                    face(*f_it).set_halfedges(hes);
-                }
-            }
-        }
-
-        // 3)
-
-        if(has_edge_bottom_up_incidences()) {
-            assert((size_t)halfedge_handle(h, 1).idx() < incident_hfs_per_he_.size());
-
-            incident_hfs_per_he_.erase(incident_hfs_per_he_.begin() + halfedge_handle(h, 1).idx());
-            incident_hfs_per_he_.erase(incident_hfs_per_he_.begin() + halfedge_handle(h, 0).idx());
-        }
-
-        if (!fast_deletion_enabled())
-        {
-            // 4)
-            if(has_vertex_bottom_up_incidences()) {
-                HEHandleCorrection cor(halfedge_handle(h, 1));
-                for (auto &ohehs: outgoing_hes_per_vertex_) {
-                    cor.correctVecValue(ohehs);
-                }
-            }
-        }
-
-
-        // 5)
-        edges_.erase(edges_.begin() + h.idx());
-        edge_deleted_.erase(edge_deleted_.begin() + h.idx());
-
-
-        // 6)
-
-        edge_deleted(h);
-
-        // Return iterator to next element in list
-//        return (edges_begin() + h.idx());
-        return EdgeIter(this, h);
-
+        incident_hfs_per_he_.erase(incident_hfs_per_he_.begin() + halfedge_handle(h, 1).idx());
+        incident_hfs_per_he_.erase(incident_hfs_per_he_.begin() + halfedge_handle(h, 0).idx());
     }
+
+    // 5)
+    edges_.erase(edges_.begin() + h.idx());
+    edge_deleted_.erase(edge_deleted_.begin() + h.idx());
+
+
+    // 6)
+
+    ResourceManager::edge_deleted(h);
 }
 
 //========================================================================================
@@ -1168,30 +1011,18 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 /**
  * \brief Delete face from mesh
  *
- * After performing this operation, all faces
- * following face _h in the array will be accessible
- * through their old handle decreased by one.
- * This function directly fixes the face links
- * in all cells. These steps are performed:
- *
- * 1) Delete bottom-up links from incident edges
- * 2) Decrease all half-face handles > _h in incident cells
- * 3) Delete entry in bottom-up list: HF -> C
- * 4) Decrease all half-face handles > 2*_h.idx() in
- *    half-edge bottom-up list
- * 5) Delete face itself
- * 6) Delete property entry
+ * There may not be any cells incident to this face.
  *
  * @param _h An face's handle
  */
-FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
+void TopologyKernel::delete_face_core(const FaceHandle& _h) {
 
     FaceHandle h = _h;
 
     assert(h.is_valid() && (size_t)h.idx() < faces_.size());
 
 
-    if (fast_deletion_enabled() && !deferred_deletion_enabled()) // for fast deletion swap handle with last one
+    if (!deferred_deletion_enabled()) // for fast deletion swap handle with last one
     {
         FaceHandle last_face = FaceHandle((int)faces_.size()-1);
         assert(!face_deleted_[last_face.idx()]);
@@ -1227,94 +1058,20 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
     {
         ++n_deleted_faces_;
         face_deleted_[h.idx()] = true;
-//        deleted_faces_.push_back(h);
-
-        // Return iterator to next element in list
-//        return (faces_begin() + h.idx()+1);
-        return FaceIter(this, FaceHandle(h.idx()+1));
+        return;
     }
-    else
-    {
+    // 3)
+    if(has_face_bottom_up_incidences()) {
+        assert((size_t)halfface_handle(h, 1).idx() < incident_cell_per_hf_.size());
 
-        if (!fast_deletion_enabled())
-        {
-            // 2)
-            if(has_face_bottom_up_incidences()) {
-
-                // Decrease all half-face handles > _h in all cells
-                // and delete all half-face handles == _h
-                std::set<CellHandle> update_cells;
-                for(std::vector<CellHandle>::const_iterator c_it = (incident_cell_per_hf_.begin() + halfface_handle(h, 0).idx()),
-                    c_end = incident_cell_per_hf_.end(); c_it != c_end; ++c_it) {
-                    if(!c_it->is_valid()) continue;
-                    update_cells.insert(*c_it);
-                }
-                for(std::set<CellHandle>::const_iterator c_it = update_cells.begin(),
-                    c_end = update_cells.end(); c_it != c_end; ++c_it) {
-
-                    std::vector<HalfFaceHandle> hfs = cell(*c_it).halffaces();
-
-                    // Delete current half-faces from cell's half-face list
-                    hfs.erase(std::remove(hfs.begin(), hfs.end(), halfface_handle(h, 0)), hfs.end());
-                    hfs.erase(std::remove(hfs.begin(), hfs.end(), halfface_handle(h, 1)), hfs.end());
-
-                    HFHandleCorrection cor(halfface_handle(h, 1));
-                    cor.correctVecValue(hfs);
-
-                    cell(*c_it).set_halffaces(hfs);
-                }
-
-            } else {
-
-                // Iterate over all cells
-                for(CellIter c_it = cells_begin(), c_end = cells_end(); c_it != c_end; ++c_it) {
-
-                    std::vector<HalfFaceHandle> hfs = cell(*c_it).halffaces();
-
-                    // Delete current half-faces from cell's half-face list
-                    hfs.erase(std::remove(hfs.begin(), hfs.end(), halfface_handle(h, 0)), hfs.end());
-                    hfs.erase(std::remove(hfs.begin(), hfs.end(), halfface_handle(h, 1)), hfs.end());
-
-                    HFHandleCorrection cor(halfface_handle(h, 1));
-                    cor.correctVecValue(hfs);
-                    cell(*c_it).set_halffaces(hfs);
-                }
-            }
-        }
-
-
-        // 3)
-        if(has_face_bottom_up_incidences()) {
-            assert((size_t)halfface_handle(h, 1).idx() < incident_cell_per_hf_.size());
-
-            incident_cell_per_hf_.erase(incident_cell_per_hf_.begin() + halfface_handle(h, 1).idx());
-            incident_cell_per_hf_.erase(incident_cell_per_hf_.begin() + halfface_handle(h, 0).idx());
-        }
-
-
-        if (!fast_deletion_enabled())
-        {
-            // 4)
-            if(has_edge_bottom_up_incidences()) {
-                HFHandleCorrection cor(halfface_handle(h, 1));
-                for (auto &ihfs: incident_hfs_per_he_) {
-                    cor.correctVecValue(ihfs);
-                }
-            }
-        }
-
-        // 5)
-        faces_.erase(faces_.begin() + h.idx());
-        face_deleted_.erase(face_deleted_.begin() + h.idx());
-
-        // 6)
-        face_deleted(h);
-
-        // Return iterator to next element in list
-//        return (faces_begin() + h.idx());
-        return FaceIter(this, h);
+        incident_cell_per_hf_.erase(incident_cell_per_hf_.begin() + halfface_handle(h, 1).idx());
+        incident_cell_per_hf_.erase(incident_cell_per_hf_.begin() + halfface_handle(h, 0).idx());
     }
 
+    faces_.erase(faces_.begin() + h.idx());
+    face_deleted_.erase(face_deleted_.begin() + h.idx());
+
+    ResourceManager::face_deleted(h);
 }
 
 //========================================================================================
@@ -1334,14 +1091,14 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
  *
  * @param _h A cell handle
  */
-CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
+void TopologyKernel::delete_cell_core(const CellHandle& _h) {
 
     CellHandle h = _h;
 
     assert(h.is_valid() && (size_t)h.idx() < cells_.size());
 
 
-    if (fast_deletion_enabled() && !deferred_deletion_enabled()) // for fast deletion swap handle with last not deleted cell
+    if (!deferred_deletion_enabled()) // for fast deletion swap handle with last not deleted cell
     {
         CellHandle last_undeleted_cell = CellHandle((int)cells_.size()-1);
         assert(!cell_deleted_[last_undeleted_cell.idx()]);
@@ -1374,34 +1131,15 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
     {
         ++n_deleted_cells_;
         cell_deleted_[h.idx()] = true;
-//        deleted_cells_.push_back(h);
-//        deleted_cells_set.insert(h);
-
-//        return (cells_begin() + h.idx()+1);
-        return CellIter(this, CellHandle(h.idx()+1));
+        return;
     }
-    else
-    {
-        // 2)
-        if (!fast_deletion_enabled())
-        {
-            if(has_face_bottom_up_incidences()) {
-                CHandleCorrection cor(h);
-                cor.correctVecValue(incident_cell_per_hf_);
-            }
-        }
 
-        // 3)
-        cells_.erase(cells_.begin() + h.idx());
-        cell_deleted_.erase(cell_deleted_.begin() + h.idx());
+    // 3)
+    cells_.erase(cells_.begin() + h.idx());
+    cell_deleted_.erase(cell_deleted_.begin() + h.idx());
 
-        // 4)
-        cell_deleted(h);
-
-        // return handle to original position
-//        return (cells_begin() + h.idx()+1);
-        return CellIter(this, h);
-    }
+    // 4)
+    ResourceManager::cell_deleted(h);
 }
 
 void TopologyKernel::swap_cell_indices(CellHandle _h1, CellHandle _h2)
