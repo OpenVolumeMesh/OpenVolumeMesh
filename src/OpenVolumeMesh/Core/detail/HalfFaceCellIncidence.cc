@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <unordered_set>
 
 
 namespace OpenVolumeMesh {
@@ -38,10 +39,14 @@ template<typename Derived>
 void HalfFaceCellIncidence<Derived>::swap(CellHandle _h1, CellHandle _h2) {
     if(!enabled()) return;
     if (_h1 == _h2) return;
-    // We assume there is no common halfface between the cells (implied by manifoldness)
 
+    std::unordered_set<HalfFaceHandle> processed;
+    processed.reserve(topo()->valence(_h1) + topo()->valence(_h2));
     for (const auto &ch: {_h1, _h2}) {
         for (const auto hfh: topo()->cell_halffaces(ch)) {
+            if(processed.find(hfh) != processed.end())
+                continue;
+            processed.insert(hfh);
             auto &inc = incident(hfh);
             if (inc == _h1) {
                 inc = _h2;
