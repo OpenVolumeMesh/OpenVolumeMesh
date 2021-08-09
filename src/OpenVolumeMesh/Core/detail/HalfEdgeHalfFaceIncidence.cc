@@ -155,45 +155,34 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
 }
 
 template<typename Derived>
-void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2) {
-    if(!enabled()) return;
-    throw std::runtime_error("unimplemented");
-#if 0
-    if (has_edge_bottom_up_incidences())
+void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
+{
+    if (!enabled()) return;
+    if (_h1 == _h2) return;
+
+    std::vector<HalfEdgeHandle> hehs;
+    hehs.reserve(topo()->valence(_h1) + topo()->valence(_h2));
+
+    for (int subidx = 0; subidx < 2; ++subidx)
     {
-        std::set<HalfEdgeHandle> processed_halfedges; // to ensure ids are only swapped once (in the case that a halfedge is incident to both swapped faces)
-        for (unsigned int i = 0; i < 2; ++i) // For both swapped faces
-        {
-            unsigned int id = ids[i];
-            for (unsigned int j = 0; j < 2; ++j) // for both halffaces
-            {
-                HalfFaceHandle hfh = HalfFaceHandle(2*id+j);
-                Face hf = halfface(hfh);
+        hehs.clear();
+        auto hfh0 = topo()->halfface_handle(_h1, subidx);
+        auto hfh1 = topo()->halfface_handle(_h2, subidx);
+        for (const auto heh: topo()->halfface_halfedges(hfh0)) { hehs.push_back(heh); }
+        for (const auto heh: topo()->halfface_halfedges(hfh1)) { hehs.push_back(heh); }
+        std::sort(hehs.begin(), hehs.end());
+        hehs.erase(std::unique(hehs.begin(), hehs.end()), hehs.end());
 
-                for (unsigned int k = 0; k < hf.halfedges().size(); ++k)
-                {
-                    HalfEdgeHandle heh = hf.halfedges()[k];
-
-                    if (processed_halfedges.find(heh) != processed_halfedges.end())
-                        continue;
-
-                    std::vector<HalfFaceHandle>& incident_halffaces = incident_hfs_per_he_[heh.idx()];
-                    for (unsigned int l = 0; l < incident_halffaces.size(); ++l)
-                    {
-                        HalfFaceHandle& hfh2 = incident_halffaces[l];
-
-                        if (hfh2.idx()/2 == (int)id1) // if halfface belongs to swapped face
-                            hfh2 = HalfFaceHandle(2 * id2 + (hfh2.idx() % 2));
-                        else if (hfh2.idx()/2 == (int)id2) // if halfface belongs to swapped face
-                            hfh2 = HalfFaceHandle(2 * id1 + (hfh2.idx() % 2));
-                    }
-
-                    processed_halfedges.insert(heh);
+        for (const auto heh: hehs) {
+            for (auto &hfh: incident(heh)) {
+                if (hfh == hfh0) {
+                    hfh = hfh1;
+                } else if (hfh == hfh1) {
+                    hfh = hfh0;
                 }
             }
         }
     }
-#endif
 }
 
 template<typename Derived>

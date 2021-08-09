@@ -37,6 +37,7 @@ void HalfFaceCellIncidence<Derived>::delete_cell(CellHandle _ch, const OpenVolum
 template<typename Derived>
 void HalfFaceCellIncidence<Derived>::swap(CellHandle _h1, CellHandle _h2) {
     if(!enabled()) return;
+    if (_h1 == _h2) return;
     // We assume there is no common halfface between the cells (implied by manifoldness)
 
     for (const auto &ch: {_h1, _h2}) {

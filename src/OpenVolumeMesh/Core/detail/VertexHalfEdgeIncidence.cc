@@ -63,7 +63,45 @@ void VertexHalfEdgeIncidence<Derived>::delete_edge(EdgeHandle _eh, const OpenVol
 template<typename Derived>
 void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
     if(!enabled()) return;
-    throw std::runtime_error("unimplemented");
+    if (_h1 == _h2) return;
+
+    const auto &e1 = topo()->edge(_h1);
+    const auto &e2 = topo()->edge(_h2);
+
+    auto heh1 = topo()->halfedge_handle(_h1, 0);
+    auto heh2 = topo()->halfedge_handle(_h2, 0);
+
+    for (auto &heh: incident(e1.from_vertex())) {
+        if (heh == heh1) {
+            heh = heh2;
+        } else if (heh == heh2) {
+            heh = heh1;
+        }
+    }
+    if (e1.from_vertex() != e2.from_vertex()) {
+        for (auto &heh: incident(e2.from_vertex())) {
+            if (heh == heh2) {
+                heh = heh1;
+            }
+        }
+    }
+    auto opp1 = topo()->halfedge_handle(_h1, 1);
+    auto opp2 = topo()->halfedge_handle(_h2, 1);
+
+    for (auto &heh: incident(e1.to_vertex())) {
+        if (heh == opp1) {
+            heh = opp2;
+        } else if (heh == opp1) {
+            heh = opp2;
+        }
+    }
+    if (e1.to_vertex() != e2.to_vertex()) {
+        for (auto &heh: incident(e2.to_vertex())) {
+            if (heh == opp2) {
+                heh = opp1;
+            }
+        }
+    }
 }
 
 
