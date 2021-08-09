@@ -363,12 +363,7 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
             swap_halfface_properties(c.halffaces()[hf_idx], hfh);
         }
 
-        delete_cell(ch);
-
-        CellHandle newCell = add_cell(newHalffaces);
-
-        swap_cell_properties(ch, newCell);
-
+        set_cell(ch, newHalffaces);
     }
 
     delete_vertex(from_vh);
@@ -402,6 +397,7 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
 
         std::vector<VertexHandle> vertices = get_cell_vertices(hfh, _heh);
 
+        // TODO: use set_cell to just change one of the cells, later copy props over to the other
         delete_cell(ch);
 
         new_cells.push_back({vertices[0], _vh, vertices[2], vertices[3]});
