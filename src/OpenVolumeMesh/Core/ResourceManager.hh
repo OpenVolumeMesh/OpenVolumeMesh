@@ -50,6 +50,7 @@
 #include <OpenVolumeMesh/Core/PropertyStorageT.hh>
 #include <OpenVolumeMesh/Core/TypeName.hh>
 #include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
+#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 
 namespace OpenVolumeMesh {
@@ -89,6 +90,16 @@ public:
     ResourceManager& operator=(ResourceManager &&other);
 
 protected:
+    friend PropertyStorageBase;
+
+    template<typename EntityTag>
+    detail::Tracker<PropertyStorageBase> & storage_tracker() const;
+
+    detail::Tracker<PropertyStorageBase> & storage_tracker(EntityType type) const;
+
+    mutable PerEntity<detail::Tracker<PropertyStorageBase>> storage_trackers_;
+
+protected:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
     /// Change size of stored vertex properties
@@ -124,8 +135,11 @@ protected:
     void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b);
 
 public:
+    /// drop all persistent properties.
     void clear_all_props();
+    /// drop persistent properties.
     template<typename EntityTag> void clear_props();
+
     [[deprecated("Use clear_props<Entity::Vertex>() instead.")]]
     inline void clear_vertex_props()   { clear_props<Entity::Vertex>();}
     [[deprecated("Use clear_props<Entity::Edge>() instead.")]]
@@ -226,41 +240,41 @@ public:
     template<typename EntityTag>
     PropertyIterator<Properties::const_iterator>
     all_props_begin() const
-        {return all_props_.get<EntityTag>().cbegin();}
+        {return storage_tracker<EntityTag>().begin();}
 
     template<typename EntityTag>
     PropertyIterator<Properties::const_iterator>
     all_props_end() const
-        {return all_props_.get<EntityTag>().cend();}
+        {return storage_tracker<EntityTag>().cend();}
 
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Vertex>() instead.")]]
-    auto vertex_props_begin()   const {return all_props_begin<Entity::Vertex>();}
+    auto vertex_props_begin()   const {return persistent_props_begin<Entity::Vertex>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Vertex>() instead.")]]
-    auto vertex_props_end()     const {return all_props_end  <Entity::Vertex>();}
+    auto vertex_props_end()     const {return persistent_props_end  <Entity::Vertex>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Edge>() instead.")]]
-    auto edge_props_begin()     const {return all_props_begin<Entity::Edge>();}
+    auto edge_props_begin()     const {return persistent_props_begin<Entity::Edge>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Edge>() instead.")]]
-    auto edge_props_end()       const {return all_props_end  <Entity::Edge>();}
+    auto edge_props_end()       const {return persistent_props_end  <Entity::Edge>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::HalfEdge>() instead.")]]
-    auto halfedge_props_begin() const {return all_props_begin<Entity::HalfEdge>();}
+    auto halfedge_props_begin() const {return persistent_props_begin<Entity::HalfEdge>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::HalfEdge>() instead.")]]
-    auto halfedge_props_end()   const {return all_props_end  <Entity::HalfEdge>();}
+    auto halfedge_props_end()   const {return persistent_props_end  <Entity::HalfEdge>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Face>() instead.")]]
-    auto face_props_begin()     const {return all_props_begin<Entity::Face>();}
+    auto face_props_begin()     const {return persistent_props_begin<Entity::Face>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Face>() instead.")]]
-    auto face_props_end()       const {return all_props_end  <Entity::Face>();}
+    auto face_props_end()       const {return persistent_props_end  <Entity::Face>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::HalfFace>() instead.")]]
-    auto halfface_props_begin() const {return all_props_begin<Entity::HalfFace>();}
+    auto halfface_props_begin() const {return persistent_props_begin<Entity::HalfFace>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::HalfFace>() instead.")]]
-    auto halfface_props_end()   const {return all_props_end  <Entity::HalfFace>();}
+    auto halfface_props_end()   const {return persistent_props_end  <Entity::HalfFace>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Cell>() instead.")]]
-    auto cell_props_begin()     const {return all_props_begin<Entity::Cell>();}
+    auto cell_props_begin()     const {return persistent_props_begin<Entity::Cell>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Cell>() instead.")]]
-    auto cell_props_end()       const {return all_props_end  <Entity::Cell>();}
+    auto cell_props_end()       const {return persistent_props_end  <Entity::Cell>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Mesh>() instead.")]]
-    auto mesh_props_begin()     const {return all_props_begin<Entity::Mesh>();}
+    auto mesh_props_begin()     const {return persistent_props_begin<Entity::Mesh>();}
     [[deprecated("Use (persistent|all)_props_{begin,end}<Entity::Mesh>() instead.")]]
-    auto mesh_props_end()       const {return all_props_end  <Entity::Mesh>();}
+    auto mesh_props_end()       const {return persistent_props_end  <Entity::Mesh>();}
 
 
 public:
@@ -335,20 +349,12 @@ public:
 
 
 private:
-    template<typename T, typename EntityTag>
-    friend class PropertyPtr;
-
-    template<typename EntityTag>
-    void property_deleted(PropertyStorageBase *ptr) const {
-        all_props_.get<EntityTag>().erase(ptr);
-    }
     template<bool Move, typename EntityTag>
     void assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
     template<bool Move>
     void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
 
 private:
-    mutable PerEntity<Properties> all_props_;
     PerEntity<PersistentProperties> persistent_props_;
 
 

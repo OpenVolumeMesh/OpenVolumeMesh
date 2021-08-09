@@ -4,6 +4,7 @@
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
 
 #include <algorithm>
+#include <stdexcept>
 
 
 namespace OpenVolumeMesh {
@@ -41,6 +42,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::delete_face(FaceHandle _fh, const OpenV
         rm(heh, hfh0);
         auto opp = topo()->opposite_halfedge_handle(heh);
         rm(opp, hfh1);
+        invalidate_order(topo()->edge_handle(heh));
     }
 
 }
@@ -148,6 +150,48 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
 #endif
 
 
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2) {
+    if(!enabled()) return;
+    throw std::runtime_error("unimplemented");
+#if 0
+    if (has_edge_bottom_up_incidences())
+    {
+        std::set<HalfEdgeHandle> processed_halfedges; // to ensure ids are only swapped once (in the case that a halfedge is incident to both swapped faces)
+        for (unsigned int i = 0; i < 2; ++i) // For both swapped faces
+        {
+            unsigned int id = ids[i];
+            for (unsigned int j = 0; j < 2; ++j) // for both halffaces
+            {
+                HalfFaceHandle hfh = HalfFaceHandle(2*id+j);
+                Face hf = halfface(hfh);
+
+                for (unsigned int k = 0; k < hf.halfedges().size(); ++k)
+                {
+                    HalfEdgeHandle heh = hf.halfedges()[k];
+
+                    if (processed_halfedges.find(heh) != processed_halfedges.end())
+                        continue;
+
+                    std::vector<HalfFaceHandle>& incident_halffaces = incident_hfs_per_he_[heh.idx()];
+                    for (unsigned int l = 0; l < incident_halffaces.size(); ++l)
+                    {
+                        HalfFaceHandle& hfh2 = incident_halffaces[l];
+
+                        if (hfh2.idx()/2 == (int)id1) // if halfface belongs to swapped face
+                            hfh2 = HalfFaceHandle(2 * id2 + (hfh2.idx() % 2));
+                        else if (hfh2.idx()/2 == (int)id2) // if halfface belongs to swapped face
+                            hfh2 = HalfFaceHandle(2 * id1 + (hfh2.idx() % 2));
+                    }
+
+                    processed_halfedges.insert(heh);
+                }
+            }
+        }
+    }
+#endif
 }
 
 template<typename Derived>

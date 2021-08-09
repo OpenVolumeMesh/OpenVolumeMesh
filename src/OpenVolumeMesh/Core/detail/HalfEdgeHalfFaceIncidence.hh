@@ -25,6 +25,9 @@ protected:
     void invalidate_order(const EdgeHandle &) { /* TODO */ };
     void invalidate_order(const FaceHandle &) { /* TODO */ };
     void invalidate_order(const CellHandle &) { /* TODO */ };
+
+    using IncidencesT::swap;
+    void swap(FaceHandle _h1, FaceHandle _h2);
 private:
     const Derived *topo() const {return static_cast<const Derived*>(this);}
     //std::vector<bool> order_valid_;

@@ -43,19 +43,28 @@ namespace OpenVolumeMesh {
 
 
 template<typename EntityTag>
+detail::Tracker<PropertyStorageBase> &
+ResourceManager::storage_tracker() const
+{
+    return storage_trackers_.get<EntityTag>();
+}
+
+detail::Tracker<PropertyStorageBase> &
+ResourceManager::storage_tracker(EntityType type) const
+{
+    return storage_trackers_.get(type);
+}
+
+template<typename EntityTag>
 void ResourceManager::clear_props()
 {
-    for (auto &prop: all_props_.get<EntityTag>()) {
-        prop->setResMan(nullptr);
-    }
-    all_props_.get<EntityTag>().clear();
     persistent_props_.get<EntityTag>().clear();
 }
 
 template <typename EntityTag>
 void ResourceManager::swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b)
 {
-    for (auto &prop: all_props_.get<EntityTag>()) {
+    for (auto &prop: storage_tracker<EntityTag>()) {
         prop->swap(_idx_a.uidx(), _idx_b.uidx());
     }
 }
@@ -111,7 +120,9 @@ ResourceManager::internal_find_property(const std::string& _name) const
 
     auto type_name = get_type_name(typeid(T));
 
-    for(auto &prop: all_props_.get<EntityTag>())
+    // TODO: maybe we should only look for persistent props!
+    //       also make sure persistent props always have a name!
+    for(auto &prop: storage_tracker<EntityTag>())
     {
         if(prop->name() == _name
             && prop->internal_type_name() == type_name)
@@ -127,10 +138,8 @@ ResourceManager::internal_find_property(const std::string& _name) const
 template<class T, class EntityTag>
 PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string& _name, const T _def) const
 {
-    auto storage = std::make_shared<PropertyStorageT<T>>(_name, EntityTag::type(), _def);
+    auto storage = std::make_shared<PropertyStorageT<T>> (&storage_tracker<EntityTag>(), _name, EntityTag::type(), _def);
     storage->resize(n<EntityTag>());
-    storage->setResMan(this);
-    all_props_.get<EntityTag>().insert(storage.get());
     return PropertyPtr<T, EntityTag>(std::move(storage));
 }
 
@@ -214,65 +223,56 @@ void ResourceManager::entity_deleted(Container& _vec, const OpenVolumeMeshHandle
 
 template<typename EntityTag>
 size_t ResourceManager::n_props() const {
-    auto const &props = all_props_.get<EntityTag>();
-    return props.size();
+    return storage_tracker<EntityTag>().size();
 }
 
 template<bool Move, typename EntityTag>
 void ResourceManager::assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)
 {
-    auto &dst_all = all_props_.get<EntityTag>();
-    auto &src_all = src.all_props_.template get<EntityTag>();
+    auto &src_all = src.persistent_props_.template get<EntityTag>();
+    auto &dst_all = persistent_props_.get<EntityTag>();
 
     // If possible, re-use existing properties instead of copying
     // everything blindly.
 
-    PersistentProperties persist;
+    PersistentProperties out;
 
-
-    Properties out;
     // TODO OPT: this will be slow for many props (quadratic) - we could do this in nlogn!
     //           sort both sets by key (name, type), then traverse in parallel
-    for (PropertyStorageBase *srcprop: src_all) {
+    for (const auto &srcprop: src_all) {
         bool found = false;
         for (auto it = dst_all.begin(); it != dst_all.end(); ++it)
         {
-            PropertyStorageBase *dstprop = *it;
+            auto &dstprop = *it;
             if (dstprop->name() == srcprop->name()
                     && dstprop->internal_type_name() == srcprop->internal_type_name())
             {
+                // found a correspondence!
                 out.insert(dstprop);
-                dst_all.erase(it);
                 if (Move) {
                     dstprop->move_values_from(srcprop);
                 } else {
                     dstprop->assign_values_from(srcprop);
                 }
-                dstprop->setResMan(this);
-                dstprop->set_persistent(srcprop->persistent());
-                if (dstprop->persistent()) {
-                    persist.insert(dstprop->shared_from_this());
-                }
+                dst_all.erase(it);
                 found = true;
                 break;
             }
         }
-        // non-persistent props that do not exist in dst would have no-one to keep them alive.
-        if (!found && srcprop->persistent())
+
+        if (!found)
         {
             std::shared_ptr<PropertyStorageBase> prop;
             if (Move) {
-                prop = srcprop->shared_from_this();
+                prop = srcprop;
             } else {
                 prop = srcprop->clone();
             }
-            prop->setResMan(this);
-            out.insert(prop.get());
-            persist.insert(std::move(prop));
+            prop->set_tracker(storage_tracker<EntityTag>());
+            out.insert(std::move(prop));
         }
     }
     dst_all = std::move(out);
-    persistent_props_.get<EntityTag>() = std::move(persist);
 }
 
 template<bool Move>

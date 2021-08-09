@@ -2006,14 +2006,8 @@ static void testDeferredDelete(PolyhedralMesh &mesh) {
 	EXPECT_DOUBLE_EQ(mesh.vertex(VertexHandle(0))[1], 1);
 }
 
-TEST_F(PolyhedralMeshBase, DeferredDelete) {
-	mesh_.enable_deferred_deletion(true);
-	mesh_.enable_fast_deletion(false);
-	testDeferredDelete(mesh_);
-}
 TEST_F(PolyhedralMeshBase, DeferredFastDelete) {
 	mesh_.enable_deferred_deletion(true);
-	mesh_.enable_fast_deletion(true);
 	testDeferredDelete(mesh_);
 }
 

@@ -143,10 +143,11 @@ public:
 public:
 
 	explicit PropertyStorageT(
+            detail::Tracker<PropertyStorageBase> *tracker,
             const std::string& _name,
             EntityType _entity_type,
             const T &_def = T())
-        : PropertyStorageBase(_name, get_type_name<T>(), _entity_type),
+        : PropertyStorageBase(tracker, _name, get_type_name<T>(), _entity_type),
           def_(_def)
     {}
 
@@ -234,7 +235,7 @@ public:
 
     std::shared_ptr<PropertyStorageBase> clone() const override {
         auto res = std::make_shared<PropertyStorageT<T>>(*this);
-        res->setResMan(nullptr);
+        res->set_tracker(nullptr);
         return res;
 	}
 

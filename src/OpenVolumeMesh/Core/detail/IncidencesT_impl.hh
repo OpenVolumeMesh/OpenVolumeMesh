@@ -4,29 +4,29 @@
 
 namespace OpenVolumeMesh {
 
-template<typename SubEntity, typename _Incidences>
+template<typename Entity, typename _Incidences>
 _Incidences &
-IncidencesT<SubEntity, _Incidences>::
-incident(SubHandle _h)
+IncidencesT<Entity, _Incidences>::
+incident(Handle _h)
 {
     assert(enabled_);
     assert(_h.uidx() < incident_.size());
     return incident_[_h.uidx()];
 }
 
-template<typename SubEntity, typename _Incidences>
+template<typename Entity, typename _Incidences>
 _Incidences const &
-IncidencesT<SubEntity, _Incidences>::
-incident(SubHandle _h) const
+IncidencesT<Entity, _Incidences>::
+incident(Handle _h) const
 {
     assert(enabled_);
     assert(_h.uidx() < incident_.size());
     return incident_[_h.uidx()];
 }
 
-template<typename SubEntity, typename _Incidences>
+template<typename Entity, typename _Incidences>
 void
-IncidencesT<SubEntity, _Incidences>::
+IncidencesT<Entity, _Incidences>::
 setEnabled(bool enable)
 {
     if (enabled_ == enable)
@@ -40,9 +40,9 @@ setEnabled(bool enable)
     }
 }
 
-template<typename SubEntity, typename _Incidences>
+template<typename Entity, typename _Incidences>
 void
-IncidencesT<SubEntity, _Incidences>::
+IncidencesT<Entity, _Incidences>::
 clear() {
     // TODO: once we store incident_ as prop, we do not need clear()
     // anymore

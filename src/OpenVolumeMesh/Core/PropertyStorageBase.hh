@@ -41,10 +41,10 @@
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/TypeName.hh>
+#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 namespace OpenVolumeMesh {
 
-class ResourceManager;
 
 template<typename T>
 class PropertyStorageT;
@@ -55,26 +55,25 @@ class PropertyStorageT;
 
  **/
 
-class OVM_EXPORT PropertyStorageBase : public std::enable_shared_from_this<PropertyStorageBase>
+class OVM_EXPORT PropertyStorageBase
+        : public std::enable_shared_from_this<PropertyStorageBase>
+        , public detail::Tracked<PropertyStorageBase>
 {
 public:
-
-    friend class ResourceManager;
     template <class PropT, class HandleT> friend class PropertyPtr;
-
-	/// Indicates an error when a size is returned by a member.
-	static const size_t UnknownSize;
 
 public:
 
     explicit PropertyStorageBase(
+            detail::Tracker<PropertyStorageBase> *tracker,
             const std::string& _name,
             const std::string& _internal_type_name,
             EntityType _entity_type)
-        : name_(_name),
-          internal_type_name_(_internal_type_name),
-          entity_type_(_entity_type),
-          persistent_(false)
+        : detail::Tracked<PropertyStorageBase>(tracker)
+        , name_(_name)
+        , internal_type_name_(_internal_type_name)
+        , entity_type_(_entity_type)
+        , persistent_(false)
     {}
 
     virtual ~PropertyStorageBase() = default;
@@ -153,15 +152,7 @@ protected:
     /// Move data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void move_values_from(PropertyStorageBase *other) = 0;
 
-
-    void setResMan(const ResourceManager *resMan) { resMan_ = resMan;}
-    const ResourceManager *resMan() { return resMan_;}
-
-
 private:
-
-    const ResourceManager* resMan_ = nullptr;
-
 	std::string name_;
 	std::string internal_type_name_;
     EntityType entity_type_;

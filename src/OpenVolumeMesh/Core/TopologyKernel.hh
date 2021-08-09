@@ -59,15 +59,10 @@ public:
     TopologyKernel() = default;
     ~TopologyKernel() override = default;
 
-    TopologyKernel& operator=(const TopologyKernel&);
-    TopologyKernel& operator=(TopologyKernel&&);
-    TopologyKernel(const TopologyKernel&);
-    TopologyKernel(TopologyKernel&&);
 
-    void assign(const TopologyKernel *other) {
-        assert(other != nullptr);
-        *this = *other;
-    }
+    VertexHalfEdgeIncidence::Incidences const& outgoing_hes_per_vertex(VertexHandle vh);
+    HalfEdgeHalfFaceIncidence::Incidences const& incident_hfs_per_he(HalfEdgeHandle heh);
+    HalfFaceCellIncidence::Incidences const& incident_cell_per_hf(HalfFaceHandle hfh);
 
     /*
      * Defines and constants
@@ -758,73 +753,6 @@ public:
     /// Exchanges the indices of two vertices while keeping the mesh otherwise unaffected.
     virtual void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2);
 
-protected:
-
-    class EdgeCorrector {
-    public:
-        explicit EdgeCorrector(const std::vector<int>& _newIndices) :
-            newIndices_(_newIndices) {}
-
-        void operator()(Edge& _edge) {
-            _edge.set_from_vertex(VertexHandle(newIndices_[_edge.from_vertex().uidx()]));
-            _edge.set_to_vertex(VertexHandle(newIndices_[_edge.to_vertex().uidx()]));
-        }
-    private:
-        const std::vector<int>& newIndices_;
-    };
-
-    class FaceCorrector {
-    public:
-        explicit FaceCorrector(const std::vector<int>& _newIndices) :
-            newIndices_(_newIndices) {}
-
-        void operator()(Face& _face) {
-            std::vector<HalfEdgeHandle> hes = _face.halfedges();
-            for(std::vector<HalfEdgeHandle>::iterator he_it = hes.begin(),
-                    he_end = hes.end(); he_it != he_end; ++he_it) {
-
-                EdgeHandle eh = edge_handle(*he_it);
-                unsigned char opp = he_it->idx() == halfedge_handle(eh, 1).idx();
-                *he_it = halfedge_handle(EdgeHandle(newIndices_[eh.uidx()]), opp);
-            }
-            _face.set_halfedges(hes);
-        }
-    private:
-        const std::vector<int>& newIndices_;
-    };
-
-    class CellCorrector {
-    public:
-        explicit CellCorrector(const std::vector<int>& _newIndices) :
-            newIndices_(_newIndices) {}
-
-        void operator()(Cell& _cell) {
-            std::vector<HalfFaceHandle> hfs = _cell.halffaces();
-            for(std::vector<HalfFaceHandle>::iterator hf_it = hfs.begin(),
-                    hf_end = hfs.end(); hf_it != hf_end; ++hf_it) {
-
-                FaceHandle fh = face_handle(*hf_it);
-                unsigned char opp = hf_it->idx() == halfface_handle(fh, 1).idx();
-                *hf_it = halfface_handle(FaceHandle(newIndices_[fh.uidx()]), opp);
-            }
-            _cell.set_halffaces(hfs);
-        }
-    private:
-        const std::vector<int>& newIndices_;
-    };
-
-public:
-
-    /** \brief Delete range of cells
-     *
-     * Deletes all cells in range [_first, _last].
-     *
-     * @param _first Iterator to first cell that is to be deleted
-     * @param _last Iterator to last cell that is to be deleted
-     * @return An iterator to the first cell after the deleted range
-     */
-    CellIter delete_cell_range(const CellIter& _first, const CellIter& _last);
-
 public:
 
     /// Clear whole mesh
@@ -917,8 +845,6 @@ protected:
     void compute_edge_bottom_up_incidences();
 
     void compute_face_bottom_up_incidences();
-
-    void reorder_incident_halffaces(const EdgeHandle& _eh);
 
 private:
 

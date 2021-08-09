@@ -8,27 +8,20 @@ namespace OpenVolumeMesh {
 
 class TopologyKernel;
 
-template<typename SubEntity, typename _Incidences>
+template<typename Entity, typename _Incidences>
 class IncidencesT
 {
-    static_assert(is_entity<SubEntity>::value);
+    static_assert(is_entity<Entity>::value);
 public:
-    using SubHandle = HandleT<SubEntity>;
+    using Handle = HandleT<Entity>;
     using Incidences = _Incidences;
 
     IncidencesT() = default;
 
-#if 0
-    IncidencesT(IncidencesT const&) = default;
-    IncidencesT(IncidencesT &&) = default;
-    IncidencesT& operator=(IncidencesT &&) = default;
-    IncidencesT& operator=(IncidencesT const &) = default;
-#endif
-
     bool enabled() const {return enabled_;}
     void setEnabled(bool enable);
 
-    Incidences const& incident(SubHandle _h) const;
+    Incidences const& incident(Handle _h) const;
 
 protected:
     void reserve(size_t n) {
@@ -40,21 +33,21 @@ protected:
         incident_.resize(n, Incidences{});
     }
 #if 0
-    void remove(SubHandle _h) {
+    void remove(Handle _h) {
         if(!enabled_) return;
         incident(_h).clear();
     }
 #endif
     // TODO: no need to do this if we keep our vector as prop :)
-    void swap(SubHandle _h1, SubHandle _h2) {
+    void swap(Handle _h1, Handle _h2) {
         if(!enabled_) return;
         std::swap(incident(_h1), incident(_h2));
     }
     void clear();
 
-    Incidences & incident(SubHandle _h);
+    Incidences & incident(Handle _h);
 
-    bool valid(SubHandle vh) const;
+    bool valid(Handle vh) const;
     virtual void recompute() = 0;
 
 private:

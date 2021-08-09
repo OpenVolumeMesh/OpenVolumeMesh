@@ -18,6 +18,8 @@ public:
 protected:
     void add_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
     void delete_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
+    using IncidencesT::swap;
+    void swap(EdgeHandle _h1, EdgeHandle _h2);
 private:
     const Derived *topo() const {return static_cast<const Derived*>(this);}
     void recompute() override;

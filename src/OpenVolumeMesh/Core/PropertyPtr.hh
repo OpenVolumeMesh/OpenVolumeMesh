@@ -79,16 +79,6 @@ public:
     // defined in ResourceManagerT_impl to avoid circular references
     PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
 
-    ~PropertyPtr() {
-        // TODO: move this to extra parent class, then implement default assignment ops and copy constructors
-        auto resman = storage()->resMan();
-        if (resman != nullptr) {
-            if (storage().use_count() == 1) {
-                resman->template property_deleted<EntityTag>(storage().get());
-            }
-        }
-    }
-
     friend class ResourceManager;
     friend class PropertyStorageT<T>;
 

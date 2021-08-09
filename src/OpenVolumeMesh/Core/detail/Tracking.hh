@@ -41,6 +41,10 @@ public:
         // Keeping them seems acceptable, operator= in derived classes can do something with them.
     }
 
+    auto begin()  const { return tracked_.cbegin(); }
+    auto end()    const { return tracked_.cend(); }
+    size_t size() const { return tracked_.size(); }
+
 protected:
     void add(T* val)
     {
@@ -53,9 +57,6 @@ protected:
         assert(tracked_.find(val) == tracked_.end());
         tracked_.insert(val);
     }
-
-    auto begin() const { return tracked_.cbegin(); }
-    auto end()   const { return tracked_.cend(); }
 
     template<typename F>
     auto for_each(F fun)
@@ -101,17 +102,18 @@ public:
         other.remove();
         return *this;
     }
-protected:
-    Tracked(Tracker<T> *_tracker)
-        : tracker_(_tracker)
-    { add(); }
-
 
     void set_tracker(Tracker<T> *new_tracker) {
         remove();
         tracker_ = new_tracker;
         add();
     }
+protected:
+    Tracked(Tracker<T> *_tracker)
+        : tracker_(_tracker)
+    { add(); }
+
+
 
 private:
     void add() {

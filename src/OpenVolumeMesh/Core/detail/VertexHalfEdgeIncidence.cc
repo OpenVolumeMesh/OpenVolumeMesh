@@ -4,6 +4,7 @@
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
 
 #include <algorithm>
+#include <stdexcept>
 
 
 namespace OpenVolumeMesh {
@@ -58,6 +59,12 @@ void VertexHalfEdgeIncidence<Derived>::delete_edge(EdgeHandle _eh, const OpenVol
 
     rm_v_heh(_edge.from_vertex(), topo()->halfedge_handle(_eh, 0));
     rm_v_heh(_edge.to_vertex(),   topo()->halfedge_handle(_eh, 1));
+}
+
+template<typename Derived>
+void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
+    if(!enabled()) return;
+    throw std::runtime_error("unimplemented");
 }
 
 
