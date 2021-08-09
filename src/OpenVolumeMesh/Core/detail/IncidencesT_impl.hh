@@ -25,6 +25,16 @@ incident(Handle _h) const
 }
 
 template<typename Derived, typename Entity, typename _Incidences>
+_Incidences &
+IncidencesT<Derived, Entity, _Incidences>::
+incident_mutable(Handle _h) const
+{
+    assert(enabled());
+    assert(_h.uidx() < incident_->size());
+    return (*incident_)[_h];
+}
+
+template<typename Derived, typename Entity, typename _Incidences>
 void
 IncidencesT<Derived, Entity, _Incidences>::
 set_enabled(bool enable)
@@ -32,10 +42,10 @@ set_enabled(bool enable)
     if (enabled() == enable)
         return;
     if (enable) {
-        incident_ = PrivateProperty<Incidences, Entity>(topo(), "bottom-up incidences");
+        incident_.emplace(topo(), "bottom-up incidences");
         recompute();
     } else {
-        incident_ = {};
+        incident_.reset();
     }
 }
 

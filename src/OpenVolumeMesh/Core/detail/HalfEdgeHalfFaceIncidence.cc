@@ -50,7 +50,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::delete_face(FaceHandle _fh, const OpenV
 }
 
 template<typename Derived>
-void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh)
+void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(EdgeHandle _eh) const
 {
     /* Put halffaces in clockwise order via the
      * same cell property which now exists.
@@ -73,12 +73,13 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
     if (topo()->is_deleted(_eh)) return;
 
     HalfEdgeHandle heh = topo()->halfedge_handle(_eh, 0);
-    auto &incident_hfs = incident(heh);
+    auto &incident_hfs = incident_mutable(heh);
 
     const size_t n_hfs = incident_hfs.size();
 
-    if(n_hfs < 2)
+    if(n_hfs < 2) {
         return;
+    }
 
     std::vector<HalfFaceHandle> new_halffaces;
     new_halffaces.reserve(n_hfs);
@@ -98,7 +99,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
         if (!ch.is_valid() || topo()->is_deleted(ch))
             break;
 
-        cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh);
+        cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh, true);
         if(!cur_hf.is_valid()) {
             return;
         }
@@ -122,7 +123,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
             if (!ch.is_valid() || topo()->is_deleted(ch))
                 break;
 
-            cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh);
+            cur_hf = topo()->adjacent_halfface_in_cell(cur_hf, heh, true);
             if(!cur_hf.is_valid()) {
                 return;
             }
@@ -139,7 +140,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
     // Everything worked just fine, set the new ordered vector
     if(new_halffaces.size() == incident_hfs.size()) {
         incident_hfs = std::move(new_halffaces);
-        auto &opp_incident = incident(topo()->opposite_halfedge_handle(heh));
+        auto &opp_incident = incident_mutable(topo()->opposite_halfedge_handle(heh));
         // update incident halffaces of the opposite halfedge:
         std::transform(incident_hfs.rbegin(), incident_hfs.rend(),
                        opp_incident.begin(),
@@ -153,6 +154,50 @@ void HalfEdgeHalfFaceIncidence<Derived>::reorder_halffaces(const EdgeHandle &_eh
     }
 #endif
 
+
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(EdgeHandle _eh)
+{
+    if (!enabled()) return;
+    (*ordered_)[_eh] = false;
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(FaceHandle _fh)
+{
+    if (!enabled()) return;
+    for (const auto eh: topo()->face_edges(_fh)) {
+         (*ordered_)[eh] = false;
+    }
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(CellHandle _ch)
+{
+    if (!enabled()) return;
+    for (const auto hfh: topo()->cell_halffaces(_ch)) {
+        for (const auto &heh: topo()->halfface_halfedges(hfh)) {
+            // both of each incident edge's halfedges are included exactly once,
+            // so we just pick the ones with subidx 0.
+            if ((heh.idx() & 1) == 0) {
+                HalfEdgeHalfFaceIncidence::reorder_halffaces(topo()->edge_handle(heh));
+            }
+        }
+    }
+
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::ensure_ordered(EdgeHandle _eh) const
+{
+    if (!enabled()) return;
+
+    if (!(*ordered_)[_eh]) {
+        reorder_halffaces(_eh);
+        (*ordered_)[_eh] = true;
+    }
 
 }
 
@@ -184,6 +229,19 @@ void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
                 }
             }
         }
+    }
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::set_enabled(bool _enable)
+{
+    if (enabled() == _enable)
+        return;
+    Parent::set_enabled(_enable);
+    if (_enable) {
+        ordered_.emplace(topo(), "valid hfh order", false);
+    } else {
+        ordered_.reset();
     }
 }
 
