@@ -312,18 +312,7 @@ public:
         return property_exists<T, Entity::Mesh>( _name);
     }
 
-protected:
-
-
-    void delete_multiple_vertex_props(const std::vector<bool>& _tags);
-    void delete_multiple_edge_props(const std::vector<bool>& _tags);
-    void delete_multiple_face_props(const std::vector<bool>& _tags);
-    void delete_multiple_cell_props(const std::vector<bool>& _tags);
-
 private:
-
-    template<typename EntityTag>
-    void delete_multiple_entities(const std::vector<bool>& _tags);
 
     template<class Container>
     void resize_props(Container& _vec, size_t _n);

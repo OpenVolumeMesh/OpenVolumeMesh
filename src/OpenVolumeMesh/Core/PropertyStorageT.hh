@@ -278,22 +278,6 @@ protected:
 
     }
 
-    /// Delete multiple entries in list
-    void delete_multiple_entries(const std::vector<bool>& _tags) override {
-
-        assert(_tags.size() == data_.size());
-        vector_type new_data;
-        typename vector_type::iterator d_it = data_.begin();
-        std::vector<bool>::const_iterator t_it = _tags.begin();
-        std::vector<bool>::const_iterator t_end = _tags.end();
-        for(; t_it != t_end; ++t_it, ++d_it) {
-            if(!*t_it) {
-                new_data.push_back(*d_it);
-            }
-        }
-        data_.swap(new_data);
-    }
-
 protected:
     //detail::Tracker<PropertyStoragePtr<T>> pointer_tracker;
 private:

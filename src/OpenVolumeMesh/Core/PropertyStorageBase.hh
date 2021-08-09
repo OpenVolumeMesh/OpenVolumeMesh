@@ -154,9 +154,6 @@ protected:
     virtual void move_values_from(PropertyStorageBase *other) = 0;
 
 
-	/// Delete multiple entries in list
-    virtual void delete_multiple_entries(const std::vector<bool>&) = 0;
-
     void setResMan(const ResourceManager *resMan) { resMan_ = resMan;}
     const ResourceManager *resMan() { return resMan_;}
 

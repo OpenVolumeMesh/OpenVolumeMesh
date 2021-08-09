@@ -152,46 +152,6 @@ void ResourceManager::clear_all_props()
     for_each_entity([this](auto entity_tag){ clear_props<decltype(entity_tag)>();});
 }
 
-void ResourceManager::delete_multiple_vertex_props(const std::vector<bool>& _tags)
-{
-    delete_multiple_entities<Entity::Vertex>(_tags);
-}
-
-void ResourceManager::delete_multiple_edge_props(const std::vector<bool>& _tags)
-{
-    delete_multiple_entities<Entity::Edge>(_tags);
-
-    // TODO OPTI: remove_if stuff? see delete_multiple_face_props too
-    // Create tags vector for halfedges
-    std::vector<bool> hetags;
-    for(std::vector<bool>::const_iterator t_it = _tags.begin(),
-            t_end = _tags.end(); t_it != t_end; ++t_it) {
-        hetags.push_back(*t_it);
-        hetags.push_back(*t_it);
-    }
-    delete_multiple_entities<Entity::HalfEdge>(hetags);
-}
-
-void ResourceManager::delete_multiple_face_props(const std::vector<bool>& _tags)
-{
-
-    delete_multiple_entities<Entity::Face>(_tags);
-
-    // Create tags vector for halffaces
-    std::vector<bool> hftags;
-    for(std::vector<bool>::const_iterator t_it = _tags.begin(),
-            t_end = _tags.end(); t_it != t_end; ++t_it) {
-        hftags.push_back(*t_it);
-        hftags.push_back(*t_it);
-    }
-    delete_multiple_entities<Entity::HalfFace>(hftags);
-}
-
-void ResourceManager::delete_multiple_cell_props(const std::vector<bool>& _tags)
-{
-    delete_multiple_entities<Entity::Cell>(_tags);
-}
-
 
 template<> size_t ResourceManager::n<Entity::Vertex>()   const { return n_vertices(); }
 template<> size_t ResourceManager::n<Entity::Edge>()     const { return n_edges(); }

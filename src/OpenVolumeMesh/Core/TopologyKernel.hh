@@ -760,18 +760,6 @@ public:
 
 protected:
 
-    [[deprecated("this does not delete incident edges, etc")]]
-    virtual void delete_multiple_vertices(const std::vector<bool>& _tag);
-
-    [[deprecated("this does not delete incident faces and cells, or update bottom-up incidences!")]]
-    virtual void delete_multiple_edges(const std::vector<bool>& _tag);
-
-    [[deprecated("this does not delete incident cells, or update bottom-up incidences!")]]
-    virtual void delete_multiple_faces(const std::vector<bool>& _tag);
-
-    [[deprecated("this does not update bottom-up incidences!")]]
-    virtual void delete_multiple_cells(const std::vector<bool>& _tag);
-
     class EdgeCorrector {
     public:
         explicit EdgeCorrector(const std::vector<int>& _newIndices) :

@@ -186,14 +186,6 @@ void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _fla
 }
 
 
-template<class EntityTag>
-void ResourceManager::delete_multiple_entities(const std::vector<bool>& _tags)
-{
-    for (auto &prop: all_props_.get<EntityTag>()) {
-        prop->delete_multiple_entries(_tags);
-    }
-}
-
 template<class Container>
 void ResourceManager::resize_props(Container& _vec, size_t _n)
 {
