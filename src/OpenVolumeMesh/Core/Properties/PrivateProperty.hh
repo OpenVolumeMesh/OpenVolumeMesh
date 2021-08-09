@@ -14,10 +14,10 @@ class PrivateProperty : public AddEntityHandleAccess<EntityTag, PropertyStorageT
 {
     static_assert(is_entity<EntityTag>::value);
 public:
-    PrivateProperty(const ResourceManager *resman, T const& _def = T())
+    PrivateProperty(const ResourceManager *resman, std::string const&name, T const& _def = T())
         : AddEntityHandleAccess<EntityTag, PropertyStorageT<T>>(
         &resman->storage_tracker<EntityTag>(),
-              "", EntityTag::type(), _def)
+              name, EntityTag::type(), _def)
     {
         PropertyStorageT<T>::resize(resman->n<EntityTag>());
 

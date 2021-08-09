@@ -32,7 +32,7 @@ set_enabled(bool enable)
     if (enabled() == enable)
         return;
     if (enable) {
-        incident_ = PrivateProperty<Incidences, Entity>(topo());
+        incident_ = PrivateProperty<Incidences, Entity>(topo(), "bottom-up incidences");
         recompute();
     } else {
         incident_ = {};

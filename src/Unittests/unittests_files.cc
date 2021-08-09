@@ -247,6 +247,7 @@ TEST_F(PolyhedralMeshBase, LoadFileWithProps) {
 
   OpenVolumeMesh::IO::FileManager fileManager;
 
+  mesh_.enable_bottom_up_incidences(false);
   ASSERT_TRUE(fileManager.readFile("Cube_with_props.ovm", mesh_));
 
   EXPECT_EQ(8u, mesh_.n_vertices());

@@ -37,27 +37,18 @@ void HalfFaceCellIncidence<Derived>::delete_cell(CellHandle _ch, const OpenVolum
 template<typename Derived>
 void HalfFaceCellIncidence<Derived>::swap(CellHandle _h1, CellHandle _h2) {
     if(!enabled()) return;
-    throw std::runtime_error("unimplemented");
+    // We assume there is no common halfface between the cells (implied by manifoldness)
 
-
-#if 0
-    // correct pointers to those cells
-    std::vector<HalfFaceHandle> hfhs1 = c1.halffaces();
-    for (unsigned int i = 0; i < hfhs1.size(); ++i)
-    {
-        HalfFaceHandle hfh = hfhs1[i];
-        if (incident_cell_per_hf_[hfh.idx()] == _h1)
-            incident_cell_per_hf_[hfh.idx()] = _h2;
+    for (const auto &ch: {_h1, _h2}) {
+        for (const auto hfh: topo()->cell_halffaces(ch)) {
+            auto &inc = incident(hfh);
+            if (inc == _h1) {
+                inc = _h2;
+            } else if (inc == _h2) {
+                inc = _h1;
+            }
+        }
     }
-
-    std::vector<HalfFaceHandle> hfhs2 = c2.halffaces();
-    for (unsigned int i = 0; i < hfhs2.size(); ++i)
-    {
-        HalfFaceHandle hfh = hfhs2[i];
-        if (incident_cell_per_hf_[hfh.idx()] == _h2)
-            incident_cell_per_hf_[hfh.idx()] = _h1;
-    }
-#endif
 }
 
 template<typename Derived>
