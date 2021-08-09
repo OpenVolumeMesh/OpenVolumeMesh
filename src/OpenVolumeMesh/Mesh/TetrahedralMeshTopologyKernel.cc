@@ -363,6 +363,7 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
             swap_halfface_properties(c.halffaces()[hf_idx], hfh);
         }
 
+        // TODO: does this create a temporary non-manifold situation? can we avoid it?
         set_cell(ch, newHalffaces);
     }
 

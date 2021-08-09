@@ -51,6 +51,7 @@ void VertexHalfEdgeIncidence<Derived>::delete_edge(EdgeHandle _eh, const OpenVol
     auto rm_v_heh = [this](VertexHandle vh, HalfEdgeHandle heh)
     {
         Incidences &vec = incident(vh);
+        // PERF: we can swap in the last element and resize instead of using remove
         vec.erase(std::remove( vec.begin(), vec.end(),
                       heh),
                   vec.end());
@@ -91,8 +92,8 @@ void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
     for (auto &heh: incident(e1.to_vertex())) {
         if (heh == opp1) {
             heh = opp2;
-        } else if (heh == opp1) {
-            heh = opp2;
+        } else if (heh == opp2) {
+            heh = opp1;
         }
     }
     if (e1.to_vertex() != e2.to_vertex()) {
