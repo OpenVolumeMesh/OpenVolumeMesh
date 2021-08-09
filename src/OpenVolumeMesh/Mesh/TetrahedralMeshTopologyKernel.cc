@@ -350,7 +350,7 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
             for (unsigned int j = 0; j < 3; ++j)
             {
                 Edge e = halfedge(hf.halfedges()[j]);
-                VertexHandle newStart = (e.from_vertex() == from_vh) ? to_vh: e.from_vertex();
+                VertexHandle newStart = (e.from_vertex() == from_vh) ? to_vh : e.from_vertex();
                 VertexHandle newEnd   = (e.to_vertex()   == from_vh) ? to_vh : e.to_vertex();
 
                 HalfEdgeHandle heh = add_halfedge(newStart, newEnd);
@@ -371,31 +371,11 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
 
     }
 
-
-    VertexHandle survivingVertex = to_vh;
-
-    if (!deferred_deletion_tmp)
-    {
-        if (fast_deletion_enabled())
-        {
-            // from_vh is swapped with last vertex and then deleted
-            if (to_vh.idx() == (int)n_vertices() - 1)
-                survivingVertex = from_vh;
-        }
-        else
-        {
-            // from_vh is deleted and every vertex id larger than from_vh is reduced by one
-            if (from_vh.idx() < to_vh.idx())
-                survivingVertex = VertexHandle(to_vh.idx() - 1);
-        }
-    }
-
     delete_vertex(from_vh);
 
     enable_deferred_deletion(deferred_deletion_tmp);
 
-    return survivingVertex;
-
+    return to_vh;
 }
 
 // cppcheck-suppress unusedFunction ; public interface

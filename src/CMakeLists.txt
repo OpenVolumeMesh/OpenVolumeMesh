@@ -18,7 +18,9 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/Iterators.cc
     OpenVolumeMesh/Core/PropertyStorageBase.cc
     OpenVolumeMesh/Core/TypeName.cc
-    OpenVolumeMesh/Core/VertexEdgeIncidence.cc
+    OpenVolumeMesh/Core/detail/VertexHalfEdgeIncidence.cc
+    OpenVolumeMesh/Core/detail/HalfEdgeHalfFaceIncidence.cc
+    OpenVolumeMesh/Core/detail/HalfFaceCellIncidence.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/HexahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.cc

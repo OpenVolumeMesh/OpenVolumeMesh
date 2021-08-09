@@ -41,21 +41,28 @@
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 #include <OpenVolumeMesh/Core/Iterators.hh>
-#include <OpenVolumeMesh/Core/VertexEdgeIncidence.hh>
+#include <OpenVolumeMesh/Core/detail/VertexHalfEdgeIncidence.hh>
+#include <OpenVolumeMesh/Core/detail/HalfEdgeHalfFaceIncidence.hh>
+#include <OpenVolumeMesh/Core/detail/HalfFaceCellIncidence.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 
 class OVM_EXPORT TopologyKernel
         : public ResourceManager
-        , public VertexEdgeIncidence
+        , public VertexHalfEdgeIncidence<TopologyKernel>
+        , public HalfEdgeHalfFaceIncidence<TopologyKernel>
+        , public HalfFaceCellIncidence<TopologyKernel>
 {
 public:
 
     TopologyKernel() = default;
     ~TopologyKernel() override = default;
 
-    TopologyKernel& operator=(const TopologyKernel&) = default;
+    TopologyKernel& operator=(const TopologyKernel&);
+    TopologyKernel& operator=(TopologyKernel&&);
+    TopologyKernel(const TopologyKernel&);
+    TopologyKernel(TopologyKernel&&);
 
     void assign(const TopologyKernel *other) {
         assert(other != nullptr);
@@ -678,16 +685,12 @@ public:
 
     /// Get valence of vertex (number of incident edges)
     inline size_t valence(const VertexHandle& _vh) const {
-        return VertexEdgeIncidence::valence(_vh);
+        return VertexHalfEdgeIncidence::incident(_vh).size();
     }
 
     /// Get valence of edge (number of incident faces)
     inline size_t valence(const EdgeHandle& _eh) const {
-        assert(has_edge_bottom_up_incidences());
-        assert(_eh.is_valid() && _eh.uidx() < edges_.size());
-        assert(halfedge_handle(_eh, 0).uidx() < incident_hfs_per_he_.size());
-
-        return incident_hfs_per_he_[halfedge_handle(_eh, 0).uidx()].size();
+        return HalfEdgeHalfFaceIncidence::incident(halfedge_handle(_eh, 0)).size();
     }
 
     /// Get valence of face (number of incident edges)
@@ -850,9 +853,11 @@ public:
         n_deleted_edges_ = 0;
         n_deleted_faces_ = 0;
         n_deleted_cells_ = 0;
-        incident_hfs_per_he_.clear();
-        incident_cell_per_hf_.clear();
         n_vertices_ = 0;
+
+        VertexHalfEdgeIncidence::clear();
+        HalfEdgeHalfFaceIncidence::clear();
+        HalfFaceCellIncidence::clear();
 
         if(_clearProps) {
             // Delete all property data
@@ -881,54 +886,17 @@ public:
 
     void enable_vertex_bottom_up_incidences(bool _enable = true)
     {
-        VertexEdgeIncidence::setEnabled(_enable);
+        VertexHalfEdgeIncidence::setEnabled(_enable);
     }
 
-    void enable_edge_bottom_up_incidences(bool _enable = true) {
-
-        if(_enable && !e_bottom_up_) {
-            // Edge bottom-up incidences have to be
-            // recomputed for the whole mesh
-            compute_edge_bottom_up_incidences();
-
-            if(f_bottom_up_) {
-                for (const auto &eh: edges()) {
-                    reorder_incident_halffaces(eh);
-                }
-            }
-        }
-
-        if(!_enable) {
-            incident_hfs_per_he_.clear();
-        }
-
-        e_bottom_up_ = _enable;
+    void enable_edge_bottom_up_incidences(bool _enable = true)
+    {
+        HalfEdgeHalfFaceIncidence::setEnabled(_enable);
     }
 
-    void enable_face_bottom_up_incidences(bool _enable = true) {
-
-        bool updateOrder = false;
-        if(_enable && !f_bottom_up_) {
-            // Face bottom-up incidences have to be
-            // recomputed for the whole mesh
-            compute_face_bottom_up_incidences();
-
-            updateOrder = true;
-        }
-
-        if(!_enable) {
-            incident_cell_per_hf_.clear();
-        }
-
-        f_bottom_up_ = _enable;
-
-        if(updateOrder) {
-            if(e_bottom_up_) {
-                for (const auto &eh: edges()) {
-                    reorder_incident_halffaces(eh);
-                }
-            }
-        }
+    void enable_face_bottom_up_incidences(bool _enable = true)
+    {
+        HalfFaceCellIncidence::setEnabled(_enable);
     }
 
     bool has_full_bottom_up_incidences() const {
@@ -937,11 +905,11 @@ public:
                 has_face_bottom_up_incidences());
     }
 
-    bool has_vertex_bottom_up_incidences() const { return v_bottom_up_; }
+    bool has_vertex_bottom_up_incidences() const { return VertexHalfEdgeIncidence::enabled(); }
 
-    bool has_edge_bottom_up_incidences() const { return e_bottom_up_; }
+    bool has_edge_bottom_up_incidences() const { return HalfEdgeHalfFaceIncidence::enabled(); }
 
-    bool has_face_bottom_up_incidences() const { return f_bottom_up_; }
+    bool has_face_bottom_up_incidences() const { return HalfFaceCellIncidence::enabled(); }
 
 
     void enable_deferred_deletion(bool _enable = true);
@@ -949,7 +917,7 @@ public:
 
 
     [[deprecated("Fast deletion is always enabled now.")]]
-    void enable_fast_deletion(bool _enable = true) {}
+    void enable_fast_deletion(bool = true) {}
     [[deprecated("Fast deletion is always enabled now.")]]
     bool fast_deletion_enabled() const { return true; }
 
@@ -964,18 +932,7 @@ protected:
 
     void reorder_incident_halffaces(const EdgeHandle& _eh);
 
-    // Incident halffaces per (directed) halfedge
-    std::vector<std::vector<HalfFaceHandle> > incident_hfs_per_he_;
-
-    // Incident cell (at most one) per halfface
-    std::vector<CellHandle> incident_cell_per_hf_;
-
 private:
-    bool v_bottom_up_ = true;
-
-    bool e_bottom_up_ = true;
-
-    bool f_bottom_up_ = true;
 
     bool deferred_deletion_ = true;
 
@@ -998,12 +955,8 @@ public:
     /// Get cell that is incident to the given halfface
     CellHandle incident_cell(const HalfFaceHandle& _halfFaceHandle) const;
 
-    bool is_boundary(const HalfFaceHandle& _halfFaceHandle) const {
-
-        assert(_halfFaceHandle.is_valid() && _halfFaceHandle.uidx() < faces_.size() * 2u);
-        assert(has_face_bottom_up_incidences());
-        assert(_halfFaceHandle.uidx() < incident_cell_per_hf_.size());
-        return incident_cell_per_hf_[_halfFaceHandle.uidx()] == InvalidCellHandle;
+    bool is_boundary(const HalfFaceHandle& _hfh) const {
+        return !HalfFaceCellIncidence::incident(_hfh).is_valid();
     }
 
     bool is_boundary(const FaceHandle& _faceHandle) const {
@@ -1148,7 +1101,7 @@ public:
 public:
     template<typename Entity>
     bool is_valid(HandleT<Entity> _h) const {
-        return _h.uidx() < n<Entity>();
+        return _h.uidx() < n<Entity>() && !is_deleted(_h);
     }
 
 protected:

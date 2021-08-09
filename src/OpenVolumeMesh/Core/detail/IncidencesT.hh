@@ -8,58 +8,59 @@ namespace OpenVolumeMesh {
 
 class TopologyKernel;
 
-template<typename SubEntity, typename SuperEntity>
+template<typename SubEntity, typename _Incidences>
 class IncidencesT
 {
     static_assert(is_entity<SubEntity>::value);
-    static_assert(is_entity<SuperEntity>::value);
-    using SubHandle = HandleT<SubEntity>;
-    using SuperHandle = HandleT<SuperEntity>;
 public:
-    using Incidences = std::vector<SuperHandle>;
+    using SubHandle = HandleT<SubEntity>;
+    using Incidences = _Incidences;
+
+    IncidencesT() = default;
+
+#if 0
+    IncidencesT(IncidencesT const&) = default;
+    IncidencesT(IncidencesT &&) = default;
+    IncidencesT& operator=(IncidencesT &&) = default;
+    IncidencesT& operator=(IncidencesT const &) = default;
+#endif
+
     bool enabled() const {return enabled_;}
     void setEnabled(bool enable);
-    void clear();
-    size_t valence(SubHandle _h) const {
-        assert(enabled_);
-        return incident(_h).size();
-    }
-    Incidences const& incident(SubHandle _h) const {
-        assert(enabled_);
-        assert(topo()->is_valid(_h));
-        return incident_[_h.uidx()];
-    }
+
+    Incidences const& incident(SubHandle _h) const;
+
+protected:
     void reserve(size_t n) {
         if(!enabled_) return;
         incident_.reserve(n);
     }
     void resize(size_t n) {
         if(!enabled_) return;
-        incident_.resize(n);
+        incident_.resize(n, Incidences{});
     }
+#if 0
     void remove(SubHandle _h) {
         if(!enabled_) return;
         incident(_h).clear();
     }
+#endif
     // TODO: no need to do this if we keep our vector as prop :)
     void swap(SubHandle _h1, SubHandle _h2) {
         if(!enabled_) return;
         std::swap(incident(_h1), incident(_h2));
     }
-protected:
-    Incidences & incident(SubHandle _h) {
-        assert(enabled_);
-        assert(topo()->is_valid(_h));
-        return incident_[_h.uidx()];
-    }
+    void clear();
 
-    TopologyKernel const* topo() const;
+    Incidences & incident(SubHandle _h);
+
     bool valid(SubHandle vh) const;
     virtual void recompute() = 0;
 
 private:
-    bool enabled_;
     std::vector<Incidences> incident_;
+    bool enabled_ = false;
 };
+
 
 } // namespace OpenVolumeMesh

@@ -53,6 +53,10 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
                                       std_API_Container_CHandlePointer &ch_to_update,
                                       bool _preserveManifoldness) {
 
+    throw std::runtime_error("not implemented anymore! Use TopologyKernel deferred deletion!");
+    // TODO: provide compatibility implementation
+
+#if 0
     /*
      * This is not a real garbage collection in its conventional
      * sense. What happens in this routine are the following steps:
@@ -363,5 +367,6 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer &vh_to_up
             return;
         }
     }
+#endif
 }
 } // namespace OpenVolumeMesh

@@ -50,7 +50,7 @@ const FaceHandle        TopologyKernel::InvalidFaceHandle     = FaceHandle(-1);
 const HalfFaceHandle    TopologyKernel::InvalidHalfFaceHandle = HalfFaceHandle(-1);
 const CellHandle        TopologyKernel::InvalidCellHandle     = CellHandle(-1);
 
-//========================================================================================
+
 void TopologyKernel::reserve_vertices(size_t n)
 {
     ResourceManager::reserve_vprops(n);
@@ -109,24 +109,9 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
 
     // Test if edge does not exist, yet
     if(!_allowDuplicates) {
-        if(has_vertex_bottom_up_incidences()) {
-
-            assert((size_t)_fromVertex.idx() < outgoing_hes_per_vertex_.size());
-            std::vector<HalfEdgeHandle>& ohes = outgoing_hes_per_vertex_[_fromVertex.idx()];
-            for(std::vector<HalfEdgeHandle>::const_iterator he_it = ohes.begin(),
-                    he_end = ohes.end(); he_it != he_end; ++he_it) {
-                if(halfedge(*he_it).to_vertex() == _toVertex) {
-                    return edge_handle(*he_it);
-                }
-            }
-        } else {
-            for(int i = 0; i < (int)edges_.size(); ++i) {
-                if(edge(EdgeHandle(i)).from_vertex() == _fromVertex && edge(EdgeHandle(i)).to_vertex() == _toVertex) {
-                    return EdgeHandle(i);
-                } else if(edge(EdgeHandle(i)).from_vertex() == _toVertex && edge(EdgeHandle(i)).to_vertex() == _fromVertex) {
-                    return EdgeHandle(i);
-                }
-            }
+        auto heh = halfedge(_fromVertex, _toVertex);
+        if (heh.is_valid()) {
+            return edge_handle(heh);
         }
     }
 
@@ -138,12 +123,8 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
 
     EdgeHandle eh((int)edges_.size()-1);
 
-    VertexEdgeIncidence::add_edge(eh, edges_.back());
-
-    // Create item for edge bottom-up incidences
-    if(has_edge_bottom_up_incidences()) {
-        incident_hfs_per_he_.resize(n_halfedges());
-    }
+    VertexHalfEdgeIncidence::add_edge(eh, edges_.back());
+    HalfEdgeHalfFaceIncidence::resize(n_halfedges());
 
     // Get handle of recently created edge
     return eh;
@@ -157,8 +138,9 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
 #ifndef NDEBUG
     // Assert that halfedges are valid
     for(std::vector<HalfEdgeHandle>::const_iterator it = _halfedges.begin(),
-            end = _halfedges.end(); it != end; ++it)
-        assert(it->is_valid() && (size_t)it->idx() < edges_.size() * 2u && !is_deleted(*it));
+            end = _halfedges.end(); it != end; ++it) {
+        is_valid(*it);
+    }
 #endif
 
     // Perform topology check
@@ -184,29 +166,9 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
     // Resize props
     resize_fprops(n_faces());
 
-    // Update edge bottom-up incidences
-    if(has_edge_bottom_up_incidences()) {
+    HalfEdgeHalfFaceIncidence::add_face(fh, faces_.back());
+    HalfFaceCellIncidence::resize(n_halffaces());
 
-        const auto &face_halfedges = faces_[fh.idx()].halfedges();
-        for (const auto heh: face_halfedges) {
-            auto opp = opposite_halfedge_handle(heh);
-
-            assert((size_t)heh.idx() < incident_hfs_per_he_.size());
-            assert((size_t)opp.idx() < incident_hfs_per_he_.size());
-
-            incident_hfs_per_he_[heh.idx()].push_back(halfface_handle(fh, 0));
-            incident_hfs_per_he_[opp.idx()].push_back(halfface_handle(fh, 1));
-            // we added a single face, so the configuration is not manifold.
-            // no need to call reorder_incident_halffaces(edge_handle(heh))
-        }
-    }
-
-    // Create item for face bottom-up incidences
-    if(has_face_bottom_up_incidences()) {
-        incident_cell_per_hf_.resize(n_halffaces(), InvalidCellHandle);
-    }
-
-    // Return handle of recently created face
     return fh;
 }
 
@@ -253,106 +215,6 @@ FaceHandle TopologyKernel::add_face(const std::vector<VertexHandle>& _vertices) 
 //========================================================================================
 
 void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
-
-    /* Put halffaces in clockwise order via the
-     * same cell property which now exists.
-     * Note, this only works for manifold configurations though.
-     * Proceed as follows: Pick one starting halfface. Assuming
-     * that all halfface normals point into the incident cell,
-     * we find the adjacent halfface within the incident cell
-     * along the considered halfedge. We set the found halfface
-     * to be the one to be processed next. If we reach an outside
-     * region, we try to go back from the starting halfface in reverse
-     * order. If the complex is properly connected (the pairwise
-     * intersection of two adjacent 3-dimensional cells is always
-     * a 2-dimensional entity, namely a facet), such an ordering
-     * always exists and will be found. If not, a correct order
-     * can not be given and, as a result, the related iterators
-     * will address the related entities in an arbitrary fashion.
-     */
-
-    HalfEdgeHandle heh = halfedge_handle(_eh, 0);
-    assert((size_t)heh.idx() < incident_hfs_per_he_.size());
-    auto &incident_hfs = incident_hfs_per_he_[heh.idx()];
-
-    const size_t n_hfs = incident_hfs.size();
-
-    if(n_hfs < 2)
-        return;
-
-    std::vector<HalfFaceHandle> new_halffaces;
-    new_halffaces.reserve(n_hfs);
-
-    // Start with one incident halfface and go into the first direction
-    auto start_hf = incident_hfs.front();
-    auto cur_hf = start_hf;
-
-    do {
-        new_halffaces.push_back(cur_hf);
-        if (new_halffaces.size() > incident_hfs.size()) {
-            //std::cerr << "reorder_incident_halffaces(" << _eh.idx() << "): weird topology, aborting." << std::endl;
-            return;
-        };
-
-        if (incident_cell(cur_hf) == InvalidCellHandle
-                || is_deleted(incident_cell(cur_hf)))
-            break;
-
-        cur_hf = adjacent_halfface_in_cell(cur_hf, heh);
-        if(cur_hf == InvalidHalfFaceHandle) {
-            return;
-        }
-        cur_hf = opposite_halfface_handle(cur_hf);
-
-    } while (cur_hf != start_hf);
-
-    // First direction has terminated
-    // If new_halffaces has the same size as old (unordered)
-    // vector of incident halffaces, we are done here
-    // If not, try the other way round
-    // (this must be a boundary edge)
-    if(new_halffaces.size() != incident_hfs.size()) {
-
-        cur_hf = start_hf;
-
-        while(true) {
-            cur_hf = opposite_halfface_handle(cur_hf);
-
-            if (incident_cell(cur_hf) == InvalidCellHandle
-                    || is_deleted(incident_cell(cur_hf))) {
-                // reached the other boundary
-                break;
-            }
-
-            cur_hf = adjacent_halfface_in_cell(cur_hf, heh);
-            if (cur_hf == InvalidHalfFaceHandle) {
-                return;
-            }
-
-            // TODO PERF: just move everything we already have to the end *once* and fill backwards
-            new_halffaces.insert(new_halffaces.begin(), cur_hf);
-            if(new_halffaces.size() > incident_hfs.size()) {
-                //std::cerr << "reorder_incident_halffaces(" << _eh.idx() << ") #2: weird topology, aborting" << std::endl;
-                return;
-            }
-        }
-    }
-
-    // Everything worked just fine, set the new ordered vector
-    if(new_halffaces.size() == incident_hfs.size()) {
-        incident_hfs = std::move(new_halffaces);
-        // update incident halffaces of the opposite halfedge:
-        std::transform(incident_hfs.rbegin(), incident_hfs.rend(),
-                incident_hfs_per_he_[opposite_halfedge_handle(heh).idx()].begin(),
-                opposite_halfface_handle);
-    }
-#if 0
-    else {
-        std::cerr << "reorder_incident_halffaces: found " << new_halffaces.size() << " of " << incident_hfs.size()
-            << " incident halffaces, likely the edge has more than one boundary! Currently not supported, not reordering." << std::endl;
-        // TODO FIXME: we should support this case.
-    }
-#endif
 
 }
 
@@ -432,42 +294,17 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
 
     // Update face bottom-up incidences
     if(has_face_bottom_up_incidences()) {
+        HalfFaceCellIncidence::add_cell(ch, cells_.back());
+    }
 
-        const auto &cell_halffaces = cells_[ch.idx()].halffaces();
-        std::set<EdgeHandle> cell_edges;
-        for(const auto &hfh: cell_halffaces) {
-            assert((size_t)hfh.idx() < incident_cell_per_hf_.size());
-
-#ifndef NDEBUG
-            if(_topologyCheck) {
-                if(incident_cell_per_hf_[hfh.idx()] != InvalidCellHandle) {
-                    // Shouldn't this situation be dealt with before adding the
-                    // cell and return InvalidCellHandle in this case?
-                    // Mike: Not if the user intends to add non-manifold
-                    // configurations. Although, in this case, he should be
-                    // warned about it.
-                    std::cerr << "add_cell(): One of the specified half-faces is already incident to another cell!" << std::endl;
+    if (has_edge_bottom_up_incidences() && has_face_bottom_up_incidences()) {
+        for (const auto &hfh: cells_.back().halffaces()) {
+            // both of each incident edge's halfedges are included exactly once,
+            // so we just pick the ones with subidx 0.
+            for (const auto &heh: halfface_halfedges(hfh)) {
+                if ((heh.idx() & 1) == 0) {
+                    HalfEdgeHalfFaceIncidence::reorder_halffaces(edge_handle(heh));
                 }
-            }
-#endif
-
-            // Overwrite incident cell for current half-face
-            incident_cell_per_hf_[hfh.idx()] = ch;
-
-            // Collect all edges of cell
-            for(const auto &eh: face_edges(face_handle(hfh))) {
-                cell_edges.insert(eh);
-            }
-        }
-
-        if(has_edge_bottom_up_incidences()) {
-
-            // Try to reorder all half-faces w.r.t.
-            // their incident half-edges such that all
-            // half-faces are in cyclic order around
-            // a half-edge
-            for (const auto &eh: cell_edges) {
-                reorder_incident_halffaces(eh);
             }
         }
     }
@@ -486,10 +323,10 @@ void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVe
 
     Edge& e = edge(_eh);
 
-    VertexEdgeIncidence::delete_edge(_eh, e);
+    VertexHalfEdgeIncidence::delete_edge(_eh, e);
     e.set_from_vertex(_fromVertex);
     e.set_to_vertex(_toVertex);
-    VertexEdgeIncidence::add_edge(_eh, e);
+    VertexHalfEdgeIncidence::add_edge(_eh, e);
 }
 
 //========================================================================================
@@ -500,37 +337,10 @@ void TopologyKernel::set_face(const FaceHandle& _fh, const std::vector<HalfEdgeH
 
     Face& f = face(_fh);
 
-    if(has_edge_bottom_up_incidences()) {
-
-        const HalfFaceHandle hf0 = halfface_handle(_fh, 0);
-        const HalfFaceHandle hf1 = halfface_handle(_fh, 1);
-
-        const std::vector<HalfEdgeHandle>& hes = f.halfedges();
-
-        for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin(),
-                he_end = hes.end(); he_it != he_end; ++he_it) {
-
-        	std::vector<HalfFaceHandle>::iterator h_end =
-        			std::remove(incident_hfs_per_he_[he_it->idx()].begin(),
-                        		incident_hfs_per_he_[he_it->idx()].end(), hf0);
-            incident_hfs_per_he_[he_it->idx()].resize(h_end - incident_hfs_per_he_[he_it->idx()].begin());
-
-            h_end =  std::remove(incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].begin(),
-                        		 incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].end(), hf1);
-            incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].resize(h_end - incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].begin());
-        }
-
-        for(std::vector<HalfEdgeHandle>::const_iterator he_it = _hes.begin(),
-                he_end = _hes.end(); he_it != he_end; ++he_it) {
-
-            incident_hfs_per_he_[he_it->idx()].push_back(hf0);
-            incident_hfs_per_he_[opposite_halfedge_handle(*he_it).idx()].push_back(hf1);
-        }
-
-        // TODO: Reorder incident half-faces
-    }
-
+    HalfEdgeHalfFaceIncidence::delete_face(_fh, f);
     f.set_halfedges(_hes);
+    HalfEdgeHalfFaceIncidence::add_face(_fh, f);
+    HalfEdgeHalfFaceIncidence::invalidate_order(_fh);
 }
 
 //========================================================================================
@@ -541,17 +351,11 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
 
     Cell& c = cell(_ch);
 
-    if(has_face_bottom_up_incidences()) {
-        for (const auto &hfh: c.halffaces()) {
-            incident_cell_per_hf_[hfh.idx()] = InvalidCellHandle;
-        }
-        for (const auto &hfh: _hfs) {
-            incident_cell_per_hf_[hfh.idx()] = _ch;
-        }
-    }
-
+    HalfFaceCellIncidence::delete_cell(_ch, c);
     c.set_halffaces(_hfs);
-    // TODO: possibly reorder incident halffaces of the edges of the "new" cell
+    HalfFaceCellIncidence::add_cell(_ch, c);
+
+    HalfEdgeHalfFaceIncidence::invalidate_order(_ch);
 }
 
 //========================================================================================
@@ -759,7 +563,7 @@ void TopologyKernel::get_incident_edges(const ContainerT& _vs,
         for(typename ContainerT::const_iterator v_it = _vs.begin(),
                 v_end = _vs.end(); v_it != v_end; ++v_it) {
 
-            const std::vector<HalfEdgeHandle>& inc_hes = outgoing_hes_per_vertex_[v_it->idx()];
+            auto const &inc_hes = VertexHalfEdgeIncidence::incident(*v_it);
 
             for(std::vector<HalfEdgeHandle>::const_iterator he_it = inc_hes.begin(),
                     he_end = inc_hes.end(); he_it != he_end; ++he_it) {
@@ -935,7 +739,7 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
         h = last_edge;
     }
 
-    VertexEdgeIncidence::delete_edge(h, edge(h));
+    VertexHalfEdgeIncidence::delete_edge(h, edge(h));
 
     if (deferred_deletion_enabled())
     {
@@ -1621,6 +1425,21 @@ void TopologyKernel::enable_deferred_deletion(bool _enable)
     deferred_deletion_ = _enable;
 }
 
+void TopologyKernel::compute_vertex_bottom_up_incidences()
+{
+
+}
+
+void TopologyKernel::compute_edge_bottom_up_incidences()
+{
+
+}
+
+void TopologyKernel::compute_face_bottom_up_incidences()
+{
+
+}
+
 //========================================================================================
 
 /// Get edge with handle _edgeHandle
@@ -1988,93 +1807,7 @@ CellHandle TopologyKernel::incident_cell(const HalfFaceHandle& _halfFaceHandle) 
 }
 
 //========================================================================================
-
-void TopologyKernel::compute_vertex_bottom_up_incidences() {
-
-    // Clear incidences
-    outgoing_hes_per_vertex_.clear();
-    outgoing_hes_per_vertex_.resize(n_vertices());
-    std::vector<int> n_edges_per_vertex(n_vertices(), 0);
-    for (const auto &eh: edges()) {
-        ++n_edges_per_vertex[edges_[eh.idx()].from_vertex().idx()];
-        ++n_edges_per_vertex[edges_[eh.idx()].to_vertex().idx()];
-    }
-    for (const auto &vh: vertices()) {
-        outgoing_hes_per_vertex_[vh.idx()].reserve(n_edges_per_vertex[vh.idx()]);
-    }
-
-    // Store outgoing halfedges per vertex
-    int n_edges = (int)edges_.size();
-    for(int i = 0; i < n_edges; ++i) {
-        if (edge_deleted_[i])
-            continue;
-
-        VertexHandle from = edges_[i].from_vertex();
-        // If this condition is not fulfilled, it is out of caller's control and
-        // definitely our bug, therefore an assert
-        assert((size_t)from.idx() < outgoing_hes_per_vertex_.size());
-
-        outgoing_hes_per_vertex_[from.idx()].push_back(halfedge_handle(EdgeHandle(i), 0));
-
-        VertexHandle to = edges_[i].to_vertex();
-        assert((size_t)to.idx() < outgoing_hes_per_vertex_.size());
-
-        // Store opposite halfedge handle
-        outgoing_hes_per_vertex_[to.idx()].push_back(halfedge_handle(EdgeHandle(i), 1));
-    }
-}
-
 //========================================================================================
 
-void TopologyKernel::compute_edge_bottom_up_incidences() {
-
-    // Clear
-    incident_hfs_per_he_.resize(n_halfedges());
-
-    std::vector<int> n_faces_per_edge(n_edges(), 0);
-    for (const auto &fh: faces()) {
-        for (const auto &heh: face(fh).halfedges()) {
-            ++n_faces_per_edge[edge_handle(heh).idx()];
-        }
-    }
-    for (const auto &eh: edges()) {
-        incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].clear();
-        incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].reserve(n_faces_per_edge[eh.idx()]);
-        incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].clear();
-        incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].reserve(n_faces_per_edge[eh.idx()]);
-    }
-    // Store incident halffaces per halfedge
-    for (const auto &fh: faces()) {
-        for(const auto &heh: faces_[fh.idx()].halfedges()) {
-            auto opp = opposite_halfedge_handle(heh);
-            incident_hfs_per_he_[heh.idx()].push_back(halfface_handle(fh, 0));
-            incident_hfs_per_he_[opp.idx()].push_back(halfface_handle(fh, 1));
-        }
-    }
-}
-
-//========================================================================================
-
-void TopologyKernel::compute_face_bottom_up_incidences() {
-
-    // Clear
-    incident_cell_per_hf_.clear();
-    incident_cell_per_hf_.resize(n_halffaces(), InvalidCellHandle);
-
-
-    for (const auto ch: cells())
-    {
-        for (const auto hfh: cell_halffaces(ch)) {
-#ifndef NDEBUG
-            if(incident_cell_per_hf_[hfh.idx()] != InvalidCellHandle) {
-                std::cerr << "compute_face_bottom_up_incidences(): Detected non-three-manifold configuration!" << std::endl;
-                std::cerr << "Connectivity probably won't work." << std::endl;
-                continue;
-            }
-#endif
-            incident_cell_per_hf_[hfh.idx()] = ch;
-        }
-    }
-}
 
 } // Namespace OpenVolumeMesh
