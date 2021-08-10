@@ -18,10 +18,14 @@ public:
     using Handle = HandleT<Entity>;
     using Incidences = _Incidences;
 
-    IncidencesT() {}
+    IncidencesT() = default;
+    // TODO IMPORTANT: implement copy/move constructor/= for this and for ve-hf::ordered_
+    IncidencesT(IncidencesT<Derived, Entity, _Incidences> const &other);
+    IncidencesT(IncidencesT<Derived, Entity, _Incidences> &&other);
+    IncidencesT &operator=(IncidencesT<Derived, Entity, _Incidences> const &other);
+    IncidencesT &operator=(IncidencesT<Derived, Entity, _Incidences> &&other);
 
     bool enabled() const {return incident_.has_value();}
-    // TODO: rename to set_enabled
     void set_enabled(bool enable);
 
     Incidences const& incident(Handle _h) const;

@@ -350,6 +350,7 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
     Cell& c = cell(_ch);
 
     HalfFaceCellIncidence::delete_cell(_ch, c);
+    HalfEdgeHalfFaceIncidence::invalidate_order(_ch);
     c.set_halffaces(_hfs);
     HalfFaceCellIncidence::add_cell(_ch, c);
 
@@ -680,7 +681,7 @@ void TopologyKernel::get_incident_cells(const ContainerT& _fs,
 /**
  * \brief Delete vertex from mesh
  *
- * There may be no more edges, faces, or cells incident to this edge.
+ * There must be no more edges, faces, or cells incident to this edge.
  *
  * @param _h A vertex's handle
  */
@@ -713,7 +714,7 @@ void TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
 /**
  * \brief Delete edge from mesh
  *
- * There may be no more faces or cells incident to this edge.
+ * There must be no more faces or cells incident to this edge.
  *
  * @param _h An edge's handle
  */
@@ -749,7 +750,7 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 /**
  * \brief Delete face from mesh
  *
- * There may not be any cells incident to this face.
+ * There must not be any cells incident to this face.
  *
  * @param _h An face's handle
  */
@@ -1104,21 +1105,6 @@ void TopologyKernel::enable_deferred_deletion(bool _enable)
         collect_garbage();
 
     deferred_deletion_ = _enable;
-}
-
-void TopologyKernel::compute_vertex_bottom_up_incidences()
-{
-
-}
-
-void TopologyKernel::compute_edge_bottom_up_incidences()
-{
-
-}
-
-void TopologyKernel::compute_face_bottom_up_incidences()
-{
-
 }
 
 //========================================================================================

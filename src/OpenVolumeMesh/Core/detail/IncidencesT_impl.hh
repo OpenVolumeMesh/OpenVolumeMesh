@@ -5,6 +5,45 @@
 namespace OpenVolumeMesh {
 
 template<typename Derived, typename Entity, typename _Incidences>
+IncidencesT<Derived, Entity, _Incidences>&
+IncidencesT<Derived, Entity, _Incidences>::
+operator=(IncidencesT<Derived, Entity, _Incidences> const &other)
+{
+    incident_ = other.incident_;
+    if (enabled()) {
+        incident_->attach_to(topo());
+    }
+    return *this;
+}
+
+template<typename Derived, typename Entity, typename _Incidences>
+IncidencesT<Derived, Entity, _Incidences>&
+IncidencesT<Derived, Entity, _Incidences>::
+operator=(IncidencesT<Derived, Entity, _Incidences> &&other)
+{
+    incident_ = std::move(other.incident_);
+    if (enabled()) {
+        incident_->attach_to(topo());
+    }
+    return *this;
+
+}
+template<typename Derived, typename Entity, typename _Incidences>
+IncidencesT<Derived, Entity, _Incidences>::
+IncidencesT(IncidencesT<Derived, Entity, _Incidences> &&other)
+{
+    *this = std::move(other);
+}
+template<typename Derived, typename Entity, typename _Incidences>
+IncidencesT<Derived, Entity, _Incidences>::
+IncidencesT(IncidencesT<Derived, Entity, _Incidences> const &other)
+{
+    *this = other;
+}
+
+
+
+template<typename Derived, typename Entity, typename _Incidences>
 _Incidences &
 IncidencesT<Derived, Entity, _Incidences>::
 incident(Handle _h)

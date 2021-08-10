@@ -21,6 +21,10 @@ protected:
     using Parent::incident_mutable;
     using Parent::enabled;
 
+
+    HalfEdgeHalfFaceIncidence() = default;
+    HalfEdgeHalfFaceIncidence(HalfEdgeHalfFaceIncidence<Derived> const &other);
+
     void add_face(FaceHandle _fh, OpenVolumeMeshFace const &_face);
     void delete_face(FaceHandle _fh, OpenVolumeMeshFace const &_face);
 

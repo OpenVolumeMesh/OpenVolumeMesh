@@ -363,8 +363,15 @@ VertexHandle TetrahedralMeshTopologyKernel::collapse_edge(HalfEdgeHandle _heh)
             swap_halfface_properties(c.halffaces()[hf_idx], hfh);
         }
 
-        // TODO: does this create a temporary non-manifold situation? can we avoid it?
+#if 0
         set_cell(ch, newHalffaces);
+#else
+        delete_cell(ch);
+
+        CellHandle newCell = add_cell(newHalffaces);
+
+        swap_cell_properties(ch, newCell);
+#endif
     }
 
     auto survivingVertex = to_vh;

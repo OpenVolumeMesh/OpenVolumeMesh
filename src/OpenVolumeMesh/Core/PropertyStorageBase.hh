@@ -45,6 +45,7 @@
 
 namespace OpenVolumeMesh {
 
+class ResourceManager;
 
 template<typename T>
 class PropertyStorageT;
@@ -161,6 +162,9 @@ public:
 
     /// Move data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void move_values_from(PropertyStorageBase *other) = 0;
+
+    void attach_to(const ResourceManager *resman);
+    operator bool() const {return Tracked::has_tracker();}
 
 private:
 	std::string name_;

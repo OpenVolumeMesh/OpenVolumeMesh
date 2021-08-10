@@ -12,6 +12,14 @@ namespace OpenVolumeMesh {
 //template class IncidencesT<Entity::Vertex, Entity::HalfEdge>;
 
 template<typename Derived>
+HalfEdgeHalfFaceIncidence<Derived>::
+HalfEdgeHalfFaceIncidence(const HalfEdgeHalfFaceIncidence<Derived> &other)
+{
+    ordered_ = other.ordered_;
+    ordered_->attach_to(topo());
+}
+
+template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::add_face(FaceHandle _fh, const OpenVolumeMeshFace &_face)
 {
     if (!enabled()) return;

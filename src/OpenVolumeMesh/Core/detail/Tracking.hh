@@ -118,12 +118,18 @@ public:
         tracker_ = new_tracker;
         add();
     }
+
 protected:
+
     Tracked(Tracker<T> *_tracker)
         : tracker_(_tracker)
     {
         //std::cerr << this << " (" << _tracker << ")" << std::endl;
         add();
+    }
+
+    bool has_tracker() const {
+        return tracker_ != nullptr;
     }
 
 

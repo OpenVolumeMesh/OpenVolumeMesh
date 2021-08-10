@@ -618,6 +618,7 @@ public:
     /// Get cell with handle _cellHandle
     const Cell& cell(const CellHandle& _cellHandle) const;
 
+protected:
     /// Get edge with handle _edgeHandle
     Edge& edge(const EdgeHandle& _edgeHandle);
 
@@ -626,6 +627,8 @@ public:
 
     /// Get cell with handle _cellHandle
     Cell& cell(const CellHandle& _cellHandle);
+
+public:
 
     /// Get edge that corresponds to halfedge with handle _halfEdgeHandle
     Edge halfedge(const HalfEdgeHandle& _halfEdgeHandle) const;
@@ -828,14 +831,6 @@ public:
     [[deprecated("Fast deletion is always enabled now.")]]
     bool fast_deletion_enabled() const { return true; }
 
-
-protected:
-
-    void compute_vertex_bottom_up_incidences();
-
-    void compute_edge_bottom_up_incidences();
-
-    void compute_face_bottom_up_incidences();
 
 private:
 
