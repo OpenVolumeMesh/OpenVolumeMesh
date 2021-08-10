@@ -620,13 +620,13 @@ public:
 
 protected:
     /// Get edge with handle _edgeHandle
-    Edge& edge(const EdgeHandle& _edgeHandle);
+    Edge& edge_mutable(const EdgeHandle& _edgeHandle);
 
     /// Get face with handle _faceHandle
-    Face& face(const FaceHandle& _faceHandle);
+    Face& face_mutable(const FaceHandle& _faceHandle);
 
     /// Get cell with handle _cellHandle
-    Cell& cell(const CellHandle& _cellHandle);
+    Cell& cell_mutable(const CellHandle& _cellHandle);
 
 public:
 
