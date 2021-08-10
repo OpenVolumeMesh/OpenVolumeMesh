@@ -50,6 +50,7 @@ void VertexHalfEdgeIncidence<Derived>::delete_edge(EdgeHandle _eh, const OpenVol
     if (!enabled()) return;
     auto rm_v_heh = [this](VertexHandle vh, HalfEdgeHandle heh)
     {
+        if (!vh.is_valid()) return;
         Incidences &vec = incident(vh);
         // PERF: we can swap in the last element and resize instead of using remove
         vec.erase(std::remove( vec.begin(), vec.end(),
@@ -72,14 +73,16 @@ void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
     auto heh1 = topo()->halfedge_handle(_h1, 0);
     auto heh2 = topo()->halfedge_handle(_h2, 0);
 
-    for (auto &heh: incident(e1.from_vertex())) {
-        if (heh == heh1) {
-            heh = heh2;
-        } else if (heh == heh2) {
-            heh = heh1;
+    if (e1.from_vertex().is_valid()) {
+        for (auto &heh: incident(e1.from_vertex())) {
+            if (heh == heh1) {
+                heh = heh2;
+            } else if (heh == heh2) {
+                heh = heh1;
+            }
         }
     }
-    if (e1.from_vertex() != e2.from_vertex()) {
+    if (e1.from_vertex() != e2.from_vertex() && e2.from_vertex().is_valid()) {
         for (auto &heh: incident(e2.from_vertex())) {
             if (heh == heh2) {
                 heh = heh1;
@@ -89,14 +92,16 @@ void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
     auto opp1 = topo()->halfedge_handle(_h1, 1);
     auto opp2 = topo()->halfedge_handle(_h2, 1);
 
-    for (auto &heh: incident(e1.to_vertex())) {
-        if (heh == opp1) {
-            heh = opp2;
-        } else if (heh == opp2) {
-            heh = opp1;
+    if (e1.to_vertex().is_valid()) {
+        for (auto &heh: incident(e1.to_vertex())) {
+            if (heh == opp1) {
+                heh = opp2;
+            } else if (heh == opp2) {
+                heh = opp1;
+            }
         }
     }
-    if (e1.to_vertex() != e2.to_vertex()) {
+    if (e1.to_vertex() != e2.to_vertex() && e2.to_vertex().is_valid()) {
         for (auto &heh: incident(e2.to_vertex())) {
             if (heh == opp2) {
                 heh = opp1;

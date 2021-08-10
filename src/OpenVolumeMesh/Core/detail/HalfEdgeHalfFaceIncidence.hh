@@ -40,6 +40,9 @@ protected:
     void swap(FaceHandle _h1, FaceHandle _h2);
 
     void set_enabled(bool enable);
+
+    void debug_check(EdgeHandle) const;
+    void debug_check(HalfEdgeHandle) const;
 private:
     using Parent::topo;
     mutable std::optional<PrivateProperty<bool, Entity::Edge>> ordered_;

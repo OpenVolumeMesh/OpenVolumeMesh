@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <iterator>
 
 
 namespace OpenVolumeMesh {
@@ -203,6 +204,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::ensure_ordered(EdgeHandle _eh) const
     if (!enabled()) return;
 
     if (!(*ordered_)[_eh]) {
+        debug_check(_eh);
         reorder_halffaces(_eh);
         (*ordered_)[_eh] = true;
     }
@@ -215,19 +217,29 @@ void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
     if (!enabled()) return;
     if (_h1 == _h2) return;
 
+    std::set<HalfEdgeHandle> all_hehs;
     std::vector<HalfEdgeHandle> hehs;
     hehs.reserve(topo()->valence(_h1) + topo()->valence(_h2));
 
     for (int subidx = 0; subidx < 2; ++subidx)
     {
-        hehs.clear();
         auto hfh0 = topo()->halfface_handle(_h1, subidx);
         auto hfh1 = topo()->halfface_handle(_h2, subidx);
+        // collect incident halfedges:
+        hehs.clear();
         for (const auto heh: topo()->halfface_halfedges(hfh0)) { hehs.push_back(heh); }
         for (const auto heh: topo()->halfface_halfedges(hfh1)) { hehs.push_back(heh); }
+        for (const auto heh: hehs) {
+            all_hehs.insert(heh);
+        }
+        // eliminate duplicates (should be faster than std:(unordered_)set):
         std::sort(hehs.begin(), hehs.end());
         hehs.erase(std::unique(hehs.begin(), hehs.end()), hehs.end());
+        if (subidx == 0) {
+            assert(all_hehs.size() == hehs.size());
+        }
 
+        // swap hf(_h1, i) with hf(_h2, i):
         for (const auto heh: hehs) {
             for (auto &hfh: incident(heh)) {
                 if (hfh == hfh0) {
@@ -238,6 +250,9 @@ void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
             }
         }
     }
+    for (const auto heh: all_hehs) {
+        debug_check(heh);
+    }
 }
 
 template<typename Derived>
@@ -245,11 +260,34 @@ void HalfEdgeHalfFaceIncidence<Derived>::set_enabled(bool _enable)
 {
     if (enabled() == _enable)
         return;
-    Parent::set_enabled(_enable);
     if (_enable) {
         ordered_.emplace(topo(), "valid hfh order", false);
     } else {
         ordered_.reset();
+    }
+    Parent::set_enabled(_enable);
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::debug_check(EdgeHandle _eh) const
+{
+    for (int subidx = 0; subidx < 2; ++subidx) {
+        auto heh = topo()->halfedge_handle(_eh, subidx);
+        debug_check(heh);
+    }
+}
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::debug_check(HalfEdgeHandle heh) const
+{
+    for(const auto &hfh: incident(heh)) {
+        bool found = false;
+        for (const auto hf_heh: topo()->halfface_halfedges(hfh)) {
+            if (hf_heh == heh) {
+                assert(found == false);
+                found = true;
+            }
+        }
+        assert(found);
     }
 }
 

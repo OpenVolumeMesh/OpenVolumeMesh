@@ -88,4 +88,12 @@ set_enabled(bool enable)
     }
 }
 
+template<typename Derived, typename Entity, typename _Incidences>
+void IncidencesT<Derived, Entity, _Incidences>::deleted(Handle _h)
+{
+    if (!enabled()) return;
+    incident(_h) = {};
+}
+
+
 } // namespace OpenVolumeMesh

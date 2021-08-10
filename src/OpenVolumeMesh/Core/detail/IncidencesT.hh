@@ -27,6 +27,7 @@ public:
 
     bool enabled() const {return incident_.has_value();}
     void set_enabled(bool enable);
+    void deleted(Handle);
 
     Incidences const& incident(Handle _h) const;
 
