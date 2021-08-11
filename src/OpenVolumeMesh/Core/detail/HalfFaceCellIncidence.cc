@@ -48,11 +48,8 @@ void HalfFaceCellIncidence<Derived>::swap(CellHandle _h1, CellHandle _h2) {
                 continue;
             processed.insert(hfh);
             auto &inc = incident(hfh);
-            if (inc == _h1) {
-                inc = _h2;
-            } else if (inc == _h2) {
-                inc = _h1;
-            }
+            if      (inc == _h1) { inc = _h2; }
+            else if (inc == _h2) { inc = _h1; }
         }
     }
 }

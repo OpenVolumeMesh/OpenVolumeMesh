@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
+#include <unordered_set>
 
 
 namespace OpenVolumeMesh {
@@ -217,41 +218,30 @@ void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
     if (!enabled()) return;
     if (_h1 == _h2) return;
 
-    std::set<HalfEdgeHandle> all_hehs;
-    std::vector<HalfEdgeHandle> hehs;
-    hehs.reserve(topo()->valence(_h1) + topo()->valence(_h2));
-
-    for (int subidx = 0; subidx < 2; ++subidx)
+    auto swap_indices = [=](HalfEdgeHandle heh)
     {
-        auto hfh0 = topo()->halfface_handle(_h1, subidx);
-        auto hfh1 = topo()->halfface_handle(_h2, subidx);
-        // collect incident halfedges:
-        hehs.clear();
-        for (const auto heh: topo()->halfface_halfedges(hfh0)) { hehs.push_back(heh); }
-        for (const auto heh: topo()->halfface_halfedges(hfh1)) { hehs.push_back(heh); }
-        for (const auto heh: hehs) {
-            all_hehs.insert(heh);
+        for (auto &hfh: incident(heh)) {
+            if      (hfh.full() == _h1) hfh = _h2.half(hfh.subidx());
+            else if (hfh.full() == _h2) hfh = _h1.half(hfh.subidx());
         }
-        // eliminate duplicates (should be faster than std:(unordered_)set):
-        std::sort(hehs.begin(), hehs.end());
-        hehs.erase(std::unique(hehs.begin(), hehs.end()), hehs.end());
-        if (subidx == 0) {
-            assert(all_hehs.size() == hehs.size());
+    };
+
+    std::unordered_set<EdgeHandle> processed;
+    processed.reserve(topo()->valence(_h1) + topo()->valence(_h2));
+
+    for (const auto fh: {_h1, _h2})
+    {
+        for (const auto eh: topo()->face_edges(fh)) {
+            if (processed.find(eh) != processed.end())
+                continue;
+            processed.insert(eh);
+            swap_indices(eh.half(0));
+            swap_indices(eh.half(1));
         }
 
-        // swap hf(_h1, i) with hf(_h2, i):
-        for (const auto heh: hehs) {
-            for (auto &hfh: incident(heh)) {
-                if (hfh == hfh0) {
-                    hfh = hfh1;
-                } else if (hfh == hfh1) {
-                    hfh = hfh0;
-                }
-            }
-        }
     }
-    for (const auto heh: all_hehs) {
-        debug_check(heh);
+    for (const auto eh: processed) {
+        debug_check(eh);
     }
 }
 

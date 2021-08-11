@@ -63,8 +63,9 @@ void VertexHalfEdgeIncidence<Derived>::delete_edge(EdgeHandle _eh, const OpenVol
 }
 
 template<typename Derived>
-void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2) {
-    if(!enabled()) return;
+void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2)
+{
+    if (!enabled()) return;
     if (_h1 == _h2) return;
 
     const auto &e1 = topo()->edge(_h1);
