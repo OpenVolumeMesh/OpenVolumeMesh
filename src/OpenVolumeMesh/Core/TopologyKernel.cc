@@ -860,14 +860,10 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
 
     auto swap_indices = [=](CellHandle ch)
     {
-        auto &cell_hfs = cell_mutable(ch).halffaces_mutable();
-        std::transform(cell_hfs.begin(), cell_hfs.end(), cell_hfs.begin(),
-                       [_h1, _h2](HalfFaceHandle hfh)
-        {
-            if (hfh.full() == _h1) return _h2.half(hfh.subidx());
-            if (hfh.full() == _h2) return _h1.half(hfh.subidx());
-            return hfh;
-        });
+        for (auto &hfh: cell_mutable(ch).halffaces_mutable()) {
+            if      (hfh.full() == _h1) hfh = _h2.half(hfh.subidx());
+            else if (hfh.full() == _h2) hfh = _h1.half(hfh.subidx());
+        }
     };
 
 
@@ -922,14 +918,10 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 
     auto swap_indices = [=](FaceHandle fh)
     {
-        auto &face_hfs = face_mutable(fh).halfedges_mutable();
-        std::transform(face_hfs.begin(), face_hfs.end(), face_hfs.begin(),
-                       [_h1, _h2](HalfEdgeHandle heh)
-        {
-            if (heh.full() == _h1) return _h2.half(heh.subidx());
-            if (heh.full() == _h2) return _h1.half(heh.subidx());
-            return heh;
-        });
+        for (auto &heh: face_mutable(fh).halfedges_mutable()) {
+            if      (heh.full() == _h1) heh = _h2.half(heh.subidx());
+            else if (heh.full() == _h2) heh = _h1.half(heh.subidx());
+        }
     };
 
     // correct pointers to those edges
