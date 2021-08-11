@@ -12,13 +12,13 @@ namespace OpenVolumeMesh {
 /// Call templated function with a dummy argument of each entity type
 template<typename F, typename ... Ts>
 inline void for_each_entity(F fun, Ts... args) {
-    fun(Entity::Vertex(),   std::forward<Ts>(args)...);
-    fun(Entity::Edge(),     std::forward<Ts>(args)...);
-    fun(Entity::HalfEdge(), std::forward<Ts>(args)...);
-    fun(Entity::Face(),     std::forward<Ts>(args)...);
-    fun(Entity::HalfFace(), std::forward<Ts>(args)...);
-    fun(Entity::Cell(),     std::forward<Ts>(args)...);
-    fun(Entity::Mesh(),     std::forward<Ts>(args)...);
+    fun(Entity::Vertex(),   args...);
+    fun(Entity::Edge(),     args...);
+    fun(Entity::HalfEdge(), args...);
+    fun(Entity::Face(),     args...);
+    fun(Entity::HalfFace(), args...);
+    fun(Entity::Cell(),     args...);
+    fun(Entity::Mesh(),     args...);
 }
 
 /// Call templated function with a dummy argument of the dynamic entity type
