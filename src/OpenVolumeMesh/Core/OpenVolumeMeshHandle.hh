@@ -83,7 +83,7 @@ public:
 
 	void idx(const int& _idx) { idx_ = _idx; }
 
-#if OVM_ENABLE_DEPRECATED_APIS
+#if 0
     OVM_DEPRECATED("use explicit .idx() instead")
     inline operator int() const { return idx_; }
 #endif
@@ -94,24 +94,15 @@ private:
 	int idx_;
 };
 
-template<typename EntityTag,
-    typename = typename std::enable_if<is_entity<EntityTag>::value>::type>
-class PropHandleTag {};
 
-template <typename T> struct is_prop_handle_tag : std::false_type {};
-template<typename T>
-struct is_prop_handle_tag<PropHandleTag<T>> : std::true_type {};
-
-template<typename T>
-using is_handle_tag = std::enable_if<is_entity<T>::value || is_prop_handle_tag<T>::value>;
-
-
-template<typename EntityTag, typename = typename is_handle_tag<EntityTag>::type>
+template<typename EntityTag>
 class HandleT : public OpenVolumeMeshHandle
 {
+    static_assert(is_entity<EntityTag>::value);
 public:
     using Entity = EntityTag;
-    explicit constexpr HandleT(int _idx = -1) : OpenVolumeMeshHandle(_idx) {}
+    constexpr HandleT() : OpenVolumeMeshHandle(-1) {}
+    explicit constexpr HandleT(int _idx) : OpenVolumeMeshHandle(_idx) {}
 
     static HandleT<EntityTag>
     from_unsigned(size_t _idx)
@@ -143,70 +134,19 @@ using FaceHandle     = HandleT<Entity::Face>;
 using CellHandle     = HandleT<Entity::Cell>;
 using MeshHandle     = HandleT<Entity::Mesh>;
 
-// Helper class that is used to decrease all handles
-// exceeding a certain threshold
-
-class VHandleCorrection {
-public:
-    explicit VHandleCorrection(VertexHandle _thld) : thld_(_thld) {}
-    void correctValue(VertexHandle& _h) {
-        if(_h > thld_) _h.idx(_h.idx() - 1);
-    }
-private:
-    VertexHandle thld_;
-};
-class HEHandleCorrection {
-public:
-    explicit HEHandleCorrection(HalfEdgeHandle _thld) : thld_(_thld) {}
-    void correctVecValue(std::vector<HalfEdgeHandle>& _vec) {
-        for (auto &heh: _vec) {
-            correctValue(heh);
-        }
-    }
-    void correctValue(HalfEdgeHandle& _h) {
-        if(_h > thld_) _h.idx(_h.idx() - 2);
-    }
-private:
-    HalfEdgeHandle thld_;
-};
-class HFHandleCorrection {
-public:
-    explicit HFHandleCorrection(HalfFaceHandle _thld) : thld_(_thld) {}
-    void correctVecValue(std::vector<HalfFaceHandle>& _vec) {
-        for (auto &hfh: _vec) {
-            correctValue(hfh);
-        }
-    }
-    void correctValue(HalfFaceHandle& _h) {
-        if(_h > thld_) _h.idx(_h.idx() - 2);
-    }
-private:
-    HalfFaceHandle thld_;
-};
-class CHandleCorrection {
-public:
-    explicit CHandleCorrection(CellHandle _thld) : thld_(_thld) {}
-    void correctVecValue(std::vector<CellHandle>& _vec) {
-        for (auto &ch: _vec) {
-            correctValue(ch);
-        }
-    }
-    void correctValue(CellHandle& _h) {
-        if(_h > thld_) _h.idx(_h.idx() - 1);
-    }
-private:
-    CellHandle thld_;
-};
-
+[[deprecated]]
 OVM_EXPORT
 bool operator==(const int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+[[deprecated]]
 OVM_EXPORT
 bool operator==(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+[[deprecated]]
 OVM_EXPORT
 bool operator!=(const int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
+[[deprecated]]
 OVM_EXPORT
 bool operator!=(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs);
 
