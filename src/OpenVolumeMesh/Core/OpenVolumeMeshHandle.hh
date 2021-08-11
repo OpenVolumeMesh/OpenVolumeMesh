@@ -119,7 +119,13 @@ public:
 
     constexpr SuperHandle full() const {
         assert(this->is_valid());
-        return SuperHandle{this->idx()*2};
+        return SuperHandle{this->idx() / 2 };
+    }
+
+    /// obtain opposite sub-handle.
+    constexpr Derived opp() const {
+        assert(this->is_valid());
+        return Derived{this->idx() ^ 1};
     }
 
 };

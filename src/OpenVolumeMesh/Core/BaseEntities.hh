@@ -93,6 +93,10 @@ public:
 
 protected:
 
+    std::vector<HalfEdgeHandle>& halfedges_mutable() & {
+        return halfedges_;
+    }
+
     void set_halfedges(const std::vector<HalfEdgeHandle>& _halfedges) {
         halfedges_ = _halfedges;
     }
@@ -117,12 +121,17 @@ public:
         return halffaces_;
     }
 
+
     const std::vector<HalfFaceHandle>& halffaces() const && = delete;
     std::vector<HalfFaceHandle> halffaces() && {
         return std::move(halffaces_);
     }
 
 protected:
+
+    std::vector<HalfFaceHandle>& halffaces_mutable() & {
+        return halffaces_;
+    }
 
     void set_halffaces(const std::vector<HalfFaceHandle>& _halffaces) {
         halffaces_ = _halffaces;

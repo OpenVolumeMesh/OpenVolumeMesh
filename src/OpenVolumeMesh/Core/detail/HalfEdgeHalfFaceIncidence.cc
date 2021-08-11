@@ -187,10 +187,10 @@ void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(CellHandle _ch)
 {
     if (!enabled()) return;
     for (const auto hfh: topo()->cell_halffaces(_ch)) {
-        for (const auto &heh: topo()->halfface_halfedges(hfh)) {
+        for (const HEH &heh: topo()->halfface_halfedges(hfh)) {
             // both of each incident edge's halfedges are included exactly once,
             // so we just pick the ones with subidx 0.
-            if ((heh.idx() & 1) == 0) {
+            if (heh.subidx() == 0) {
                 (*ordered_)[topo()->edge_handle(heh)] = false;
             }
         }

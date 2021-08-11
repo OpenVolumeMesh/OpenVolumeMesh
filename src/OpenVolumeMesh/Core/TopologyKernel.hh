@@ -959,45 +959,29 @@ public:
 
     /// Conversion function
     static inline HalfEdgeHandle halfedge_handle(const EdgeHandle& _h, const unsigned char _subIdx) {
-        // Is handle in range?
-        assert(_h.is_valid());
-        assert(_subIdx < 2);
-        // if(_h.idx() < 0 || _subIdx > 1) return InvalidHalfEdgeHandle;
-        return HalfEdgeHandle((2 * _h.idx()) + (_subIdx ? 1 : 0));
+        return _h.half(_subIdx);
     }
 
     /// Conversion function
     static inline HalfFaceHandle halfface_handle(const FaceHandle& _h, const unsigned char _subIdx) {
-        // Is handle in range?
-        assert(_h.is_valid());
-        assert(_subIdx < 2);
-        // if(_h.idx() < 0 || _subIdx > 1) return InvalidHalfFaceHandle;
-        return HalfFaceHandle((2 * _h.idx()) + (_subIdx ? 1 : 0));
+        return _h.half(_subIdx);
     }
 
     /// Handle conversion
     static inline EdgeHandle edge_handle(const HalfEdgeHandle& _h) {
-        // Is handle in range?
-        assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidEdgeHandle;
-        return EdgeHandle((int)(_h.idx() / 2));
+        return _h.full();
     }
 
     static inline FaceHandle face_handle(const HalfFaceHandle& _h) {
-        // Is handle in range?
-        assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidFaceHandle;
-        return FaceHandle((int)(_h.idx() / 2));
+        return _h.full();
     }
 
     static inline HalfEdgeHandle opposite_halfedge_handle(const HalfEdgeHandle& _h) {
-        assert(_h.is_valid());
-        return HalfEdgeHandle(_h.idx() ^ 1);
+        return _h.opp();
     }
 
     static inline HalfFaceHandle opposite_halfface_handle(const HalfFaceHandle& _h) {
-        assert(_h.is_valid());
-        return HalfFaceHandle(_h.idx() ^ 1);
+        return _h.opp();
     }
 
     bool inline needs_garbage_collection() const {
