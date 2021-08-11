@@ -60,7 +60,7 @@ void ResourceManager::clear_props()
 }
 
 template <typename EntityTag>
-void ResourceManager::swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b)
+void ResourceManager::swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> const &_idx_b)
 {
     for (auto &prop: storage_tracker<EntityTag>()) {
         prop->swap(_idx_a.uidx(), _idx_b.uidx());

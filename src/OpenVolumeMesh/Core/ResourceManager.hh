@@ -66,7 +66,7 @@ public:
         return &sp;
     }
     PropertyIterator<Iter> operator++() {
-        it_++;
+        ++it_;
         return *this;
     }
     bool operator!=(PropertyIterator<Iter> const &other) {
@@ -135,7 +135,7 @@ protected:
     void swap_vertex_properties(VertexHandle _h1, VertexHandle _h2);
 
     template <typename EntityTag>
-    void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> &_idx_b);
+    void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> const &_idx_b);
 
 public:
     /// drop all persistent properties.

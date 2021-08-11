@@ -52,9 +52,12 @@ void HalfEdgeHalfFaceIncidence<Derived>::delete_face(FaceHandle _fh, const OpenV
     auto hfh1 = topo()->halfface_handle(_fh, 1);
     for (const auto &heh: _face.halfedges()) {
         rm(heh, hfh0);
+        rm(heh, hfh1);
         auto opp = topo()->opposite_halfedge_handle(heh);
+        rm(opp, hfh0);
         rm(opp, hfh1);
         invalidate_order(topo()->edge_handle(heh));
+        debug_check(topo()->edge_handle(heh));
     }
 
 }
@@ -218,7 +221,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
     if (!enabled()) return;
     if (_h1 == _h2) return;
 
-    auto swap_indices = [=](HalfEdgeHandle heh)
+    auto swap_indices = [this, _h1, _h2](HalfEdgeHandle heh)
     {
         for (auto &hfh: incident(heh)) {
             if      (hfh.full() == _h1) hfh = _h2.half(hfh.subidx());
@@ -270,6 +273,7 @@ template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::debug_check(HalfEdgeHandle heh) const
 {
     for(const auto &hfh: incident(heh)) {
+        assert(!topo()->is_deleted(hfh));
         bool found = false;
         for (const auto hf_heh: topo()->halfface_halfedges(hfh)) {
             if (hf_heh == heh) {
@@ -313,7 +317,9 @@ void HalfEdgeHalfFaceIncidence<Derived>::recompute()
             incident(opp).push_back(hfh1);
         }
     }
-    // TODO: if we have hf->ch incidences, reorder halffaces
+    for (const auto &heh: topo()->halfedges()) {
+        debug_check(heh);
+    }
 }
 
 // instantiate for the only class that derives from this:

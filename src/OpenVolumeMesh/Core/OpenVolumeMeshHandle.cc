@@ -104,19 +104,19 @@ std::ostream& operator<<(std::ostream& _ostr, MH _h)
 { return _ostr << _h.idx(); }
 
 std::istream& operator>>(std::istream& _istr, VH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 std::istream& operator>>(std::istream& _istr, EH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 std::istream& operator>>(std::istream& _istr, HEH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 std::istream& operator>>(std::istream& _istr, FH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 std::istream& operator>>(std::istream& _istr, HFH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 std::istream& operator>>(std::istream& _istr, CH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 std::istream& operator>>(std::istream& _istr, MH &_h)
-{ return _istr >> _h.idx(); }
+{ return _istr >> _h.idx_mutable(); }
 
 
 

@@ -687,9 +687,12 @@ void TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
     VertexHandle h = _h;
     assert(h.is_valid() && (size_t)h.idx() < n_vertices());
 
+    if (has_vertex_bottom_up_incidences()) {
+        assert(VertexHalfEdgeIncidence::count(_h) == 0);
+    }
+
     if (deferred_deletion_enabled())
     {
-        VertexHalfEdgeIncidence::deleted(_h);
         ++n_deleted_vertices_;
         vertex_deleted_[h.idx()] = true;
         return;
@@ -725,8 +728,10 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 
     VertexHalfEdgeIncidence::delete_edge(h, edge(h));
 
-    HalfEdgeHalfFaceIncidence::deleted(halfedge_handle(h, 0));
-    HalfEdgeHalfFaceIncidence::deleted(halfedge_handle(h, 1));
+    if (has_edge_bottom_up_incidences()) {
+        assert(HalfEdgeHalfFaceIncidence::count(halfedge_handle(h, 0)) == 0);
+        assert(HalfEdgeHalfFaceIncidence::count(halfedge_handle(h, 1)) == 0);
+    }
 
     edge_mutable(h).set_from_vertex(VertexHandle{});
     edge_mutable(h).set_to_vertex(VertexHandle{});
@@ -768,8 +773,11 @@ void TopologyKernel::delete_face_core(const FaceHandle& _h) {
 
     HalfEdgeHalfFaceIncidence::delete_face(_h, face(_h));
     face_mutable(_h).set_halfedges({});
-    HalfFaceCellIncidence::deleted(halfface_handle(_h, 0));
-    HalfFaceCellIncidence::deleted(halfface_handle(_h, 1));
+
+    if (has_face_bottom_up_incidences()) {
+        assert(!HalfFaceCellIncidence::incident(halfface_handle(_h, 0)).is_valid());
+        assert(!HalfFaceCellIncidence::incident(halfface_handle(_h, 1)).is_valid());
+    }
 
     if (deferred_deletion_enabled())
     {
@@ -858,7 +866,7 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
 
     // correct cells that contain a swapped face
 
-    auto swap_indices = [=](CellHandle ch)
+    auto swap_indices = [this, _h1, _h2](CellHandle ch)
     {
         for (auto &hfh: cell_mutable(ch).halffaces_mutable()) {
             if      (hfh.full() == _h1) hfh = _h2.half(hfh.subidx());
@@ -916,7 +924,7 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 
     std::array<EdgeHandle, 2> ehs { _h1, _h2 };
 
-    auto swap_indices = [=](FaceHandle fh)
+    auto swap_indices = [this, _h1, _h2](FaceHandle fh)
     {
         for (auto &heh: face_mutable(fh).halfedges_mutable()) {
             if      (heh.full() == _h1) heh = _h2.half(heh.subidx());
@@ -970,15 +978,11 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     if (_h1 == _h2)
         return;
 
-    auto swap_edge_indices = [=](Edge &e) {
-        if (e.from_vertex() == _h1)
-            e.set_from_vertex(_h2);
-        else if (e.from_vertex() == _h2)
-            e.set_from_vertex(_h1);
-        if (e.to_vertex() == _h1)
-            e.set_to_vertex(_h2);
-        else if (e.to_vertex() == _h2)
-            e.set_to_vertex(_h1);
+    auto swap_edge_indices = [_h1, _h2](Edge &e) {
+        if      (e.from_vertex() == _h1) e.set_from_vertex(_h2);
+        else if (e.from_vertex() == _h2) e.set_from_vertex(_h1);
+        if      (e.to_vertex() == _h1) e.set_to_vertex(_h2);
+        else if (e.to_vertex() == _h2) e.set_to_vertex(_h1);
     };
 
     if (has_vertex_bottom_up_incidences())

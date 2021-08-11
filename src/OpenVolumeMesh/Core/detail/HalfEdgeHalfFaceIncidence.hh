@@ -43,6 +43,7 @@ protected:
 
     void debug_check(EdgeHandle) const;
     void debug_check(HalfEdgeHandle) const;
+    size_t count(HalfEdgeHandle _h) const {return incident(_h).size();};
 private:
     using Parent::topo;
     mutable std::optional<PrivateProperty<bool, Entity::Edge>> ordered_;

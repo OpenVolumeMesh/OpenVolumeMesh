@@ -21,6 +21,7 @@ protected:
     void add_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
     void delete_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
     void swap(EdgeHandle _h1, EdgeHandle _h2);
+    size_t count(VertexHandle _h) const {return incident(_h).size();};
 private:
     using Parent::topo;
     void recompute() override;

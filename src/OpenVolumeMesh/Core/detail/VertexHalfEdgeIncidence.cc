@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <unordered_set>
 
 
 namespace OpenVolumeMesh {
@@ -68,6 +69,30 @@ void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2)
     if (!enabled()) return;
     if (_h1 == _h2) return;
 
+    auto swap_indices = [this, _h1, _h2](VertexHandle vh)
+    {
+        for (auto &heh: incident(vh)) {
+            if      (heh.full() == _h1) heh = _h2.half(heh.subidx());
+            else if (heh.full() == _h2) heh = _h1.half(heh.subidx());
+        }
+    };
+
+    std::unordered_set<VertexHandle> processed;
+    processed.reserve(4);
+
+
+    for (const auto eh: {_h1, _h2}) {
+        const auto &edge = topo()->edge(eh);
+        for (const auto vh: {edge.from_vertex(), edge.to_vertex()}) {
+            if (!vh.is_valid() || processed.find(vh) != processed.end())
+                continue;
+            processed.insert(vh);
+            swap_indices(vh);
+        }
+    }
+
+
+#if 0
     const auto &e1 = topo()->edge(_h1);
     const auto &e2 = topo()->edge(_h2);
 
@@ -109,6 +134,7 @@ void VertexHalfEdgeIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2)
             }
         }
     }
+#endif
 }
 
 

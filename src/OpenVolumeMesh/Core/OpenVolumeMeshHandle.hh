@@ -81,7 +81,7 @@ public:
     constexpr bool operator!=(const Derived& _h) const { return _h.idx_ != this->idx_; }
 
     constexpr const int& idx() const { return idx_; }
-    constexpr int& idx() { return idx_; }
+    constexpr int& idx_mutable() { return idx_; }
 
     /// return unsigned idx - handle must be valid
     unsigned int uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
