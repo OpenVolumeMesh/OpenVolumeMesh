@@ -5,52 +5,13 @@
 namespace OpenVolumeMesh {
 
 template<typename Derived, typename Entity, typename _Incidences>
-IncidencesT<Derived, Entity, _Incidences>&
-IncidencesT<Derived, Entity, _Incidences>::
-operator=(IncidencesT<Derived, Entity, _Incidences> const &other)
-{
-    incident_ = other.incident_;
-    if (enabled()) {
-        incident_->attach_to(topo());
-    }
-    return *this;
-}
-
-template<typename Derived, typename Entity, typename _Incidences>
-IncidencesT<Derived, Entity, _Incidences>&
-IncidencesT<Derived, Entity, _Incidences>::
-operator=(IncidencesT<Derived, Entity, _Incidences> &&other)
-{
-    incident_ = std::move(other.incident_);
-    if (enabled()) {
-        incident_->attach_to(topo());
-    }
-    return *this;
-
-}
-template<typename Derived, typename Entity, typename _Incidences>
-IncidencesT<Derived, Entity, _Incidences>::
-IncidencesT(IncidencesT<Derived, Entity, _Incidences> &&other)
-{
-    *this = std::move(other);
-}
-template<typename Derived, typename Entity, typename _Incidences>
-IncidencesT<Derived, Entity, _Incidences>::
-IncidencesT(IncidencesT<Derived, Entity, _Incidences> const &other)
-{
-    *this = other;
-}
-
-
-
-template<typename Derived, typename Entity, typename _Incidences>
 _Incidences &
 IncidencesT<Derived, Entity, _Incidences>::
 incident(Handle _h)
 {
     assert(enabled());
-    assert(_h.uidx() < incident_->size());
-    return (*incident_)[_h];
+    assert(_h.uidx() < incident_.size());
+    return incident_[_h.idx()];
 }
 
 template<typename Derived, typename Entity, typename _Incidences>
@@ -59,8 +20,8 @@ IncidencesT<Derived, Entity, _Incidences>::
 incident(Handle _h) const
 {
     assert(enabled());
-    assert(_h.uidx() < incident_->size());
-    return (*incident_)[_h];
+    assert(_h.uidx() < incident_.size());
+    return incident_[_h.idx()];
 }
 
 template<typename Derived, typename Entity, typename _Incidences>
@@ -69,8 +30,8 @@ IncidencesT<Derived, Entity, _Incidences>::
 incident_mutable(Handle _h) const
 {
     assert(enabled());
-    assert(_h.uidx() < incident_->size());
-    return (*incident_)[_h];
+    assert(_h.uidx() < incident_.size());
+    return incident_[_h.idx()];
 }
 
 template<typename Derived, typename Entity, typename _Incidences>
@@ -80,11 +41,13 @@ set_enabled(bool enable)
 {
     if (enabled() == enable)
         return;
-    if (enable) {
-        incident_.emplace(topo(), "bottom-up incidences");
+    enabled_ = enable;
+    if (enabled_) {
+        resize();
         recompute();
     } else {
-        incident_.reset();
+        incident_.clear();
+        incident_.shrink_to_fit();
     }
 }
 
@@ -93,6 +56,21 @@ void IncidencesT<Derived, Entity, _Incidences>::deleted(Handle _h)
 {
     if (!enabled()) return;
     incident(_h) = {};
+}
+
+
+template<typename Derived, typename Entity, typename _Incidences>
+void IncidencesT<Derived, Entity, _Incidences>::resize()
+{
+    if (!enabled()) return;
+    incident_.resize(topo()->template n<Entity>());
+}
+
+template<typename Derived, typename _Entity, typename _Incidences>
+void IncidencesT<Derived, _Entity, _Incidences>::swap(Handle _h1, Handle _h2)
+{
+    if (!enabled()) return;
+    std::swap(incident_[_h1.idx()], incident_[_h2.idx()]);
 }
 
 

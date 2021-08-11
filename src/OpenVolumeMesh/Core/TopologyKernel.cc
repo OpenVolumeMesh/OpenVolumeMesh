@@ -103,11 +103,8 @@ VertexHandle TopologyKernel::add_vertex() {
 
     ++n_vertices_;
     vertex_deleted_.push_back(false);
-
-    // Resize vertex props
+    VertexHalfEdgeIncidence::resize();
     resize_vprops(n_vertices_);
-
-    // Return 0-indexed handle
     return VertexHandle((int)(n_vertices_ - 1));
 }
 
@@ -138,6 +135,8 @@ EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
     resize_eprops(n_edges());
 
     EdgeHandle eh((int)edges_.size()-1);
+
+    HalfEdgeHalfFaceIncidence::resize();
 
     VertexHalfEdgeIncidence::add_edge(eh, edges_.back());
 
@@ -180,6 +179,8 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
 
     // Resize props
     resize_fprops(n_faces());
+
+    HalfFaceCellIncidence::resize();
 
     HalfEdgeHalfFaceIncidence::add_face(fh, faces_.back());
 
@@ -705,6 +706,7 @@ void TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
     --n_vertices_;
     vertex_deleted_.erase(vertex_deleted_.begin() + h.idx());
 
+    VertexHalfEdgeIncidence::resize();
     ResourceManager::vertex_deleted(h);
 }
 
@@ -749,7 +751,7 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
 
     edges_.erase(edges_.begin() + h.idx());
     edge_deleted_.erase(edge_deleted_.begin() + h.idx());
-
+    HalfEdgeHalfFaceIncidence::resize();
     ResourceManager::edge_deleted(h);
 }
 
@@ -793,6 +795,7 @@ void TopologyKernel::delete_face_core(const FaceHandle& _h) {
     faces_.erase(faces_.begin() + h.idx());
     face_deleted_.erase(face_deleted_.begin() + h.idx());
 
+    HalfFaceCellIncidence::resize();
     ResourceManager::face_deleted(h);
 }
 
@@ -909,8 +912,10 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
     std::swap(faces_[_h1.idx()], faces_[_h2.idx()]);
     std::swap(face_deleted_[_h1.idx()], face_deleted_[_h2.idx()]);
     swap_face_properties(_h1, _h2);
-    swap_halfface_properties(halfface_handle(_h1, 0), halfface_handle(_h2, 0));
-    swap_halfface_properties(halfface_handle(_h1, 1), halfface_handle(_h2, 1));
+    for (int subidx = 0; subidx < 2; ++subidx) {
+        HalfFaceCellIncidence::swap(_h1.half(subidx), _h2.half(subidx));
+        swap_halfface_properties(_h1.half(subidx), _h2.half(subidx));
+    }
     HalfEdgeHalfFaceIncidence::swap(_h1, _h2);
 }
 
@@ -967,6 +972,7 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
     swap_halfedge_properties(halfedge_handle(_h1, 1), halfedge_handle(_h2, 1));
 
     // correct bottom up incidences
+    HalfEdgeHalfFaceIncidence::swap(_h1, _h2);
     VertexHalfEdgeIncidence::swap(_h1, _h2);
 }
 
@@ -1016,6 +1022,7 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     // swap vector entries
     std::swap(vertex_deleted_[_h1.uidx()], vertex_deleted_[_h2.uidx()]);
     swap_vertex_properties(_h1, _h2);
+    VertexHalfEdgeIncidence::swap(_h1, _h2);
 }
 
 //========================================================================================
@@ -1366,9 +1373,6 @@ CellHandle TopologyKernel::incident_cell(const HalfFaceHandle& _halfFaceHandle) 
 
     return HalfFaceCellIncidence::incident(_halfFaceHandle);
 }
-
-//========================================================================================
-//========================================================================================
 
 
 } // Namespace OpenVolumeMesh

@@ -21,10 +21,6 @@ protected:
     using Parent::incident_mutable;
     using Parent::enabled;
 
-
-    HalfEdgeHalfFaceIncidence() = default;
-    HalfEdgeHalfFaceIncidence(HalfEdgeHalfFaceIncidence<Derived> const &other);
-
     void add_face(FaceHandle _fh, OpenVolumeMeshFace const &_face);
     void delete_face(FaceHandle _fh, OpenVolumeMeshFace const &_face);
 
@@ -38,18 +34,18 @@ protected:
     void ensure_ordered(EdgeHandle) const;
 
     void swap(FaceHandle _h1, FaceHandle _h2);
+    void swap(EdgeHandle _h1, EdgeHandle _h2);
 
     void set_enabled(bool enable);
 
     void debug_check(EdgeHandle) const;
     void debug_check(HalfEdgeHandle) const;
     size_t count(HalfEdgeHandle _h) const {return incident(_h).size();};
+    void resize();
 private:
     using Parent::topo;
-    mutable std::optional<PrivateProperty<bool, Entity::Edge>> ordered_;
-    //std::vector<bool> order_valid_;
+    mutable std::vector<bool> edge_ordered_;
     void recompute() override;
-    // TODO: maybe keep a prop<bool, EH> "ordered" to invalidate?
 };
 
 } // namespace OpenVolumeMesh

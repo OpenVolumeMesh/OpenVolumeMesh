@@ -10,22 +10,17 @@ namespace OpenVolumeMesh {
 
 class ResourceManager;
 
-template<typename Derived, typename Entity, typename _Incidences>
+template<typename Derived, typename _Entity, typename _Incidences>
 class IncidencesT
 {
-    static_assert(is_entity<Entity>::value);
 public:
-    using Handle = HandleT<Entity>;
+    using Entity = _Entity;
     using Incidences = _Incidences;
+    static_assert(is_entity<_Entity>::value);
+    using Handle = HandleT<Entity>;
 
     IncidencesT() = default;
-    // TODO IMPORTANT: implement copy/move constructor/= for this and for ve-hf::ordered_
-    IncidencesT(IncidencesT<Derived, Entity, _Incidences> const &other);
-    IncidencesT(IncidencesT<Derived, Entity, _Incidences> &&other);
-    IncidencesT &operator=(IncidencesT<Derived, Entity, _Incidences> const &other);
-    IncidencesT &operator=(IncidencesT<Derived, Entity, _Incidences> &&other);
-
-    bool enabled() const {return incident_.has_value();}
+    bool enabled() const {return enabled_;}
     void set_enabled(bool enable);
     void deleted(Handle);
 
@@ -39,12 +34,16 @@ protected:
 
     bool valid(Handle vh) const;
     virtual void recompute() = 0;
+    void resize();
+
+    void swap(Handle _h1, Handle _h2);
 
 private:
+    bool enabled_ = false;
     // HACK: mutable;
     // we need this for the lazy ordering of HE-HF incidences :(
     // I wish we could have mutable inheritance from IncidencesT instead.
-    mutable std::optional<PrivateProperty<Incidences, Entity>> incident_;
+    mutable std::vector<_Incidences> incident_;
 };
 
 } // namespace OpenVolumeMesh

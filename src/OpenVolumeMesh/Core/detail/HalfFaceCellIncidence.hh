@@ -22,6 +22,8 @@ protected:
     void delete_cell(CellHandle _ch, OpenVolumeMeshCell const &_cell);
 
     void swap(CellHandle _h1, CellHandle _h2);
+    using Parent::swap;
+    using Parent::resize;
 private:
     using Parent::topo;
     void recompute() override;

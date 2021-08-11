@@ -18,6 +18,8 @@ protected:
     using Incidences = typename Parent::Incidences;
     using Parent::incident;
     using Parent::enabled;
+    using Parent::resize;
+    using Parent::swap;
     void add_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
     void delete_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge);
     void swap(EdgeHandle _h1, EdgeHandle _h2);

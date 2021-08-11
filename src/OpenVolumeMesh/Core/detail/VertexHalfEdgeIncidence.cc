@@ -41,6 +41,7 @@ template<typename Derived>
 void VertexHalfEdgeIncidence<Derived>::add_edge(EdgeHandle _eh, OpenVolumeMeshEdge const &_edge)
 {
     if (!enabled()) return;
+    resize();
     incident(_edge.from_vertex()).push_back(topo()->halfedge_handle(_eh, 0));
     incident(_edge.to_vertex()).push_back(topo()->halfedge_handle(_eh, 1));
 }

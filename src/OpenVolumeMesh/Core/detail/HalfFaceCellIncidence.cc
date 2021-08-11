@@ -17,6 +17,7 @@ template<typename Derived>
 void HalfFaceCellIncidence<Derived>::add_cell(CellHandle _ch, const OpenVolumeMeshCell &_cell)
 {
     if (!enabled()) return;
+    resize();
     for (const auto &hfh: _cell.halffaces()) {
         incident(hfh) = _ch;
     }

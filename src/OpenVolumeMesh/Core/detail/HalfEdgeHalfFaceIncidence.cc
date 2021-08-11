@@ -11,20 +11,12 @@
 
 namespace OpenVolumeMesh {
 
-//template class IncidencesT<Entity::Vertex, Entity::HalfEdge>;
-
-template<typename Derived>
-HalfEdgeHalfFaceIncidence<Derived>::
-HalfEdgeHalfFaceIncidence(const HalfEdgeHalfFaceIncidence<Derived> &other)
-{
-    ordered_ = other.ordered_;
-    ordered_->attach_to(topo());
-}
 
 template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::add_face(FaceHandle _fh, const OpenVolumeMeshFace &_face)
 {
     if (!enabled()) return;
+    resize();
     auto hfh0 = topo()->halfface_handle(_fh, 0);
     auto hfh1 = topo()->halfface_handle(_fh, 1);
     for (const auto &heh: _face.halfedges()) {
@@ -174,7 +166,7 @@ template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(EdgeHandle _eh)
 {
     if (!enabled()) return;
-    (*ordered_)[_eh] = false;
+    edge_ordered_[_eh.idx()] = false;
 }
 
 template<typename Derived>
@@ -182,7 +174,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(FaceHandle _fh)
 {
     if (!enabled()) return;
     for (const auto eh: topo()->face_edges(_fh)) {
-         (*ordered_)[eh] = false;
+        invalidate_order(eh);
     }
 }
 
@@ -195,7 +187,7 @@ void HalfEdgeHalfFaceIncidence<Derived>::invalidate_order(CellHandle _ch)
             // both of each incident edge's halfedges are included exactly once,
             // so we just pick the ones with subidx 0.
             if (heh.subidx() == 0) {
-                (*ordered_)[topo()->edge_handle(heh)] = false;
+                invalidate_order(heh.full());
             }
         }
     }
@@ -207,10 +199,10 @@ void HalfEdgeHalfFaceIncidence<Derived>::ensure_ordered(EdgeHandle _eh) const
 {
     if (!enabled()) return;
 
-    if (!(*ordered_)[_eh]) {
+    if (!edge_ordered_[_eh.idx()]) {
         debug_check(_eh);
         reorder_halffaces(_eh);
-        (*ordered_)[_eh] = true;
+        edge_ordered_[_eh.idx()] = true;
     }
 
 }
@@ -247,18 +239,30 @@ void HalfEdgeHalfFaceIncidence<Derived>::swap(FaceHandle _h1, FaceHandle _h2)
         debug_check(eh);
     }
 }
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::swap(EdgeHandle _h1, EdgeHandle _h2)
+{
+    if(!enabled()) return;
+    for (int subidx = 0; subidx < 2; ++subidx) {
+        Parent::swap(_h1.half(subidx), _h2.half(subidx));
+    }
+    std::swap(edge_ordered_[_h1.idx()],
+              edge_ordered_[_h2.idx()]);
+}
 
 template<typename Derived>
 void HalfEdgeHalfFaceIncidence<Derived>::set_enabled(bool _enable)
 {
     if (enabled() == _enable)
         return;
-    if (_enable) {
-        ordered_.emplace(topo(), "valid hfh order", false);
-    } else {
-        ordered_.reset();
-    }
     Parent::set_enabled(_enable);
+
+    if (_enable) {
+        resize();
+    } else {
+        edge_ordered_.clear();
+        edge_ordered_.shrink_to_fit();
+    }
 }
 
 template<typename Derived>
@@ -283,6 +287,14 @@ void HalfEdgeHalfFaceIncidence<Derived>::debug_check(HalfEdgeHandle heh) const
         }
         assert(found);
     }
+}
+
+template<typename Derived>
+void HalfEdgeHalfFaceIncidence<Derived>::resize()
+{
+    Parent::resize();
+    edge_ordered_.resize(topo()->n_edges(), false);
+
 }
 
 template<typename Derived>
