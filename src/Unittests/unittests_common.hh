@@ -139,8 +139,9 @@ public:
   explicit Print(bool _mute = false) : mute_(_mute) {}
   void mute(bool _mute) { mute_ = _mute; }
   bool mute() const { return mute_; }
-  void operator()(const OpenVolumeMesh::OpenVolumeMeshHandle& _h) const {
-    if(!mute_) std::cerr << "Handle: " << _h.idx() << std::endl;
+  template<typename Handle>
+  void operator()(const Handle &_h) const {
+    if(!mute_) std::cerr << "Handle: " << _h << std::endl;
   }
 private:
   bool mute_;

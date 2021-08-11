@@ -341,8 +341,8 @@ private:
     template<class Container>
     void reserve_props(Container& _vec, size_t _n);
 
-    template<class Container>
-    void entity_deleted(Container& _vec, const OpenVolumeMeshHandle& _h);
+    template<class EntityTag>
+    void entity_deleted(HandleT<EntityTag>);
 
     template<typename T, typename EntityTag>
     std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;

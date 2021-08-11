@@ -103,25 +103,24 @@ void ResourceManager::reserve_cprops(size_t _n) {
 
 
 void ResourceManager::vertex_deleted(const VertexHandle& _h) {
-    entity_deleted(storage_tracker<Entity::Vertex>(), _h);
+    entity_deleted<Entity::Vertex>(_h);
 }
 
 void ResourceManager::edge_deleted(const EdgeHandle& _h) {
-
-    entity_deleted(storage_tracker<Entity::Edge>(), _h);
-    entity_deleted(storage_tracker<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2+1});
-    entity_deleted(storage_tracker<Entity::HalfEdge>(), HalfEdgeHandle{_h.idx()*2});
+    entity_deleted<Entity::Edge>(_h);
+    entity_deleted<Entity::HalfEdge>(_h.half(1));
+    entity_deleted<Entity::HalfEdge>(_h.half(0));
 }
 
 void ResourceManager::face_deleted(const FaceHandle& _h)
 {
-    entity_deleted(storage_tracker<Entity::Face>(), _h);
-    entity_deleted(storage_tracker<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2+1});
-    entity_deleted(storage_tracker<Entity::HalfFace>(), HalfFaceHandle{_h.idx()*2});
+    entity_deleted<Entity::Face>(_h);
+    entity_deleted<Entity::HalfFace>(_h.half(1));
+    entity_deleted<Entity::HalfFace>(_h.half(0));
 }
 
 void ResourceManager::cell_deleted(const CellHandle& _h) {
-    entity_deleted(storage_tracker<Entity::Cell>(), _h);
+    entity_deleted<Entity::Cell>(_h);
 }
 
 void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2)

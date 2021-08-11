@@ -1005,9 +1005,9 @@ public:
     }
 
 public:
-    template<typename Entity>
-    bool is_valid(HandleT<Entity> _h) const {
-        return _h.uidx() < n<Entity>();
+    template<typename Handle, typename = std::enable_if_t<is_handle_v<Handle>>>
+    bool is_valid(Handle const &_h) const {
+        return _h.uidx() < n<typename Handle::EntityTag>();
     }
 
 protected:

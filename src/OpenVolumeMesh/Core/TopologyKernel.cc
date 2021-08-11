@@ -686,9 +686,9 @@ void TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
     VertexHandle h = _h;
     assert(h.is_valid() && (size_t)h.idx() < n_vertices());
 
-    VertexHalfEdgeIncidence::deleted(_h);
     if (deferred_deletion_enabled())
     {
+        VertexHalfEdgeIncidence::deleted(_h);
         ++n_deleted_vertices_;
         vertex_deleted_[h.idx()] = true;
         return;
@@ -723,6 +723,7 @@ void TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
     edge_deleted_[h.idx()] = true;
 
     VertexHalfEdgeIncidence::delete_edge(h, edge(h));
+
     HalfEdgeHalfFaceIncidence::deleted(halfedge_handle(h, 0));
     HalfEdgeHalfFaceIncidence::deleted(halfedge_handle(h, 1));
 

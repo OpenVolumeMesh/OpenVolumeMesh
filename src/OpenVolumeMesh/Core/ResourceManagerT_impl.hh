@@ -210,10 +210,10 @@ void ResourceManager::reserve_props(Container& _vec, size_t _n)
 }
 
 
-template<class Container>
-void ResourceManager::entity_deleted(Container& _vec, const OpenVolumeMeshHandle& _h) {
+template<typename  EntityTag>
+void ResourceManager::entity_deleted(HandleT<EntityTag> _h) {
 
-    for (auto &prop: _vec) {
+    for (auto &prop: storage_tracker<EntityTag>()) {
         prop->delete_element(_h.uidx());
     }
 }
