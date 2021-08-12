@@ -1298,22 +1298,36 @@ public:
 
 //===========================================================================
 
-class OVM_EXPORT FaceHalfEdgeIterImpl : public HalfFaceHalfEdgeIterImpl {
+class OVM_EXPORT FaceHalfEdgeIterImpl : public BaseCirculator<FaceHandle, HalfEdgeHandle> {
 public:
-
+    using BaseIter = BaseCirculator<FaceHandle, HalfEdgeHandle>;
     typedef FaceHandle CenterEntityHandle;
+
     FaceHalfEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+    FaceHalfEdgeIterImpl& operator++();
+    FaceHalfEdgeIterImpl& operator--();
+
+private:
+    std::vector<HalfEdgeHandle> const& halfedges_;
+    size_t cur_index_ = 0;
 
 };
 
 //===========================================================================
 
-class OVM_EXPORT FaceEdgeIterImpl : public HalfFaceEdgeIterImpl {
+class OVM_EXPORT FaceEdgeIterImpl : public BaseCirculator<FaceHandle, EdgeHandle> {
 public:
+    using BaseIter = BaseCirculator<FaceHandle, EdgeHandle>;
 
     typedef FaceHandle CenterEntityHandle;
-    FaceEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
 
+    FaceEdgeIterImpl(const FaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps = 1);
+    FaceEdgeIterImpl& operator++();
+    FaceEdgeIterImpl& operator--();
+
+private:
+    std::vector<HalfEdgeHandle> const& halfedges_;
+    size_t cur_index_ = 0;
 };
 
 //===========================================================================
