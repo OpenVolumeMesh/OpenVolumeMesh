@@ -71,7 +71,7 @@ public:
     HalfFaceHandle add_halfface(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck = false);
     HalfFaceHandle add_halfface(VertexHandle _vh0, VertexHandle _vh1, VertexHandle _vh2, bool _topologyCheck = false);
 
-    HalfEdgeHandle add_halfedge(const VertexHandle& _fromVertex, const VertexHandle& _toVertex);
+    HalfEdgeHandle add_halfedge(VertexHandle _fromVertex, VertexHandle _toVertex);
 
     std::vector<VertexHandle> get_cell_vertices(CellHandle ch) const;
     std::vector<VertexHandle> get_cell_vertices(CellHandle ch, VertexHandle vh) const;
@@ -99,11 +99,11 @@ public:
 
     typedef class TetVertexIter TetVertexIter;
 
-    TetVertexIter tv_iter(const CellHandle& _ref_h, int _max_laps = 1) const {
+    TetVertexIter tv_iter(CellHandle _ref_h, int _max_laps = 1) const {
         return TetVertexIter(_ref_h, this, _max_laps);
     }
 
-    std::pair<TetVertexIter,TetVertexIter> tet_vertices(const CellHandle& _ref_h, int _max_laps = 1) const {
+    std::pair<TetVertexIter,TetVertexIter> tet_vertices(CellHandle _ref_h, int _max_laps = 1) const {
         TetVertexIter begin = tv_iter(_ref_h, _max_laps);
         TetVertexIter end   = make_end_circulator(begin);
         return std::make_pair(begin, end);

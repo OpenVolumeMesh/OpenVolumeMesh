@@ -55,7 +55,7 @@ private:
     typedef BaseCirculator<CellHandle,
             VertexHandle> BaseIter;
 public:
-    TetVertexIter(const CellHandle& _ref_h,
+    TetVertexIter(CellHandle _ref_h,
                   const TetrahedralMeshTopologyKernel* _mesh,
                   int _max_laps = 1);
 

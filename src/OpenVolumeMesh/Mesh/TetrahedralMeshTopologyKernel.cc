@@ -95,7 +95,7 @@ TetrahedralMeshTopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, 
 }
 
 
-HalfEdgeHandle TetrahedralMeshTopologyKernel::add_halfedge(const VertexHandle& _fromVertex, const VertexHandle& _toVertex)
+HalfEdgeHandle TetrahedralMeshTopologyKernel::add_halfedge(VertexHandle _fromVertex, VertexHandle _toVertex)
 {
     HalfEdgeHandle he = halfedge(_fromVertex, _toVertex);
     if (he != InvalidHalfEdgeHandle)

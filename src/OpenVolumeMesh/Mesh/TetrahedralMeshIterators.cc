@@ -45,7 +45,7 @@ namespace OpenVolumeMesh {
 //================================================================================================
 
 
-TetVertexIter::TetVertexIter(const CellHandle& _ref_h,
+TetVertexIter::TetVertexIter(CellHandle _ref_h,
         const TetrahedralMeshTopologyKernel* _mesh, int _max_laps) :
 BaseIter(_mesh, _ref_h, _max_laps) {
 

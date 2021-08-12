@@ -432,8 +432,8 @@ HexahedralMeshTopologyKernel::add_cell(const std::vector<VertexHandle>& _vertice
 
 //========================================================================================
 
-const HalfFaceHandle&
-HexahedralMeshTopologyKernel::get_adjacent_halfface(const HalfFaceHandle& _hfh, const HalfEdgeHandle& _heh,
+HalfFaceHandle
+HexahedralMeshTopologyKernel::get_adjacent_halfface(HalfFaceHandle _hfh, HalfEdgeHandle _heh,
         const std::vector<HalfFaceHandle>& _halffaces) const {
 
     // Search for halfface that is incident to the opposite

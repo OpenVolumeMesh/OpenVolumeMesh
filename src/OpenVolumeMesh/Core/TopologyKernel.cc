@@ -98,8 +98,8 @@ VertexHandle TopologyKernel::add_vertex() {
 //========================================================================================
 
 /// Add edge
-EdgeHandle TopologyKernel::add_edge(const VertexHandle& _fromVertex,
-                                    const VertexHandle& _toVertex,
+EdgeHandle TopologyKernel::add_edge(VertexHandle _fromVertex,
+                                    VertexHandle _toVertex,
                                     bool _allowDuplicates) {
 
     // If the conditions are not fulfilled, assert will fail (instead
@@ -257,7 +257,7 @@ FaceHandle TopologyKernel::add_face(const std::vector<VertexHandle>& _vertices) 
 
 //========================================================================================
 
-void TopologyKernel::reorder_incident_halffaces(const EdgeHandle& _eh) {
+void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
 
     /* Put halffaces in clockwise order via the
      * same cell property which now exists.
@@ -479,7 +479,7 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
 
 /// Set the vertices of an edge
 // cppcheck-suppress unusedFunction ; public interface
-void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVertex, const VertexHandle& _toVertex) {
+void TopologyKernel::set_edge(EdgeHandle _eh, VertexHandle _fromVertex, VertexHandle _toVertex) {
 
     assert(_fromVertex.is_valid() && (size_t)_fromVertex.idx() < n_vertices() && !is_deleted(_fromVertex));
     assert(_toVertex.is_valid() && (size_t)_toVertex.idx() < n_vertices() && !is_deleted(_toVertex));
@@ -489,8 +489,8 @@ void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVe
     // Update bottom-up entries
     if(has_vertex_bottom_up_incidences()) {
 
-        const VertexHandle& fv = e.from_vertex();
-        const VertexHandle& tv = e.to_vertex();
+        VertexHandle fv = e.from_vertex();
+        VertexHandle tv = e.to_vertex();
 
         const HalfEdgeHandle heh0 = halfedge_handle(_eh, 0);
         const HalfEdgeHandle heh1 = halfedge_handle(_eh, 1);
@@ -514,7 +514,7 @@ void TopologyKernel::set_edge(const EdgeHandle& _eh, const VertexHandle& _fromVe
 
 /// Set the half-edges of a face
 // cppcheck-suppress unusedFunction ; public interface
-void TopologyKernel::set_face(const FaceHandle& _fh, const std::vector<HalfEdgeHandle>& _hes) {
+void TopologyKernel::set_face(FaceHandle _fh, const std::vector<HalfEdgeHandle>& _hes) {
 
     Face& f = face(_fh);
 
@@ -555,7 +555,7 @@ void TopologyKernel::set_face(const FaceHandle& _fh, const std::vector<HalfEdgeH
 
 /// Set the half-faces of a cell
 // cppcheck-suppress unusedFunction ; public interface
-void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceHandle>& _hfs) {
+void TopologyKernel::set_cell(CellHandle _ch, const std::vector<HalfFaceHandle>& _hfs) {
 
     Cell& c = cell(_ch);
 
@@ -592,7 +592,7 @@ void TopologyKernel::set_cell(const CellHandle& _ch, const std::vector<HalfFaceH
  *
  * @param _h The handle to the vertex to be deleted
  */
-VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
+VertexIter TopologyKernel::delete_vertex(VertexHandle _h) {
 
     assert(!is_deleted(_h));
 
@@ -644,7 +644,7 @@ VertexIter TopologyKernel::delete_vertex(const VertexHandle& _h) {
  *
  * @param _h The handle to the edge to be deleted
  */
-EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
+EdgeIter TopologyKernel::delete_edge(EdgeHandle _h) {
 
     assert(!is_deleted(_h));
 
@@ -687,7 +687,7 @@ EdgeIter TopologyKernel::delete_edge(const EdgeHandle& _h) {
  *
  * @param _h The handle to the face to be deleted
  */
-FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
+FaceIter TopologyKernel::delete_face(FaceHandle _h) {
 
     assert(!is_deleted(_h));
 
@@ -718,7 +718,7 @@ FaceIter TopologyKernel::delete_face(const FaceHandle& _h) {
  *
  * @param _h The handle to the cell to be deleted
  */
-CellIter TopologyKernel::delete_cell(const CellHandle& _h) {
+CellIter TopologyKernel::delete_cell(CellHandle _h) {
 
     assert(!is_deleted(_h));
     return delete_cell_core(_h);
@@ -916,7 +916,7 @@ void TopologyKernel::get_incident_cells(const ContainerT& _fs,
  *
  * @param _h A vertex's handle
  */
-VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
+VertexIter TopologyKernel::delete_vertex_core(VertexHandle _h) {
 
     VertexHandle h = _h;
     assert(h.is_valid() && (size_t)h.idx() < n_vertices());
@@ -1021,7 +1021,7 @@ VertexIter TopologyKernel::delete_vertex_core(const VertexHandle& _h) {
  *
  * @param _h An edge's handle
  */
-EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
+EdgeIter TopologyKernel::delete_edge_core(EdgeHandle _h) {
 
     EdgeHandle h = _h;
 
@@ -1205,7 +1205,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
  *
  * @param _h An face's handle
  */
-FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
+FaceIter TopologyKernel::delete_face_core(FaceHandle _h) {
 
     FaceHandle h = _h;
 
@@ -1376,7 +1376,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
  *
  * @param _h A cell handle
  */
-CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
+CellIter TopologyKernel::delete_cell_core(CellHandle _h) {
 
     CellHandle h = _h;
 
@@ -2004,7 +2004,7 @@ void TopologyKernel::enable_deferred_deletion(bool _enable)
 //========================================================================================
 
 /// Get edge with handle _edgeHandle
-const OpenVolumeMeshEdge& TopologyKernel::edge(const EdgeHandle& _edgeHandle) const {
+const OpenVolumeMeshEdge& TopologyKernel::edge(EdgeHandle _edgeHandle) const {
 
     // Test if edge is valid
     assert(_edgeHandle.is_valid() && (size_t)_edgeHandle.idx() < edges_.size());
@@ -2015,7 +2015,7 @@ const OpenVolumeMeshEdge& TopologyKernel::edge(const EdgeHandle& _edgeHandle) co
 //========================================================================================
 
 /// Get face with handle _faceHandle
-const OpenVolumeMeshFace& TopologyKernel::face(const FaceHandle& _faceHandle) const {
+const OpenVolumeMeshFace& TopologyKernel::face(FaceHandle _faceHandle) const {
 
     // Test if face is valid
     assert(_faceHandle.is_valid() && (size_t)_faceHandle.idx() < faces_.size());
@@ -2026,7 +2026,7 @@ const OpenVolumeMeshFace& TopologyKernel::face(const FaceHandle& _faceHandle) co
 //========================================================================================
 
 /// Get cell with handle _cellHandle
-const OpenVolumeMeshCell& TopologyKernel::cell(const CellHandle& _cellHandle) const {
+const OpenVolumeMeshCell& TopologyKernel::cell(CellHandle _cellHandle) const {
 
     // Test if cell is valid
     assert(_cellHandle.is_valid() && (size_t)_cellHandle.idx() < cells_.size());
@@ -2037,7 +2037,7 @@ const OpenVolumeMeshCell& TopologyKernel::cell(const CellHandle& _cellHandle) co
 //========================================================================================
 
 /// Get edge with handle _edgeHandle
-OpenVolumeMeshEdge& TopologyKernel::edge(const EdgeHandle& _edgeHandle) {
+OpenVolumeMeshEdge& TopologyKernel::edge(EdgeHandle _edgeHandle) {
 
     // Test if edge is valid
     assert(_edgeHandle.is_valid() && (size_t)_edgeHandle.idx() < edges_.size());
@@ -2048,7 +2048,7 @@ OpenVolumeMeshEdge& TopologyKernel::edge(const EdgeHandle& _edgeHandle) {
 //========================================================================================
 
 /// Get face with handle _faceHandle
-OpenVolumeMeshFace& TopologyKernel::face(const FaceHandle& _faceHandle) {
+OpenVolumeMeshFace& TopologyKernel::face(FaceHandle _faceHandle) {
 
     // Test if face is valid
     assert((size_t)_faceHandle.idx() < faces_.size());
@@ -2060,7 +2060,7 @@ OpenVolumeMeshFace& TopologyKernel::face(const FaceHandle& _faceHandle) {
 //========================================================================================
 
 /// Get cell with handle _cellHandle
-OpenVolumeMeshCell& TopologyKernel::cell(const CellHandle& _cellHandle) {
+OpenVolumeMeshCell& TopologyKernel::cell(CellHandle _cellHandle) {
 
     // Test if cell is valid
     assert((size_t)_cellHandle.idx() < cells_.size());
@@ -2072,7 +2072,7 @@ OpenVolumeMeshCell& TopologyKernel::cell(const CellHandle& _cellHandle) {
 //========================================================================================
 
 /// Get edge that corresponds to halfedge with handle _halfEdgeHandle
-OpenVolumeMeshEdge TopologyKernel::halfedge(const HalfEdgeHandle& _halfEdgeHandle) const {
+OpenVolumeMeshEdge TopologyKernel::halfedge(HalfEdgeHandle _halfEdgeHandle) const {
 
     // Is handle in range?
     assert((size_t)_halfEdgeHandle.idx() < (edges_.size() * 2));
@@ -2089,7 +2089,7 @@ OpenVolumeMeshEdge TopologyKernel::halfedge(const HalfEdgeHandle& _halfEdgeHandl
 //========================================================================================
 
 /// Get face that corresponds to halfface with handle _halfFaceHandle
-OpenVolumeMeshFace TopologyKernel::halfface(const HalfFaceHandle& _halfFaceHandle) const {
+OpenVolumeMeshFace TopologyKernel::halfface(HalfFaceHandle _halfFaceHandle) const {
 
     // Is handle in range?
     assert((size_t)_halfFaceHandle.idx() < (faces_.size() * 2));
@@ -2106,7 +2106,7 @@ OpenVolumeMeshFace TopologyKernel::halfface(const HalfFaceHandle& _halfFaceHandl
 //========================================================================================
 
 /// Get opposite halfedge that corresponds to halfedge with handle _halfEdgeHandle
-OpenVolumeMeshEdge TopologyKernel::opposite_halfedge(const HalfEdgeHandle& _halfEdgeHandle) const {
+OpenVolumeMeshEdge TopologyKernel::opposite_halfedge(HalfEdgeHandle _halfEdgeHandle) const {
 
     // Is handle in range?
     assert(_halfEdgeHandle.idx() >= 0);
@@ -2123,7 +2123,7 @@ OpenVolumeMeshEdge TopologyKernel::opposite_halfedge(const HalfEdgeHandle& _half
 //========================================================================================
 
 /// Get opposite halfface that corresponds to halfface with handle _halfFaceHandle
-OpenVolumeMeshFace TopologyKernel::opposite_halfface(const HalfFaceHandle& _halfFaceHandle) const {
+OpenVolumeMeshFace TopologyKernel::opposite_halfface(HalfFaceHandle _halfFaceHandle) const {
 
     // Is handle in range?
     assert(_halfFaceHandle.idx() >= 0);
@@ -2139,7 +2139,7 @@ OpenVolumeMeshFace TopologyKernel::opposite_halfface(const HalfFaceHandle& _half
 
 //========================================================================================
 
-HalfEdgeHandle TopologyKernel::halfedge(const VertexHandle& _vh1, const VertexHandle& _vh2) const {
+HalfEdgeHandle TopologyKernel::halfedge(VertexHandle _vh1, VertexHandle _vh2) const {
 
     assert(_vh1.idx() < (int)n_vertices());
     assert(_vh2.idx() < (int)n_vertices());
@@ -2243,7 +2243,7 @@ HalfFaceHandle TopologyKernel::halfface(const std::vector<HalfEdgeHandle>& _hes)
 
 //========================================================================================
 
-HalfEdgeHandle TopologyKernel::next_halfedge_in_halfface(const HalfEdgeHandle& _heh, const HalfFaceHandle& _hfh) const {
+HalfEdgeHandle TopologyKernel::next_halfedge_in_halfface(HalfEdgeHandle _heh, HalfFaceHandle _hfh) const {
 
     assert(_heh.is_valid() && (size_t)_heh.idx() < edges_.size() * 2u);
     assert(_hfh.is_valid() && (size_t)_hfh.idx() < faces_.size() * 2u);
@@ -2263,7 +2263,7 @@ HalfEdgeHandle TopologyKernel::next_halfedge_in_halfface(const HalfEdgeHandle& _
 
 //========================================================================================
 
-HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(const HalfEdgeHandle& _heh, const HalfFaceHandle& _hfh) const {
+HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(HalfEdgeHandle _heh, HalfFaceHandle _hfh) const {
 
     assert(_heh.is_valid() && (size_t)_heh.idx() < edges_.size() * 2u);
     assert(_hfh.is_valid() && (size_t)_hfh.idx() < faces_.size() * 2u);
@@ -2285,8 +2285,8 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(const HalfEdgeHandle& _
 //
 
 HalfFaceHandle
-TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
-                                          const HalfEdgeHandle& _halfEdgeHandle) const
+TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
+                                          HalfEdgeHandle _halfEdgeHandle) const
 {
 
     assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
@@ -2337,12 +2337,10 @@ TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
 
 //========================================================================================
 
-CellHandle TopologyKernel::incident_cell(const HalfFaceHandle& _halfFaceHandle) const
+CellHandle TopologyKernel::incident_cell(HalfFaceHandle _halfFaceHandle) const
 {
     assert((size_t)_halfFaceHandle.idx() < incident_cell_per_hf_.size() && _halfFaceHandle.is_valid());
-    if(!has_face_bottom_up_incidences()) {
-        return InvalidCellHandle;
-    }
+    assert(has_face_bottom_up_incidences());
 
     return incident_cell_per_hf_[_halfFaceHandle.idx()];
 }
