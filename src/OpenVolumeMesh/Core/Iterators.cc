@@ -1504,9 +1504,7 @@ CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator--() {
         if (lap_ < 0)
             BaseIter::valid(false);
     }
-    else {
-        --hf_iter_;
-    }
+    --hf_iter_;
     BaseIter::cur_handle(*hf_iter_);
     return *this;
 }
