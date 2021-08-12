@@ -2336,12 +2336,10 @@ TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
 
 //========================================================================================
 
-CellHandle TopologyKernel::incident_cell(const HalfFaceHandle& _halfFaceHandle) const {
-
+CellHandle TopologyKernel::incident_cell(const HalfFaceHandle& _halfFaceHandle) const
+{
+    assert((size_t)_halfFaceHandle.idx() < incident_cell_per_hf_.size() && _halfFaceHandle.is_valid());
     if(!has_face_bottom_up_incidences()) {
-        return InvalidCellHandle;
-    }
-    if((size_t)_halfFaceHandle.idx() >= incident_cell_per_hf_.size() || _halfFaceHandle.idx() < 0) {
         return InvalidCellHandle;
     }
 
