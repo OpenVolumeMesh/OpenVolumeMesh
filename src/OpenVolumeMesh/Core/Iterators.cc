@@ -1487,19 +1487,19 @@ CellEdgeIterImpl& CellEdgeIterImpl::operator++() {
 
 CellHalfFaceIterImpl::CellHalfFaceIterImpl(const CellHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
     BaseIter(_mesh, _ref_h, _max_laps),
-    hf_iter_(BaseIter::mesh()->cell(_ref_h).halffaces().begin())
+    hf_begin_(BaseIter::mesh()->cell(_ref_h).halffaces().begin()),
+    hf_iter_(hf_begin_),
+    hf_end_(BaseIter::mesh()->cell(_ref_h).halffaces().end())
 {
-    BaseIter::valid(hf_iter_ != BaseIter::mesh()->cell(_ref_h).halffaces().end());
+    BaseIter::valid(hf_iter_ != hf_end_);
     if (BaseIter::valid()) {
         BaseIter::cur_handle(*hf_iter_);
     }
 }
 
 CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator--() {
-    const std::vector<HalfFaceHandle>& halffaces =
-        BaseIter::mesh()->cell(ref_handle_).halffaces();
-    if (hf_iter_ == halffaces.begin()) {
-        hf_iter_ = halffaces.end();
+    if (hf_iter_ == hf_begin_) {
+        hf_iter_ = hf_end_;
         --lap_;
         if (lap_ < 0)
             BaseIter::valid(false);
@@ -1511,10 +1511,8 @@ CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator--() {
 
 CellHalfFaceIterImpl& CellHalfFaceIterImpl::operator++() {
     ++hf_iter_;
-    const std::vector<HalfFaceHandle>& halffaces =
-        BaseIter::mesh()->cell(ref_handle_).halffaces();
-    if (hf_iter_ == halffaces.end()) {
-        hf_iter_ = halffaces.begin();
+    if (hf_iter_ == hf_end_) {
+        hf_iter_ = hf_begin_;
         ++lap_;
         if (lap_ >= max_laps_)
             BaseIter::valid(false);

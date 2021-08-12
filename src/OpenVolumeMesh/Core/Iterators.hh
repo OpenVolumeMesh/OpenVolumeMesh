@@ -1363,7 +1363,7 @@ public:
     CellHalfFaceIterImpl& operator--();
 
 private:
-    std::vector<HalfFaceHandle>::const_iterator hf_iter_;
+    std::vector<HalfFaceHandle>::const_iterator hf_begin_, hf_iter_, hf_end_;
 };
 
 //===========================================================================
