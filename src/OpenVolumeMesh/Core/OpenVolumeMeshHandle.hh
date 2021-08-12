@@ -53,7 +53,10 @@ public:
     // Default constructor
     explicit constexpr OpenVolumeMeshHandle(int _idx) : idx_(_idx) {}
 
-	inline constexpr bool is_valid() const { return idx_ != -1; }
+	inline constexpr bool is_valid() const {
+        // cppcheck-suppress syntaxError ; broken parser in cppcheck 2.3
+        return idx_ != -1;
+    }
 
 	inline constexpr bool operator<(const OpenVolumeMeshHandle& _idx) const { return (this->idx_ < _idx.idx_); }
 

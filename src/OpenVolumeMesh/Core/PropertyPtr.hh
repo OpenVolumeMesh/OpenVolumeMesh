@@ -121,7 +121,10 @@ public:
      bool anonymous() const override { return ptr::shared_ptr<PropT>::get()->name().empty(); }
 
 protected:
-    const std::string &internal_type_name() const override { return ptr::shared_ptr<PropT>::get()->internal_type_name(); }
+    const std::string &internal_type_name() const override {
+        // cppcheck-suppress returnTempReference ; false positive, lifetimes are okay
+        return ptr::shared_ptr<PropT>::get()->internal_type_name();
+    }
 
     void assign_values_from(const BaseProperty *other) override;
     void move_values_from(BaseProperty *other) override;

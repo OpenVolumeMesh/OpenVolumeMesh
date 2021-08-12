@@ -77,6 +77,7 @@ struct are_convertible_to<To, From> : public std::is_convertible<From, To> {
 template<typename Scalar, int DIM>
 class VectorT {
 
+        // cppcheck-suppress syntaxError ; broken parser in cppcheck 2.3
         static_assert(DIM >= 1, "VectorT requires positive dimensionality.");
 
     private:
