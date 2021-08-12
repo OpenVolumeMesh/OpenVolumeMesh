@@ -2420,8 +2420,7 @@ void TopologyKernel::compute_face_bottom_up_incidences() {
     incident_cell_per_hf_.resize(faces_.size() * 2u, InvalidCellHandle);
 
     for (const auto ch: cells()) {
-        const auto &hfs = cells_[ch.idx()].halffaces();
-        for (const auto hfh: hfs) {
+        for (const auto hfh: cell_halffaces(ch)) {
             if(incident_cell_per_hf_[hfh.idx()] == InvalidCellHandle) {
 
                 incident_cell_per_hf_[hfh.idx()] = ch;
