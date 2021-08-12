@@ -2419,28 +2419,18 @@ void TopologyKernel::compute_face_bottom_up_incidences() {
     incident_cell_per_hf_.clear();
     incident_cell_per_hf_.resize(faces_.size() * 2u, InvalidCellHandle);
 
-    int n_cells = (int)cells_.size();
-    for(int i = 0; i < n_cells; ++i) {
-        if (cell_deleted_[i])
-            continue;
+    for (const auto ch: cells()) {
+        const auto &hfs = cells_[ch.idx()].halffaces();
+        for (const auto hfh: hfs) {
+            if(incident_cell_per_hf_[hfh.idx()] == InvalidCellHandle) {
 
-        std::vector<HalfFaceHandle> halffaces = cells_[i].halffaces();
-
-        // Go over all halffaces
-        for(std::vector<HalfFaceHandle>::const_iterator hf_it = halffaces.begin();
-                hf_it != halffaces.end(); ++hf_it) {
-
-            if(incident_cell_per_hf_[hf_it->idx()] == InvalidCellHandle) {
-
-                incident_cell_per_hf_[hf_it->idx()] = CellHandle(i);
+                incident_cell_per_hf_[hfh.idx()] = ch;
 
             } else {
-
 #ifndef NDEBUG
                 std::cerr << "compute_face_bottom_up_incidences(): Detected non-three-manifold configuration!" << std::endl;
                 std::cerr << "Connectivity probably won't work." << std::endl;
 #endif
-                continue;
             }
         }
     }
