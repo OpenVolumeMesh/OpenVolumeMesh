@@ -480,36 +480,30 @@ public:
      * Convenience functions
      */
 
-    std::vector<VertexHandle> halfedge_vertices(HalfEdgeHandle _h) const {
-        std::vector<VertexHandle> res(2);
-        res[0] = from_vertex_handle(_h);
-        res[1] = to_vertex_handle(_h);
-        return res;
+    std::array<VertexHandle, 2> halfedge_vertices(HalfEdgeHandle _h) const {
+        return {from_vertex_handle(_h), to_vertex_handle(_h)};
     }
 
-    std::vector<VertexHandle> edge_vertices(EdgeHandle _h) const {
+    std::array<VertexHandle, 2> edge_vertices(EdgeHandle _h) const {
         return halfedge_vertices(halfedge_handle(_h, 0));
     }
 
-    std::vector<HalfEdgeHandle> edge_halfedges(EdgeHandle _h) const {
-        std::vector<HalfEdgeHandle> res(2);
-        res[0] = halfedge_handle(_h, 0);
-        res[1] = halfedge_handle(_h, 1);
-        return res;
+    std::array<HalfEdgeHandle, 2> edge_halfedges(EdgeHandle _h) const {
+        return {
+            halfedge_handle(_h, 0),
+            halfedge_handle(_h, 1)};
     }
 
-    std::vector<HalfFaceHandle> face_halffaces(FaceHandle _h) const {
-        std::vector<HalfFaceHandle> res(2);
-        res[0] = halfface_handle(_h, 0);
-        res[1] = halfface_handle(_h, 1);
-        return res;
+    std::array<HalfFaceHandle,2> face_halffaces(FaceHandle _h) const {
+        return {
+            halfface_handle(_h, 0),
+            halfface_handle(_h, 1)};
     }
 
-    std::vector<CellHandle> face_cells(FaceHandle _h) const {
-        std::vector<CellHandle> res(2);
-        res[0] = incident_cell(halfface_handle(_h, 0));
-        res[1] = incident_cell(halfface_handle(_h, 1));
-        return res;
+    std::array<CellHandle, 2> face_cells(FaceHandle _h) const {
+        return {
+        incident_cell(halfface_handle(_h, 0)),
+        incident_cell(halfface_handle(_h, 1))};
     }
 
     /*

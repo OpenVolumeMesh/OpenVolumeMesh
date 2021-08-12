@@ -4,6 +4,7 @@ Version 2.2 (2021/08/?)
   API changes:
     - add_{face,edge,cell} takes an std::vector by value instead of by const reference.
     - add_face topology check is more strict: the halfedges need to be in circular order.
+    - (half)edge_vertices(), face_halffaces(), edge_halfedges(), face_halffaces(), face_cells(): Return std::array<*Handle,2> instead of vector.
 
 Version 2.1 (2019/09/09)
 - Modern target-based CMake 3 build system
