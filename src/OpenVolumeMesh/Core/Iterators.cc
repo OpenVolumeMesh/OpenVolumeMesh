@@ -1279,19 +1279,18 @@ EdgeCellIterImpl::EdgeCellIterImpl(const EdgeHandle& _ref_h, const TopologyKerne
 
 HalfFaceHalfEdgeIterImpl::HalfFaceHalfEdgeIterImpl(const HalfFaceHandle& _ref_h, const TopologyKernel* _mesh, int _max_laps) :
     BaseIter(_mesh, _ref_h, _max_laps),
+    halfedges_(_mesh->halfface(_ref_h).halfedges()),
     cur_index_(0)
 {
-    BaseIter::valid(_ref_h.is_valid() && _mesh->halfface(_ref_h).halfedges().size() > 0);
+    assert(halfedges_.size() > 0);
     if (BaseIter::valid()) {
-        BaseIter::cur_handle(_mesh->halfface(_ref_h).halfedges()[cur_index_]);
+        BaseIter::cur_handle(halfedges_[cur_index_]);
     }
 }
 
 HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator--() {
-    const std::vector<HalfEdgeHandle> halfedges =
-        mesh()->halfface(ref_handle()).halfedges();
     if (cur_index_ == 0) {
-        cur_index_ = halfedges.size() - 1;
+        cur_index_ = halfedges_.size() - 1;
         --lap_;
         if (lap_ < 0)
             BaseIter::valid(false);
@@ -1299,21 +1298,19 @@ HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator--() {
     else {
         --cur_index_;
     }
-    BaseIter::cur_handle(halfedges[cur_index_]);
+    BaseIter::cur_handle(halfedges_[cur_index_]);
     return *this;
 }
 
 HalfFaceHalfEdgeIterImpl& HalfFaceHalfEdgeIterImpl::operator++() {
-    const std::vector<HalfEdgeHandle> halfedges =
-        mesh()->halfface(ref_handle()).halfedges();
     ++cur_index_;
-    if (cur_index_ >= halfedges.size()) {
+    if (cur_index_ >= halfedges_.size()) {
         cur_index_ = 0;
         ++lap_;
         if (lap_ >= max_laps_)
             BaseIter::valid(false);
     }
-    BaseIter::cur_handle(halfedges[cur_index_]);
+    BaseIter::cur_handle(halfedges_[cur_index_]);
     return *this;
 }
 
