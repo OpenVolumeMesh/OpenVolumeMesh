@@ -41,12 +41,12 @@
 #include <vector>
 #include <type_traits>
 
-#include "../System/Compiler.hh"
-#include "OpenVolumeMesh/Config/Export.hh"
-#include "OpenVolumeMeshProperty.hh"
-#include "PropertyHandles.hh"
-#include "TypeName.hh"
-#include "ForwardDeclarations.hh"
+#include <OpenVolumeMesh/System/Compiler.hh>
+#include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/OpenVolumeMeshProperty.hh>
+#include <OpenVolumeMesh/Core/PropertyHandles.hh>
+#include <OpenVolumeMesh/Core/TypeName.hh>
+#include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
 
 #if OVM_CXX_17
 #include <optional>
@@ -372,5 +372,5 @@ private:
 
 }
 
-#include "ResourceManagerT_impl.hh"
+#include <OpenVolumeMesh/Core/ResourceManagerT_impl.hh>
 

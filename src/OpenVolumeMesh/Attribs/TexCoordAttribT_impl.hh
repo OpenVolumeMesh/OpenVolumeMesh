@@ -34,7 +34,7 @@
 \*===========================================================================*/
 
 
-#include "TexCoordAttrib.hh"
+#include <OpenVolumeMesh/Attribs/TexCoordAttrib.hh>
 
 namespace OpenVolumeMesh {
 

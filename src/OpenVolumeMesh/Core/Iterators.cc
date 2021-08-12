@@ -36,8 +36,8 @@
 #include <algorithm>
 #include <set>
 
-#include "Iterators.hh"
-#include "TopologyKernel.hh"
+#include <OpenVolumeMesh/Core/Iterators.hh>
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

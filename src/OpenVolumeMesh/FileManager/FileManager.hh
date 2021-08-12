@@ -39,7 +39,7 @@
 #include <fstream>
 #include <istream>
 #include <ostream>
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 
@@ -176,4 +176,4 @@ private:
 
 } // Namespace FileManager
 
-#include "FileManagerT_impl.hh"
+#include <OpenVolumeMesh/FileManager/FileManagerT_impl.hh>

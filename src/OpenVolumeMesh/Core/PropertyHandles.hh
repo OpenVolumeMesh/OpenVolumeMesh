@@ -35,8 +35,8 @@
 
 #pragma once
 
-#include "OpenVolumeMeshHandle.hh"
-#include "Entities.hh"
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/Entities.hh>
 
 namespace OpenVolumeMesh {
 

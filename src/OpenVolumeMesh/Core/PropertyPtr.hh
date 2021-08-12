@@ -37,11 +37,11 @@
 
 #include <string>
 
-#include "PropertyHandles.hh"
-#include "BaseProperty.hh"
-#include "OpenVolumeMeshHandle.hh"
-#include "../System/MemoryInclude.hh"
-#include "../System/Deprecation.hh"
+#include <OpenVolumeMesh/Core/PropertyHandles.hh>
+#include <OpenVolumeMesh/Core/BaseProperty.hh>
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/System/MemoryInclude.hh>
+#include <OpenVolumeMesh/System/Deprecation.hh>
 
 namespace OpenVolumeMesh {
 
@@ -136,5 +136,5 @@ protected:
 
 } // Namespace OpenVolumeMesh
 
-#include "PropertyPtrT_impl.hh"
+#include <OpenVolumeMesh/Core/PropertyPtrT_impl.hh>
 

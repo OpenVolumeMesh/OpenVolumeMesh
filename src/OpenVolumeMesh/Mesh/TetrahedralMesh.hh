@@ -35,8 +35,8 @@
 
 
 
-#include "TetrahedralMeshTopologyKernel.hh"
-#include "../Core/GeometryKernel.hh"
+#include <OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.hh>
+#include <OpenVolumeMesh/Core/GeometryKernel.hh>
 
 namespace OpenVolumeMesh {
 

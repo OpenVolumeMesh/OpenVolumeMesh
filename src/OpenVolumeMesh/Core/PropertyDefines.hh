@@ -40,9 +40,9 @@
 #include <typeinfo>
 #include <map>
 
-#include "Entities.hh"
-#include "PropertyHandles.hh"
-#include "PropertyPtr.hh"
+#include <OpenVolumeMesh/Core/Entities.hh>
+#include <OpenVolumeMesh/Core/PropertyHandles.hh>
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 
 namespace OpenVolumeMesh {
 
@@ -119,4 +119,4 @@ template<typename T> using MeshPropertyT     = PropertyTT<T, Entity::Mesh>;
 
 } // Namespace OpenVolumeMesh
 
-#include "PropertyDefinesT_impl.hh"
+#include <OpenVolumeMesh/Core/PropertyDefinesT_impl.hh>

@@ -35,8 +35,8 @@
 
 #include <set>
 
-#include "HexahedralMeshIterators.hh"
-#include "HexahedralMeshTopologyKernel.hh"
+#include <OpenVolumeMesh/Mesh/HexahedralMeshIterators.hh>
+#include <OpenVolumeMesh/Mesh/HexahedralMeshTopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

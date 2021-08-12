@@ -33,7 +33,7 @@
 \*===========================================================================*/
 
 
-#include "HexahedralMeshTopologyKernel.hh"
+#include <OpenVolumeMesh/Mesh/HexahedralMeshTopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

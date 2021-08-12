@@ -34,7 +34,7 @@
 
 #include <istream>
 
-#include "OpenVolumeMeshHandle.hh"
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 
 namespace OpenVolumeMesh {
 

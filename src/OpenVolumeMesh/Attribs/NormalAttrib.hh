@@ -36,9 +36,9 @@
 
 #include <cassert>
 
-#include "../Core/OpenVolumeMeshHandle.hh"
-#include "OpenVolumeMeshStatus.hh"
-#include "../Core/PropertyDefines.hh"
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
 
 namespace OpenVolumeMesh {
 
@@ -114,5 +114,5 @@ private:
 } // Namespace OpenVolumeMesh
 
 
-#include "NormalAttribT_impl.hh"
+#include <OpenVolumeMesh/Attribs/NormalAttribT_impl.hh>
 

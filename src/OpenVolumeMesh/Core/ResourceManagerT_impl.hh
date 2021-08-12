@@ -33,9 +33,9 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "ResourceManager.hh"
-#include "PropertyDefines.hh"
-#include "TypeName.hh"
+#include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <OpenVolumeMesh/Core/PropertyDefines.hh>
+#include <OpenVolumeMesh/Core/TypeName.hh>
 
 namespace OpenVolumeMesh {
 

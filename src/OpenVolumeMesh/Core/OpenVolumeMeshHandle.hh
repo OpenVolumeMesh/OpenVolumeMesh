@@ -40,10 +40,10 @@
 #include <cassert>
 #include <limits>
 
-#include "Entities.hh"
+#include <OpenVolumeMesh/Core/Entities.hh>
 #include <functional>
-#include "../System/Deprecation.hh"
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/System/Deprecation.hh>
+#include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 

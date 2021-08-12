@@ -37,9 +37,9 @@
 #include <cassert>
 #include <iostream>
 
-#include "../Geometry/VectorT.hh"
-#include "../Core/GeometryKernel.hh"
-#include "TetrahedralMeshTopologyKernel.hh"
+#include <OpenVolumeMesh/Geometry/VectorT.hh>
+#include <OpenVolumeMesh/Core/GeometryKernel.hh>
+#include <OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

@@ -35,9 +35,9 @@
 
 #include <set>
 
-#include "NormalAttrib.hh"
+#include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
 
-#include "../Core/GeometryKernel.hh"
+#include <OpenVolumeMesh/Core/GeometryKernel.hh>
 
 namespace OpenVolumeMesh {
 

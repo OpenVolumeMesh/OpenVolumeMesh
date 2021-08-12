@@ -42,7 +42,7 @@
 #include <string>
 
 #include <iterator>
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh
 {
@@ -76,4 +76,4 @@ std::istream& operator>>(std::istream& is, std::vector< bool >& rhs);
 
 }
 
-#include "SerializersT_impl.hh"
+#include <OpenVolumeMesh/Core/SerializersT_impl.hh>

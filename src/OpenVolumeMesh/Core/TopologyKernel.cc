@@ -38,7 +38,7 @@
 
 #include <queue>
 
-#include "TopologyKernel.hh"
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 

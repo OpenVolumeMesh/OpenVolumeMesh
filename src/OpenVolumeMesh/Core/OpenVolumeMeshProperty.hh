@@ -42,9 +42,9 @@
 #include <string>
 #include <vector>
 
-#include "OpenVolumeMeshBaseProperty.hh"
+#include <OpenVolumeMesh/Core/OpenVolumeMeshBaseProperty.hh>
 
-#include "Serializers.hh"
+#include <OpenVolumeMesh/Core/Serializers.hh>
 
 namespace OpenVolumeMesh {
 

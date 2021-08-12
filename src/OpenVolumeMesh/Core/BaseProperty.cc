@@ -32,7 +32,7 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "BaseProperty.hh"
+#include <OpenVolumeMesh/Core/BaseProperty.hh>
 
 namespace OpenVolumeMesh {
 

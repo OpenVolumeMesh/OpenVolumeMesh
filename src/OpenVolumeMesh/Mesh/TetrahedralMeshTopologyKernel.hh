@@ -39,9 +39,9 @@
 #endif
 #include <set>
 
-#include "../Core/TopologyKernel.hh"
-#include "TetrahedralMeshIterators.hh"
-#include "OpenVolumeMesh/Config/Export.hh"
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
+#include <OpenVolumeMesh/Mesh/TetrahedralMeshIterators.hh>
+#include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
 

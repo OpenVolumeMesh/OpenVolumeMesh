@@ -46,7 +46,7 @@
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
 
-#include "FileManager.hh"
+#include <OpenVolumeMesh/FileManager/FileManager.hh>
 
 namespace OpenVolumeMesh {
 

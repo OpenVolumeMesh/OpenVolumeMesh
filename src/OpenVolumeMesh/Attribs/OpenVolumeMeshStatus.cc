@@ -34,7 +34,7 @@
 
 #include <istream>
 
-#include "OpenVolumeMeshStatus.hh"
+#include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
 
 namespace OpenVolumeMesh {
 

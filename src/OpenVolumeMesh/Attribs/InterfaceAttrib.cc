@@ -1,5 +1,5 @@
-#include "InterfaceAttrib.hh"
-#include "../Core/TopologyKernel.hh"
+#include <OpenVolumeMesh/Attribs/InterfaceAttrib.hh>
+#include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 
