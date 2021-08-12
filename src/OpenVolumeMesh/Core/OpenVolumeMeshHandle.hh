@@ -41,7 +41,7 @@
 #include <limits>
 
 #include "Entities.hh"
-#include "../System/FunctionalInclude.hh"
+#include <functional>
 #include "../System/Deprecation.hh"
 #include "OpenVolumeMesh/Config/Export.hh"
 
@@ -163,7 +163,7 @@ public:
             correctValue(*it);
         }
 #else
-        std::for_each(_vec.begin(), _vec.end(), fun::bind(&HEHandleCorrection::correctValue, this, fun::placeholders::_1));
+        std::for_each(_vec.begin(), _vec.end(), std::bind(&HEHandleCorrection::correctValue, this, std::placeholders::_1));
 #endif
     }
     void correctValue(HalfEdgeHandle& _h) {
@@ -181,7 +181,7 @@ public:
             correctValue(*it);
         }
 #else
-        std::for_each(_vec.begin(), _vec.end(), fun::bind(&HFHandleCorrection::correctValue, this, fun::placeholders::_1));
+        std::for_each(_vec.begin(), _vec.end(), std::bind(&HFHandleCorrection::correctValue, this, std::placeholders::_1));
 #endif
     }
     void correctValue(HalfFaceHandle& _h) {

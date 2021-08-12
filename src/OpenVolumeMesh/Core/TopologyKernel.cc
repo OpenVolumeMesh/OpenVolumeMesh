@@ -1101,7 +1101,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
                     }
     #else
                     std::for_each(hes.begin(), hes.end(),
-                                  fun::bind(&HEHandleCorrection::correctValue, &cor, fun::placeholders::_1));
+                                  std::bind(&HEHandleCorrection::correctValue, &cor, std::placeholders::_1));
     #endif
                     face(*f_it).set_halfedges(hes);
                 }
@@ -1127,7 +1127,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
                     }
     #else
                     std::for_each(hes.begin(), hes.end(),
-                                  fun::bind(&HEHandleCorrection::correctValue, &cor, fun::placeholders::_1));
+                                  std::bind(&HEHandleCorrection::correctValue, &cor, std::placeholders::_1));
     #endif
                     face(*f_it).set_halfedges(hes);
                 }
@@ -1156,7 +1156,7 @@ EdgeIter TopologyKernel::delete_edge_core(const EdgeHandle& _h) {
     #else
                 std::for_each(outgoing_hes_per_vertex_.begin(),
                               outgoing_hes_per_vertex_.end(),
-                              fun::bind(&HEHandleCorrection::correctVecValue, &cor, fun::placeholders::_1));
+                              std::bind(&HEHandleCorrection::correctVecValue, &cor, std::placeholders::_1));
     #endif
             }
         }
@@ -1281,7 +1281,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
                     }
 #else
                     std::for_each(hfs.begin(), hfs.end(),
-                                  fun::bind(&HFHandleCorrection::correctValue, &cor, fun::placeholders::_1));
+                                  std::bind(&HFHandleCorrection::correctValue, &cor, std::placeholders::_1));
 #endif
                     cell(*c_it).set_halffaces(hfs);
                 }
@@ -1305,7 +1305,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
                     }
 #else
                     std::for_each(hfs.begin(), hfs.end(),
-                                  fun::bind(&HFHandleCorrection::correctValue, &cor, fun::placeholders::_1));
+                                  std::bind(&HFHandleCorrection::correctValue, &cor, std::placeholders::_1));
 #endif
                     cell(*c_it).set_halffaces(hfs);
                 }
@@ -1334,7 +1334,7 @@ FaceIter TopologyKernel::delete_face_core(const FaceHandle& _h) {
 #else
                 std::for_each(incident_hfs_per_he_.begin(),
                               incident_hfs_per_he_.end(),
-                              fun::bind(&HFHandleCorrection::correctVecValue, &cor, fun::placeholders::_1));
+                              std::bind(&HFHandleCorrection::correctVecValue, &cor, std::placeholders::_1));
 #endif
             }
         }
@@ -1431,7 +1431,7 @@ CellIter TopologyKernel::delete_cell_core(const CellHandle& _h) {
 #else
                 std::for_each(incident_cell_per_hf_.begin(),
                               incident_cell_per_hf_.end(),
-                              fun::bind(&CHandleCorrection::correctValue, &cor, fun::placeholders::_1));
+                              std::bind(&CHandleCorrection::correctValue, &cor, std::placeholders::_1));
 #endif
             }
         }

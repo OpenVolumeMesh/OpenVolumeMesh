@@ -915,7 +915,7 @@ public:
                 }
 #else
                 std::for_each(edges_begin(), edges_end(),
-                              fun::bind(&TopologyKernel::reorder_incident_halffaces, this, fun::placeholders::_1));
+                              std::bind(&TopologyKernel::reorder_incident_halffaces, this, std::placeholders::_1));
 #endif
             }
         }
@@ -953,7 +953,7 @@ public:
                 }
 #else
                 std::for_each(edges_begin(), edges_end(),
-                              fun::bind(&TopologyKernel::reorder_incident_halffaces, this, fun::placeholders::_1));
+                              std::bind(&TopologyKernel::reorder_incident_halffaces, this, std::placeholders::_1));
 #endif
             }
         }
