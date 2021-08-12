@@ -1128,7 +1128,7 @@ public:
      */
 
     /// Conversion function
-    static inline HalfEdgeHandle halfedge_handle(const EdgeHandle& _h, const unsigned char _subIdx) {
+    static inline HalfEdgeHandle halfedge_handle(EdgeHandle _h, const unsigned char _subIdx) {
         // Is handle in range?
         assert(_h.is_valid());
         assert(_subIdx < 2);
@@ -1137,7 +1137,7 @@ public:
     }
 
     /// Conversion function
-    static inline HalfFaceHandle halfface_handle(const FaceHandle& _h, const unsigned char _subIdx) {
+    static inline HalfFaceHandle halfface_handle(FaceHandle _h, const unsigned char _subIdx) {
         // Is handle in range?
         assert(_h.is_valid());
         assert(_subIdx < 2);
@@ -1146,42 +1146,24 @@ public:
     }
 
     /// Handle conversion
-    static inline EdgeHandle edge_handle(const HalfEdgeHandle& _h) {
-        // Is handle in range?
+    static inline EdgeHandle edge_handle(HalfEdgeHandle _h) {
         assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidEdgeHandle;
-        return EdgeHandle((int)(_h.idx() / 2));
+        return EdgeHandle(_h.idx() / 2);
     }
 
-    static inline FaceHandle face_handle(const HalfFaceHandle& _h) {
-        // Is handle in range?
+    static inline FaceHandle face_handle(HalfFaceHandle _h) {
         assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidFaceHandle;
-        return FaceHandle((int)(_h.idx() / 2));
+        return FaceHandle(_h.idx() / 2);
     }
 
-    static inline HalfEdgeHandle opposite_halfedge_handle(const HalfEdgeHandle& _h) {
-        // Is handle in range?
+    static inline HalfEdgeHandle opposite_halfedge_handle(HalfEdgeHandle _h) {
         assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidHalfEdgeHandle;
-
-        // Is handle even?
-        if(_h.idx() % 2 == 0) {
-            return HalfEdgeHandle(_h.idx() + 1);
-        }
-        return HalfEdgeHandle(_h.idx() - 1);
+        return HalfEdgeHandle(_h.idx() ^ 1);
     }
 
-    static inline HalfFaceHandle opposite_halfface_handle(const HalfFaceHandle& _h) {
-        // Is handle in range?
+    static inline HalfFaceHandle opposite_halfface_handle(HalfFaceHandle _h) {
         assert(_h.is_valid());
-        // if(_h.idx() < 0) return InvalidHalfFaceHandle;
-
-        // Is handle even?
-        if(_h.idx() % 2 == 0) {
-            return HalfFaceHandle(_h.idx() + 1);
-        }
-        return HalfFaceHandle(_h.idx() - 1);
+        return HalfFaceHandle(_h.idx() ^ 1);
     }
 
     bool inline needs_garbage_collection() const {

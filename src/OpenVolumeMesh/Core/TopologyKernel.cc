@@ -2313,7 +2313,8 @@ TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
                 return idx;
             }
         } else {
-            for (const auto &heh: face(face_handle(hfh)).halfedges()) {
+            const auto &hfh_face = face(face_handle(hfh));
+            for (const auto heh: hfh_face.halfedges()) {
                 if(edge_handle(heh) == eh) {
                     if (idx.is_valid()) {
                         // we found two(!) other halffaces that contain the given edge.
