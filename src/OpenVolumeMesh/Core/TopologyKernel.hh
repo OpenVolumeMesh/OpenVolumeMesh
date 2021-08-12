@@ -1085,13 +1085,9 @@ public:
         assert(_ch.is_valid() && _ch.uidx() < cells_.size());
 
         std::set<VertexHandle> vhs;
-        std::vector<HalfFaceHandle> hfs = cell(_ch).halffaces();
-        for(std::vector<HalfFaceHandle>::const_iterator hf_it = hfs.begin();
-                hf_it != hfs.end(); ++hf_it) {
-            std::vector<HalfEdgeHandle> hes = halfface(*hf_it).halfedges();
-            for(std::vector<HalfEdgeHandle>::const_iterator he_it = hes.begin();
-                he_it != hes.end(); ++he_it) {
-                vhs.insert(halfedge(*he_it).to_vertex());
+        for(const auto hfh: cell_halffaces(_ch)) {
+            for(const auto heh: halfface_halfedges(hfh)) {
+                vhs.insert(to_vertex_handle(heh));
             }
         }
         return vhs.size();
