@@ -1,7 +1,5 @@
 #include "unittests_common.hh"
 
-#if __cplusplus >= 201103L || _MSC_VER >= 1800
-
 #include <OpenVolumeMesh/System/MemoryInclude.hh>
 
 TEST(MakeUniqueTest, MakeUniqueTest) {
@@ -13,4 +11,3 @@ TEST(MakeUniqueTest, MakeUniqueTest) {
   EXPECT_EQ(bar.get(), nullptr);
 }
 
-#endif

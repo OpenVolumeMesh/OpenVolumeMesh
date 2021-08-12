@@ -34,6 +34,7 @@
 \*===========================================================================*/
 
 
+#include <type_traits>
 #include <iterator>
 #include <set>
 #include <vector>
@@ -124,9 +125,6 @@ private:
 };
 
 
-#if __cplusplus >= 201103L || _MSC_VER >= 1800 // an older MSVC version might be sufficient, didn't test
-
-#include <type_traits>
 
 template<class I>
 using is_ovm_iterator = std::is_base_of<BaseIterator<typename std::remove_const<typename I::value_type>::type>, I>;
@@ -147,7 +145,6 @@ end(const std::pair<I, I>& iterpair)
     return iterpair.second;
 }
 
-#endif // C++11
 
 template <
 class IH /*  Input handle type */,
