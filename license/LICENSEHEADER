@@ -4,10 +4,10 @@
  *        Copyright (C) 2011 by Computer Graphics Group, RWTH Aachen         *
  *                        www.openvolumemesh.org                             *
  *                                                                           *
- *---------------------------------------------------------------------------* 
+ *---------------------------------------------------------------------------*
  *  This file is part of OpenVolumeMesh.                                     *
  *                                                                           *
- *  OpenVolumeMesh is free software: you can redistribute it and/or modify   * 
+ *  OpenVolumeMesh is free software: you can redistribute it and/or modify   *
  *  it under the terms of the GNU Lesser General Public License as           *
  *  published by the Free Software Foundation, either version 3 of           *
  *  the License, or (at your option) any later version with the              *
@@ -29,13 +29,5 @@
  *  You should have received a copy of the GNU LesserGeneral Public          *
  *  License along with OpenVolumeMesh.  If not,                              *
  *  see <http://www.gnu.org/licenses/>.                                      *
- *                                                                           *
-\*===========================================================================*/ 
-
-/*===========================================================================*\
- *                                                                           *             
- *   $Revision: 1 $                                                          *
- *   $Date: 2011-01-09 12:46:45 +0100 (Mo, 09. Jan 2011) $                   *
- *   $LastChangedBy: kremer $                                                *
  *                                                                           *
 \*===========================================================================*/

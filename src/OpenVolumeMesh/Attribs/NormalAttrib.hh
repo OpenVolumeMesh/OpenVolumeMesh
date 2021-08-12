@@ -34,14 +34,6 @@
 \*===========================================================================*/
 
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Date$                    *
- *   $LastChangedBy$                                                *
- *                                                                           *
-\*===========================================================================*/
-
 #include <cassert>
 
 #include "../Core/OpenVolumeMeshHandle.hh"
@@ -121,8 +113,6 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-#if defined(INCLUDE_TEMPLATES) && !defined(NORMALATTRIBT_CC)
-#include "NormalAttribT_impl.hh"
-#endif
 
-#endif /* NORMALATTRIB_HH_ */
+#include "NormalAttribT_impl.hh"
+
