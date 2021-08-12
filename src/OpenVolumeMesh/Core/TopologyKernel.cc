@@ -360,39 +360,56 @@ CellHandle TopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, bool
         assert(it->is_valid() && ((size_t)it->idx() < faces_.size() * 2u) && !is_deleted(*it));
 #endif
 
-    // Perform topology check
+
     if(_topologyCheck) {
 
         /*
-         * Test if all halffaces are connected and form a two-manifold
-         * => Cell is closed
-         *
-         * This test is simple: The number of involved half-edges has to be
-         * exactly twice the number of involved edges.
+         * We test the following necessary properties for a closed 2-manifold cell:
+         *   - each halfedge may only be used once (this implies a halfface may only be used once)
+         *   - if a halfedge is used, its opposite halfface must be used too
          */
 
-        std::set<HalfEdgeHandle> incidentHalfedges;
-        std::set<EdgeHandle>     incidentEdges;
+        // collect a vector of all used halfedges
+        std::vector<HalfEdgeHandle> incidentHalfedges;
+        size_t guess_n_halfedges = _halffaces.size() * valence(face_handle(_halffaces[0]));
+        // actually, use double the guess, better to allocate a bit more than
+        // risk reallocation.
+        incidentHalfedges.reserve(2 * guess_n_halfedges);
 
         for (const auto &hfh: _halffaces) {
-            // TODO: optimize this, halfface() creates unnecessary copies
-            OpenVolumeMeshFace const hface = halfface(hfh);
-            for(const auto &heh: halfface_halfedges(hfh)) {
-                incidentHalfedges.insert(heh);
-                incidentEdges.insert(edge_handle(heh));
+            const auto &hes = face(face_handle(hfh)).halfedges();
+            if ((hfh.idx() & 1) == 0) { // first halfface
+                std::copy(hes.begin(), hes.end(),
+                        std::back_inserter(incidentHalfedges));
+            } else {
+                std::transform(hes.rbegin(),
+                        hes.rend(),
+                        std::back_inserter(incidentHalfedges),
+                        opposite_halfedge_handle);
             }
         }
+        std::sort(incidentHalfedges.begin(), incidentHalfedges.end());
+        auto duplicate = std::adjacent_find(incidentHalfedges.begin(), incidentHalfedges.end());
+        if (duplicate != incidentHalfedges.end()) {
+#ifndef NDEBUG
+            std::cerr << "add_cell(): Halfedge #" << duplicate->idx() << " is contained in more than 1 halfface." << std::endl;
+#endif
+            return InvalidCellHandle;
+        }
+        size_t n_halfedges = incidentHalfedges.size();
+        auto e_end = std::unique(incidentHalfedges.begin(), incidentHalfedges.end(),
+                [](HalfEdgeHandle a, HalfEdgeHandle b) {return a.idx()/2 == b.idx()/2;});
+        auto n_edges = static_cast<size_t>(std::distance(incidentHalfedges.begin(), e_end));
 
-        if(incidentHalfedges.size() != (incidentEdges.size() * 2u)) {
+        if(n_halfedges != 2u * n_edges) {
 #ifndef NDEBUG
             std::cerr << "add_cell(): The specified half-faces are not connected!" << std::endl;
 #endif
             return InvalidCellHandle;
         }
-
-        // The halffaces are now guaranteed to form a two-manifold
     }
 
+    // Perform topology chec
     // Create new cell
     cells_.emplace_back(std::move(_halffaces));
     cell_deleted_.push_back(false);
