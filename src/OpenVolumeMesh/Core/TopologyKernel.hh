@@ -580,7 +580,7 @@ public:
     /// \return Handle of the new face, InvalidFaceHandle if \a _halfedges
     ///         are not connected and \a _topologyCheck is \a true.
     ///
-    /// \warning If _halfedges are not connected and \a _topologyCheck is \a false,
+    /// \warning If _halfedges are not connected or not in the right order and \a _topologyCheck is \a false,
     ///          the behavior is undefined.
     virtual FaceHandle add_face(std::vector<HalfEdgeHandle> _halfedges, bool _topologyCheck = false);
 
