@@ -37,6 +37,7 @@
 #include <cassert>
 #include <set>
 #include <vector>
+#include <array>
 
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
