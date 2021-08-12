@@ -2282,48 +2282,57 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(const HalfEdgeHandle& _
 }
 
 //========================================================================================
+//
 
 HalfFaceHandle
-TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle, const HalfEdgeHandle& _halfEdgeHandle) const {
+TopologyKernel::adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle,
+                                          const HalfEdgeHandle& _halfEdgeHandle) const
+{
 
     assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
     assert(_halfEdgeHandle.is_valid() && (size_t)_halfEdgeHandle.idx() < edges_.size() * 2u);
     assert(has_face_bottom_up_incidences());
-    assert((size_t)_halfFaceHandle.idx() < incident_cell_per_hf_.size());
 
-    if(incident_cell_per_hf_[_halfFaceHandle.idx()] == InvalidCellHandle) {
+    const auto ch = incident_cell(_halfFaceHandle);
+    if(!ch.is_valid()) {
         // Specified halfface is on the outside of the complex
         return InvalidHalfFaceHandle;
     }
 
-    OpenVolumeMeshCell c = cell(incident_cell_per_hf_[_halfFaceHandle.idx()]);
-
     // Make sure that _halfFaceHandle is incident to _halfEdgeHandle
     bool skipped = false;
-    bool found = false;
     HalfFaceHandle idx = InvalidHalfFaceHandle;
-    for(std::vector<HalfFaceHandle>::const_iterator hf_it = c.halffaces().begin();
-            hf_it != c.halffaces().end(); ++hf_it) {
 
-        if(*hf_it == _halfFaceHandle) {
+    const auto eh = edge_handle(_halfEdgeHandle);
+
+    for(const auto &hfh: cell(ch).halffaces()) {
+        if(hfh == _halfFaceHandle) {
+            assert(!skipped); // a halfface may only appear once in a cell!
             skipped = true;
-            continue;
-        }
-
-        OpenVolumeMeshFace hf = halfface(*hf_it);
-        for(std::vector<HalfEdgeHandle>::const_iterator he_it = hf.halfedges().begin();
-            he_it != hf.halfedges().end(); ++he_it) {
-
-            if(edge_handle(*he_it) == edge_handle(_halfEdgeHandle)) {
-                found = true;
-                idx = *hf_it;
+            if (idx.is_valid()) {
+                return idx;
             }
-            if(skipped && found) break;
+        } else {
+            for (const auto &heh: face(face_handle(hfh)).halfedges()) {
+                if(edge_handle(heh) == eh) {
+                    if (idx.is_valid()) {
+                        // we found two(!) other halffaces that contain the given edge.
+                        // likely the given halfedge is not part of the given halfface
+                        return InvalidHalfFaceHandle;
+                    }
+                    if (skipped) {
+                        return hfh;
+                    } else {
+                        idx = hfh;
+                        continue;
+                    }
+                }
+            }
         }
-        if(skipped && found) break;
     }
-    return ((skipped && found) ? idx : InvalidHalfFaceHandle);
+    return InvalidHalfFaceHandle;
 }
+
 
 //========================================================================================
 

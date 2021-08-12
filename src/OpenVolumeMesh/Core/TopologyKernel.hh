@@ -1009,12 +1009,19 @@ private:
 
 public:
 
+    // TODO: this should probably be "common edge", the halfedge direction is ignored,
+    // and existing code likly relies on this behaviour.
+    // We probably also want a "common halfedge" API that may assume he \in hf
+    //
     /// \brief Get halfface that is adjacent (w.r.t. a common halfedge) within the same cell
+    ///
+    /// \param without_he_hf_incidences: for use when creating he-hf incidences
     ///
     /// \return Handle of the adjacent half-face if \a _halfFaceHandle is not
     ///         at a boundary, \a InvalidHalfFaceHandle otherwise.
     ///
     /// \warning The mesh must have face bottom-up incidences.
+
     HalfFaceHandle adjacent_halfface_in_cell(const HalfFaceHandle& _halfFaceHandle, const HalfEdgeHandle& _halfEdgeHandle) const;
 
     /// Get cell that is incident to the given halfface
