@@ -543,19 +543,15 @@ CellVertexIter::CellVertexIter(const CellHandle& _ref_h,
         const TopologyKernel* _mesh, int _max_laps) :
 BaseIter(_mesh, _ref_h, _max_laps) {
 
-    OpenVolumeMeshCell c = BaseIter::mesh()->cell(_ref_h);
-    std::vector<HalfFaceHandle>::const_iterator hf_iter = c.halffaces().begin();
-    for(; hf_iter != c.halffaces().end(); ++hf_iter) {
-        const OpenVolumeMeshFace& halfface = BaseIter::mesh()->halfface(*hf_iter);
-        const std::vector<HalfEdgeHandle>& hes = halfface.halfedges();
-        for(std::vector<HalfEdgeHandle>::const_iterator he_iter = hes.begin(); he_iter != hes.end(); ++he_iter) {
-            incident_vertices_.push_back(BaseIter::mesh()->halfedge(*he_iter).to_vertex());
+    for(const auto hfh: BaseIter::mesh()->cell_halffaces(_ref_h)) {
+        for (const auto vh: BaseIter::mesh()->face_vertices(BaseIter::mesh()->face_handle(hfh))) {
+            incident_vertices_.push_back(vh);
         }
     }
 
     // Remove all duplicate entries
     std::sort(incident_vertices_.begin(), incident_vertices_.end());
-    incident_vertices_.resize(std::unique(incident_vertices_.begin(), incident_vertices_.end()) - incident_vertices_.begin());
+    incident_vertices_.erase(std::unique(incident_vertices_.begin(), incident_vertices_.end()), incident_vertices_.end());
 
     cur_index_ = 0;
     BaseIter::valid(incident_vertices_.size() > 0);
