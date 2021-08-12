@@ -194,8 +194,7 @@ FaceHandle TopologyKernel::add_face(std::vector<HalfEdgeHandle> _halfedges, bool
     // Update edge bottom-up incidences
     if(has_edge_bottom_up_incidences()) {
 
-        const auto &face_halfedges = faces_[fh.idx()].halfedges();
-        for (const auto heh: face_halfedges) {
+        for (const auto heh: face_halfedges(fh)) {
             auto opp = opposite_halfedge_handle(heh);
 
             assert((size_t)heh.idx() < incident_hfs_per_he_.size());
@@ -2353,32 +2352,31 @@ void TopologyKernel::compute_vertex_bottom_up_incidences() {
     outgoing_hes_per_vertex_.clear();
     outgoing_hes_per_vertex_.resize(n_vertices());
     std::vector<int> n_edges_per_vertex(n_vertices(), 0);
+
     for (const auto &eh: edges()) {
-        ++n_edges_per_vertex[edges_[eh.idx()].from_vertex().idx()];
-        ++n_edges_per_vertex[edges_[eh.idx()].to_vertex().idx()];
+        const auto &e = edge(eh);
+        ++n_edges_per_vertex[e.from_vertex().idx()];
+        ++n_edges_per_vertex[e.to_vertex().idx()];
     }
     for (const auto &vh: vertices()) {
         outgoing_hes_per_vertex_[vh.idx()].reserve(n_edges_per_vertex[vh.idx()]);
     }
 
     // Store outgoing halfedges per vertex
-    int n_edges = (int)edges_.size();
-    for(int i = 0; i < n_edges; ++i) {
-        if (edge_deleted_[i])
-            continue;
-
-        VertexHandle from = edges_[i].from_vertex();
+    for (const auto eh: edges()) {
+        const auto &e = edge(eh);
+        VertexHandle from = e.from_vertex();
         // If this condition is not fulfilled, it is out of caller's control and
         // definitely our bug, therefore an assert
         assert((size_t)from.idx() < outgoing_hes_per_vertex_.size());
 
-        outgoing_hes_per_vertex_[from.idx()].push_back(halfedge_handle(EdgeHandle(i), 0));
+        outgoing_hes_per_vertex_[from.idx()].push_back(halfedge_handle(eh, 0));
 
-        VertexHandle to = edges_[i].to_vertex();
+        VertexHandle to = e.to_vertex();
         assert((size_t)to.idx() < outgoing_hes_per_vertex_.size());
 
         // Store opposite halfedge handle
-        outgoing_hes_per_vertex_[to.idx()].push_back(halfedge_handle(EdgeHandle(i), 1));
+        outgoing_hes_per_vertex_[to.idx()].push_back(halfedge_handle(eh, 1));
     }
 }
 
@@ -2392,21 +2390,20 @@ void TopologyKernel::compute_edge_bottom_up_incidences() {
 
     std::vector<int> n_faces_per_edge(n_edges(), 0);
     for (const auto &fh: faces()) {
-        for (const auto &heh: face(fh).halfedges()) {
+        for (const auto &heh: face_halfedges(fh)) {
             ++n_faces_per_edge[edge_handle(heh).idx()];
         }
     }
     for (const auto &eh: edges()) {
-        incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].resize(n_faces_per_edge[eh.idx()]);
-        incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].resize(n_faces_per_edge[eh.idx()]);
+        incident_hfs_per_he_[halfedge_handle(eh, 0).idx()].reserve(n_faces_per_edge[eh.idx()]);
+        incident_hfs_per_he_[halfedge_handle(eh, 1).idx()].reserve(n_faces_per_edge[eh.idx()]);
     }
     // Store incident halffaces per halfedge
     for (const auto &fh: faces()) {
-        for(const auto &heh: faces_[fh.idx()].halfedges()) {
+        for (const auto &heh: face_halfedges(fh)) {
             auto opp = opposite_halfedge_handle(heh);
-            auto &idx = --n_faces_per_edge[edge_handle(heh).idx()];
-            incident_hfs_per_he_[heh.idx()][idx] = halfface_handle(fh, 0);
-            incident_hfs_per_he_[opp.idx()][idx] = halfface_handle(fh, 1);
+            incident_hfs_per_he_[heh.idx()].push_back(halfface_handle(fh, 0));
+            incident_hfs_per_he_[opp.idx()].push_back(halfface_handle(fh, 1));
         }
     }
 }
