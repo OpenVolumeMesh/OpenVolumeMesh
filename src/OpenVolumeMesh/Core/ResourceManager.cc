@@ -146,6 +146,12 @@ void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2){
     swap_property_elements(cell_props_begin(), cell_props_end(), _h1, _h2);
 }
 
+void ResourceManager::copy_cell_properties(CellHandle _h1, CellHandle _h2){
+    // TODO: implement for other entities too
+
+    copy_property_elements(cell_props_begin(), cell_props_end(), _h1, _h2);
+}
+
 void ResourceManager::swap_face_properties(FaceHandle _h1, FaceHandle _h2){
 
     swap_property_elements(face_props_begin(), face_props_end(), _h1, _h2);

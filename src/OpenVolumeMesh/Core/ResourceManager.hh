@@ -95,6 +95,8 @@ protected:
 
     void cell_deleted(const CellHandle& _h);
 
+    void copy_cell_properties(CellHandle _h1, CellHandle _h2);
+
     void swap_cell_properties(CellHandle _h1, CellHandle _h2);
 
     void swap_face_properties(FaceHandle _h1, FaceHandle _h2);
@@ -113,6 +115,14 @@ protected:
         PropIterator p_iter =  _begin;
         for (; p_iter != _end; ++p_iter)
             (*p_iter)->swap_elements(_h1.uidx(), _h2.uidx());
+    }
+
+    template <typename PropIterator, typename Handle>
+    void copy_property_elements(PropIterator _begin, PropIterator _end, Handle _h1, Handle _h2)
+    {
+        PropIterator p_iter =  _begin;
+        for (; p_iter != _end; ++p_iter)
+            (*p_iter)->copy(_h1.uidx(), _h2.uidx());
     }
 
 
