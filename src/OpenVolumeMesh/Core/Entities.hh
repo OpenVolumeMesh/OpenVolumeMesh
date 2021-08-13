@@ -26,6 +26,10 @@ struct OVM_EXPORT Mesh     { static EntityType type() {return EntityType::Mesh;}
 template<typename T>
 struct is_entity : std::false_type {};
 
+template<typename T>
+const inline bool is_entity_v = is_entity<T>::value;
+
+
 template<> struct OVM_EXPORT is_entity<Entity::Vertex>   : std::true_type {};
 template<> struct OVM_EXPORT is_entity<Entity::Edge>     : std::true_type {};
 template<> struct OVM_EXPORT is_entity<Entity::HalfEdge> : std::true_type {};

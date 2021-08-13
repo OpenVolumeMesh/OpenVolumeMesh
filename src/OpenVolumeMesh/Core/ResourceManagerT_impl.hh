@@ -202,27 +202,30 @@ void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _fla
 }
 
 
-template<class Container>
-void ResourceManager::resize_props(Container& _vec, size_t _n)
+template<class EntityTag>
+void ResourceManager::resize_props(size_t _n)
 {
-    for (auto &prop: _vec) {
+    static_assert(is_entity_v<EntityTag>);
+    for (auto &prop: storage_tracker<EntityTag>()) {
         prop->resize(_n);
     }
 }
 
-template<class Container>
-void ResourceManager::reserve_props(Container& _vec, size_t _n)
+template<class EntityTag>
+void ResourceManager::reserve_props(size_t _n)
 {
-    for (auto &prop: _vec) {
+    static_assert(is_entity_v<EntityTag>);
+    for (auto &prop: storage_tracker<EntityTag>()) {
         prop->reserve(_n);
     }
 }
 
 
-template<typename  EntityTag>
-void ResourceManager::entity_deleted(HandleT<EntityTag> _h) {
-
-    for (auto &prop: storage_tracker<EntityTag>()) {
+template<typename  Handle>
+void ResourceManager::entity_deleted(Handle _h)
+{
+    static_assert(is_handle_v<Handle>);
+    for (auto &prop: storage_tracker<typename Handle::EntityTag>()) {
         prop->delete_element(_h.uidx());
     }
 }
