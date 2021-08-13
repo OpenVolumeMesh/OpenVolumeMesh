@@ -4,7 +4,7 @@
 #include <cassert>
 
 // TODO: remove debug prints
-//#include <iostream>
+#include <iostream>
 
 namespace OpenVolumeMesh::detail {
 
@@ -17,7 +17,7 @@ class Tracker {
 public:
     virtual ~Tracker() {
         for (const auto t: tracked_){
-            t->set_tracker(nullptr);
+            t->tracker_removed();
         }
     }
     Tracker() = default;
@@ -51,6 +51,7 @@ public:
 protected:
     void add(T* val)
     {
+        assert(val != nullptr);
         assert(tracked_.find(val) == tracked_.end());
         tracked_.insert(val);
     }
@@ -68,6 +69,7 @@ protected:
             fun(t);
         }
     }
+private:
     std::set<T*> tracked_;
 };
 
@@ -78,42 +80,42 @@ class Tracked
     friend class Tracker<T>;
 public:
     virtual ~Tracked() {
-        //std::cerr << this << " ~Tracked " << std::endl;
+        // std::cerr << this << " ~Tracked " << std::endl;
         remove();
     }
 
     Tracked(Tracked<T> const &other)
         : tracker_(other.tracker_)
     {
-        //std::cerr << this << " (const&) " << std::endl;
+        // std::cerr << this << " (const&) " << std::endl;
         add();
     }
 
     Tracked(Tracked<T> &&other)
         : tracker_(other.tracker_)
     {
-        //std::cerr << this << " (&&) " << &other << std::endl;
+        // std::cerr << this << " (&&) " << &other << std::endl;
         add();
         other.set_tracker(nullptr);
     }
 
     Tracked<T> operator=(Tracked<T> const &other)
     {
-        //std::cerr << this << " =(const&) " << &other << std::endl;
+        // std::cerr << this << " =(const&) " << &other << std::endl;
         set_tracker(other.tracker_);
         return *this;
     }
 
     Tracked<T> operator=(Tracked<T> &&other)
     {
-        //std::cerr << this << " =(&&) " << &other << std::endl;
+        // std::cerr << this << " =(&&) " << &other << std::endl;
         set_tracker(other.tracker_);
         other.set_tracker(nullptr);
         return *this;
     }
 
     void set_tracker(Tracker<T> *new_tracker) {
-        //std::cerr << this << "set_tracker(" << new_tracker << ")" << std::endl;
+        // std::cerr << this << "set_tracker(" << new_tracker << ")" << std::endl;
         remove();
         tracker_ = new_tracker;
         add();
@@ -124,7 +126,7 @@ protected:
     Tracked(Tracker<T> *_tracker)
         : tracker_(_tracker)
     {
-        //std::cerr << this << " (" << _tracker << ")" << std::endl;
+        // std::cerr << this << " (" << _tracker << ")" << std::endl;
         add();
     }
 
@@ -132,20 +134,25 @@ protected:
         return tracker_ != nullptr;
     }
 
+    void tracker_removed() {
+        tracker_ = nullptr;
+    }
+
 
 
 private:
     void add() {
         if (tracker_) {
-            //std::cerr << this << " add to " << tracker_  << std::endl;
+            // std::cerr << this << " add to " << tracker_  << std::endl;
             tracker_->add(static_cast<T*>(this));
         }
     }
     void remove() {
         if (tracker_) {
-            //std::cerr << this << " remove from " << tracker_  << std::endl;
+            // std::cerr << this << " remove from " << tracker_  << std::endl;
             tracker_->remove(static_cast<T*>(this));
         }
+        tracker_ = nullptr;
     }
     Tracker<T> *tracker_;
 };
