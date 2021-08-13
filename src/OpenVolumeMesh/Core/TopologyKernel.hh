@@ -671,31 +671,30 @@ public:
 
     /// Get valence of vertex (number of incident edges)
     inline size_t valence(VertexHandle _vh) const {
+        assert(is_valid(_vh));
         assert(has_vertex_bottom_up_incidences());
-        assert(_vh.is_valid() && _vh.uidx() < outgoing_hes_per_vertex_.size());
 
-        return outgoing_hes_per_vertex_[_vh.uidx()].size();
+        return outgoing_hes_per_vertex_[_vh].size();
     }
 
     /// Get valence of edge (number of incident faces)
     inline size_t valence(EdgeHandle _eh) const {
+        assert(is_valid(_eh));
         assert(has_edge_bottom_up_incidences());
-        assert(_eh.is_valid() && _eh.uidx() < edges_.size());
-        assert(halfedge_handle(_eh, 0).uidx() < incident_hfs_per_he_.size());
 
-        return incident_hfs_per_he_[halfedge_handle(_eh, 0).uidx()].size();
+        return incident_hfs_per_he_[halfedge_handle(_eh, 0)].size();
     }
 
     /// Get valence of face (number of incident edges)
     inline size_t valence(FaceHandle _fh) const {
-        assert(_fh.is_valid() && _fh.uidx() < faces_.size());
+        assert(is_valid(_fh));
 
         return face(_fh).halfedges().size();
     }
 
     /// Get valence of cell (number of incident faces)
     inline size_t valence(CellHandle _ch) const {
-        assert(_ch.is_valid() && _ch.uidx() < cells_.size());
+        assert(is_valid(_ch));
 
         return cell(_ch).halffaces().size();
     }
@@ -951,13 +950,13 @@ protected:
     void reorder_incident_halffaces(EdgeHandle _eh);
 
     // Outgoing halfedges per vertex
-    std::vector<std::vector<HalfEdgeHandle> > outgoing_hes_per_vertex_;
+    VertexVector<std::vector<HalfEdgeHandle> > outgoing_hes_per_vertex_;
 
     // Incident halffaces per (directed) halfedge
-    std::vector<std::vector<HalfFaceHandle> > incident_hfs_per_he_;
+    HalfEdgeVector<std::vector<HalfFaceHandle> > incident_hfs_per_he_;
 
     // Incident cell (at most one) per halfface
-    std::vector<CellHandle> incident_cell_per_hf_;
+    HalfFaceVector<CellHandle> incident_cell_per_hf_;
 
 private:
     bool v_bottom_up_ = true;
@@ -994,24 +993,23 @@ public:
     /// Get cell that is incident to the given halfface
     CellHandle incident_cell(HalfFaceHandle _halfFaceHandle) const;
 
-    bool is_boundary(HalfFaceHandle _halfFaceHandle) const {
-
-        assert(_halfFaceHandle.is_valid() && _halfFaceHandle.uidx() < faces_.size() * 2u);
+    bool is_boundary(HalfFaceHandle _halfFaceHandle) const
+    {
+        assert(is_valid(_halfFaceHandle));
         assert(has_face_bottom_up_incidences());
-        assert(_halfFaceHandle.uidx() < incident_cell_per_hf_.size());
-        return incident_cell_per_hf_[_halfFaceHandle.uidx()] == InvalidCellHandle;
+        return incident_cell_per_hf_[_halfFaceHandle] == InvalidCellHandle;
     }
 
     bool is_boundary(FaceHandle _faceHandle) const {
-        assert(_faceHandle.is_valid() && _faceHandle.uidx() < faces_.size());
+        assert(is_valid(_faceHandle));
         assert(has_face_bottom_up_incidences());
         return  is_boundary(halfface_handle(_faceHandle, 0)) ||
                 is_boundary(halfface_handle(_faceHandle, 1));
     }
 
     bool is_boundary(EdgeHandle _edgeHandle) const {
+        assert(is_valid(_edgeHandle));
         assert(has_edge_bottom_up_incidences());
-        assert(_edgeHandle.is_valid() && _edgeHandle.uidx() < edges_.size());
 
         for(HalfEdgeHalfFaceIter hehf_it = hehf_iter(halfedge_handle(_edgeHandle, 0));
                 hehf_it.valid(); ++hehf_it) {
@@ -1023,8 +1021,8 @@ public:
     }
 
     bool is_boundary(HalfEdgeHandle _halfedgeHandle) const {
+        assert(is_valid(_halfedgeHandle));
         assert(has_edge_bottom_up_incidences());
-        assert(_halfedgeHandle.is_valid() && _halfedgeHandle.uidx() < edges_.size() * 2u);
 
         for(HalfEdgeHalfFaceIter hehf_it = hehf_iter(_halfedgeHandle);
                 hehf_it.valid(); ++hehf_it) {
@@ -1036,8 +1034,8 @@ public:
     }
 
     bool is_boundary(VertexHandle _vertexHandle) const {
+        assert(is_valid(_vertexHandle));
         assert(has_vertex_bottom_up_incidences());
-        assert(_vertexHandle.is_valid() && _vertexHandle.uidx() < n_vertices());
 
         for(VertexOHalfEdgeIter voh_it = voh_iter(_vertexHandle); voh_it.valid(); ++voh_it) {
             if(is_boundary(*voh_it)) return true;
@@ -1046,7 +1044,7 @@ public:
     }
 
     bool is_boundary(CellHandle _cellHandle) const {
-        assert(_cellHandle.is_valid() && (size_t)_cellHandle.idx() < n_cells());
+        assert(is_valid(_cellHandle));
 
         for(CellFaceIter cf_it = cf_iter(_cellHandle); cf_it.valid(); ++cf_it) {
             if(is_boundary(*cf_it)) return true;
@@ -1055,7 +1053,7 @@ public:
     }
 
     size_t n_vertices_in_cell(CellHandle _ch) const {
-        assert(_ch.is_valid() && _ch.uidx() < cells_.size());
+        assert(is_valid(_ch));
 
         std::set<VertexHandle> vhs;
         for(const auto hfh: cell_halffaces(_ch)) {
