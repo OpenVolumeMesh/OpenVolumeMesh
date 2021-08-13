@@ -34,9 +34,6 @@
 \*===========================================================================*/
 
 
-#ifndef TEXCOORDATTRIB_HH_
-#define TEXCOORDATTRIB_HH_
-
 #include <cassert>
 
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
