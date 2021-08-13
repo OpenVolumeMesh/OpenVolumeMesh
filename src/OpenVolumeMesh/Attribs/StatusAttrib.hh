@@ -33,14 +33,12 @@
  *                                                                           *
 \*===========================================================================*/
 
-
-
 #include <cassert>
 
-#include <OpenVolumeMesh/Core/OpenVolumeMeshProperty.hh>
+#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
-#include <OpenVolumeMesh/Core/PropertyDefines.hh>
+#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
@@ -273,6 +271,4 @@ private:
 
 } // Namespace OpenVolumeMesh
 
-
 #include <OpenVolumeMesh/Attribs/StatusAttribT_impl.hh>
-

@@ -47,46 +47,202 @@
 
 namespace OpenVolumeMesh {
 
-// Define handle types in order to distinguish different entities by their indices
-class OVM_EXPORT OpenVolumeMeshHandle {
-public:
-    // Default constructor
-    explicit constexpr OpenVolumeMeshHandle(int _idx) : idx_(_idx) {}
 
-	inline constexpr bool is_valid() const {
-        // cppcheck-suppress syntaxError ; broken parser in cppcheck 2.3
-        return idx_ != -1;
+namespace detail {
+
+template <typename Derived>
+class OVM_EXPORT HandleT
+{
+public:
+    constexpr HandleT() = default;
+    explicit constexpr HandleT(int _idx) : idx_(_idx) {}
+
+    HandleT(const HandleT& _idx) = default;
+    HandleT(HandleT&& _idx) = default;
+    HandleT& operator=(const HandleT& _idx) = default;
+    HandleT& operator=(HandleT&& _idx) = default;
+
+    [[deprecated]]
+    HandleT& operator=(int _idx) {
+        idx_ = _idx;
+        return *this;
     }
 
-	inline constexpr bool operator<(const OpenVolumeMeshHandle& _idx) const { return (this->idx_ < _idx.idx_); }
+    bool is_valid() const { return idx_ != -1; }
 
-	inline constexpr bool operator<(int _idx) const { return idx_ < _idx; }
+    constexpr bool operator<(const Derived& _idx) const { return (this->idx_ < _idx.idx_); }
 
-	inline constexpr bool operator>(const OpenVolumeMeshHandle& _idx) const { return (this->idx_ > _idx.idx_); }
+    constexpr bool operator>(const Derived& _idx) const { return (this->idx_ > _idx.idx_); }
 
-    inline constexpr bool operator>(int _idx) const { return idx_ > _idx; }
+    constexpr bool operator==(const Derived& _h) const { return _h.idx_ == this->idx_; }
 
-	inline constexpr bool operator==(const OpenVolumeMeshHandle& _h) const { return _h.idx_ == this->idx_; }
+    constexpr bool operator!=(const Derived& _h) const { return _h.idx_ != this->idx_; }
 
-	inline constexpr bool operator!=(const OpenVolumeMeshHandle& _h) const { return _h.idx_ != this->idx_; }
-
-	inline constexpr const int& idx() const { return idx_; }
+    constexpr const int& idx() const { return idx_; }
+    constexpr int& idx_mutable() { return idx_; }
 
     /// return unsigned idx - handle must be valid
-    inline size_t uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
+    unsigned int uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
 
-	void idx(const int& _idx) { idx_ = _idx; }
+    /// set idx
+    void idx(const int& _idx) { idx_ = _idx; }
 
-#if OVM_ENABLE_DEPRECATED_APIS
-    OVM_DEPRECATED("use explicit .idx() instead")
-    inline operator int() const { return idx_; }
-#endif
+    /// make handle invalid
+    void reset() { idx_ = -1; }
 
-	void reset() { idx_ = -1; }
+    static Derived from_unsigned(size_t _idx)
+    {
+        if (_idx <= static_cast<size_t>(std::numeric_limits<int>::max())) {
+            return Derived{static_cast<int>(_idx)};
+        } else {
+            assert(false);
+            return Derived{};
+        }
+    }
 
 private:
-	int idx_;
+    int idx_ = -1;
 };
+
+template <typename Derived, typename SuperHandle>
+class SubHandleT : public HandleT<Derived>
+{
+public:
+    using HandleT<Derived>::HandleT;
+
+    constexpr int subidx() const {
+        assert(this->is_valid());
+        return this->idx() & 1;
+    }
+
+    constexpr SuperHandle full() const {
+        assert(this->is_valid());
+        return SuperHandle{this->idx() / 2 };
+    }
+
+    /// obtain opposite sub-handle.
+    constexpr Derived opp() const {
+        assert(this->is_valid());
+        return Derived{this->idx() ^ 1};
+    }
+
+};
+
+template <typename Derived, typename SubHandle>
+class SuperHandleT : public HandleT<Derived>
+{
+public:
+    using HandleT<Derived>::HandleT;
+
+    constexpr SubHandle half(int subidx) const {
+        assert(0 <= subidx && subidx <= 1);
+        return SubHandle{2 * HandleT<Derived>::idx() + subidx};
+    }
+
+};
+
+} // namespace detail
+
+
+class OVM_EXPORT VH  : public detail::HandleT<VH> {
+public:
+    using detail::HandleT<VH>::HandleT;
+    using EntityTag = Entity::Vertex;
+};
+
+class HEH;
+class OVM_EXPORT EH  : public detail::SuperHandleT<EH, HEH> {
+public:
+    using detail::SuperHandleT<EH, HEH>::SuperHandleT;
+    using EntityTag = Entity::Edge;
+
+};
+class OVM_EXPORT HEH : public detail::SubHandleT<HEH, EH> {
+public:
+    using detail::SubHandleT<HEH, EH>::SubHandleT;
+    using EntityTag = Entity::HalfEdge;
+};
+
+class HFH;
+class OVM_EXPORT FH  : public detail::SuperHandleT<FH, HFH> {
+public:
+    using detail::SuperHandleT<FH, HFH>::SuperHandleT;
+    using EntityTag = Entity::Face;
+
+};
+class OVM_EXPORT HFH : public detail::SubHandleT<HFH, FH> {
+public:
+    using detail::SubHandleT<HFH, FH>::SubHandleT;
+    using EntityTag = Entity::HalfFace;
+};
+
+class OVM_EXPORT CH  : public detail::HandleT<CH> {
+public:
+    using detail::HandleT<CH>::HandleT;
+    using EntityTag = Entity::Cell;
+
+};
+class OVM_EXPORT MH  : public detail::HandleT<MH> {
+public:
+    using detail::HandleT<MH>::HandleT;
+    using EntityTag = Entity::Mesh;
+};
+
+using VertexHandle = VH;
+using EdgeHandle = EH;
+using HalfEdgeHandle = HEH;
+using FaceHandle = FH;
+using HalfFaceHandle = HFH;
+using CellHandle = CH;
+using MeshHandle = MH;
+
+template<typename EntityTag>
+struct handle_for_tag;
+
+
+template<> struct handle_for_tag<Entity::Vertex>   { using type = VH;  };
+template<> struct handle_for_tag<Entity::Edge>     { using type = EH;  };
+template<> struct handle_for_tag<Entity::HalfEdge> { using type = HEH; };
+template<> struct handle_for_tag<Entity::Face>     { using type = FH;  };
+template<> struct handle_for_tag<Entity::HalfFace> { using type = HFH; };
+template<> struct handle_for_tag<Entity::Cell>     { using type = CH;  };
+template<> struct handle_for_tag<Entity::Mesh>     { using type = MH;  };
+
+
+template<typename EntityTag>
+using HandleT = typename handle_for_tag<EntityTag>::type;
+
+template<typename>
+struct is_handle : public std::false_type {};
+
+template<> struct is_handle<VH>  : public std::true_type {};
+template<> struct is_handle<EH>  : public std::true_type {};
+template<> struct is_handle<HEH> : public std::true_type {};
+template<> struct is_handle<FH>  : public std::true_type {};
+template<> struct is_handle<HFH> : public std::true_type {};
+template<> struct is_handle<CH>  : public std::true_type {};
+template<> struct is_handle<MH>  : public std::true_type {};
+
+template<typename Handle>
+inline const bool is_handle_v = is_handle<Handle>::value;
+
+std::ostream& operator<<(std::ostream& _ostr, VH _h);
+std::ostream& operator<<(std::ostream& _ostr, EH _h);
+std::ostream& operator<<(std::ostream& _ostr, HEH _h);
+std::ostream& operator<<(std::ostream& _ostr, FH _h);
+std::ostream& operator<<(std::ostream& _ostr, HFH _h);
+std::ostream& operator<<(std::ostream& _ostr, CH _h);
+std::ostream& operator<<(std::ostream& _ostr, MH _h);
+
+std::istream& operator>>(std::istream& _istr, VH &_h);
+std::istream& operator>>(std::istream& _istr, EH &_h);
+std::istream& operator>>(std::istream& _istr, HEH &_h);
+std::istream& operator>>(std::istream& _istr, FH &_h);
+std::istream& operator>>(std::istream& _istr, HFH &_h);
+std::istream& operator>>(std::istream& _istr, CH &_h);
+std::istream& operator>>(std::istream& _istr, MH &_h);
+
+
 
 template<typename EntityTag,
     typename = typename std::enable_if<is_entity<EntityTag>::value>::type>
@@ -98,45 +254,6 @@ struct is_prop_handle_tag<PropHandleTag<T>> : std::true_type {};
 
 template<typename T>
 using is_handle_tag = std::enable_if<is_entity<T>::value || is_prop_handle_tag<T>::value>;
-
-
-template<typename EntityTag, typename = typename is_handle_tag<EntityTag>::type>
-class HandleT : public OpenVolumeMeshHandle
-{
-public:
-    using Entity = EntityTag;
-    constexpr HandleT() : OpenVolumeMeshHandle(-1) {}
-    explicit constexpr HandleT(int _idx) : OpenVolumeMeshHandle(_idx) {}
-
-  static HandleT<EntityTag>
-    from_unsigned(size_t _idx)
-    {
-        if (_idx <= static_cast<size_t>(std::numeric_limits<int>::max())) {
-            return HandleT<EntityTag>(static_cast<int>(_idx));
-        } else {
-            assert(false);
-            return HandleT<EntityTag>(-1);
-        }
-    }
-};
-
-// Default entity handles
-//
-template class OVM_EXPORT HandleT<Entity::Vertex>;
-template class OVM_EXPORT HandleT<Entity::HalfEdge>;
-template class OVM_EXPORT HandleT<Entity::Edge>;
-template class OVM_EXPORT HandleT<Entity::HalfFace>;
-template class OVM_EXPORT HandleT<Entity::Face>;
-template class OVM_EXPORT HandleT<Entity::Cell>;
-template class OVM_EXPORT HandleT<Entity::Mesh>;
-
-using VertexHandle   = HandleT<Entity::Vertex>;
-using HalfEdgeHandle = HandleT<Entity::HalfEdge>;
-using EdgeHandle     = HandleT<Entity::Edge>;
-using HalfFaceHandle = HandleT<Entity::HalfFace>;
-using FaceHandle     = HandleT<Entity::Face>;
-using CellHandle     = HandleT<Entity::Cell>;
-using MeshHandle     = HandleT<Entity::Mesh>;
 
 // Helper class that is used to decrease all handles
 // exceeding a certain threshold
@@ -195,24 +312,6 @@ public:
 private:
     CellHandle thld_;
 };
-
-OVM_EXPORT
-bool operator==(const int& _lhs, const OpenVolumeMeshHandle& _rhs);
-
-OVM_EXPORT
-bool operator==(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs);
-
-OVM_EXPORT
-bool operator!=(const int& _lhs, const OpenVolumeMeshHandle& _rhs);
-
-OVM_EXPORT
-bool operator!=(const unsigned int& _lhs, const OpenVolumeMeshHandle& _rhs);
-
-OVM_EXPORT
-std::ostream& operator<<(std::ostream& _ostr, const OpenVolumeMeshHandle& _handle);
-
-OVM_EXPORT
-std::istream& operator>>(std::istream& _istr, OpenVolumeMeshHandle& _handle);
 
 } // Namespace OpenVolumeMesh
 

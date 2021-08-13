@@ -3,23 +3,18 @@
 
 namespace OpenVolumeMesh {
 
-class BaseProperty;
-
 template <class T>
-class OpenVolumeMeshPropertyT;
+class PropertyStorageT;
 
-template <class PropT, typename Entity>
+template <class T, typename Entity>
 class PropertyPtr;
 
-template<typename T, typename Entity>
-class PropertyTT;
-
-template<typename T> using VertexPropertyT   = PropertyTT<T, Entity::Vertex>;
-template<typename T> using EdgePropertyT     = PropertyTT<T, Entity::Edge>;
-template<typename T> using HalfEdgePropertyT = PropertyTT<T, Entity::HalfEdge>;
-template<typename T> using FacePropertyT     = PropertyTT<T, Entity::Face>;
-template<typename T> using HalfFacePropertyT = PropertyTT<T, Entity::HalfFace>;
-template<typename T> using CellPropertyT     = PropertyTT<T, Entity::Cell>;
-template<typename T> using MeshPropertyT     = PropertyTT<T, Entity::Mesh>;
+template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
+template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;
+template<typename T> using HalfEdgePropertyT = PropertyPtr<T, Entity::HalfEdge>;
+template<typename T> using FacePropertyT     = PropertyPtr<T, Entity::Face>;
+template<typename T> using HalfFacePropertyT = PropertyPtr<T, Entity::HalfFace>;
+template<typename T> using CellPropertyT     = PropertyPtr<T, Entity::Cell>;
+template<typename T> using MeshPropertyT     = PropertyPtr<T, Entity::Mesh>;
 
 } // namespace OVM

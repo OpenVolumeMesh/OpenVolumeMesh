@@ -39,6 +39,7 @@
 #include <vector>
 #include <array>
 
+#include <OpenVolumeMesh/Core/HandleIndexing.hh>
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
@@ -758,14 +759,6 @@ public:
 
 protected:
 
-    virtual void delete_multiple_vertices(const std::vector<bool>& _tag);
-
-    virtual void delete_multiple_edges(const std::vector<bool>& _tag);
-
-    virtual void delete_multiple_faces(const std::vector<bool>& _tag);
-
-    virtual void delete_multiple_cells(const std::vector<bool>& _tag);
-
     class EdgeCorrector {
     public:
         explicit EdgeCorrector(const std::vector<int>& _newIndices) :
@@ -821,18 +814,6 @@ protected:
 
 public:
 
-    /** \brief Delete range of cells
-     *
-     * Deletes all cells in range [_first, _last].
-     *
-     * @param _first Iterator to first cell that is to be deleted
-     * @param _last Iterator to last cell that is to be deleted
-     * @return An iterator to the first cell after the deleted range
-     */
-    CellIter delete_cell_range(const CellIter& _first, const CellIter& _last);
-
-public:
-
     /// Clear whole mesh
     virtual void clear(bool _clearProps = true) {
 
@@ -853,16 +834,7 @@ public:
         n_vertices_ = 0;
 
         if(_clearProps) {
-
-            // Delete all property data
-            clear_vertex_props();
-            clear_edge_props();
-            clear_halfedge_props();
-            clear_face_props();
-            clear_halfface_props();
-            clear_cell_props();
-            clear_mesh_props();
-
+            clear_all_props();
         } else {
             // Resize props
             resize_vprops(0u);

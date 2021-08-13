@@ -1,5 +1,4 @@
 SET(SOURCE_FILES
-    unittests_smartptr.cc
     unittests_basics.cc
     unittests_files.cc
     unittests_common.cc

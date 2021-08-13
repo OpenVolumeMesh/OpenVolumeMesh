@@ -10,12 +10,11 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/OpenVolumeMeshHandle.cc
     OpenVolumeMesh/Core/ResourceManager.cc
     OpenVolumeMesh/Core/BaseEntities.cc
-    OpenVolumeMesh/Core/BaseProperty.cc
     OpenVolumeMesh/Core/TopologyKernel.cc
     OpenVolumeMesh/Core/Serializers.cc
     OpenVolumeMesh/Core/Iterators.cc
-    OpenVolumeMesh/Core/OpenVolumeMeshBaseProperty.cc
     OpenVolumeMesh/Core/TypeName.cc
+    OpenVolumeMesh/Core/PropertyStorageBase.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/HexahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.cc

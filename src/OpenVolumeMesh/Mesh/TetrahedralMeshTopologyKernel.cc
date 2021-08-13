@@ -437,7 +437,7 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
     for (const auto &n: new_cells) {
         const auto &vhs = n.second;
         CellHandle newCell = add_cell(vhs[0], vhs[1], vhs[2], vhs[3]);
-        copy_cell_properties(n.first, newCell);
+        copy_property_elements(n.first, newCell);
     }
 
 
@@ -475,7 +475,7 @@ void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
     for (const auto &n: new_cells) {
         const auto &vhs = n.second;
         CellHandle newCell = add_cell(vhs[0], vhs[1], vhs[2], vhs[3]);
-        copy_cell_properties(n.first, newCell);
+        copy_property_elements(n.first, newCell);
     }
 
     enable_deferred_deletion(deferred_deletion_tmp);

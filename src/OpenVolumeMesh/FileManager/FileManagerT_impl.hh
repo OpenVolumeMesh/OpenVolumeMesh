@@ -1,4 +1,3 @@
-#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -34,6 +33,7 @@
 \*===========================================================================*/
 
 
+#define FILEMANAGERT_CC
 
 #include <vector>
 #include <iostream>
@@ -42,6 +42,8 @@
 #include <cctype>
 #include <typeinfo>
 #include <stdint.h>
+#include <memory>
+#include <array>
 
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
@@ -344,6 +346,9 @@ bool FileManager::readFile(const std::string& _filename, MeshT& _mesh,
 
     std::ifstream iff(_filename.c_str(), std::ios::in);
 
+    auto read_buf = std::make_unique<std::array<char, 0x10000>>();
+    iff.rdbuf()->pubsetbuf(read_buf->data(), read_buf->size());
+
     if(!iff.good()) {
         if (verbosity_level_ >= 1) {
             std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;
@@ -532,20 +537,13 @@ void FileManager::writeStream(std::ostream &_ostream, const MeshT &_mesh) const
         _ostream << std::endl;
     }
 
-    // write vertex props
-    writeProps(_ostream, _mesh.vertex_props_begin(), _mesh.vertex_props_end());
-    // write edge props
-    writeProps(_ostream, _mesh.edge_props_begin(), _mesh.edge_props_end());
-    // write halfedge props
-    writeProps(_ostream, _mesh.halfedge_props_begin(), _mesh.halfedge_props_end());
-    // write face props
-    writeProps(_ostream, _mesh.face_props_begin(), _mesh.face_props_end());
-    // write halfface props
-    writeProps(_ostream, _mesh.halfface_props_begin(), _mesh.halfface_props_end());
-    // write cell props
-    writeProps(_ostream, _mesh.cell_props_begin(), _mesh.cell_props_end());
-    // write mesh props
-    writeProps(_ostream, _mesh.mesh_props_begin(), _mesh.mesh_props_end());
+    writeProps<Entity::Vertex>  (_ostream, _mesh);
+    writeProps<Entity::Edge>    (_ostream, _mesh);
+    writeProps<Entity::HalfEdge>(_ostream, _mesh);
+    writeProps<Entity::Face>    (_ostream, _mesh);
+    writeProps<Entity::HalfFace>(_ostream, _mesh);
+    writeProps<Entity::Cell>    (_ostream, _mesh);
+    writeProps<Entity::Mesh>    (_ostream, _mesh);
 }
 
 template<class MeshT>
@@ -564,15 +562,28 @@ bool FileManager::writeFile(const std::string& _filename, const MeshT& _mesh) co
 }
 
 //==================================================
+template<typename EntityTag, class MeshT>
+void FileManager::writeProps(std::ostream &_ostream, const MeshT& _mesh) const {
+    writeProps(_ostream,
+               _mesh.template persistent_props_begin<EntityTag>(),
+               _mesh.template persistent_props_end<EntityTag>(),
+               entityTypeName<EntityTag>()
+               );
+}
+
 
 template<class IteratorT>
-void FileManager::writeProps(std::ostream& _ostr, const IteratorT& _begin, const IteratorT& _end) const {
+void FileManager::writeProps(
+        std::ostream& _ostr,
+        const IteratorT& _begin, const IteratorT& _end,
+        std::string const &_entityType
+        ) const {
 
     // write props
-    for(IteratorT p_it = _begin;
-            p_it != _end; ++p_it) {
-        if(!(*p_it)->persistent()) continue;
-        if((*p_it)->anonymous()) {
+    for(IteratorT p_it = _begin; p_it != _end; ++p_it) {
+        auto prop = *p_it;
+        if(!prop->persistent()) continue;
+        if(prop->anonymous()) {
             if (verbosity_level_ >= 2) {
                 std::cerr << "Serialization of anonymous properties is not supported!" << std::endl;
             }
@@ -581,18 +592,18 @@ void FileManager::writeProps(std::ostream& _ostr, const IteratorT& _begin, const
 
         std::string type_name;
         try {
-            type_name = (*p_it)->typeNameWrapper();
+            type_name = prop->typeNameWrapper();
         } catch (std::runtime_error &e) { // type not serializable
             if (verbosity_level_ >= 1) {
-                std::cerr << "Failed to save property " << (*p_it)->name() << " , skipping: " << e.what() << std::endl;
+                std::cerr << "Failed to save property " << prop->name() << " , skipping: " << e.what() << std::endl;
             }
             continue;
         }
-        _ostr << (*p_it)->entityType() << " ";
+        _ostr << _entityType << " ";
         _ostr << type_name << " ";
-        _ostr << "\"" << (*p_it)->name() << "\"" << std::endl;
+        _ostr << "\"" << prop->name() << "\"" << std::endl;
 
-        (*p_it)->serialize(_ostr);
+        prop->serialize(_ostr);
     }
 }
 

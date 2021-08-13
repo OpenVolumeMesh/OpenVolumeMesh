@@ -35,11 +35,14 @@
 
 #include <limits>
 
-#include <OpenVolumeMesh/Core/OpenVolumeMeshBaseProperty.hh>
+#include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
+#include <OpenVolumeMesh/Core/ResourceManager.hh>
 
 namespace OpenVolumeMesh {
 
-// Initialize constant
-const size_t OpenVolumeMeshBaseProperty::UnknownSize = std::numeric_limits<size_t>::max();
+void PropertyStorageBase::attach_to(const ResourceManager *resman)
+{
+    set_tracker(&resman->storage_tracker(entity_type()));
+}
 
 } // Namespace OpenVolumeMesh

@@ -97,6 +97,9 @@ TEST_F(PolyhedralMeshBase, SaveFileWithProps) {
 
   mesh_.clear();
 
+  EXPECT_EQ(0u, mesh_.n_persistent_props<Entity::HalfFace>());
+  EXPECT_EQ(0u, mesh_.n_persistent_props<Entity::Vertex>());
+
   ASSERT_TRUE(fileManager.readFile("Cylinder.copy.ovm", mesh_));
 
   EXPECT_EQ(399u, mesh_.n_vertices());
@@ -104,8 +107,8 @@ TEST_F(PolyhedralMeshBase, SaveFileWithProps) {
   EXPECT_EQ(960u, mesh_.n_faces());
   EXPECT_EQ(288u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_halfface_props());
-  EXPECT_EQ(1u, mesh_.n_vertex_props());
+  EXPECT_EQ(1u, mesh_.n_persistent_props<Entity::HalfFace>());
+  EXPECT_EQ(1u, mesh_.n_persistent_props<Entity::Vertex>());
 
   HalfFacePropertyT<float> hfprop2 = mesh_.request_halfface_property<float>("MyHalfFaceProp");
   VertexPropertyT<unsigned int> vprop2 = mesh_.request_vertex_property<unsigned int>("MyVertexProp");
@@ -147,16 +150,18 @@ TEST_F(PolyhedralMeshBase, SaveFileWithVectorProps) {
   ASSERT_TRUE(fileManager.writeFile("Cylinder.copy.ovm", mesh_));
 
   mesh_.clear();
+  EXPECT_EQ(0u, mesh_.n_persistent_props<Entity::HalfFace>());
+  EXPECT_EQ(0u, mesh_.n_persistent_props<Entity::Vertex>());
 
-  ASSERT_TRUE(fileManager.readFile("Cylinder.copy.ovm", mesh_));
+  ASSERT_TRUE(fileManager.readFile("Cylinder.copy.ovm", mesh_, true, false));
 
   EXPECT_EQ(399u, mesh_.n_vertices());
   EXPECT_EQ(1070u, mesh_.n_edges());
   EXPECT_EQ(960u, mesh_.n_faces());
   EXPECT_EQ(288u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_halfface_props());
-  EXPECT_EQ(1u, mesh_.n_vertex_props());
+  EXPECT_EQ(1u, mesh_.n_persistent_props<Entity::HalfFace>());
+  EXPECT_EQ(1u, mesh_.n_persistent_props<Entity::Vertex>());
 
   HalfFacePropertyT<Vec3d> hfprop2 = mesh_.request_halfface_property<Vec3d>("MyHalfFaceProp");
   VertexPropertyT<Vec2i> vprop2 = mesh_.request_vertex_property<Vec2i>("MyVertexProp");
@@ -247,55 +252,55 @@ TEST_F(PolyhedralMeshBase, LoadFileWithProps) {
 
   OpenVolumeMesh::IO::FileManager fileManager;
 
-  ASSERT_TRUE(fileManager.readFile("Cube_with_props.ovm", mesh_));
+  ASSERT_TRUE(fileManager.readFile("Cube_with_props.ovm", mesh_, true, false));
 
   EXPECT_EQ(8u, mesh_.n_vertices());
   EXPECT_EQ(12u, mesh_.n_edges());
   EXPECT_EQ(6u, mesh_.n_faces());
   EXPECT_EQ(1u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_vertex_props());
-  EXPECT_EQ(1u, mesh_.n_edge_props());
-  EXPECT_EQ(0u, mesh_.n_halfedge_props());
-  EXPECT_EQ(1u, mesh_.n_face_props());
-  EXPECT_EQ(1u, mesh_.n_halfface_props());
-  EXPECT_EQ(0u, mesh_.n_cell_props());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Vertex>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Edge>());
+  EXPECT_EQ(0u, mesh_.n_props<Entity::HalfEdge>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Face>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::HalfFace>());
+  EXPECT_EQ(0u, mesh_.n_props<Entity::Cell>());
 }
 
 TEST_F(PolyhedralMeshBase, SaveFileWithProps2) {
 
   OpenVolumeMesh::IO::FileManager fileManager;
 
-  ASSERT_TRUE(fileManager.readFile("Cube_with_props.ovm", mesh_));
+  ASSERT_TRUE(fileManager.readFile("Cube_with_props.ovm", mesh_, true, false));
 
   EXPECT_EQ(8u, mesh_.n_vertices());
   EXPECT_EQ(12u, mesh_.n_edges());
   EXPECT_EQ(6u, mesh_.n_faces());
   EXPECT_EQ(1u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_vertex_props());
-  EXPECT_EQ(1u, mesh_.n_edge_props());
-  EXPECT_EQ(0u, mesh_.n_halfedge_props());
-  EXPECT_EQ(1u, mesh_.n_face_props());
-  EXPECT_EQ(1u, mesh_.n_halfface_props());
-  EXPECT_EQ(0u, mesh_.n_cell_props());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Vertex>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Edge>());
+  EXPECT_EQ(0u, mesh_.n_props<Entity::HalfEdge>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Face>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::HalfFace>());
+  EXPECT_EQ(0u, mesh_.n_props<Entity::Cell>());
 
   ASSERT_TRUE(fileManager.writeFile("Cube_with_props.copy.ovm", mesh_));
 
   mesh_.clear();
 
-  ASSERT_TRUE(fileManager.readFile("Cube_with_props.copy.ovm", mesh_));
+  ASSERT_TRUE(fileManager.readFile("Cube_with_props.copy.ovm", mesh_, true, false));
 
   EXPECT_EQ(8u, mesh_.n_vertices());
   EXPECT_EQ(12u, mesh_.n_edges());
   EXPECT_EQ(6u, mesh_.n_faces());
   EXPECT_EQ(1u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_vertex_props());
-  EXPECT_EQ(1u, mesh_.n_edge_props());
-  EXPECT_EQ(0u, mesh_.n_halfedge_props());
-  EXPECT_EQ(1u, mesh_.n_face_props());
-  EXPECT_EQ(1u, mesh_.n_halfface_props());
-  EXPECT_EQ(0u, mesh_.n_cell_props());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Vertex>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Edge>());
+  EXPECT_EQ(0u, mesh_.n_props<Entity::HalfEdge>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::Face>());
+  EXPECT_EQ(1u, mesh_.n_props<Entity::HalfFace>());
+  EXPECT_EQ(0u, mesh_.n_props<Entity::Cell>());
 }
 

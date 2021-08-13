@@ -35,42 +35,50 @@
 
 #include <iosfwd>
 #include <string>
+#include <memory>
 #include <vector>
 
 #include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/TypeName.hh>
+#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 namespace OpenVolumeMesh {
 
-/** \class OpenVolumeMeshBaseProperty
+class ResourceManager;
 
- Abstract class defining the basic interface of a dynamic property.
+template<typename T>
+class PropertyStorageT;
+
+/** \class PropertyStorageBase
+
+ Abstract class defining the type-independent interface of a dynamic property.
 
  **/
 
-class OVM_EXPORT OpenVolumeMeshBaseProperty {
+class OVM_EXPORT PropertyStorageBase
+        : public std::enable_shared_from_this<PropertyStorageBase>
+        , public detail::Tracked<PropertyStorageBase>
+{
 public:
-
-    friend class ResourceManager;
     template <class PropT, class HandleT> friend class PropertyPtr;
 
-	/// Indicates an error when a size is returned by a member.
-	static const size_t UnknownSize;
-
 public:
 
-	explicit OpenVolumeMeshBaseProperty(
-            const std::string& _name,
-            const std::string& _internal_type_name)
-        : name_(_name),
-          internal_type_name_(_internal_type_name),
-          persistent_(false),
-          handle_(-1)
+    explicit PropertyStorageBase(
+            detail::Tracker<PropertyStorageBase> *tracker,
+            const std::string _name,
+            const std::string& _internal_type_name,
+            EntityType _entity_type)
+        : detail::Tracked<PropertyStorageBase>(tracker)
+        , name_(std::move(_name))
+        , internal_type_name_(_internal_type_name)
+        , entity_type_(_entity_type)
+        , persistent_(false)
     {}
 
-	OpenVolumeMeshBaseProperty(const OpenVolumeMeshBaseProperty& _rhs) = default;
+    virtual ~PropertyStorageBase() = default;
 
-	virtual ~OpenVolumeMeshBaseProperty() {}
 
 public:
 
@@ -92,18 +100,24 @@ public:
 	/// Let two elements swap their storage place.
 	virtual void swap(size_t _i0, size_t _i1) = 0;
 
+    /// Let two elements swap their storage place.
+    virtual void copy(size_t _i0, size_t _i1) = 0;
+
 	/// Erase an element of the vector
 	virtual void delete_element(size_t _idx) = 0;
 
 	/// Return a deep copy of self.
-	virtual OpenVolumeMeshBaseProperty* clone() const = 0;
+    virtual std::shared_ptr<PropertyStorageBase> clone() const = 0;
 
 	/// Return the name of the property
-	const std::string& name() const {
+	const std::string& name() const && = delete;
+	const std::string& name() const & {
 		return name_;
 	}
+    bool anonymous() const {return name_.empty();}
 
-	const std::string& internal_type_name() const {
+	const std::string& internal_type_name() const && = delete;
+	const std::string& internal_type_name() const & {
 		return internal_type_name_;
 	}
 
@@ -121,38 +135,42 @@ public:
 	/// Number of elements in property
 	virtual size_t n_elements() const = 0;
 
-	/// Size of one element in bytes or UnknownSize if not known.
-	virtual size_t element_size() const = 0;
+    virtual std::string typeNameWrapper() const = 0;
 
-	/// Return size of property in bytes
-	virtual size_t size_of() const {
-		return size_of(n_elements());
-	}
+    EntityType entity_type() const {return entity_type_;}
 
-	/// Estimated size of property if it has _n_elem elements.
-	/// The member returns UnknownSize if the size cannot be estimated.
-	virtual size_t size_of(size_t _n_elem) const {
-		return (element_size() != UnknownSize) ? (_n_elem * element_size())
-				: UnknownSize;
-	}
+    template<typename T>
+    PropertyStorageT<T>* cast_to_StorageT()
+    {
+        if (get_type_name<T>() != internal_type_name()) {
+            throw std::bad_cast();
+        }
+        return static_cast<PropertyStorageT<T>*>(this);
+    }
 
-	const OpenVolumeMeshHandle& handle() const { return handle_; }
+    template<typename T>
+    const PropertyStorageT<T>* cast_to_StorageT() const
+    {
+        if (get_type_name<T>() != internal_type_name()) {
+            throw std::bad_cast();
+        }
+        return static_cast<const PropertyStorageT<T>*>(this);
+    }
 
-	void set_handle(const OpenVolumeMeshHandle& _handle) { handle_.idx(_handle.idx()); }
+    /// Copy data from other property. `other` must point to an object with the same derived type as `this`!
+    virtual void assign_values_from(const PropertyStorageBase *other) = 0;
 
-protected:
+    /// Move data from other property. `other` must point to an object with the same derived type as `this`!
+    virtual void move_values_from(PropertyStorageBase *other) = 0;
 
-	/// Delete multiple entries in list
-    virtual void delete_multiple_entries(const std::vector<bool>&) = 0;
+    void attach_to(const ResourceManager *resman);
+    operator bool() const {return Tracked::has_tracker();}
 
 private:
-
 	std::string name_;
 	std::string internal_type_name_;
-
+    EntityType entity_type_;
 	bool persistent_;
-
-	OpenVolumeMeshHandle handle_;
 };
 
 } // Namespace OpenVolumeMesh

@@ -34,25 +34,26 @@
 \*===========================================================================*/
 
 
-#include <iosfwd>
-#include <stdexcept>
 #include <string>
-#include <typeinfo>
 #include <map>
+#include <vector>
+#include <stdexcept>
 
+#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
-#include <OpenVolumeMesh/Core/PropertyHandles.hh>
-#include <OpenVolumeMesh/Core/PropertyPtr.hh>
 
 namespace OpenVolumeMesh {
 
-template <class T>
-class OpenVolumeMeshPropertyT;
-
-class ResourceManager;
-
+#if 0
 template <class T>
 const std::string typeName();
+#endif
+
+template<typename T>
+const std::string typeName() {
+    throw std::runtime_error("Serialization is not supported for this data type!");
+}
+
 
 template <> OVM_EXPORT const std::string typeName<int>();
 template <> OVM_EXPORT const std::string typeName<unsigned int>();
@@ -82,41 +83,4 @@ template <> OVM_EXPORT const std::string entityTypeName<Entity::HalfFace>();
 template <> OVM_EXPORT const std::string entityTypeName<Entity::Cell>();
 template <> OVM_EXPORT const std::string entityTypeName<Entity::Mesh>();
 
-template<typename T, typename Entity>
-class PropertyTT : public PropertyPtr<OpenVolumeMeshPropertyT<T>, Entity> {
-public:
-    using value_type = T;
-    using entity_type = Entity;
-    template<typename MeshT>
-    PropertyTT(MeshT *mesh, const std::string& _name, const T &_def = T())
-        : PropertyTT(std::move(mesh->template request_property<T, Entity>(_name, _def)))
-    {}
-    PropertyTT (const PropertyTT<T, Entity>&) = default;
-    PropertyTT (PropertyTT<T,Entity>&&) = default;
-    // copy assignment can be confusing for users - instead of the property contents
-    // being assigned, the PropertyPtr just points to the rhs now.
-    PropertyTT<T, Entity>& operator=(const PropertyTT<T, Entity>&) = delete;
-    PropertyTT<T, Entity>& operator=(PropertyTT<T, Entity>&&) = default;
-
-    using PropertyHandleT = OpenVolumeMesh::PropHandleT<Entity>;
-    PropertyTT(const std::string& _name, const std::string& _internal_type_name, ResourceManager& _resMan, PropertyHandleT _handle, const T &_def = T());
-    ~PropertyTT() override = default;
-    BaseProperty* clone(ResourceManager &_resMan, OpenVolumeMeshHandle _handle) const override;
-    const std::string entityType() const override { return entityTypeName<Entity>(); }
-    const std::string typeNameWrapper() const override { return typeName<T>(); }
-private:
-    PropertyTT(OpenVolumeMeshPropertyT<T> *_prop, ResourceManager& _resMan, PropertyHandleT _handle);
-};
-
-template<typename T> using VertexPropertyT   = PropertyTT<T, Entity::Vertex>;
-template<typename T> using EdgePropertyT     = PropertyTT<T, Entity::Edge>;
-template<typename T> using HalfEdgePropertyT = PropertyTT<T, Entity::HalfEdge>;
-template<typename T> using FacePropertyT     = PropertyTT<T, Entity::Face>;
-template<typename T> using HalfFacePropertyT = PropertyTT<T, Entity::HalfFace>;
-template<typename T> using CellPropertyT     = PropertyTT<T, Entity::Cell>;
-template<typename T> using MeshPropertyT     = PropertyTT<T, Entity::Mesh>;
-
-
 } // Namespace OpenVolumeMesh
-
-#include <OpenVolumeMesh/Core/PropertyDefinesT_impl.hh>

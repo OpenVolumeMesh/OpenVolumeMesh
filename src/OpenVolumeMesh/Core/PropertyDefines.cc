@@ -62,4 +62,19 @@ template <> const std::string entityTypeName<Entity::HalfFace>(){ return "HFProp
 template <> const std::string entityTypeName<Entity::Cell>()    { return "CProp";  }
 template <> const std::string entityTypeName<Entity::Mesh>()    { return "MProp";  }
 
+#if 0
+std::string entityTypeName(EntityType _type) {
+    switch(_type) {
+    case EntityType::Vertex:   return entityTypeName<Entity::Vertex>();
+    case EntityType::Edge:     return entityTypeName<Entity::Edge>();
+    case EntityType::HalfEdge: return entityTypeName<Entity::HalfEdge>();
+    case EntityType::Face:     return entityTypeName<Entity::Face>();
+    case EntityType::HalfFace: return entityTypeName<Entity::HalfFace>();
+    case EntityType::Cell:     return entityTypeName<Entity::Cell>();
+    case EntityType::Mesh:     return entityTypeName<Entity::Mesh>();
+    }
+    return "<invalid>";
+}
+#endif
+
 } // Namespace OpenVolumeMesh

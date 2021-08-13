@@ -39,34 +39,47 @@
 #endif
 #include <string>
 #include <vector>
+#include <memory>
+#include <set>
 #include <type_traits>
+#include <optional>
 
-#include <OpenVolumeMesh/System/Compiler.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
-#include <OpenVolumeMesh/Core/OpenVolumeMeshProperty.hh>
-#include <OpenVolumeMesh/Core/PropertyHandles.hh>
+#include <OpenVolumeMesh/Core/Entities.hh>
+#include <OpenVolumeMesh/Core/EntityUtils.hh>
+#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
 #include <OpenVolumeMesh/Core/TypeName.hh>
 #include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
+#include <OpenVolumeMesh/Core/detail/Tracking.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyIterator.hh>
 
-#if OVM_CXX_17
-#include <optional>
-#endif
 
 namespace OpenVolumeMesh {
-
-// Forward declarations
-class BaseProperty;
-
 class OVM_EXPORT ResourceManager {
+
 public:
+    using Properties = std::set<PropertyStorageBase*>;
+
     ResourceManager() = default;
+    virtual ~ResourceManager() = default;
+
     ResourceManager(const ResourceManager &other);
     ResourceManager(ResourceManager &&other);
     ResourceManager& operator=(const ResourceManager &other);
     ResourceManager& operator=(ResourceManager &&other);
-    virtual ~ResourceManager();
 
-    template <class PropT, class HandleT> friend class PropertyPtr;
+protected:
+    friend class PropertyStorageBase;
+
+    template<typename EntityTag>
+    detail::Tracker<PropertyStorageBase> & storage_tracker() const;
+
+    detail::Tracker<PropertyStorageBase> & storage_tracker(EntityType type) const;
+
+    mutable PerEntity<detail::Tracker<PropertyStorageBase>> storage_trackers_;
+
+protected:
+    using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
     /// Change size of stored vertex properties
     void resize_vprops(size_t _nv);
@@ -85,62 +98,44 @@ public:
     void reserve_fprops(size_t n);
     void reserve_cprops(size_t n);
 
-protected:
-
     void vertex_deleted(const VertexHandle& _h);
-
     void edge_deleted(const EdgeHandle& _h);
-
     void face_deleted(const FaceHandle& _h);
-
     void cell_deleted(const CellHandle& _h);
 
-    void copy_cell_properties(CellHandle _h1, CellHandle _h2);
-
     void swap_cell_properties(CellHandle _h1, CellHandle _h2);
-
     void swap_face_properties(FaceHandle _h1, FaceHandle _h2);
-
     void swap_halfface_properties(HalfFaceHandle _h1, HalfFaceHandle _h2);
-
     void swap_edge_properties(EdgeHandle _h1, EdgeHandle _h2);
-
     void swap_halfedge_properties(HalfEdgeHandle _h1, HalfEdgeHandle _h2);
-
     void swap_vertex_properties(VertexHandle _h1, VertexHandle _h2);
 
-    template <typename PropIterator, typename Handle>
-    void swap_property_elements(PropIterator _begin, PropIterator _end, Handle _h1, Handle _h2)
-    {
-        PropIterator p_iter =  _begin;
-        for (; p_iter != _end; ++p_iter)
-            (*p_iter)->swap_elements(_h1.uidx(), _h2.uidx());
-    }
+    template <typename EntityTag>
+    void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> const &_idx_b);
 
-    template <typename PropIterator, typename Handle>
-    void copy_property_elements(PropIterator _begin, PropIterator _end, Handle _h1, Handle _h2)
-    {
-        PropIterator p_iter =  _begin;
-        for (; p_iter != _end; ++p_iter)
-            (*p_iter)->copy(_h1.uidx(), _h2.uidx());
-    }
-
+    template <typename Handle>
+    void copy_property_elements(Handle _idx_a, Handle _idx_b);
 
 public:
+    /// drop all persistent properties.
+    void clear_all_props();
+    /// drop persistent properties.
+    template<typename EntityTag> void clear_props();
 
-    void clear_vertex_props() { clearVec(vertex_props_); }
-
-    void clear_edge_props() { clearVec(edge_props_); }
-
-    void clear_halfedge_props() { clearVec(halfedge_props_); }
-
-    void clear_face_props() { clearVec(face_props_); }
-
-    void clear_halfface_props() { clearVec(halfface_props_); }
-
-    void clear_cell_props() { clearVec(cell_props_); }
-
-    void clear_mesh_props() { clearVec(mesh_props_); }
+    [[deprecated("Use clear_props<Entity::Vertex>() instead.")]]
+    inline void clear_vertex_props()   { clear_props<Entity::Vertex>();}
+    [[deprecated("Use clear_props<Entity::Edge>() instead.")]]
+    inline void clear_edge_props()     { clear_props<Entity::Edge>();}
+    [[deprecated("Use clear_props<Entity::HalfEdge>() instead.")]]
+    inline void clear_halfedge_props() { clear_props<Entity::HalfEdge>();}
+    [[deprecated("Use clear_props<Entity::Face>() instead.")]]
+    inline void clear_face_props()     { clear_props<Entity::Face>();}
+    [[deprecated("Use clear_props<Entity::HalfFace>() instead.")]]
+    inline void clear_halfface_props() { clear_props<Entity::HalfFace>();}
+    [[deprecated("Use clear_props<Entity::Cell>() instead.")]]
+    inline void clear_cell_props()     { clear_props<Entity::Cell>();}
+    [[deprecated("Use clear_props<Entity::Mesh>() instead.")]]
+    inline void clear_mesh_props()     { clear_props<Entity::Mesh>();}
 
     /// Get number of vertices in mesh
     virtual size_t n_vertices() const = 0;
@@ -155,23 +150,25 @@ public:
     /// Get number of cells in mesh
     virtual size_t n_cells() const = 0;
 
-
     /** Get or create property: if the property does not exist yet, create it.
      */
     template<typename T, typename EntityTag>
-    PropertyTT<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
+    PropertyPtr<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
 
-#if OVM_CXX_17
     /** Create new property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
-    std::optional<PropertyTT<T, EntityTag>> create_property(const std::string& _name = std::string(), const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_property(const std::string& _name = std::string(), const T _def = T());
+
+    /** Create private property - useful for const meshes
+     */
+    template<typename T, typename EntityTag>
+    PropertyPtr<T, EntityTag> create_private_property(std::string _name = {}, const T _def = T()) const;
 
     /** Get existing property: if the property does not exist, return no value.
      */
     template<typename T, typename EntityTag>
-    std::optional<PropertyTT<T, EntityTag>> get_property(const std::string& _name = std::string());
-#endif
+    std::optional<PropertyPtr<T, EntityTag>> get_property(const std::string& _name = std::string());
 
     template<class T> VertexPropertyT<T> request_vertex_property(const std::string& _name = std::string(), const T _def = T());
 
@@ -188,196 +185,156 @@ public:
     template<class T> MeshPropertyT<T> request_mesh_property(const std::string& _name = std::string(), const T _def = T());
 
 
-private:
-
-    void release_property(VertexPropHandle _handle);
-
-    void release_property(EdgePropHandle _handle);
-
-    void release_property(HalfEdgePropHandle _handle);
-
-    void release_property(FacePropHandle _handle);
-
-    void release_property(HalfFacePropHandle _handle);
-
-    void release_property(CellPropHandle _handle);
-
-    void release_property(MeshPropHandle _handle);
-
 public:
 
-    size_t n_vertex_props() const { return vertex_props_.size(); }
+    /// number of tracked properties
+    template<typename EntityTag> size_t n_props() const;
 
-    size_t n_edge_props() const { return edge_props_.size(); }
+    /// number of persistent properties
+    template<typename EntityTag> size_t n_persistent_props() const;
 
-    size_t n_halfedge_props() const { return halfedge_props_.size(); }
-
-    size_t n_face_props() const { return face_props_.size(); }
-
-    size_t n_halfface_props() const { return halfface_props_.size(); }
-
-    size_t n_cell_props() const { return cell_props_.size(); }
-
-    size_t n_mesh_props() const { return mesh_props_.size(); }
+    //[[deprecated("Use n_props<Entity::Vertex>() instead.")]]
+    size_t n_vertex_props() const   { return n_props<Entity::Vertex>();}
+    //[[deprecated("Use n_props<Entity::Edge instead.")]]
+    size_t n_edge_props() const     { return n_props<Entity::Edge>();}
+    //[[deprecated("Use n_props<Entity::HalfEdge>() instead.")]]
+    size_t n_halfedge_props() const { return n_props<Entity::HalfEdge>();}
+    //[[deprecated("Use n_props<Entity::Face>() instead.")]]
+    size_t n_face_props() const     { return n_props<Entity::Face>();}
+    //[[deprecated("Use n_props<Entity::HalfFace>() instead.")]]
+    size_t n_halfface_props() const { return n_props<Entity::HalfFace>();}
+    //[[deprecated("Use n_props<Entity::Cell>() instead.")]]
+    size_t n_cell_props() const     { return n_props<Entity::Cell>();}
+    //[[deprecated("Use n_props<Entity::Mesh>() instead.")]]
+    size_t n_mesh_props() const     { return n_props<Entity::Mesh>();}
 
     template<typename T, class EntityTag>
-    void set_persistent(PropertyTT<T, EntityTag>& _prop, bool _flag = true);
+    void set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _flag = true);
 
-    typedef std::vector<BaseProperty*> Properties;
+    // TODO: - implement iteration over props for all entities
 
-    Properties::const_iterator vertex_props_begin() const { return vertex_props_.begin(); }
+    template<typename EntityTag>
+    PropertyIterator<PersistentProperties::const_iterator>
+    persistent_props_begin() const
+        {return persistent_props_.get<EntityTag>().cbegin();}
 
-    Properties::const_iterator vertex_props_end() const { return vertex_props_.end(); }
+    template<typename EntityTag>
+    PropertyIterator<PersistentProperties::const_iterator>
+    persistent_props_end() const
+        {return persistent_props_.get<EntityTag>().cend();}
 
-    Properties::const_iterator edge_props_begin() const { return edge_props_.begin(); }
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Vertex>() instead.")]]
+    auto vertex_props_begin()   const {return persistent_props_begin<Entity::Vertex>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Vertex>() instead.")]]
+    auto vertex_props_end()     const {return persistent_props_end  <Entity::Vertex>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Edge>() instead.")]]
+    auto edge_props_begin()     const {return persistent_props_begin<Entity::Edge>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Edge>() instead.")]]
+    auto edge_props_end()       const {return persistent_props_end  <Entity::Edge>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfEdge>() instead.")]]
+    auto halfedge_props_begin() const {return persistent_props_begin<Entity::HalfEdge>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfEdge>() instead.")]]
+    auto halfedge_props_end()   const {return persistent_props_end  <Entity::HalfEdge>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Face>() instead.")]]
+    auto face_props_begin()     const {return persistent_props_begin<Entity::Face>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Face>() instead.")]]
+    auto face_props_end()       const {return persistent_props_end  <Entity::Face>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfFace>() instead.")]]
+    auto halfface_props_begin() const {return persistent_props_begin<Entity::HalfFace>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfFace>() instead.")]]
+    auto halfface_props_end()   const {return persistent_props_end  <Entity::HalfFace>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Cell>() instead.")]]
+    auto cell_props_begin()     const {return persistent_props_begin<Entity::Cell>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Cell>() instead.")]]
+    auto cell_props_end()       const {return persistent_props_end  <Entity::Cell>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Mesh>() instead.")]]
+    auto mesh_props_begin()     const {return persistent_props_begin<Entity::Mesh>();}
+    [[deprecated("Use persistent_props_{begin,end}<Entity::Mesh>() instead.")]]
+    auto mesh_props_end()       const {return persistent_props_end  <Entity::Mesh>();}
 
-    Properties::const_iterator edge_props_end() const { return edge_props_.end(); }
-
-    Properties::const_iterator halfedge_props_begin() const { return halfedge_props_.begin(); }
-
-    Properties::const_iterator halfedge_props_end() const { return halfedge_props_.end(); }
-
-    Properties::const_iterator face_props_begin() const { return face_props_.begin(); }
-
-    Properties::const_iterator face_props_end() const { return face_props_.end(); }
-
-    Properties::const_iterator halfface_props_begin() const { return halfface_props_.begin(); }
-
-    Properties::const_iterator halfface_props_end() const { return halfface_props_.end(); }
-
-    Properties::const_iterator cell_props_begin() const { return cell_props_.begin(); }
-
-    Properties::const_iterator cell_props_end() const { return cell_props_.end(); }
-
-    Properties::const_iterator mesh_props_begin() const { return mesh_props_.begin(); }
-
-    Properties::const_iterator mesh_props_end() const { return mesh_props_.end(); }
-
-private:
-
-    template <class FullPropT, class PropIterT>
-    bool property_exists(const PropIterT& _begin, const PropIterT& _end, const std::string& _name) const
-    {
-        auto type_name = get_type_name(typeid(typename FullPropT::value_type));
-
-        if(_name.empty()) {
-#ifndef NDEBUG
-            std::cerr << "property_exists(): Checking for the existence of anonymous properties is" << std::endl;
-            std::cerr << "ambiguous!" << std::endl;
-#endif
-            return false;
-        }
-
-        PropIterT it = _begin;
-        for(; it != _end; ++it)
-        {
-            if((*it)->name() == _name
-                && (*it)->internal_type_name() == type_name)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
 public:
+    template <typename T, typename EntityTag>
+    bool property_exists(const std::string& _name) const
+    {
+        return internal_find_property<T, EntityTag>(_name).has_value();
+    }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::Vertex>() instead.")]]
     bool vertex_property_exists(const std::string& _name) const {
-        return property_exists<VertexPropertyT<PropT> >(vertex_props_begin(), vertex_props_end(), _name);
+        return property_exists<T, Entity::Vertex>(_name);
     }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::Edge>() instead.")]]
     bool edge_property_exists(const std::string& _name) const {
-        return property_exists<EdgePropertyT<PropT> >(edge_props_begin(), edge_props_end(), _name);
+        return property_exists<T, Entity::Edge>(_name);
     }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::HalfEdge>() instead.")]]
     bool halfedge_property_exists(const std::string& _name) const {
-        return property_exists<HalfEdgePropertyT<PropT> >(halfedge_props_begin(), halfedge_props_end(), _name);
+        return property_exists<T, Entity::HalfEdge>(_name);
     }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::Face>() instead.")]]
     bool face_property_exists(const std::string& _name) const {
-        return property_exists<FacePropertyT<PropT> >(face_props_begin(), face_props_end(), _name);
+        return property_exists<T, Entity::Face>(_name);
     }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::HalfFace>() instead.")]]
     bool halfface_property_exists(const std::string& _name) const {
-        return property_exists<HalfFacePropertyT<PropT> >(halfface_props_begin(), halfface_props_end(), _name);
+        return property_exists<T, Entity::HalfFace>( _name);
     }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::Cell>() instead.")]]
     bool cell_property_exists(const std::string& _name) const {
-        return property_exists<CellPropertyT<PropT> >(cell_props_begin(), cell_props_end(), _name);
+        return property_exists<T, Entity::Cell>( _name);
     }
 
-    template <class PropT>
+    template <class T>
+    //[[deprecated("Use propery_exists<T, Entity::Mesh>() instead.")]]
     bool mesh_property_exists(const std::string& _name) const {
-        return property_exists<MeshPropertyT<PropT> >(mesh_props_begin(), mesh_props_end(), _name);
+        return property_exists<T, Entity::Mesh>( _name);
     }
-
-protected:
-
-    void delete_multiple_vertex_props(const std::vector<bool>& _tags);
-
-    void delete_multiple_edge_props(const std::vector<bool>& _tags);
-
-    void delete_multiple_face_props(const std::vector<bool>& _tags);
-
-    void delete_multiple_cell_props(const std::vector<bool>& _tags);
 
 private:
 
-    template<class StdVecT>
-    void resize_props(StdVecT& _vec, size_t _n);
+    template<class Container>
+    void resize_props(Container& _vec, size_t _n);
 
-    template<class StdVecT>
-    void reserve_props(StdVecT& _vec, size_t _n);
+    template<class Container>
+    void reserve_props(Container& _vec, size_t _n);
 
-    template<class StdVecT>
-    void entity_deleted(StdVecT& _vec, const OpenVolumeMeshHandle& _h);
-
-    template<class StdVecT>
-    void remove_property(StdVecT& _vec, size_t _idx);
+    template<class EntityTag>
+    void entity_deleted(HandleT<EntityTag>);
 
     template<typename T, typename EntityTag>
-    PropertyTT<T, EntityTag> *internal_find_property(const std::string& _name);
+    std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;
 
     template<typename T, typename EntityTag>
-    PropertyTT<T, EntityTag> internal_create_property(const std::string& _name, const T _def = T());
+    PropertyPtr<T, EntityTag> internal_create_property(const std::string _name, const T _def = T()) const;
 
-    template<class StdVecT>
-    void clearVec(StdVecT& _vec);
-
-    template<class StdVecT>
-    void updatePropHandles(StdVecT& _vec);
-
-    template<bool Move>
-    void assignProperties(typename std::conditional<Move, Properties&, const Properties&>::type src,
-                          Properties &dest);
-    template<bool Move>
-    void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager*, const ResourceManager*>::type src);
-
-    Properties vertex_props_;
-
-    Properties edge_props_;
-
-    Properties halfedge_props_;
-
-    Properties face_props_;
-
-    Properties halfface_props_;
-
-    Properties cell_props_;
-
-    Properties mesh_props_;
-
+public:
     template<typename Entity>
-    Properties &entity_props();
+    size_t n() const;
 
-    template<typename Entity>
-    size_t n();
+
+private:
+    template<bool Move, typename EntityTag>
+    void assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
+    template<bool Move>
+    void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
+
+private:
+    PerEntity<PersistentProperties> persistent_props_;
+
+
+
 };
 
 }
