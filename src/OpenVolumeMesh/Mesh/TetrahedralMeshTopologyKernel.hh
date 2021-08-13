@@ -65,7 +65,6 @@ public:
     CellHandle add_cell(std::vector<HalfFaceHandle> _halffaces, bool _topologyCheck = false) override;
 
     CellHandle add_cell(const std::vector<VertexHandle>& _vertices, bool _topologyCheck = false);
-    CellHandle add_cell(const std::array<VertexHandle, 4>& _vertices, bool _topologyCheck = false);
 
     CellHandle add_cell(VertexHandle _vh0, VertexHandle _vh1, VertexHandle _vh2, VertexHandle _vh3, bool _topologyCheck = false);
 

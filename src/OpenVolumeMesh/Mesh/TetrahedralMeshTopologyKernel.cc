@@ -435,7 +435,8 @@ void TetrahedralMeshTopologyKernel::split_edge(HalfEdgeHandle _heh, VertexHandle
     delete_edge(edge_handle(_heh));
 
     for (const auto &n: new_cells) {
-        CellHandle newCell = add_cell(n.second);
+        const auto &vhs = n.second;
+        CellHandle newCell = add_cell(vhs[0], vhs[1], vhs[2], vhs[3]);
         copy_cell_properties(n.first, newCell);
     }
 
@@ -472,7 +473,8 @@ void TetrahedralMeshTopologyKernel::split_face(FaceHandle _fh, VertexHandle _vh)
     delete_face(_fh);
 
     for (const auto &n: new_cells) {
-        CellHandle newCell = add_cell(n.second);
+        const auto &vhs = n.second;
+        CellHandle newCell = add_cell(vhs[0], vhs[1], vhs[2], vhs[3]);
         copy_cell_properties(n.first, newCell);
     }
 
@@ -605,14 +607,6 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<VertexHandle>& _vertic
     if(_vertices.size() != 4) {
         return CellHandle(-1);
     }
-    std::array<VertexHandle, 4> verts;
-    std::copy(_vertices.begin(), _vertices.end(), verts.begin());
-    return add_cell(verts, _topologyCheck);
-}
-
-CellHandle
-TetrahedralMeshTopologyKernel::add_cell(const std::array<VertexHandle, 4>& _vertices, bool _topologyCheck)
-{
 
     // debug mode checks
     assert(TopologyKernel::has_full_bottom_up_incidences());
