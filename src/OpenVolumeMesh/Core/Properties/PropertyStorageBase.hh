@@ -65,12 +65,14 @@ public:
             detail::Tracker<PropertyStorageBase> *tracker,
             const std::string _name,
             const std::string _internal_type_name,
-            EntityType _entity_type)
+            EntityType _entity_type,
+            bool _shared)
         : detail::Tracked<PropertyStorageBase>(tracker)
         , name_(std::move(_name))
         , internal_type_name_(std::move(_internal_type_name))
         , entity_type_(_entity_type)
         , persistent_(false)
+        , shared_(_shared)
     {}
 
     virtual ~PropertyStorageBase() = default;
@@ -112,6 +114,10 @@ public:
 	}
     bool anonymous() const {return name_.empty();}
 
+    void set_name(const std::string _name) {
+        name_ = std::move(_name);
+    }
+
 	const std::string& internal_type_name() const && = delete;
 
     /// A platform-specific unique name for the contained type.
@@ -130,8 +136,10 @@ public:
 	// I/O support
 
 	void set_persistent(bool _persistent) { persistent_ = _persistent; }
+    void set_shared(bool _shared) { shared_ = _shared; }
 
 	bool persistent() const { return persistent_; }
+    bool shared() const { return shared_; }
 
     EntityType entity_type() const {return entity_type_;}
 
@@ -167,9 +175,15 @@ public:
 
 private:
 	std::string name_;
-	std::string internal_type_name_;
+    // while we could compute this on the fly,
+    // it does not take much storage and is useful in debugging
+    std::string internal_type_name_;
     EntityType entity_type_;
-	bool persistent_;
+
+
+    // TODO: an enum might be nicer for this:
+    bool persistent_;
+    bool shared_;
 };
 
 } // Namespace OpenVolumeMesh

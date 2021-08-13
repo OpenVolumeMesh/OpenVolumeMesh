@@ -84,6 +84,7 @@ public:
     void deserialize(std::istream& _istr) { storage()->deserialize(_istr); }
 
     bool persistent() const { return storage()->persistent(); }
+    bool shared() const { return storage()->shared(); }
     bool anonymous() const { return storage()->anonymous(); }
 
     EntityType entity_type() const {return storage()->entity_type();}
@@ -92,6 +93,9 @@ public:
         // the string we return a reference to lives long enough, no warnings please:
         // cppcheck-suppress returnTempReference
         return storage()->name();
+    }
+    void set_name(const std::string _name) {
+        storage()->set_name(std::move(_name));
     }
 
     /// get default value.

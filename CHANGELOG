@@ -1,11 +1,12 @@
 Version 3.0 (2021/08/?)
   - Minimum C++ version is now 17 instead of 11
   - Property system redesign:
-    - non-persistent (private) properties:
-        - can now be created on const meshes: create_private_property()
-        - cannot be found using {request,get}_property
-        - are not saved to files
-        - can be turned persistent (shared)
+    - Properties can be shared or private (in addition to being 'persistent'):
+        - private properties are "invisible", i.e. request_*_prop etc do not find it (e.g. create a second property)!
+        - persistent properties must always be shared
+        - private properties can be created on const meshes: create_private_property()
+        - `set_shared()` can switch a property between shared and private
+        - `set_persistent()` can switch a property between shared and persistant
     - Property Handles were abolished, they were never fully implemented
     - Removed size_of, element_size etc.
     - Iteration over a ResourceManager(Mesh)'s persistent properties without exposing internals

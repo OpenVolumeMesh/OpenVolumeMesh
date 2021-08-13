@@ -126,12 +126,11 @@ ResourceManager::internal_find_property(const std::string& _name) const
 
     auto type_name = detail::internal_type_name<T>();
 
-    // TODO: maybe we should only look for persistent props!
-    //       also make sure persistent props always have a name!
     for(auto &prop: storage_tracker<EntityTag>())
     {
-        if(prop->name() == _name
-            && prop->internal_type_name() == type_name)
+        if(prop->shared()
+                && prop->name() == _name
+                && prop->internal_type_name() == type_name)
         {
             auto ps = std::static_pointer_cast<PropertyStorageT<T>>(
                         prop->shared_from_this());
@@ -142,9 +141,15 @@ ResourceManager::internal_find_property(const std::string& _name) const
 }
 
 template<class T, class EntityTag>
-PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(const std::string _name, const T _def) const
+PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(
+        const std::string _name, const T _def, bool _shared) const
 {
-    auto storage = std::make_shared<PropertyStorageT<T>> (&storage_tracker<EntityTag>(), std::move(_name), EntityTag::type(), _def);
+    auto storage = std::make_shared<PropertyStorageT<T>>(
+                                     &storage_tracker<EntityTag>(),
+                                     std::move(_name),
+                                     EntityTag::type(),
+                                     std::move(_def),
+                                     _shared);
     storage->resize(n<EntityTag>());
     return PropertyPtr<T, EntityTag>(std::move(storage));
 }
@@ -155,24 +160,36 @@ PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return *prop;
-    return internal_create_property<T, EntityTag>(_name, _def);
+    bool shared = !_name.empty();
+    return internal_create_property<T, EntityTag>(_name, _def, shared);
 }
-
 
 template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
-ResourceManager::create_property(const std::string& _name, const T _def)
+ResourceManager::create_persistent_property(const std::string& _name, const T _def)
 {
     auto *prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    return internal_create_property<T, EntityTag>(_name, _def);
+    auto ptr =  internal_create_property<T, EntityTag>(_name, _def, true);
+    set_persistent(ptr);
+    return ptr;
+}
+
+template<typename T, typename EntityTag>
+std::optional<PropertyPtr<T, EntityTag>>
+ResourceManager::create_shared_property(const std::string& _name, const T _def)
+{
+    auto *prop = internal_find_property<T, EntityTag>(_name);
+    if (prop)
+        return {};
+    return internal_create_property<T, EntityTag>(_name, _def, true);
 }
 template<typename T, typename EntityTag>
 PropertyPtr<T, EntityTag>
 ResourceManager::create_private_property(std::string _name, const T _def) const
 {
-    return internal_create_property<T, EntityTag>(std::move(_name), _def);
+    return internal_create_property<T, EntityTag>(std::move(_name), _def, false);
 }
 
 template<typename T, typename EntityTag>
@@ -187,17 +204,40 @@ ResourceManager::get_property(const std::string& _name)
 
 
 template<typename T, class EntityTag>
-void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _flag)
+void ResourceManager::set_shared(PropertyPtr<T, EntityTag>& _prop, bool _enable)
 {
-    if(_flag == _prop.persistent()) return;
+    if(_enable == _prop.shared()) return;
 
     auto sptr = std::static_pointer_cast<PropertyStorageBase>(_prop.storage());
-    if (_flag) {
+    if (_enable) {
+        if (_prop.anonymous()) {
+            throw std::runtime_error("Shared properties must have a name!");
+        }
+        auto existing = internal_find_property<T, EntityTag>(_prop.name());
+        if (existing) {
+            throw std::runtime_error("A shared property with this name, type and entity type already exists.");
+        }
+    } else {
+        set_persistent(_prop, false);
+    }
+    sptr->set_shared(_enable);
+}
+
+template<typename T, class EntityTag>
+void ResourceManager::set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _enable)
+{
+    if(_enable == _prop.persistent()) return;
+
+    auto sptr = std::static_pointer_cast<PropertyStorageBase>(_prop.storage());
+    if (_enable) {
+        if (!_prop.shared()) {
+            throw std::runtime_error("Persistent properties must be shared (set_shared).");
+        }
         persistent_props_.get<EntityTag>().insert(sptr);
     } else {
         persistent_props_.get<EntityTag>().erase(sptr);
     }
-    sptr->set_persistent(_flag);
+    sptr->set_persistent(_enable);
 }
 
 

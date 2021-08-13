@@ -126,13 +126,29 @@ TEST_F(HexahedralMeshBase, AnonymousPropertiesTest1) {
 
     EXPECT_EQ(1u, mesh_.n_cell_props());
 
+    // only shared props can be persistent
+    EXPECT_THROW(mesh_.set_persistent(c_prop), std::runtime_error);
+
+    // anonymous properties cannot be be shared
+    EXPECT_THROW(mesh_.set_shared(c_prop), std::runtime_error);
+
+    c_prop.set_name("test");
+
+    EXPECT_EQ(c_prop2.name(), "test");
+
+
+    // only shared props can be persistent
+    EXPECT_THROW(mesh_.set_persistent(c_prop), std::runtime_error);
+    mesh_.set_shared(c_prop);
     mesh_.set_persistent(c_prop);
 
     EXPECT_EQ(1u, mesh_.n_cell_props());
+    EXPECT_EQ(1u, mesh_.n_persistent_props<Entity::Cell>());
 
     mesh_.set_persistent(c_prop2, false);
 
     EXPECT_EQ(1u, mesh_.n_cell_props());
+    EXPECT_EQ(0u, mesh_.n_persistent_props<Entity::Cell>());
 }
 
 TEST_F(HexahedralMeshBase, AnonymousPropertiesTest2) {

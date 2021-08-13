@@ -83,7 +83,7 @@ private:
     std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;
 
     template<typename T, typename EntityTag>
-    PropertyPtr<T, EntityTag> internal_create_property(const std::string _name, const T _def = T()) const;
+    PropertyPtr<T, EntityTag> internal_create_property(const std::string _name, const T _def, bool shared) const;
 
 
     template<bool Move, typename EntityTag>
@@ -163,6 +163,7 @@ public:
     template<typename EntityTag> size_t n_persistent_props() const;
 
     /** Get or create property: if the property does not exist yet, create it.
+     *  If it has an empty name, it will be a private property, otherwise shared.
      */
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
@@ -170,14 +171,25 @@ public:
     /** Create new property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
+    [[deprecated("Use create_{shared,persistent}_property instead")]]
     std::optional<PropertyPtr<T, EntityTag>> create_property(const std::string& _name = std::string(), const T _def = T());
+
+    /** Create new shared property: if the property already exists, return no value.
+     */
+    template<typename T, typename EntityTag>
+    std::optional<PropertyPtr<T, EntityTag>> create_shared_property(const std::string& _name, const T _def = T());
+
+    /** Create new shared + persistent property: if the property already exists, return no value.
+     */
+    template<typename T, typename EntityTag>
+    std::optional<PropertyPtr<T, EntityTag>> create_persistent_property(const std::string& _name, const T _def = T());
 
     /** Create private property - useful for const meshes
      */
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> create_private_property(std::string _name = {}, const T _def = T()) const;
 
-    /** Get existing property: if the property does not exist, return no value.
+    /** Get existing shared property: if the property does not exist, return no value.
      */
     template<typename T, typename EntityTag>
     std::optional<PropertyPtr<T, EntityTag>> get_property(const std::string& _name = std::string());
@@ -189,7 +201,10 @@ public:
     }
 
     template<typename T, class EntityTag>
-    void set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _flag = true);
+    void set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _enable = true);
+
+    template<typename T, class EntityTag>
+    void set_shared(PropertyPtr<T, EntityTag>& _prop, bool _enable = true);
 
     template<typename EntityTag>
     PropertyIterator<PersistentProperties::const_iterator>
