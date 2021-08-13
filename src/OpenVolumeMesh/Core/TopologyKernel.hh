@@ -717,12 +717,12 @@ public:
     virtual void collect_garbage();
 
 
-    virtual bool is_deleted(VertexHandle _h)   const { return vertex_deleted_[_h.uidx()]; }
-    virtual bool is_deleted(EdgeHandle _h)     const { return edge_deleted_[_h.uidx()];   }
-    virtual bool is_deleted(HalfEdgeHandle _h) const { return edge_deleted_[_h.uidx()/2]; }
-    virtual bool is_deleted(FaceHandle _h)     const { return face_deleted_[_h.uidx()];   }
-    virtual bool is_deleted(HalfFaceHandle _h) const { return face_deleted_[_h.uidx()/2]; }
-    virtual bool is_deleted(CellHandle _h)     const { return cell_deleted_[_h.uidx()];   }
+    virtual bool is_deleted(VertexHandle _h)   const { return vertex_deleted_[_h]; }
+    virtual bool is_deleted(EdgeHandle _h)     const { return edge_deleted_[_h]; }
+    virtual bool is_deleted(HalfEdgeHandle _h) const { return edge_deleted_[_h.full()]; }
+    virtual bool is_deleted(FaceHandle _h)     const { return face_deleted_[_h]; }
+    virtual bool is_deleted(HalfFaceHandle _h) const { return face_deleted_[_h.full()]; }
+    virtual bool is_deleted(CellHandle _h)     const { return cell_deleted_[_h]; }
 
 private:
 
@@ -1133,21 +1133,28 @@ public:
         return n_deleted_vertices_ > 0 || n_deleted_edges_ > 0 || n_deleted_faces_ > 0 || n_deleted_cells_ > 0;
     }
 
-protected:
+    /// test is_valid and perform index range check
+    template<typename Handle>
+    constexpr bool is_valid(Handle _h) const {
+        static_assert(is_handle_v<Handle>);
+        return _h.is_valid() && _h.uidx() < n<typename Handle::EntityTag>();
+    }
 
-    // List of edges
-    std::vector<Edge> edges_;
+private:
 
-    // List of faces
-    std::vector<Face> faces_;
+    // List of edges (pair of vertex handles)
+    HandleIndexing<Entity::Edge, std::vector<Edge>> edges_;
+    // List of faces (vector of halfedge handles)
+    HandleIndexing<Entity::Face, std::vector<Face>> faces_;
+    // List of cells (vector of halfcell handles)
+    HandleIndexing<Entity::Cell, std::vector<Cell>> cells_;
 
-    // List of cells
-    std::vector<Cell> cells_;
+    // deferred deletion:
+    HandleIndexing<Entity::Vertex, std::vector<bool>> vertex_deleted_;
+    HandleIndexing<Entity::Edge,   std::vector<bool>> edge_deleted_;
+    HandleIndexing<Entity::Face,   std::vector<bool>> face_deleted_;
+    HandleIndexing<Entity::Cell,   std::vector<bool>> cell_deleted_;
 
-    std::vector<bool> vertex_deleted_;
-    std::vector<bool> edge_deleted_;
-    std::vector<bool> face_deleted_;
-    std::vector<bool> cell_deleted_;
 
     // number of elements deleted, but not yet garbage collected
     size_t n_deleted_vertices_ = 0;
