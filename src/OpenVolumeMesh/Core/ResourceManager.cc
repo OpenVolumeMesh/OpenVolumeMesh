@@ -123,35 +123,6 @@ void ResourceManager::cell_deleted(const CellHandle& _h) {
     entity_deleted<Entity::Cell>(_h);
 }
 
-void ResourceManager::swap_cell_properties(CellHandle _h1, CellHandle _h2)
-{
-    swap_property_elements<Entity::Cell>(_h1, _h2);
-}
-
-void ResourceManager::swap_face_properties(FaceHandle _h1, FaceHandle _h2)
-{
-    swap_property_elements<Entity::Face>(_h1, _h2);
-}
-
-void ResourceManager::swap_halfface_properties(HalfFaceHandle _h1, HalfFaceHandle _h2)
-{
-    swap_property_elements<Entity::HalfFace>(_h1, _h2);
-}
-
-void ResourceManager::swap_edge_properties(EdgeHandle _h1, EdgeHandle _h2)
-{
-    swap_property_elements<Entity::Edge>(_h1, _h2);
-}
-
-void ResourceManager::swap_halfedge_properties(HalfEdgeHandle _h1, HalfEdgeHandle _h2){
-
-    swap_property_elements<Entity::HalfEdge>(_h1, _h2);
-}
-
-void ResourceManager::swap_vertex_properties(VertexHandle _h1, VertexHandle _h2){
-
-    swap_property_elements<Entity::Vertex>(_h1, _h2);
-}
 void ResourceManager::clear_all_props()
 {
     for_each_entity([this](auto entity_tag){ clear_props<decltype(entity_tag)>();});

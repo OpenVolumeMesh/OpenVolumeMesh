@@ -58,10 +58,11 @@ void ResourceManager::clear_props()
     persistent_props_.get<EntityTag>().clear();
 }
 
-template <typename EntityTag>
-void ResourceManager::swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> const &_idx_b)
+template <typename Handle>
+void ResourceManager::swap_property_elements(Handle _idx_a, Handle _idx_b)
 {
-    for (auto &prop: storage_tracker<EntityTag>()) {
+    static_assert(is_handle_v<Handle>);
+    for (auto &prop: storage_tracker<typename Handle::EntityTag>()) {
         prop->swap(_idx_a.uidx(), _idx_b.uidx());
     }
 }

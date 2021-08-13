@@ -1479,7 +1479,7 @@ void TopologyKernel::swap_cell_indices(CellHandle _h1, CellHandle _h2)
     // swap vector entries
     std::swap(cells_[_h1], cells_[_h2]);
     std::swap(cell_deleted_[_h1], cell_deleted_[_h2]);
-    swap_cell_properties(_h1, _h2);
+    swap_property_elements(_h1, _h2);
 }
 
 void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
@@ -1615,9 +1615,9 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
     std::swap(face_deleted_[_h1], face_deleted_[_h2]);
     std::swap(incident_cell_per_hf_[_h1.half(0)], incident_cell_per_hf_[_h2.half(0)]);
     std::swap(incident_cell_per_hf_[_h1.half(1)], incident_cell_per_hf_[_h2.half(1)]);
-    swap_face_properties(_h1, _h2);
-    swap_halfface_properties(halfface_handle(_h1, 0), halfface_handle(_h2, 0));
-    swap_halfface_properties(halfface_handle(_h1, 1), halfface_handle(_h2, 1));
+    swap_property_elements(_h1, _h2);
+    swap_property_elements(halfface_handle(_h1, 0), halfface_handle(_h2, 0));
+    swap_property_elements(halfface_handle(_h1, 1), halfface_handle(_h2, 1));
 
 }
 
@@ -1751,9 +1751,9 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
     std::swap(edge_deleted_[_h1], edge_deleted_[_h2]);
     std::swap(incident_hfs_per_he_[_h1.half(0)], incident_hfs_per_he_[_h2.half(0)]);
     std::swap(incident_hfs_per_he_[_h1.half(1)], incident_hfs_per_he_[_h2.half(1)]);
-    swap_edge_properties(_h1, _h2);
-    swap_halfedge_properties(halfedge_handle(_h1, 0), halfedge_handle(_h2, 0));
-    swap_halfedge_properties(halfedge_handle(_h1, 1), halfedge_handle(_h2, 1));
+    swap_property_elements(_h1, _h2);
+    swap_property_elements(halfedge_handle(_h1, 0), halfedge_handle(_h2, 0));
+    swap_property_elements(halfedge_handle(_h1, 1), halfedge_handle(_h2, 1));
 
 }
 
@@ -1817,7 +1817,7 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     // swap vector entries
     std::swap(vertex_deleted_[_h1], vertex_deleted_[_h2]);
     std::swap(outgoing_hes_per_vertex_[_h1], outgoing_hes_per_vertex_[_h2]);
-    swap_vertex_properties(_h1, _h2);
+    swap_property_elements(_h1, _h2);
 }
 
 

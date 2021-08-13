@@ -103,15 +103,8 @@ protected:
     void face_deleted(const FaceHandle& _h);
     void cell_deleted(const CellHandle& _h);
 
-    void swap_cell_properties(CellHandle _h1, CellHandle _h2);
-    void swap_face_properties(FaceHandle _h1, FaceHandle _h2);
-    void swap_halfface_properties(HalfFaceHandle _h1, HalfFaceHandle _h2);
-    void swap_edge_properties(EdgeHandle _h1, EdgeHandle _h2);
-    void swap_halfedge_properties(HalfEdgeHandle _h1, HalfEdgeHandle _h2);
-    void swap_vertex_properties(VertexHandle _h1, VertexHandle _h2);
-
-    template <typename EntityTag>
-    void swap_property_elements(HandleT<EntityTag> const &_idx_a, HandleT<EntityTag> const &_idx_b);
+    template <typename Handle>
+    void swap_property_elements(Handle _idx_a, Handle _idx_b);
 
     template <typename Handle>
     void copy_property_elements(Handle _idx_a, Handle _idx_b);
