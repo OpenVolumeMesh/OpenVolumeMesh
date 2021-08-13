@@ -242,19 +242,6 @@ std::istream& operator>>(std::istream& _istr, HFH &_h);
 std::istream& operator>>(std::istream& _istr, CH &_h);
 std::istream& operator>>(std::istream& _istr, MH &_h);
 
-
-
-template<typename EntityTag,
-    typename = typename std::enable_if<is_entity<EntityTag>::value>::type>
-class PropHandleTag {};
-
-template <typename T> struct is_prop_handle_tag : std::false_type {};
-template<typename T>
-struct is_prop_handle_tag<PropHandleTag<T>> : std::true_type {};
-
-template<typename T>
-using is_handle_tag = std::enable_if<is_entity<T>::value || is_prop_handle_tag<T>::value>;
-
 // Helper class that is used to decrease all handles
 // exceeding a certain threshold
 
