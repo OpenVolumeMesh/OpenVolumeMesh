@@ -47,11 +47,11 @@
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
-#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
-#include <OpenVolumeMesh/Core/TypeName.hh>
 #include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
 #include <OpenVolumeMesh/Core/detail/Tracking.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyIterator.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyStorageBase.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
 
 
 namespace OpenVolumeMesh {

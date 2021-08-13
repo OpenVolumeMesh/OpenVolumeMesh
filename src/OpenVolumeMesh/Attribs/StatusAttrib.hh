@@ -35,10 +35,9 @@
 
 #include <cassert>
 
-#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
-#include <OpenVolumeMesh/Core/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {

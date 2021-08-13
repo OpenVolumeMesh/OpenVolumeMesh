@@ -38,9 +38,9 @@
 #include <memory>
 #include <vector>
 
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
-#include <OpenVolumeMesh/Core/TypeName.hh>
+#include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 #include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 namespace OpenVolumeMesh {
@@ -61,18 +61,14 @@ class OVM_EXPORT PropertyStorageBase
         , public detail::Tracked<PropertyStorageBase>
 {
 public:
-    template <class PropT, class HandleT> friend class PropertyPtr;
-
-public:
-
-    explicit PropertyStorageBase(
+    PropertyStorageBase(
             detail::Tracker<PropertyStorageBase> *tracker,
             const std::string _name,
-            const std::string& _internal_type_name,
+            const std::string _internal_type_name,
             EntityType _entity_type)
         : detail::Tracked<PropertyStorageBase>(tracker)
         , name_(std::move(_name))
-        , internal_type_name_(_internal_type_name)
+        , internal_type_name_(std::move(_internal_type_name))
         , entity_type_(_entity_type)
         , persistent_(false)
     {}
@@ -88,7 +84,7 @@ public:
 	/// Resize storage to hold n elements.
 	virtual void resize(size_t _n) = 0;
 
-	/// Return underlying container size
+    /// Return underlying container size
 	virtual size_t size() const = 0;
 
 	/// Clear all elements and free memory.
@@ -100,8 +96,8 @@ public:
 	/// Let two elements swap their storage place.
 	virtual void swap(size_t _i0, size_t _i1) = 0;
 
-    /// Let two elements swap their storage place.
-    virtual void copy(size_t _i0, size_t _i1) = 0;
+    /// Copy property values of src_idx to dst_idx
+    virtual void copy(size_t src_idx, size_t dst_idx) = 0;
 
 	/// Erase an element of the vector
 	virtual void delete_element(size_t _idx) = 0;
@@ -109,17 +105,22 @@ public:
 	/// Return a deep copy of self.
     virtual std::shared_ptr<PropertyStorageBase> clone() const = 0;
 
-	/// Return the name of the property
 	const std::string& name() const && = delete;
-	const std::string& name() const & {
+    /// Return the name of the property
+    const std::string& name() const & {
 		return name_;
 	}
     bool anonymous() const {return name_.empty();}
 
 	const std::string& internal_type_name() const && = delete;
+
+    /// A platform-specific unique name for the contained type.
 	const std::string& internal_type_name() const & {
 		return internal_type_name_;
 	}
+
+    // ovm-ascii file name
+    virtual std::string typeNameWrapper() const = 0;
 
 	// Function to serialize a property
 	virtual void serialize(std::ostream& /*_ostr*/) const {}
@@ -132,17 +133,12 @@ public:
 
 	bool persistent() const { return persistent_; }
 
-	/// Number of elements in property
-	virtual size_t n_elements() const = 0;
-
-    virtual std::string typeNameWrapper() const = 0;
-
     EntityType entity_type() const {return entity_type_;}
 
     template<typename T>
     PropertyStorageT<T>* cast_to_StorageT()
     {
-        if (get_type_name<T>() != internal_type_name()) {
+        if (detail::internal_type_name<T>() != internal_type_name()) {
             throw std::bad_cast();
         }
         return static_cast<PropertyStorageT<T>*>(this);
@@ -151,7 +147,7 @@ public:
     template<typename T>
     const PropertyStorageT<T>* cast_to_StorageT() const
     {
-        if (get_type_name<T>() != internal_type_name()) {
+        if (detail::internal_type_name<T>() != internal_type_name()) {
             throw std::bad_cast();
         }
         return static_cast<const PropertyStorageT<T>*>(this);
@@ -163,7 +159,10 @@ public:
     /// Move data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void move_values_from(PropertyStorageBase *other) = 0;
 
+    /// Attach to a mesh. Does not resize property!
     void attach_to(const ResourceManager *resman);
+
+    /// Is this property storage attached to a mesh?
     operator bool() const {return Tracked::has_tracker();}
 
 private:

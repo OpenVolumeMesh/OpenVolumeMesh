@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -34,49 +35,49 @@
 
 
 
+#include <string>
+#include <memory>
 
-#include <OpenVolumeMesh/Core/Serializers.hh>
+#include <OpenVolumeMesh/Core/Handles.hh>
+#include <OpenVolumeMesh/System/Deprecation.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyStorageT.hh>
+#include <OpenVolumeMesh/Core/EntityUtils.hh>
+#include <OpenVolumeMesh/Core/HandleIndexing.hh>
 
-namespace OpenVolumeMesh
+namespace OpenVolumeMesh {
+
+class ResourceManager;
+
+/**
+ * \class PropertyPtr
+ *
+ * Provides handle-type-safe user access to property contents.
+ */
+
+template <typename T, typename EntityTag>
+class PropertyPtr : public HandleIndexing<EntityTag, PropertyStoragePtr<T>>
 {
+    static_assert(is_entity<EntityTag>::value);
+    using PropertyStoragePtr<T>::storage;
+public:
+    using reference = typename PropertyStoragePtr<T>::reference;
+    using const_reference = typename PropertyStoragePtr<T>::const_reference;
 
-std::ostream& serialize(std::ostream& _ostr, const std::string& _rhs)
-{
-    _ostr << _rhs.size() << ":";
-    _ostr << _rhs;
+    // defined in ResourceManagerT_impl to avoid circular references
+    PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
 
-    return _ostr;
-}
+    friend class ResourceManager;
 
-std::istream& deserialize(std::istream& _istr, std::string& _rhs)
-{
-    size_t len;
-    char delimiter;
-    _istr >> len;  //deserialize size of string
-    _istr >> delimiter;
-    if (_istr && len) {
-        std::vector<char> tmp(len);
-        _istr.read(&tmp[0] , len); //deserialize characters of string
-        _rhs.assign(&tmp[0], len);
-    }
+protected:
+    using HandleIndexing<EntityTag, PropertyStoragePtr<T>>::HandleIndexing;
+};
 
-    return _istr;
-}
+template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
+template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;
+template<typename T> using HalfEdgePropertyT = PropertyPtr<T, Entity::HalfEdge>;
+template<typename T> using FacePropertyT     = PropertyPtr<T, Entity::Face>;
+template<typename T> using HalfFacePropertyT = PropertyPtr<T, Entity::HalfFace>;
+template<typename T> using CellPropertyT     = PropertyPtr<T, Entity::Cell>;
+template<typename T> using MeshPropertyT     = PropertyPtr<T, Entity::Mesh>;
 
-
-std::istream& operator>>(std::istream& _istr, std::vector< bool >& _rhs)
-{
-    size_t size;
-    _istr >> size;
-    _rhs.resize(size);
-    for (size_t i=0; i<size; i++)
-    {
-        bool b;
-        _istr >> b;
-        _rhs[i] = b;
-    }
-
-    return _istr;
-}
-
-}
+} // Namespace OpenVolumeMesh

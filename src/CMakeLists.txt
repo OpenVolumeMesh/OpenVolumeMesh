@@ -4,17 +4,16 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Attribs/InterfaceAttrib.cc
     OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.cc
     OpenVolumeMesh/Attribs/StatusAttrib.cc
-    OpenVolumeMesh/Geometry/Vector.cc
     OpenVolumeMesh/FileManager/FileManager.cc
-    OpenVolumeMesh/Core/PropertyDefines.cc
-    OpenVolumeMesh/Core/OpenVolumeMeshHandle.cc
+    OpenVolumeMesh/FileManager/TypeNames.cc
+    OpenVolumeMesh/FileManager/Serializers.cc
+    OpenVolumeMesh/Core/Handles.cc
     OpenVolumeMesh/Core/ResourceManager.cc
     OpenVolumeMesh/Core/BaseEntities.cc
     OpenVolumeMesh/Core/TopologyKernel.cc
-    OpenVolumeMesh/Core/Serializers.cc
     OpenVolumeMesh/Core/Iterators.cc
-    OpenVolumeMesh/Core/TypeName.cc
-    OpenVolumeMesh/Core/PropertyStorageBase.cc
+    OpenVolumeMesh/Core/detail/internal_type_name.cc
+    OpenVolumeMesh/Core/Properties/PropertyStorageBase.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/HexahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.cc

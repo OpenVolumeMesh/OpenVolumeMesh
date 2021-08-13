@@ -1,7 +1,9 @@
 #include <string>
 #include <typeinfo>
 
-std::string get_type_name(std::type_info const &ti)
+namespace OpenVolumeMesh::detail {
+
+std::string internal_type_name(std::type_info const &ti)
 {
 #ifdef _MSC_VER
     // MSVC's type_name only returns a friendly name with .name(),
@@ -14,3 +16,5 @@ std::string get_type_name(std::type_info const &ti)
 #endif
 }
 
+
+} //namespace OpenVolumeMesh::detail

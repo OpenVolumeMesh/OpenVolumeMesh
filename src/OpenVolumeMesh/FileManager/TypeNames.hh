@@ -34,85 +34,64 @@
 \*===========================================================================*/
 
 
-#include <cassert>
+#include <string>
+#include <map>
+#include <vector>
+#include <stdexcept>
 
+#include <OpenVolumeMesh/Geometry/Vector11T.hh>
 #include <OpenVolumeMesh/Core/Handles.hh>
-#include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
-#include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/Entities.hh>
 
 namespace OpenVolumeMesh {
 
-template <class GeomKernelT>
-class NormalAttrib {
-public:
+template<typename T>
+const std::string typeName() {
+    throw std::runtime_error("Serialization is not supported for this data type!");
+}
 
-    explicit NormalAttrib(GeomKernelT& _kernel);
-    virtual ~NormalAttrib();
 
-    /** \brief A simple heuristic to estimate the vertex normals
-     *
-     * This function takes the vertices' surrounding outside
-     * face normals into account and computes an average
-     * out of it.
-     */
-    void update_vertex_normals();
+template <> OVM_EXPORT const std::string typeName<int>();
+template <> OVM_EXPORT const std::string typeName<unsigned int>();
+template <> OVM_EXPORT const std::string typeName<short>();
+template <> OVM_EXPORT const std::string typeName<long>();
+template <> OVM_EXPORT const std::string typeName<unsigned long>();
+template <> OVM_EXPORT const std::string typeName<char>();
+template <> OVM_EXPORT const std::string typeName<unsigned char>();
+template <> OVM_EXPORT const std::string typeName<bool>();
+template <> OVM_EXPORT const std::string typeName<float>();
+template <> OVM_EXPORT const std::string typeName<double>();
+template <> OVM_EXPORT const std::string typeName<std::string>();
+template <> OVM_EXPORT const std::string typeName<std::map<HalfEdgeHandle, int> >();
+template <> OVM_EXPORT const std::string typeName<std::vector<double> >();
+template <> OVM_EXPORT const std::string typeName<std::vector<VertexHandle> >();
+template <> OVM_EXPORT const std::string typeName<std::vector<HalfFaceHandle> >();
+template <> OVM_EXPORT const std::string typeName<std::vector<std::vector<HalfFaceHandle> > >();
 
-    /** \brief Compute face normals
-     *
-     * This is accomplished by taking two adjacent half-edges
-     * that are incident to the faces and compute their
-     * cross product. Note that this method looses accuracy
-     * in case the faces in question is not planar.
-     */
-    void update_face_normals();
+template <> OVM_EXPORT const std::string typeName<Vec2f>();
+template <> OVM_EXPORT const std::string typeName<Vec2d>();
+template <> OVM_EXPORT const std::string typeName<Vec2i>();
+template <> OVM_EXPORT const std::string typeName<Vec2ui>();
 
-    const typename GeomKernelT::PointT& operator[](const VertexHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_vertices());
-        return v_normals_[_h.idx()];
-    }
+template <> OVM_EXPORT const std::string typeName<Vec3f>();
+template <> OVM_EXPORT const std::string typeName<Vec3d>();
+template <> OVM_EXPORT const std::string typeName<Vec3i>();
+template <> OVM_EXPORT const std::string typeName<Vec3ui>();
 
-    const typename GeomKernelT::PointT& operator[](const FaceHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_faces());
-        return f_normals_[_h.idx()];
-    }
+template <> OVM_EXPORT const std::string typeName<Vec4f>();
+template <> OVM_EXPORT const std::string typeName<Vec4d>();
+template <> OVM_EXPORT const std::string typeName<Vec4i>();
+template <> OVM_EXPORT const std::string typeName<Vec4ui>();
 
-    const typename GeomKernelT::PointT operator[](const HalfFaceHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_halffaces());
-        double mult = 1.0;
-        if(_h.idx() % 2 == 1) mult = -1.0;
-        return f_normals_[kernel_.face_handle(_h).idx()] * mult;
-    }
+template<typename Entity>
+const std::string entityTypeName();
 
-    typename GeomKernelT::PointT& operator[](const VertexHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_vertices());
-        return v_normals_[_h];
-    }
-
-    typename GeomKernelT::PointT& operator[](const FaceHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_faces());
-        return f_normals_[_h];
-    }
-
-    typename GeomKernelT::PointT operator[](const HalfFaceHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_halffaces());
-        double mult = 1.0;
-        if(_h.idx() % 2 == 1) mult = -1.0;
-        return f_normals_[kernel_.face_handle(_h)] * mult;
-    }
-
-private:
-
-    void compute_vertex_normal(const VertexHandle& _vh);
-
-    GeomKernelT& kernel_;
-
-    VertexPropertyT<typename GeomKernelT::PointT> v_normals_;
-    FacePropertyT<typename GeomKernelT::PointT> f_normals_;
-
-};
+template <> OVM_EXPORT const std::string entityTypeName<Entity::Vertex>();
+template <> OVM_EXPORT const std::string entityTypeName<Entity::HalfEdge>();
+template <> OVM_EXPORT const std::string entityTypeName<Entity::Edge>();
+template <> OVM_EXPORT const std::string entityTypeName<Entity::Face>();
+template <> OVM_EXPORT const std::string entityTypeName<Entity::HalfFace>();
+template <> OVM_EXPORT const std::string entityTypeName<Entity::Cell>();
+template <> OVM_EXPORT const std::string entityTypeName<Entity::Mesh>();
 
 } // Namespace OpenVolumeMesh
-
-
-#include <OpenVolumeMesh/Attribs/NormalAttribT_impl.hh>
-

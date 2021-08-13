@@ -846,23 +846,5 @@ typedef VectorT<double,6> Vec6d;
 
 using namespace Geometry;
 
-template <class T>
-const std::string typeName();
-
-template <> OVM_EXPORT const std::string typeName<Vec2f>();
-template <> OVM_EXPORT const std::string typeName<Vec2d>();
-template <> OVM_EXPORT const std::string typeName<Vec2i>();
-template <> OVM_EXPORT const std::string typeName<Vec2ui>();
-
-template <> OVM_EXPORT const std::string typeName<Vec3f>();
-template <> OVM_EXPORT const std::string typeName<Vec3d>();
-template <> OVM_EXPORT const std::string typeName<Vec3i>();
-template <> OVM_EXPORT const std::string typeName<Vec3ui>();
-
-template <> OVM_EXPORT const std::string typeName<Vec4f>();
-template <> OVM_EXPORT const std::string typeName<Vec4d>();
-template <> OVM_EXPORT const std::string typeName<Vec4i>();
-template <> OVM_EXPORT const std::string typeName<Vec4ui>();
-
 } // namespace OpenVolumeMesh
 

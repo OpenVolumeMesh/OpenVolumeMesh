@@ -1,4 +1,3 @@
-#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -34,53 +33,50 @@
 \*===========================================================================*/
 
 
-#include <string>
-#include <map>
-#include <vector>
-#include <stdexcept>
 
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
-#include <OpenVolumeMesh/Core/Entities.hh>
 
-namespace OpenVolumeMesh {
+#include <OpenVolumeMesh/FileManager/Serializers.hh>
 
-#if 0
-template <class T>
-const std::string typeName();
-#endif
+namespace OpenVolumeMesh
+{
 
-template<typename T>
-const std::string typeName() {
-    throw std::runtime_error("Serialization is not supported for this data type!");
+std::ostream& serialize(std::ostream& _ostr, const std::string& _rhs)
+{
+    _ostr << _rhs.size() << ":";
+    _ostr << _rhs;
+
+    return _ostr;
+}
+
+std::istream& deserialize(std::istream& _istr, std::string& _rhs)
+{
+    size_t len;
+    char delimiter;
+    _istr >> len;  //deserialize size of string
+    _istr >> delimiter;
+    if (_istr && len) {
+        std::vector<char> tmp(len);
+        _istr.read(&tmp[0] , len); //deserialize characters of string
+        _rhs.assign(&tmp[0], len);
+    }
+
+    return _istr;
 }
 
 
-template <> OVM_EXPORT const std::string typeName<int>();
-template <> OVM_EXPORT const std::string typeName<unsigned int>();
-template <> OVM_EXPORT const std::string typeName<short>();
-template <> OVM_EXPORT const std::string typeName<long>();
-template <> OVM_EXPORT const std::string typeName<unsigned long>();
-template <> OVM_EXPORT const std::string typeName<char>();
-template <> OVM_EXPORT const std::string typeName<unsigned char>();
-template <> OVM_EXPORT const std::string typeName<bool>();
-template <> OVM_EXPORT const std::string typeName<float>();
-template <> OVM_EXPORT const std::string typeName<double>();
-template <> OVM_EXPORT const std::string typeName<std::string>();
-template <> OVM_EXPORT const std::string typeName<std::map<HalfEdgeHandle, int> >();
-template <> OVM_EXPORT const std::string typeName<std::vector<double> >();
-template <> OVM_EXPORT const std::string typeName<std::vector<VertexHandle> >();
-template <> OVM_EXPORT const std::string typeName<std::vector<HalfFaceHandle> >();
-template <> OVM_EXPORT const std::string typeName<std::vector<std::vector<HalfFaceHandle> > >();
+std::istream& operator>>(std::istream& _istr, std::vector< bool >& _rhs)
+{
+    size_t size;
+    _istr >> size;
+    _rhs.resize(size);
+    for (size_t i=0; i<size; i++)
+    {
+        bool b;
+        _istr >> b;
+        _rhs[i] = b;
+    }
 
-template<typename Entity>
-const std::string entityTypeName();
+    return _istr;
+}
 
-template <> OVM_EXPORT const std::string entityTypeName<Entity::Vertex>();
-template <> OVM_EXPORT const std::string entityTypeName<Entity::HalfEdge>();
-template <> OVM_EXPORT const std::string entityTypeName<Entity::Edge>();
-template <> OVM_EXPORT const std::string entityTypeName<Entity::Face>();
-template <> OVM_EXPORT const std::string entityTypeName<Entity::HalfFace>();
-template <> OVM_EXPORT const std::string entityTypeName<Entity::Cell>();
-template <> OVM_EXPORT const std::string entityTypeName<Entity::Mesh>();
-
-} // Namespace OpenVolumeMesh
+}

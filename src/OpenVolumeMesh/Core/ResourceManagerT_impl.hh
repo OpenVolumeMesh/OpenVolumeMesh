@@ -34,9 +34,8 @@
 \*===========================================================================*/
 
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
-#include <OpenVolumeMesh/Core/PropertyDefines.hh>
-#include <OpenVolumeMesh/Core/TypeName.hh>
-#include <OpenVolumeMesh/Core/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 
 namespace OpenVolumeMesh {
 
@@ -125,7 +124,7 @@ ResourceManager::internal_find_property(const std::string& _name) const
         return {};
     }
 
-    auto type_name = get_type_name(typeid(T));
+    auto type_name = detail::internal_type_name<T>();
 
     // TODO: maybe we should only look for persistent props!
     //       also make sure persistent props always have a name!

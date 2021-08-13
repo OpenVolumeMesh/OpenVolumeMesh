@@ -3,7 +3,7 @@
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/HexahedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
-#include <OpenVolumeMesh/Core/PropertyDefines.hh>
+#include <OpenVolumeMesh/FileManager/TypeNames.hh>
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 
 #ifdef __clang__

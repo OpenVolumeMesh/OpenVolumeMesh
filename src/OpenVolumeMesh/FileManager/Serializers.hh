@@ -1,3 +1,4 @@
+#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -33,16 +34,46 @@
 \*===========================================================================*/
 
 
-#include <limits>
+#include <iostream>
+#include <map>
+#include <vector>
 
-#include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
-#include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <sstream>
+#include <string>
 
-namespace OpenVolumeMesh {
+#include <iterator>
+#include <OpenVolumeMesh/Config/Export.hh>
 
-void PropertyStorageBase::attach_to(const ResourceManager *resman)
+namespace OpenVolumeMesh
 {
-    set_tracker(&resman->storage_tracker(entity_type()));
+
+template <typename ValueT>
+std::ostream& serialize(std::ostream& os, const ValueT& rhs);
+
+OVM_EXPORT
+std::ostream& serialize(std::ostream& os, const std::string& rhs);
+
+template <typename ValueT>
+std::istream& deserialize(std::istream& is, ValueT& rhs);
+
+OVM_EXPORT
+std::istream& deserialize(std::istream& is, std::string& rhs);
+
+template <typename KeyT, typename ValueT>
+std::ostream& operator<<(std::ostream& os, const std::map< KeyT, ValueT >& rhs);
+
+template <typename KeyT, typename ValueT>
+std::istream& operator>>(std::istream& is, std::map< KeyT, ValueT >& rhs);
+
+template <typename ValueT>
+std::ostream& operator<<(std::ostream& os, const std::vector< ValueT >& rhs);
+
+template <typename ValueT>
+std::istream& operator>>(std::istream& is, std::vector< ValueT >& rhs);
+
+OVM_EXPORT
+std::istream& operator>>(std::istream& is, std::vector< bool >& rhs);
+
 }
 
-} // Namespace OpenVolumeMesh
+#include <OpenVolumeMesh/FileManager/SerializersT_impl.hh>

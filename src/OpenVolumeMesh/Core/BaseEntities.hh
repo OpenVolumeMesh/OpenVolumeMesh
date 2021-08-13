@@ -37,7 +37,7 @@
 #include <vector>
 
 #include <OpenVolumeMesh/Config/Export.hh>
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/Handles.hh>
 
 namespace OpenVolumeMesh {
 

@@ -1,4 +1,3 @@
-#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -33,47 +32,43 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <istream>
 
-#include <iostream>
-#include <map>
-#include <vector>
+#include <OpenVolumeMesh/Core/Handles.hh>
 
-#include <sstream>
-#include <string>
+namespace OpenVolumeMesh {
 
-#include <iterator>
-#include <OpenVolumeMesh/Config/Export.hh>
+std::ostream& operator<<(std::ostream& _ostr, VH _h)
+{ return _ostr << _h.idx(); }
+std::ostream& operator<<(std::ostream& _ostr, EH _h)
+{ return _ostr << _h.idx(); }
+std::ostream& operator<<(std::ostream& _ostr, HEH _h)
+{ return _ostr << _h.idx(); }
+std::ostream& operator<<(std::ostream& _ostr, FH _h)
+{ return _ostr << _h.idx(); }
+std::ostream& operator<<(std::ostream& _ostr, HFH _h)
+{ return _ostr << _h.idx(); }
+std::ostream& operator<<(std::ostream& _ostr, CH _h)
+{ return _ostr << _h.idx(); }
+std::ostream& operator<<(std::ostream& _ostr, MH _h)
+{ return _ostr << _h.idx(); }
 
-namespace OpenVolumeMesh
-{
+std::istream& operator>>(std::istream& _istr, VH &_h)
+{ return _istr >> _h.idx_mutable(); }
+std::istream& operator>>(std::istream& _istr, EH &_h)
+{ return _istr >> _h.idx_mutable(); }
+std::istream& operator>>(std::istream& _istr, HEH &_h)
+{ return _istr >> _h.idx_mutable(); }
+std::istream& operator>>(std::istream& _istr, FH &_h)
+{ return _istr >> _h.idx_mutable(); }
+std::istream& operator>>(std::istream& _istr, HFH &_h)
+{ return _istr >> _h.idx_mutable(); }
+std::istream& operator>>(std::istream& _istr, CH &_h)
+{ return _istr >> _h.idx_mutable(); }
+std::istream& operator>>(std::istream& _istr, MH &_h)
+{ return _istr >> _h.idx_mutable(); }
 
-template <typename ValueT>
-std::ostream& serialize(std::ostream& os, const ValueT& rhs);
 
-OVM_EXPORT
-std::ostream& serialize(std::ostream& os, const std::string& rhs);
 
-template <typename ValueT>
-std::istream& deserialize(std::istream& is, ValueT& rhs);
 
-OVM_EXPORT
-std::istream& deserialize(std::istream& is, std::string& rhs);
-
-template <typename KeyT, typename ValueT>
-std::ostream& operator<<(std::ostream& os, const std::map< KeyT, ValueT >& rhs);
-
-template <typename KeyT, typename ValueT>
-std::istream& operator>>(std::istream& is, std::map< KeyT, ValueT >& rhs);
-
-template <typename ValueT>
-std::ostream& operator<<(std::ostream& os, const std::vector< ValueT >& rhs);
-
-template <typename ValueT>
-std::istream& operator>>(std::istream& is, std::vector< ValueT >& rhs);
-
-OVM_EXPORT
-std::istream& operator>>(std::istream& is, std::vector< bool >& rhs);
-
-}
-
-#include <OpenVolumeMesh/Core/SerializersT_impl.hh>
+} // Namespace OpenVolumeMesh

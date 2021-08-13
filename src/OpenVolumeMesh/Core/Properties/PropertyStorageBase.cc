@@ -1,4 +1,3 @@
-#pragma once
 /*===========================================================================*\
  *                                                                           *
  *                            OpenVolumeMesh                                 *
@@ -34,50 +33,16 @@
 \*===========================================================================*/
 
 
+#include <limits>
 
-#include <string>
-#include <memory>
-
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
-#include <OpenVolumeMesh/System/Deprecation.hh>
-#include <OpenVolumeMesh/Core/PropertyStorageT.hh>
-#include <OpenVolumeMesh/Core/EntityUtils.hh>
-#include <OpenVolumeMesh/Core/HandleIndexing.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyStorageBase.hh>
+#include <OpenVolumeMesh/Core/ResourceManager.hh>
 
 namespace OpenVolumeMesh {
 
-class ResourceManager;
-
-/**
- * \class PropertyPtr
- *
- * Provides handle-type-safe user access to property contents.
- */
-
-template <typename T, typename EntityTag>
-class PropertyPtr : public HandleIndexing<EntityTag, PropertyStoragePtr<T>>
+void PropertyStorageBase::attach_to(const ResourceManager *resman)
 {
-    static_assert(is_entity<EntityTag>::value);
-    using PropertyStoragePtr<T>::storage;
-public:
-    using reference = typename PropertyStoragePtr<T>::reference;
-    using const_reference = typename PropertyStoragePtr<T>::const_reference;
-
-    // defined in ResourceManagerT_impl to avoid circular references
-    PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
-
-    friend class ResourceManager;
-
-protected:
-    using HandleIndexing<EntityTag, PropertyStoragePtr<T>>::HandleIndexing;
-};
-
-template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
-template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;
-template<typename T> using HalfEdgePropertyT = PropertyPtr<T, Entity::HalfEdge>;
-template<typename T> using FacePropertyT     = PropertyPtr<T, Entity::Face>;
-template<typename T> using HalfFacePropertyT = PropertyPtr<T, Entity::HalfFace>;
-template<typename T> using CellPropertyT     = PropertyPtr<T, Entity::Cell>;
-template<typename T> using MeshPropertyT     = PropertyPtr<T, Entity::Mesh>;
+    set_tracker(&resman->storage_tracker(entity_type()));
+}
 
 } // Namespace OpenVolumeMesh

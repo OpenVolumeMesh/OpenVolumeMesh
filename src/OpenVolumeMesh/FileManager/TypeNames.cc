@@ -33,7 +33,8 @@
 \*===========================================================================*/
 
 
-#include <OpenVolumeMesh/Core/PropertyDefines.hh>
+#include <string>
+#include <OpenVolumeMesh/FileManager/TypeNames.hh>
 
 namespace OpenVolumeMesh {
 
@@ -62,19 +63,22 @@ template <> const std::string entityTypeName<Entity::HalfFace>(){ return "HFProp
 template <> const std::string entityTypeName<Entity::Cell>()    { return "CProp";  }
 template <> const std::string entityTypeName<Entity::Mesh>()    { return "MProp";  }
 
-#if 0
-std::string entityTypeName(EntityType _type) {
-    switch(_type) {
-    case EntityType::Vertex:   return entityTypeName<Entity::Vertex>();
-    case EntityType::Edge:     return entityTypeName<Entity::Edge>();
-    case EntityType::HalfEdge: return entityTypeName<Entity::HalfEdge>();
-    case EntityType::Face:     return entityTypeName<Entity::Face>();
-    case EntityType::HalfFace: return entityTypeName<Entity::HalfFace>();
-    case EntityType::Cell:     return entityTypeName<Entity::Cell>();
-    case EntityType::Mesh:     return entityTypeName<Entity::Mesh>();
-    }
-    return "<invalid>";
-}
-#endif
+template <> const std::string typeName<Vec2f>() { return "vec2f"; }
+template <> const std::string typeName<Vec2d>() { return "vec2d"; }
+template <> const std::string typeName<Vec2i>() { return "vec2i"; }
+template <> const std::string typeName<Vec2ui>() { return "vec2ui"; }
+
+template <> const std::string typeName<Vec3f>() { return "vec3f"; }
+template <> const std::string typeName<Vec3d>() { return "vec3d"; }
+template <> const std::string typeName<Vec3i>() { return "vec3i"; }
+template <> const std::string typeName<Vec3ui>() { return "vec3ui"; }
+
+template <> const std::string typeName<Vec4f>() { return "vec4f"; }
+template <> const std::string typeName<Vec4d>() { return "vec4d"; }
+template <> const std::string typeName<Vec4i>() { return "vec4i"; }
+template <> const std::string typeName<Vec4ui>() { return "vec4ui"; }
+
+
+
 
 } // Namespace OpenVolumeMesh

@@ -41,7 +41,7 @@
 
 #include <OpenVolumeMesh/Core/HandleIndexing.hh>
 #include <OpenVolumeMesh/Core/BaseEntities.hh>
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 #include <OpenVolumeMesh/Core/Iterators.hh>
 #include <OpenVolumeMesh/Config/Export.hh>

@@ -43,99 +43,20 @@
 #include <vector>
 #include <memory>
 
-#include <OpenVolumeMesh/Core/PropertyStorageBase.hh>
-#include <OpenVolumeMesh/Core/PropertyDefines.hh>
-//#include <OpenVolumeMesh/Core/detail/Tracking.hh>
+#include <OpenVolumeMesh/FileManager/TypeNames.hh>
+#include <OpenVolumeMesh/FileManager/Serializers.hh>
 
-#include <OpenVolumeMesh/Core/Serializers.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyStorageBase.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyStoragePtr.hh>
+
+#include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 
 namespace OpenVolumeMesh {
 
-
-template <class T>
-class PropertyStorageT;
-
-template <typename T>
-/// convenience access to properties through a shared_ptr
-class PropertyStoragePtr
-                         //, public detail::Tracked<PropertyStoragePtr<T>>
-{
-public:
-    using PropStorageT = PropertyStorageT<T>;
-    typedef typename PropStorageT::value_type                  value_type;
-    typedef typename PropStorageT::vector_type::const_iterator const_iterator;
-    typedef typename PropStorageT::vector_type::iterator       iterator;
-    typedef typename PropStorageT::reference                   reference;
-    typedef typename PropStorageT::const_reference             const_reference;
-
-
-    virtual ~PropertyStoragePtr();
-
-    const_iterator begin() const { return storage()->begin(); }
-    const_iterator end() const   { return storage()->end(); }
-    iterator begin() { return storage()->begin(); }
-    iterator end()   { return storage()->end(); }
-    size_t size() const { return storage()->size(); }
-
-    [[deprecated]]
-        // TODO: check if we have a  tracker
-    operator bool() const {return true;}
-
-
-    /// No range check performed!
-    reference operator[](size_t idx) { return (*storage())[idx];};
-    /// No range check performed!
-    const_reference operator[](size_t idx) const { return (*storage())[idx];};
-    reference at(size_t idx) { return storage()->at(idx);};
-    const_reference at(size_t idx) const { return storage()->at(idx);};
-
-    void serialize(std::ostream& _ostr) const { storage()->serialize(_ostr); }
-    void deserialize(std::istream& _istr) { storage()->deserialize(_istr); }
-
-    bool persistent() const { return storage()->persistent(); }
-    bool anonymous() const { return storage()->anonymous(); }
-    size_t n_elements() const { return storage()->n_elements(); }
-
-    std::string typeNameWrapper() const {return storage()->typeNameWrapper(); }
-    EntityType entity_type() const {return storage()->entity_type();}
-
-    const std::string& name() const & {
-        // the string we return a reference to lives long enough, no warnings please:
-        // cppcheck-suppress returnTempReference
-        return storage()->name();
-    }
-
-    /// get default value.
-    T const &def() const {return storage()->def();}
-
-    /// set all values to `val`.
-    void fill(T const&val) { storage()->fill(val); }
-
-
-
-protected:
-    PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> &&_ptr = nullptr);
-
-    std::shared_ptr<PropertyStorageT<T>> &storage();
-    std::shared_ptr<PropertyStorageT<T>> const &storage() const;
-
-    friend PropertyStorageT<T>;
-    void set_storage(std::shared_ptr<PropertyStorageT<T>> &&_ptr);
-
-
-private:
-    std::shared_ptr<PropertyStorageT<T>> storage_;
-};
-template <class T, typename EntityTag>
-class PropertyPtr;
-
-//== CLASS DEFINITION =========================================================
-
 /** \class PropertyStorageT
  *
- *  \brief Default property class for any type T.
+ *  \brief Data storage for properties of type T.
  *
- *  The default property class for any type T.
  */
 
 template<class T>
@@ -159,45 +80,43 @@ public:
             const std::string& _name,
             EntityType _entity_type,
             const T &_def = T())
-        : PropertyStorageBase(tracker, _name, get_type_name<T>(), _entity_type),
+        : PropertyStorageBase(tracker, _name, detail::internal_type_name<T>(), _entity_type),
           def_(_def)
     {}
 
 public:
-    void reserve(size_t _n) override{
+    void reserve(size_t _n) final {
 		data_.reserve(_n);
 	}
-	void resize(size_t _n) override {
+    void resize(size_t _n) final  {
         data_.resize(_n, def_);
 	}
-	size_t size() const override {
+    size_t size() const final  {
 		return data_.size();
 	}
-	void clear() override {
+    void clear() final  {
 		data_.clear();
 	}
-	void push_back() override {
+    void push_back() final  {
 		data_.push_back(def_);
 	}
-	void swap(size_t _i0, size_t _i1) override {
+    void swap(size_t _i0, size_t _i1) final  {
         std::swap(data_[_i0], data_[_i1]);
     }
-    void copy(size_t _src_idx, size_t _dst_idx) override{
+    void copy(size_t _src_idx, size_t _dst_idx) final{
 		data_[_dst_idx] = data_[_src_idx];
 	}
-	void delete_element(size_t _idx) override {
+    void delete_element(size_t _idx) final {
         assert(_idx < data_.size());
         data_.erase(data_.begin() + static_cast<long>(_idx));
 	}
 
 public:
 
-	size_t n_elements() const override {
-		return data_.size();
-	}
+    std::string typeNameWrapper() const final {return OpenVolumeMesh::typeName<T>();}
 
-	// Function to serialize a property
-    void serialize(std::ostream& _ostr) const override {
+    // Function to serialize a property
+    void serialize(std::ostream& _ostr) const final {
         for(typename vector_type::const_iterator it = data_.begin();
                 it != data_.end(); ++it) {
             OpenVolumeMesh::serialize(_ostr, *it) << std::endl;
@@ -205,8 +124,8 @@ public:
     }
 
     // Function to deserialize a property
-    void deserialize(std::istream& _istr) override {
-        for(unsigned int i = 0; i < n_elements(); ++i) {
+    void deserialize(std::istream& _istr) final {
+        for(unsigned int i = 0; i < size(); ++i) {
             OpenVolumeMesh::deserialize(_istr, data_[i]);
         }
     }
@@ -220,7 +139,7 @@ public:
 		if (data_.empty())
 			return 0;
 
-		return &data_[0];
+        return data_.data();
 	}
 
 	/// Get reference to property vector (be careful, improper usage, e.g. resizing, may crash)
@@ -231,20 +150,20 @@ public:
 
 	/// Access the i'th element. No range check is performed!
     reference operator[](size_t _idx) {
-    assert(_idx < data_.size());
+        assert(_idx < data_.size());
 		return data_[_idx];
 	}
 
 	/// Const access to the i'th element. No range check is performed!
     const_reference operator[](size_t _idx) const {
-    assert(_idx < data_.size());
+        assert(_idx < data_.size());
 		return data_[_idx];
 	}
 
     const_reference at(size_t _idx) const { return data_.at(_idx); }
     reference       at(size_t _idx)       { return data_.at(_idx); }
 
-    std::shared_ptr<PropertyStorageBase> clone() const override {
+    std::shared_ptr<PropertyStorageBase> clone() const final {
         auto res = std::make_shared<PropertyStorageT<T>>(*this);
         res->set_tracker(nullptr);
         return res;
@@ -258,7 +177,6 @@ public:
 
     typename vector_type::iterator end() { return data_.end(); }
 
-    std::string typeNameWrapper() const override {return OpenVolumeMesh::typeName<T>();}
 
     T const& def() const {return def_;}
 
@@ -267,7 +185,7 @@ public:
     }
 
 
-    void assign_values_from(const PropertyStorageBase *_other) override
+    void assign_values_from(const PropertyStorageBase *_other) final
     {
         const auto *other = _other->cast_to_StorageT<T>();
         data_ = other->data_;
@@ -275,18 +193,18 @@ public:
 
     }
 
-    void move_values_from(PropertyStorageBase *_other) override
+    void move_values_from(PropertyStorageBase *_other) final
     {
         const auto *other = _other->cast_to_StorageT<T>();
         data_ = std::move(other->data_);
         def_ = std::move(other->def_);
-
     }
 
 private:
 	vector_type data_;
     T def_;
 };
+
 
 
 //-----------------------------------------------------------------------------
@@ -309,34 +227,11 @@ inline void PropertyStorageT<bool>::swap(size_t _i0, size_t _i1)
 template<>
 inline void PropertyStorageT<bool>::deserialize(std::istream& _istr)
 {
-    for(unsigned int i = 0; i < n_elements(); ++i) {
+    for(unsigned int i = 0; i < size(); ++i) {
         value_type val;
         OpenVolumeMesh::deserialize(_istr, val);
         data_[i] = val;
     }
 }
-template<typename T>
-PropertyStoragePtr<T>::PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T> > &&_ptr)
-    :
-      //detail::Tracked<PropertyStoragePtr<T>>(&_ptr->pointer_tracker) ,
-      storage_(std::move(_ptr))
-{}
-
-template<typename T>
-void PropertyStoragePtr<T>::set_storage(std::shared_ptr<PropertyStorageT<T> > &&_ptr)
-{
-    storage_ = std::move(_ptr);
-}
-
-template<typename T>
-PropertyStoragePtr<T>::~PropertyStoragePtr() = default;
-
-template<typename T>
-std::shared_ptr<PropertyStorageT<T> > &PropertyStoragePtr<T>::storage() {return storage_;}
-
-template<typename T>
-const std::shared_ptr<PropertyStorageT<T> > &PropertyStoragePtr<T>::storage() const {return storage_;}
-
-
 } // Namespace OpenVolumeMesh
 
