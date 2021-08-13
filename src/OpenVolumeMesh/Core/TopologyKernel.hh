@@ -1142,19 +1142,16 @@ public:
 
 private:
 
-    // List of edges (pair of vertex handles)
-    HandleIndexing<Entity::Edge, std::vector<Edge>> edges_;
-    // List of faces (vector of halfedge handles)
-    HandleIndexing<Entity::Face, std::vector<Face>> faces_;
-    // List of cells (vector of halfcell handles)
-    HandleIndexing<Entity::Cell, std::vector<Cell>> cells_;
+    // top-down incidences:
+    EdgeVector<Edge> edges_;
+    FaceVector<Face> faces_;
+    CellVector<Cell> cells_;
 
     // deferred deletion:
-    HandleIndexing<Entity::Vertex, std::vector<bool>> vertex_deleted_;
-    HandleIndexing<Entity::Edge,   std::vector<bool>> edge_deleted_;
-    HandleIndexing<Entity::Face,   std::vector<bool>> face_deleted_;
-    HandleIndexing<Entity::Cell,   std::vector<bool>> cell_deleted_;
-
+    VertexVector<bool> vertex_deleted_;
+    EdgeVector<bool> edge_deleted_;
+    FaceVector<bool> face_deleted_;
+    CellVector<bool> cell_deleted_;
 
     // number of elements deleted, but not yet garbage collected
     size_t n_deleted_vertices_ = 0;

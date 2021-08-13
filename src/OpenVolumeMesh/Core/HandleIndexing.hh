@@ -30,4 +30,11 @@ public:
     const_reference at(const EntityHandleT _h) const { return Parent::at(_h.uidx()); }
 };
 
+template<typename T> using VertexVector   = HandleIndexing<Entity::Vertex,   std::vector<T>>;
+template<typename T> using EdgeVector     = HandleIndexing<Entity::Edge,     std::vector<T>>;
+template<typename T> using HalfEdgeVector = HandleIndexing<Entity::HalfEdge, std::vector<T>>;
+template<typename T> using FaceVector     = HandleIndexing<Entity::Face,     std::vector<T>>;
+template<typename T> using HalfFaceVector = HandleIndexing<Entity::HalfFace, std::vector<T>>;
+template<typename T> using CellVector     = HandleIndexing<Entity::Cell,     std::vector<T>>;
+
 } // namespace OpenVolumeMesh
