@@ -115,6 +115,7 @@ public:
         return this->idx() & 1;
     }
 
+protected:
     constexpr SuperHandle full() const {
         assert(this->is_valid());
         return SuperHandle{this->idx() / 2 };
@@ -134,6 +135,7 @@ class SuperHandleT : public HandleT<Derived>
 public:
     using HandleT<Derived>::HandleT;
 
+protected:
     constexpr SubHandle half(int subidx) const {
         assert(0 <= subidx && subidx <= 1);
         return SubHandle{2 * HandleT<Derived>::idx() + subidx};
@@ -156,12 +158,19 @@ public:
     using detail::SuperHandleT<EH, HEH>::SuperHandleT;
     using EntityTag = Entity::Edge;
 
+    constexpr HEH halfedge_handle(int subidx) const;
+
 };
+
 class OVM_EXPORT HEH : public detail::SubHandleT<HEH, EH> {
 public:
     using detail::SubHandleT<HEH, EH>::SubHandleT;
     using EntityTag = Entity::HalfEdge;
+
+    constexpr HEH opposite_handle() const;
+    constexpr EH edge_handle() const;
 };
+
 
 class HFH;
 class OVM_EXPORT FH  : public detail::SuperHandleT<FH, HFH> {
@@ -169,12 +178,19 @@ public:
     using detail::SuperHandleT<FH, HFH>::SuperHandleT;
     using EntityTag = Entity::Face;
 
+    constexpr HFH halfface_handle(int subidx) const;
+
 };
+
 class OVM_EXPORT HFH : public detail::SubHandleT<HFH, FH> {
 public:
     using detail::SubHandleT<HFH, FH>::SubHandleT;
     using EntityTag = Entity::HalfFace;
+
+    constexpr HFH opposite_handle() const;
+    constexpr FH face_handle() const;
 };
+
 
 class OVM_EXPORT CH  : public detail::HandleT<CH> {
 public:
@@ -195,6 +211,30 @@ using FaceHandle = FH;
 using HalfFaceHandle = HFH;
 using CellHandle = CH;
 using MeshHandle = MH;
+
+constexpr inline HFH FH::halfface_handle(int subidx) const {
+    return half(subidx);
+}
+
+constexpr inline HEH EH::halfedge_handle(int subidx) const {
+    return half(subidx);
+}
+
+constexpr inline HEH HEH::opposite_handle() const {
+    return opp();
+}
+
+constexpr inline EH HEH::edge_handle() const {
+    return full();
+}
+
+constexpr inline HFH HFH::opposite_handle() const {
+    return opp();
+}
+
+constexpr inline FH HFH::face_handle() const {
+    return full();
+}
 
 template<typename EntityTag>
 struct handle_for_tag;

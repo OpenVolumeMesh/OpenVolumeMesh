@@ -718,9 +718,9 @@ public:
 
     virtual bool is_deleted(VertexHandle _h)   const { return vertex_deleted_[_h]; }
     virtual bool is_deleted(EdgeHandle _h)     const { return edge_deleted_[_h]; }
-    virtual bool is_deleted(HalfEdgeHandle _h) const { return edge_deleted_[_h.full()]; }
+    virtual bool is_deleted(HalfEdgeHandle _h) const { return edge_deleted_[_h.edge_handle()]; }
     virtual bool is_deleted(FaceHandle _h)     const { return face_deleted_[_h]; }
-    virtual bool is_deleted(HalfFaceHandle _h) const { return face_deleted_[_h.full()]; }
+    virtual bool is_deleted(HalfFaceHandle _h) const { return face_deleted_[_h.face_handle()]; }
     virtual bool is_deleted(CellHandle _h)     const { return cell_deleted_[_h]; }
 
 private:

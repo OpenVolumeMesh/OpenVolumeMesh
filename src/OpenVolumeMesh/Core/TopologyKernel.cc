@@ -1613,8 +1613,8 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
     // swap vector entries
     std::swap(faces_[_h1], faces_[_h2]);
     std::swap(face_deleted_[_h1], face_deleted_[_h2]);
-    std::swap(incident_cell_per_hf_[_h1.half(0)], incident_cell_per_hf_[_h2.half(0)]);
-    std::swap(incident_cell_per_hf_[_h1.half(1)], incident_cell_per_hf_[_h2.half(1)]);
+    std::swap(incident_cell_per_hf_[_h1.halfface_handle(0)], incident_cell_per_hf_[_h2.halfface_handle(0)]);
+    std::swap(incident_cell_per_hf_[_h1.halfface_handle(1)], incident_cell_per_hf_[_h2.halfface_handle(1)]);
     swap_property_elements(_h1, _h2);
     swap_property_elements(halfface_handle(_h1, 0), halfface_handle(_h2, 0));
     swap_property_elements(halfface_handle(_h1, 1), halfface_handle(_h2, 1));
@@ -1749,8 +1749,8 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
     // swap vector entries
     std::swap(edges_[_h1], edges_[_h2]);
     std::swap(edge_deleted_[_h1], edge_deleted_[_h2]);
-    std::swap(incident_hfs_per_he_[_h1.half(0)], incident_hfs_per_he_[_h2.half(0)]);
-    std::swap(incident_hfs_per_he_[_h1.half(1)], incident_hfs_per_he_[_h2.half(1)]);
+    std::swap(incident_hfs_per_he_[_h1.halfedge_handle(0)], incident_hfs_per_he_[_h2.halfedge_handle(0)]);
+    std::swap(incident_hfs_per_he_[_h1.halfedge_handle(1)], incident_hfs_per_he_[_h2.halfedge_handle(1)]);
     swap_property_elements(_h1, _h2);
     swap_property_elements(halfedge_handle(_h1, 0), halfedge_handle(_h2, 0));
     swap_property_elements(halfedge_handle(_h1, 1), halfedge_handle(_h2, 1));
@@ -1775,7 +1775,7 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
         {
             std::set<EH> processed_edges; // to ensure ids are only swapped once (in the case that the two swapped vertices are connected by an edge)
             for (const auto heh: outgoing_hes_per_vertex_[ids[i]]) {
-                const auto eh = heh.full();
+                const auto eh = heh.edge_handle();
 
                 if (processed_edges.find(eh) == processed_edges.end())
                 {
@@ -1894,9 +1894,9 @@ OpenVolumeMeshEdge TopologyKernel::halfedge(HalfEdgeHandle _halfEdgeHandle) cons
     // In case the handle is even, just return the corresponding edge
     // Otherwise return the opposite halfedge via opposite()
     if(_halfEdgeHandle.subidx() == 0)
-        return edges_[_halfEdgeHandle.full()];
+        return edges_[_halfEdgeHandle.edge_handle()];
     else
-        return opposite_halfedge(edges_[_halfEdgeHandle.full()]);
+        return opposite_halfedge(edges_[_halfEdgeHandle.edge_handle()]);
 }
 
 //========================================================================================
@@ -1909,9 +1909,9 @@ OpenVolumeMeshFace TopologyKernel::halfface(HalfFaceHandle _halfFaceHandle) cons
     // In case the handle is even, just return the corresponding face
     // Otherwise return the opposite halfface via opposite()
     if(_halfFaceHandle.idx() % 2 == 0)
-        return faces_[_halfFaceHandle.full()];
+        return faces_[_halfFaceHandle.face_handle()];
     else
-        return opposite_halfface(faces_[_halfFaceHandle.full()]);
+        return opposite_halfface(faces_[_halfFaceHandle.face_handle()]);
 }
 
 //========================================================================================
@@ -1919,7 +1919,7 @@ OpenVolumeMeshFace TopologyKernel::halfface(HalfFaceHandle _halfFaceHandle) cons
 /// Get opposite halfedge that corresponds to halfedge with handle _halfEdgeHandle
 OpenVolumeMeshEdge TopologyKernel::opposite_halfedge(HalfEdgeHandle _halfEdgeHandle) const
 {
-    return halfedge(_halfEdgeHandle.opp());
+    return halfedge(_halfEdgeHandle.opposite_handle());
 }
 
 //========================================================================================
@@ -1927,7 +1927,7 @@ OpenVolumeMeshEdge TopologyKernel::opposite_halfedge(HalfEdgeHandle _halfEdgeHan
 /// Get opposite halfface that corresponds to halfface with handle _halfFaceHandle
 OpenVolumeMeshFace TopologyKernel::opposite_halfface(HalfFaceHandle _halfFaceHandle) const
 {
-    return halfface(_halfFaceHandle.opp());
+    return halfface(_halfFaceHandle.opposite_handle());
 }
 
 //========================================================================================

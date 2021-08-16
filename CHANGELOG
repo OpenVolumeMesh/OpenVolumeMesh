@@ -9,23 +9,33 @@ Version 3.0 (2021/08/?)
         - `set_persistent()` can switch a property between shared and persistant
     - Property Handles were abolished, they were never fully implemented
     - Removed size_of, element_size etc.
-    - Iteration over a ResourceManager(Mesh)'s persistent properties without exposing internals
+    - Iteration over a `ResourceManager` (Mesh)'s persistent properties without exposing internals
     - Hide some internals from the publicly accessible property types
-    - Add ResourceManager::n_persistent_props<Entity::Vertex/...> and n_props<Entity>
-    - prop->n_elements replaced by prop.size()
+    - Add `ResourceManager::n_persistent_props<Entity::Vertex/...>` and `n_props<Entity>`
+    - `prop->n_elements` replaced by `prop.size()`
 
   - *Handle type changes:
-    - Halfface- and halfedge-handles handles gain .subidx()->{0,1} and .full() member function
-    - Face- and edge-handles handles gain a .half({0,1}) member function
     - No more direct comparison operators with ints without conversion
+    - New methods:
+        - `HalfEdgeHandle`:
+            - `edge_handle()`
+            - `opposite_handle()`
+            - `subidx() -> {0, 1}`
+        - `HalfFaceHandle`:
+            - `face_handle()`
+            - `opposite_handle()`
+            - `subidx() -> {0, 1}`
+        - `EdgeHandle`: `halfedge_handle({0, 1})`
+        - `FaceHandle`: `halfface_handle({0, 1})`
+    - Halfface- and halfedge-handles handles gain .subidx()->{0,1} and .face_handle()/edge_handle() member function
+    - Face- and edge-handles handles gain a .half({0,1}) member function
 
   - Other new features:
-    - HandleIndexing allows enforcing handle-safe indexing into vectors
+    - `HandleIndexing` allows enforcing handle-safe indexing into vectors
 
   - Other API changes:
-    - Han
-    - TopologyKernel:
-        - remove delete_multiple_* and delete_cell_range: they were unsafe to use
+    - `TopologyKernel`:
+        - remove `delete_multiple_*` and `delete_cell_range`: they were unsafe to use and not very useful anymore.
 
 Version 2.2.2 (2021-11-19)
   - CMake: disable automoc/autouic for better integration into projects that use Qt
