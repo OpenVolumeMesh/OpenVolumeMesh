@@ -151,9 +151,12 @@ public:
 
 	/// Get reference to property vector (be careful, improper usage, e.g. resizing, may crash)
 	vector_type& data_vector() {
-
 		return data_;
 	}
+
+    const vector_type& data_vector() const {
+        return data_;
+    }
 
 	/// Access the i'th element. No range check is performed!
     reference operator[](size_t _idx) {

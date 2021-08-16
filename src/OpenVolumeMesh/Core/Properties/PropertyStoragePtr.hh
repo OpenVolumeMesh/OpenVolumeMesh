@@ -46,8 +46,12 @@
 namespace OpenVolumeMesh {
 
 
-template <class T>
+template <typename T>
 class PropertyStorageT;
+namespace IO {
+template <typename T, typename Codec>
+class PropertyDecoderT;
+} // namespace IO
 
 /// convenience access to property member functions through a shared_ptr
 template <typename T>
@@ -107,6 +111,11 @@ public:
     void swap(std::vector<T> &_other) { storage()->swap(_other); }
 
 protected:
+    friend PropertyStorageT<T>;
+
+    template<typename _T, typename Codec>
+    friend class IO::PropertyDecoderT; // for storage() access
+
     PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> _ptr = nullptr)
         : storage_(std::move(_ptr))
     {}
@@ -114,7 +123,6 @@ protected:
     std::shared_ptr<PropertyStorageT<T>> &storage() {return storage_;}
     std::shared_ptr<PropertyStorageT<T>> const &storage() const {return storage_;}
 
-    friend PropertyStorageT<T>;
     void set_storage(std::shared_ptr<PropertyStorageT<T>> _ptr)
     {
         storage_ = std::move(_ptr);

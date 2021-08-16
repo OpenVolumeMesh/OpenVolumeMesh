@@ -14,6 +14,14 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/Iterators.cc
     OpenVolumeMesh/Core/detail/internal_type_name.cc
     OpenVolumeMesh/Core/Properties/PropertyStorageBase.cc
+    OpenVolumeMesh/IO/enums.cc
+    OpenVolumeMesh/IO/PropertySerialization.cc
+    OpenVolumeMesh/IO/detail/BinaryIStream.cc
+    OpenVolumeMesh/IO/detail/Decoder.cc
+    OpenVolumeMesh/IO/detail/Encoder.cc
+    OpenVolumeMesh/IO/detail/ovmb_format.cc
+    OpenVolumeMesh/IO/detail/ovmb_codec.cc
+    OpenVolumeMesh/IO/detail/WriteBuffer.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/HexahedralMeshIterators.cc
     OpenVolumeMesh/Mesh/TetrahedralMeshTopologyKernel.cc
