@@ -60,9 +60,6 @@ class PropertyPtr : public HandleIndexing<EntityTag, PropertyStoragePtr<T>>
     static_assert(is_entity<EntityTag>::value);
     using PropertyStoragePtr<T>::storage;
 public:
-    using reference = typename PropertyStoragePtr<T>::reference;
-    using const_reference = typename PropertyStoragePtr<T>::const_reference;
-
     // defined in ResourceManagerT_impl to avoid circular references
     PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
 
