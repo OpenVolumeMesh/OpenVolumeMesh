@@ -70,13 +70,13 @@ public:
 
     bool is_valid() const { return idx_ != -1; }
 
-    constexpr bool operator<(const Derived& _idx) const { return (this->idx_ < _idx.idx_); }
+    constexpr bool operator<(const HandleT& _idx) const { return (this->idx_ < _idx.idx_); }
 
-    constexpr bool operator>(const Derived& _idx) const { return (this->idx_ > _idx.idx_); }
+    constexpr bool operator>(const HandleT& _idx) const { return (this->idx_ > _idx.idx_); }
 
-    constexpr bool operator==(const Derived& _h) const { return _h.idx_ == this->idx_; }
+    constexpr bool operator==(const HandleT& _h) const { return _h.idx_ == this->idx_; }
 
-    constexpr bool operator!=(const Derived& _h) const { return _h.idx_ != this->idx_; }
+    constexpr bool operator!=(const HandleT& _h) const { return _h.idx_ != this->idx_; }
 
     constexpr const int& idx() const { return idx_; }
     constexpr int& idx_mutable() { return idx_; }
