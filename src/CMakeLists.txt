@@ -20,6 +20,12 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Mesh/HexahedralMeshTopologyKernel.cc
 )
 
+# No Qt in any of our headers:
+file(GLOB_RECURSE HEADER_FILES OpenVolumeMesh/*.hh)
+set_property(SOURCE ${HEADER_FILES} PROPERTY SKIP_AUTOMOC ON)
+set_property(SOURCE ${HEADER_FILES} PROPERTY SKIP_AUTOUIC ON)
+set_property(SOURCE ${HEADER_FILES} PROPERTY SKIP_AUTOGEN ON)
+
 set(OVM_ENABLE_DEPRECATED_APIS OFF CACHE BOOL "Support deprecated OpenVolumeMesh APIs")
 
 configure_file (
