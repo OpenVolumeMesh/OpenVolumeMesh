@@ -1133,7 +1133,7 @@ public:
 
     /// test is_valid and perform index range check
     template<typename Handle>
-    constexpr bool is_valid(Handle _h) const {
+    bool is_valid(Handle _h) const {
         static_assert(is_handle_v<Handle>);
         return _h.is_valid() && _h.uidx() < n<typename Handle::EntityTag>();
     }
