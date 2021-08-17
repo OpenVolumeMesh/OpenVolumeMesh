@@ -36,9 +36,9 @@
 
 #include <cassert>
 
-#include <OpenVolumeMesh/Core/OpenVolumeMeshHandle.hh>
+#include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
-#include <OpenVolumeMesh/Core/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
