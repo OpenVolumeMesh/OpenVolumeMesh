@@ -1,0 +1,23 @@
+# https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Set default charset
+[*.{cc,hh,md,txt}]
+charset = utf-8
+
+[CMakeLists.txt]
+indent_style = space
+indent_size = 4
+
+[*.{cc,hh}]
+indent_style = space
+indent_size = 4
+
+
