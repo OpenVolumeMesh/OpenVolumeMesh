@@ -78,7 +78,7 @@ set_target_properties (OpenVolumeMesh PROPERTIES
     AUTOMOC OFF
     AUTOUIC OFF
     # TODO: turn this on once we have OVM_EXPORT macros in all required places:
-     #CXX_VISIBILITY_PRESET hidden
+    CXX_VISIBILITY_PRESET hidden
     )
 
 

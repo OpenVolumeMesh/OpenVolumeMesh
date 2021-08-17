@@ -1,5 +1,4 @@
-#include <string>
-#include <typeinfo>
+#include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 
 namespace OpenVolumeMesh::detail {
 

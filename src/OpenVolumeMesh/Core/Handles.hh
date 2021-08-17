@@ -266,21 +266,21 @@ template<> struct is_handle<MH>  : public std::true_type {};
 template<typename Handle>
 inline const bool is_handle_v = is_handle<Handle>::value;
 
-std::ostream& operator<<(std::ostream& _ostr, VH _h);
-std::ostream& operator<<(std::ostream& _ostr, EH _h);
-std::ostream& operator<<(std::ostream& _ostr, HEH _h);
-std::ostream& operator<<(std::ostream& _ostr, FH _h);
-std::ostream& operator<<(std::ostream& _ostr, HFH _h);
-std::ostream& operator<<(std::ostream& _ostr, CH _h);
-std::ostream& operator<<(std::ostream& _ostr, MH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, VH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, EH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, HEH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, FH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, HFH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, CH _h);
+OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, MH _h);
 
-std::istream& operator>>(std::istream& _istr, VH &_h);
-std::istream& operator>>(std::istream& _istr, EH &_h);
-std::istream& operator>>(std::istream& _istr, HEH &_h);
-std::istream& operator>>(std::istream& _istr, FH &_h);
-std::istream& operator>>(std::istream& _istr, HFH &_h);
-std::istream& operator>>(std::istream& _istr, CH &_h);
-std::istream& operator>>(std::istream& _istr, MH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, VH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, EH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, HEH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, FH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, HFH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, CH &_h);
+OVM_EXPORT std::istream& operator>>(std::istream& _istr, MH &_h);
 
 // Helper class that is used to decrease all handles
 // exceeding a certain threshold
