@@ -83,7 +83,7 @@ private:
     std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;
 
     template<typename T, typename EntityTag>
-    PropertyPtr<T, EntityTag> internal_create_property(const std::string _name, const T _def, bool shared) const;
+    PropertyPtr<T, EntityTag> internal_create_property(std::string _name, const T _def, bool shared) const;
 
 
     template<bool Move, typename EntityTag>

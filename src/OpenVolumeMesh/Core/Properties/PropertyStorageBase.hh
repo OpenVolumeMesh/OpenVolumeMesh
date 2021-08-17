@@ -63,8 +63,8 @@ class OVM_EXPORT PropertyStorageBase
 public:
     PropertyStorageBase(
             detail::Tracker<PropertyStorageBase> *tracker,
-            const std::string _name,
-            const std::string _internal_type_name,
+            std::string _name,
+            std::string _internal_type_name,
             EntityType _entity_type,
             bool _shared)
         : detail::Tracked<PropertyStorageBase>(tracker)
@@ -114,7 +114,7 @@ public:
 	}
     bool anonymous() const {return name_.empty();}
 
-    void set_name(const std::string _name) {
+    void set_name(std::string _name) {
         name_ = std::move(_name);
     }
 

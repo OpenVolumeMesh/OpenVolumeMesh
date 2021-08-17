@@ -94,7 +94,7 @@ public:
         // cppcheck-suppress returnTempReference
         return storage()->name();
     }
-    void set_name(const std::string _name) {
+    void set_name(std::string _name) {
         storage()->set_name(std::move(_name));
     }
 

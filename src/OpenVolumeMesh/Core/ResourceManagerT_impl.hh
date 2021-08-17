@@ -142,7 +142,7 @@ ResourceManager::internal_find_property(const std::string& _name) const
 
 template<class T, class EntityTag>
 PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(
-        const std::string _name, const T _def, bool _shared) const
+        std::string _name, const T _def, bool _shared) const
 {
     auto storage = std::make_shared<PropertyStorageT<T>>(
                                      &storage_tracker<EntityTag>(),
