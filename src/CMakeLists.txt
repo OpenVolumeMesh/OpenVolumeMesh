@@ -51,7 +51,6 @@ if(IN_VCI_BUILD)
     endif()
 else(IN_VCI_BUILD)
     if (WIN32)
-
         add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
     else()
         option(BUILD_SHARED_LIBS "Build shared library (*.dll, *.so, *.dylib) instead of static library (*.a, *.lib)" ON)
