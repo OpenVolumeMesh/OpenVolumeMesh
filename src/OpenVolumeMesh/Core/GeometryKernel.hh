@@ -46,8 +46,9 @@ template <class VecT, class TopologyKernelT = TopologyKernel>
 class GeometryKernel : public TopologyKernelT {
 public:
 
-    typedef VecT PointT;
-    typedef TopologyKernelT KernelT;
+    using PointT = VecT; // OVM legacy
+    using Point = VecT;  // OpenMesh compatiblity
+    using KernelT = TopologyKernelT;
 
     /// Constructor
     GeometryKernel() = default;
