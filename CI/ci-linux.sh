@@ -19,14 +19,14 @@ elif [ "$COMPILER" == "clang" ]; then
   BUILDPATH="clang"  
 fi  
 
-if [ "$LANGUAGE" == "C++98" ]; then
-  echo "Building with C++98";
-  BUILDPATH="$BUILDPATH-cpp98"
-elif [ "$LANGUAGE" == "C++11" ]; then
-  echo "Building with C++11";
-  OPTIONS="$OPTIONS -DCMAKE_CXX_FLAGS='-std=c++11' "
-  BUILDPATH="$BUILDPATH-cpp11"  
-fi  
+if [ "$LANGUAGE" == "C++17" ]; then
+  echo "Building with C++17";
+  BUILDPATH="$BUILDPATH-cpp17"  
+elif [ "$LANGUAGE" == "C++20" ]; then
+  echo "Building with C++20";
+  OPTIONS="$OPTIONS -DOVM_CXX_STANDARD=20"
+  BUILDPATH="$BUILDPATH-cpp20"  
+fi
 
 #########################################
 
