@@ -264,7 +264,7 @@ template<> struct is_handle<CH>  : public std::true_type {};
 template<> struct is_handle<MH>  : public std::true_type {};
 
 template<typename Handle>
-inline const bool is_handle_v = is_handle<Handle>::value;
+inline constexpr bool is_handle_v = is_handle<Handle>::value;
 
 OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, VH _h);
 OVM_EXPORT std::ostream& operator<<(std::ostream& _ostr, EH _h);

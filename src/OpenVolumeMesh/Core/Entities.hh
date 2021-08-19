@@ -27,7 +27,7 @@ template<typename T>
 struct is_entity : std::false_type {};
 
 template<typename T>
-const inline bool is_entity_v = is_entity<T>::value;
+inline constexpr bool is_entity_v = is_entity<T>::value;
 
 
 template<> struct OVM_EXPORT is_entity<Entity::Vertex>   : std::true_type {};
