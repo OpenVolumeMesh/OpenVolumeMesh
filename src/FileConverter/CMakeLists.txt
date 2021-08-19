@@ -1,4 +1,4 @@
-find_package(Boost 1.43.0)
+find_package(Boost 1.74.0)
 if(Boost_FOUND)
 
   add_executable(file_converter ovm_converter.cc)
