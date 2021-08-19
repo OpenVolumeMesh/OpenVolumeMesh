@@ -21,37 +21,21 @@ cppcheck:
     paths:
       - cppcheck.log
 
-VS2017-64-bit:
+VS2019-32-bit:
   variables:
-    BUILD_PLATFORM: "VS2017"
-    ARCHITECTURE:   "x64"
-  script: "CI\\Windows.bat"
-  tags:
-    - VS2015
-
-VS2017-32-bit:
-  variables:
-    BUILD_PLATFORM: "VS2017"
+    BUILD_PLATFORM: "VS2019"
     ARCHITECTURE:   "x32"
   script: "CI\\Windows.bat"
   tags:
-    - VS2017
+    - VS2019
 
-VS2015-64-bit:
+VS2019-64-bit:
   variables:
-    BUILD_PLATFORM: "VS2015"
+    BUILD_PLATFORM: "VS2019"
     ARCHITECTURE:   "x64"
   script: "CI\\Windows.bat"
   tags:
-    - VS2015
-
-VS2015-32-bit:
-  variables:
-    BUILD_PLATFORM: "VS2015"
-    ARCHITECTURE:   "x32"
-  script: "CI\\Windows.bat"
-  tags:
-    - VS2015
+    - VS2019
 
 doc:
   script: "CI/ci-doc.sh"
