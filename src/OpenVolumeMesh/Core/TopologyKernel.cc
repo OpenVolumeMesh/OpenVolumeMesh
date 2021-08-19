@@ -39,8 +39,10 @@
 #include <queue>
 
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
+#include <OpenVolumeMesh/Core/detail/swap_bool.hh>
 
 namespace OpenVolumeMesh {
+
 
 // Initialize constants
 const VertexHandle      TopologyKernel::InvalidVertexHandle   = VertexHandle(-1);
@@ -1478,7 +1480,7 @@ void TopologyKernel::swap_cell_indices(CellHandle _h1, CellHandle _h2)
 
     // swap vector entries
     std::swap(cells_[_h1], cells_[_h2]);
-    std::swap(cell_deleted_[_h1], cell_deleted_[_h2]);
+    detail::swap_bool(cell_deleted_[_h1], cell_deleted_[_h2]);
     swap_property_elements(_h1, _h2);
 }
 
@@ -1612,7 +1614,7 @@ void TopologyKernel::swap_face_indices(FaceHandle _h1, FaceHandle _h2)
 
     // swap vector entries
     std::swap(faces_[_h1], faces_[_h2]);
-    std::swap(face_deleted_[_h1], face_deleted_[_h2]);
+    detail::swap_bool(face_deleted_[_h1], face_deleted_[_h2]);
     std::swap(incident_cell_per_hf_[_h1.halfface_handle(0)], incident_cell_per_hf_[_h2.halfface_handle(0)]);
     std::swap(incident_cell_per_hf_[_h1.halfface_handle(1)], incident_cell_per_hf_[_h2.halfface_handle(1)]);
     swap_property_elements(_h1, _h2);
@@ -1748,7 +1750,7 @@ void TopologyKernel::swap_edge_indices(EdgeHandle _h1, EdgeHandle _h2)
 
     // swap vector entries
     std::swap(edges_[_h1], edges_[_h2]);
-    std::swap(edge_deleted_[_h1], edge_deleted_[_h2]);
+    detail::swap_bool(edge_deleted_[_h1], edge_deleted_[_h2]);
     std::swap(incident_hfs_per_he_[_h1.halfedge_handle(0)], incident_hfs_per_he_[_h2.halfedge_handle(0)]);
     std::swap(incident_hfs_per_he_[_h1.halfedge_handle(1)], incident_hfs_per_he_[_h2.halfedge_handle(1)]);
     swap_property_elements(_h1, _h2);
@@ -1815,7 +1817,7 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
     }
 
     // swap vector entries
-    std::swap(vertex_deleted_[_h1], vertex_deleted_[_h2]);
+    detail::swap_bool(vertex_deleted_[_h1], vertex_deleted_[_h2]);
     std::swap(outgoing_hes_per_vertex_[_h1], outgoing_hes_per_vertex_[_h2]);
     swap_property_elements(_h1, _h2);
 }
