@@ -51,9 +51,7 @@ if(IN_VCI_BUILD)
     endif()
 else(IN_VCI_BUILD)
     if (WIN32)
-        # Windows .dll build is not supported yet.
-        # TODO: turn this on once we have OVM_EXPORT macros in all required places,
-        # cf CXX_VISIBILITY_PRESET:
+
         add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
     else()
         option(BUILD_SHARED_LIBS "Build shared library (*.dll, *.so, *.dylib) instead of static library (*.a, *.lib)" ON)
@@ -77,7 +75,6 @@ set_target_properties (OpenVolumeMesh PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     AUTOMOC OFF
     AUTOUIC OFF
-    # TODO: turn this on once we have OVM_EXPORT macros in all required places:
     CXX_VISIBILITY_PRESET hidden
     )
 
