@@ -1048,7 +1048,7 @@ CellIter& CellIter::operator++() {
     return *this;
 }
 
-namespace Internal {
+namespace detail {
 
 ////================================================================================================
 //// VertexIHalfEdgeIterImpl
@@ -1630,7 +1630,7 @@ CellFaceIterImpl& CellFaceIterImpl::operator++() {
     return *this;
 }
 
-}
+} // namespace detail
 
 
 ////================================================================================================

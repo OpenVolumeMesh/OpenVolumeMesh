@@ -48,6 +48,24 @@
 
 namespace OpenVolumeMesh {
 
+// provide begin() and end() for the iterator pairs provided in TopologyKernel,
+// so we can use range-for, e.g. for(const auto &vh: mesh.vertices()) works.
+template<class I>
+typename std::enable_if<is_ovm_iterator<I>::value, I>::type
+begin(const std::pair<I, I>& iterpair)
+{
+    return iterpair.first;
+}
+
+template<class I>
+typename std::enable_if<is_ovm_iterator<I>::value, I>::type
+end(const std::pair<I, I>& iterpair)
+{
+    return iterpair.second;
+}
+
+
+
 class OVM_EXPORT TopologyKernel : public ResourceManager {
 public:
 
@@ -1156,7 +1174,6 @@ private:
     size_t n_deleted_edges_ = 0;
     size_t n_deleted_faces_ = 0;
     size_t n_deleted_cells_ = 0;
-
 };
 
 }
