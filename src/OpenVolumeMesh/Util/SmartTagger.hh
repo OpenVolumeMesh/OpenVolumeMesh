@@ -1,42 +1,57 @@
 #pragma once
 #include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
+#include <type_traits>
 
 namespace OpenVolumeMesh {
 
-template<typename Entity, typename IntT=uint64_t>
+template<typename Entity, typename IntT=uint64_t, typename TagT=IntT>
 class SmartTagger
 {
+static_assert(std::is_unsigned<IntT>::value); // overflow must be defined
+
+public:
   using Handle = HandleT<Entity>;
-  public:
-    SmartTagger(ResourceManager const &_mesh)
+    SmartTagger(ResourceManager const &_mesh, IntT _tag_range = 2)
       : prop_(_mesh.create_private_property<IntT, Entity>("", 0))
-      , generation_(1)
-    {}
+      , tag_range_(_tag_range)
+    {
+      // equality makes the smart tagger pretty useless, but at least it would work
+      assert(_tag_range <= std::numeric_limits<IntT>::max());
+    }
     void reset() {
-      ++generation_;
-      if (generation_ == 0) {
+      if (current_base_ > std::numeric_limits<IntT>::max() - tag_range_ * 2) {
+        current_base_ += tag_range_;
+      } else {
+        current_base_ = 0;
         prop_.fill(0);
-        ++generation_;
       }
     }
-    void tag(Handle h) {
-      prop_[h] = generation_;
+    TagT get(Handle h) const {
+      IntT val = prop_[h] - current_base_;
+      if (val >= tag_range_) {
+        val = 0;
+      }
+      return static_cast<TagT>(val);
     }
 
-    void untag(Handle h) {
-      prop_[h] = 0;
+    TagT operator[](Handle h) const {
+      return get(h);
     }
 
-    bool operator[](Handle h) const {
-      return prop_[h] == generation_;
+    void set(Handle h, TagT tag) {
+      prop_[h] = current_base_ + static_cast<IntT>(tag);
     }
 
-  using T = IntT;
+
   private:
   // TODO: use private property without shared_ptr indirection!
   PropertyPtr<IntT, Entity> prop_;
-  T generation_;
+  IntT current_base_ = 0;
+  IntT tag_range_ = 2; // number of distinct tags
 };
+
+template<typename Entity, typename IntT=uint64_t>
+using SmartTaggerBool = SmartTagger<Entity, IntT, bool>;
 
 } // namespace OpenVolumeMesh
