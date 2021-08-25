@@ -4,6 +4,7 @@ SET(SOURCE_FILES
     unittests_common.cc
     unittests.cc
     unittests_iterators.cc
+    unittests_smart_tagger.cc
     unittests_properties.cc)
 
 if (NOT TARGET OpenVolumeMesh::OpenVolumeMesh)
