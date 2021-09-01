@@ -113,6 +113,7 @@ template<> inline size_t ovmb_size<FileHeader> =
         + sizeof(FileHeader::header_version)
         + sizeof(FileHeader::vertex_dim)
         + ovmb_size<TopoType>
+        + 4 // padding
         + 4 * sizeof(uint64_t);
 
 static constexpr uint32_t fourcc(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
