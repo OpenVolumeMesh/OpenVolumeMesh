@@ -12,6 +12,12 @@
 
 namespace OpenVolumeMesh::IO::detail {
 
+// TODO: move to a public header and allow using changed settings
+struct WriteOptions {
+    /// try to determine if a polyhedral mesh can in fact be stored as tet or hex mesh
+    bool detect_specialized_mesh = true;
+};
+
 template<typename MeshT>
 class BinaryFileWriterImpl
 {
@@ -38,10 +44,17 @@ private:
 
     void write_propdir();
     void write_all_props();
+
+    bool mesh_is_tetrahedral();
+    bool mesh_is_hexahedral();
+
 private:
     std::ostream &ostream_;
     MeshT const &mesh_;
     PropertyCodecs const &prop_codecs_;
+
+    WriteOptions options_;
+
 
     WriteBuffer chunk_buffer_;
     WriteBuffer header_buffer_;

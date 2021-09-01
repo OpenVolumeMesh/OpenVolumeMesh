@@ -62,10 +62,14 @@ WriteResult BinaryFileWriterImpl<MeshT>::write_file()
     }
     TopoType topo_type = TopoType::Polyhedral;
 
-    if (std::is_base_of<TetrahedralMeshTopologyKernel, MeshT>::value) {
+    if (std::is_base_of<TetrahedralMeshTopologyKernel, MeshT>::value
+            || (options_.detect_specialized_mesh && mesh_is_tetrahedral()))
+    {
         topo_type = TopoType::Tetrahedral;
     }
-    if (std::is_base_of<HexahedralMeshTopologyKernel, MeshT>::value) {
+    if (std::is_base_of<HexahedralMeshTopologyKernel, MeshT>::value
+            || (options_.detect_specialized_mesh && mesh_is_hexahedral()))
+    {
         topo_type = TopoType::Hexahedral;
     }
 
@@ -350,6 +354,48 @@ void BinaryFileWriterImpl<MeshT>::write_all_props()
 
         write_chunk(ChunkType::Property);
     }
+}
+
+template<typename MeshT>
+bool
+BinaryFileWriterImpl<MeshT>::
+mesh_is_tetrahedral() {
+    // for now, just check face and cell valences, and require at least one cell.
+    if (mesh_.n_cells() == 0) {
+        return false;
+    }
+    for (const auto fh: mesh_.faces()) {
+        if (mesh_.valence(fh) != 3) {
+            return false;
+        }
+    }
+    for (const auto ch: mesh_.cells()) {
+        if (mesh_.valence(ch) != 4) {
+            return false;
+        }
+    }
+    return true;
+    // TODO: check order of faces in cells
+}
+template<typename MeshT>
+bool
+BinaryFileWriterImpl<MeshT>::
+mesh_is_hexahedral() {
+    if (mesh_.n_cells() == 0) {
+        return false;
+    }
+    for (const auto fh: mesh_.faces()) {
+        if (mesh_.valence(fh) != 4) {
+            return false;
+        }
+    }
+    for (const auto ch: mesh_.cells()) {
+        if (mesh_.valence(ch) != 6) {
+            return false;
+        }
+    }
+    return true;
+    // TODO: check order of faces in cells
 }
 
 } // namespace OpenVolumeMesh::IO::detail
