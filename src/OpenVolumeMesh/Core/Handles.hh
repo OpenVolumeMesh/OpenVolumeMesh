@@ -57,10 +57,12 @@ public:
     constexpr HandleT() = default;
     explicit constexpr HandleT(int _idx) : idx_(_idx) {}
 
-    HandleT(const HandleT& _idx) = default;
-    HandleT(HandleT&& _idx) = default;
-    HandleT& operator=(const HandleT& _idx) = default;
-    HandleT& operator=(HandleT&& _idx) = default;
+    constexpr HandleT(const HandleT& _idx) = default;
+    constexpr HandleT(HandleT&& _idx) = default;
+    HandleT& operator=(const HandleT& _idx) & = default;
+    HandleT& operator=(const HandleT& _idx) && = delete;
+    HandleT& operator=(HandleT&& _idx) & = default;
+    HandleT& operator=(HandleT&& _idx) && = delete;
 
     [[deprecated]]
     HandleT& operator=(int _idx) {
@@ -88,7 +90,7 @@ public:
     void idx(const int& _idx) { idx_ = _idx; }
 
     /// make handle invalid
-    void reset() { idx_ = -1; }
+    void reset() & { idx_ = -1; }
 
     static Derived from_unsigned(size_t _idx)
     {
