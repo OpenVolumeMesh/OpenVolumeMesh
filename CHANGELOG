@@ -36,6 +36,7 @@ Version 3.0 (2021/08/?)
   - Other API changes:
     - `TopologyKernel`:
         - remove `delete_multiple_*` and `delete_cell_range`: they were unsafe to use and not very useful anymore.
+    - Iterators: add `is_valid()` to replace `valid()` for consistency with handle API
 
 Version 2.2.2 (2021-11-19)
   - CMake: disable automoc/autouic for better integration into projects that use Qt
