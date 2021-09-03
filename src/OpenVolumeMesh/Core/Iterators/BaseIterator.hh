@@ -62,7 +62,11 @@ public:
     void valid(bool _valid) {
         valid_ = _valid;
     }
+    // TODO: [[deprecated("Use is_valid() instead")]]
     bool valid() const {
+        return valid_;
+    }
+    bool is_valid() const {
         return valid_;
     }
     void cur_handle(const OH& _h) {
