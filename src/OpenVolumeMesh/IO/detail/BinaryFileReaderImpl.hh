@@ -5,6 +5,7 @@
 #include <OpenVolumeMesh/IO/enums.hh>
 #include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
+#include <OpenVolumeMesh/Config/Export.hh>
 
 #include <vector>
 #include <limits>
@@ -15,7 +16,7 @@
 
 namespace OpenVolumeMesh::IO::detail {
 
-class BinaryFileReaderImpl
+class OVM_EXPORT BinaryFileReaderImpl
 {
 public:
     BinaryFileReaderImpl(std::istream &_s)

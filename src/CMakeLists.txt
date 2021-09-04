@@ -18,6 +18,7 @@ SET(SOURCE_FILES
     OpenVolumeMesh/IO/BinaryFileReader.cc
     OpenVolumeMesh/IO/PropertySerialization.cc
     OpenVolumeMesh/IO/detail/BinaryIStream.cc
+    OpenVolumeMesh/IO/detail/BinaryFileReaderImpl.cc
     OpenVolumeMesh/IO/detail/Decoder.cc
     OpenVolumeMesh/IO/detail/Encoder.cc
     OpenVolumeMesh/IO/detail/ovmb_format.cc
