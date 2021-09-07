@@ -189,10 +189,15 @@ public:
     template<typename T, typename EntityTag>
     PropertyPtr<T, EntityTag> create_private_property(std::string _name = {}, const T _def = T()) const;
 
-    /** Get existing shared property: if the property does not exist, return no value.
+    /** Get existing shared property. If the property does not exist, return no value.
      */
     template<typename T, typename EntityTag>
     std::optional<PropertyPtr<T, EntityTag>> get_property(const std::string& _name = std::string());
+
+    /** Get a const view on an existing shared property. If the property does not exist, return no value.
+     */
+    template<typename T, typename EntityTag>
+    std::optional<const PropertyPtr<T, EntityTag>> get_property(const std::string& _name = std::string()) const;
 
     template <typename T, typename EntityTag>
     bool property_exists(const std::string& _name) const

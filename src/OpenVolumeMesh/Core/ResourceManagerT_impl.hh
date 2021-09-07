@@ -196,10 +196,14 @@ template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
 ResourceManager::get_property(const std::string& _name)
 {
-    auto *prop = internal_find_property<T, EntityTag>(_name);
-    if (prop)
-        return {*prop};
-    return {};
+    return internal_find_property<T, EntityTag>(_name);
+}
+
+template<typename T, typename EntityTag>
+std::optional<const PropertyPtr<T, EntityTag>>
+ResourceManager::get_property(const std::string& _name) const
+{
+    return internal_find_property<T, EntityTag>(_name);
 }
 
 
