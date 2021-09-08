@@ -259,7 +259,7 @@ TEST_F(PolyhedralMeshBase, LoadFileWithProps) {
   EXPECT_EQ(6u, mesh_.n_faces());
   EXPECT_EQ(1u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_props<Entity::Vertex>());
+  EXPECT_EQ(2u, mesh_.n_props<Entity::Vertex>());
   EXPECT_EQ(1u, mesh_.n_props<Entity::Edge>());
   EXPECT_EQ(0u, mesh_.n_props<Entity::HalfEdge>());
   EXPECT_EQ(1u, mesh_.n_props<Entity::Face>());
@@ -278,7 +278,7 @@ TEST_F(PolyhedralMeshBase, SaveFileWithProps2) {
   EXPECT_EQ(6u, mesh_.n_faces());
   EXPECT_EQ(1u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_props<Entity::Vertex>());
+  EXPECT_EQ(2u, mesh_.n_props<Entity::Vertex>());
   EXPECT_EQ(1u, mesh_.n_props<Entity::Edge>());
   EXPECT_EQ(0u, mesh_.n_props<Entity::HalfEdge>());
   EXPECT_EQ(1u, mesh_.n_props<Entity::Face>());
@@ -296,7 +296,7 @@ TEST_F(PolyhedralMeshBase, SaveFileWithProps2) {
   EXPECT_EQ(6u, mesh_.n_faces());
   EXPECT_EQ(1u, mesh_.n_cells());
 
-  EXPECT_EQ(1u, mesh_.n_props<Entity::Vertex>());
+  EXPECT_EQ(2u, mesh_.n_props<Entity::Vertex>());
   EXPECT_EQ(1u, mesh_.n_props<Entity::Edge>());
   EXPECT_EQ(0u, mesh_.n_props<Entity::HalfEdge>());
   EXPECT_EQ(1u, mesh_.n_props<Entity::Face>());

@@ -42,6 +42,23 @@
 
 namespace OpenVolumeMesh {
 
+#if 0
+template <class VecT>
+class GeometryKernelT {
+public:
+    GeometryKernelT(ResourceManager *_resman)
+        : prop_{_resman->create_persistent_property<VecT, Entity::Vertex>("ovm:position")}
+    {}
+    VecT const& operator[](VH vh) const {return prop_[vh];}
+    VecT      & operator[](VH vh)       {return prop_[vh];}
+
+private:
+    PropertyPtr<VecT, Entity::Vertex> prop_;
+};
+#endif
+template <class VecT>
+using GeometryKernelT = PropertyPtr<VecT, Entity::Vertex>;
+
 template <class VecT, class TopologyKernelT = TopologyKernel>
 class GeometryKernel : public TopologyKernelT {
 public:
@@ -50,104 +67,66 @@ public:
     using Point = VecT;  // OpenMesh compatiblity
     using KernelT = TopologyKernelT;
 
-    /// Constructor
-    GeometryKernel() = default;
+    GeometryKernel()
+        : TopologyKernelT()
+        , position_{get_prop()}
+    {}
 
-    /// Destructor
-    ~GeometryKernel() override = default;
+    GeometryKernel(GeometryKernel&& other)
+        : TopologyKernelT(std::move(other))
+        , position_{get_prop()}
+    {}
 
-    void reserve_vertices(size_t n) {
-        TopologyKernelT::reserve_vertices(n);
-        vertices_.reserve(n);
+    GeometryKernel(GeometryKernel const& other)
+        : TopologyKernelT(other)
+        , position_{get_prop()}
+    {}
+
+    GeometryKernel& operator=(GeometryKernel &&other)
+    {
+        TopologyKernelT::operator=(std::move(other));
+        position_ = get_prop();
     }
 
+    GeometryKernel& operator=(GeometryKernel const&other)
+    {
+        TopologyKernelT::operator=(other);
+        position_ = get_prop();
+    }
 
     template<class OtherTopoKernel>
-    void assign(const GeometryKernel<VecT, OtherTopoKernel> *other) {
+    void assign(const GeometryKernel<VecT, OtherTopoKernel> *other)
+    {
         TopologyKernelT::assign(other);
-        other->clone_vertices(vertices_);
+        position_.assign(other->vertex_positions());
     }
-
-    /// Override of empty add_vertex function
-    VertexHandle add_vertex() override { return add_vertex(VecT()); }
 
     /// Add a geometric point to the mesh
     VertexHandle add_vertex(const VecT& _p) {
-
-        // Store vertex in list
-        vertices_.push_back(_p);
-
-        // Get handle of recently created vertex
-        return KernelT::add_vertex();
+        VH vh = TopologyKernelT::add_vertex();
+        position_[vh] = _p;
+        return vh;
     }
 
     /// Set the coordinates of point _vh
+    [[deprecated("Use VecT& vertex(VH) instead.")]]
     void set_vertex(VertexHandle _vh, const VecT& _p) {
 
-        assert(_vh.idx() < (int)vertices_.size());
+        assert(_vh.idx() < (int)position_.size());
 
-        vertices_[_vh.uidx()] = _p;
+        position_[_vh] = _p;
     }
 
     /// Get point _vh's coordinates
     const VecT& vertex(VertexHandle _vh) const {
-        return vertices_[_vh.uidx()];
+        return position_[_vh];
     }
 
-    VertexIter delete_vertex(VertexHandle _h) override {
-        assert(_h.idx() < (int)TopologyKernelT::n_vertices());
-
-        VertexIter nV = TopologyKernelT::delete_vertex(_h);
-
-        if (TopologyKernelT::deferred_deletion_enabled())
-        {
-
-        }
-        else
-            vertices_.erase(vertices_.begin() + _h.idx());
-
-        return nV;
-    }
-
-    void collect_garbage() override
-    {
-        if (!TopologyKernelT::needs_garbage_collection())
-            return;
-
-        if (TopologyKernelT::fast_deletion_enabled()) {
-            TopologyKernelT::collect_garbage();
-            vertices_.resize(TopologyKernel::n_vertices());
-        } else {
-            for (int i = (int)vertices_.size(); i > 0; --i)
-                if (TopologyKernelT::is_deleted(VertexHandle(i-1)))
-                {
-                    vertices_.erase(vertices_.begin() + (i-1));
-                }
-            TopologyKernelT::collect_garbage();
-        }
-
-    }
-
-    void swap_vertex_indices(VertexHandle _h1, VertexHandle _h2) override
-    {
-        assert(_h1.idx() >= 0 && _h1.idx() < (int)vertices_.size());
-        assert(_h2.idx() >= 0 && _h2.idx() < (int)vertices_.size());
-
-        if (_h1 == _h2)
-            return;
-
-        std::swap(vertices_[_h1.uidx()], vertices_[_h2.uidx()]);
-
-        TopologyKernelT::swap_vertex_indices(_h1, _h2);
+    void swap_vertices(std::vector<VecT> &_other) {
+        position_.swap(_other);
     }
 
 public:
-
-    void clear(bool _clearProps = true) override {
-
-        vertices_.clear();
-        TopologyKernelT::clear(_clearProps);
-    }
 
     typename PointT::value_type length(HalfEdgeHandle _heh) const {
         return vector(_heh).length();
@@ -219,24 +198,19 @@ public:
         return n.normalized();
     }
 
-    void clone_vertices(std::vector<VecT>& _copy) const {
-        _copy.clear();
-        _copy.reserve(vertices_.size());
-        std::copy(vertices_.begin(), vertices_.end(), std::back_inserter(_copy));
-    }
+    GeometryKernelT<VecT> const& vertex_positions() const & {return position_;}
+    GeometryKernelT<VecT> & vertex_positions() & {return position_;}
 
-    void swap_vertices(std::vector<VecT>& _copy) {
-        if(_copy.size() != vertices_.size()) {
-            std::cerr << "Vertex vectors differ in size! The size of the copy " <<
-            		"is artificially set to the correct one. Some values may not be correctly initialized." << std::endl;
-            _copy.resize(vertices_.size());
-        }
-        std::swap(vertices_, _copy);
+private:
+    GeometryKernelT<VecT> get_prop() {
+        auto prop = this->template request_property<VecT, Entity::Vertex>("ovm:position");
+        this->set_persistent(prop);
+        return prop;
     }
 
 private:
+    GeometryKernelT<VecT> position_;
 
-    std::vector<VecT> vertices_;
 };
 
 } // Namespace OpenVolumeMesh

@@ -23,8 +23,10 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
     generatePolyhedralMesh(mesh_);
 
     EXPECT_EQ(12u, mesh_.n_vertices());
+    const size_t nvp = mesh_.n_vertex_props();
 
     VertexPropertyT<double> v_prop_d = mesh_.request_vertex_property<double>("MyVPropDbl");
+    EXPECT_EQ(nvp + 1, mesh_.n_vertex_props());
 
     for(int i = 0; i < 1; ++i) {
 
@@ -38,22 +40,22 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
 
         EXPECT_EQ(12u, v_prop3.size());
 
-        EXPECT_EQ(2u, mesh_.n_vertex_props());
+        EXPECT_EQ(nvp + 2, mesh_.n_vertex_props());
 
         VertexPropertyT<float> v_prop_duplicate = mesh_.request_vertex_property<float>("MyVProp");
 
-        EXPECT_EQ(2u, mesh_.n_vertex_props());
+        EXPECT_EQ(nvp + 2, mesh_.n_vertex_props());
 
         EXPECT_FLOAT_EQ(1.4f, v_prop3[VertexHandle(0)]);
 
         VertexPropertyT<std::string> v_prop_duplicate_2 = mesh_.request_vertex_property<std::string>("MyVProp");
 
-        EXPECT_EQ(3u, mesh_.n_vertex_props());
+        EXPECT_EQ(nvp + 3, mesh_.n_vertex_props());
     }
 
     mesh_.set_persistent(v_prop_d);
 
-    EXPECT_EQ(1u, mesh_.n_vertex_props());
+    EXPECT_EQ(nvp + 1, mesh_.n_vertex_props());
 
     mesh_.add_vertex(Vec3d(0.0, 0.0, 0.0));
 
@@ -61,7 +63,7 @@ TEST_F(PolyhedralMeshBase, PropertySmartPointerTest1) {
 
     VertexPropertyT<double> v_prop_d2 = mesh_.request_vertex_property<double>("MyVPropDbl");
 
-    EXPECT_EQ(1u, mesh_.n_vertex_props());
+    EXPECT_EQ(nvp + 1, mesh_.n_vertex_props());
 
     HalfEdgePropertyT<int> he_prop = mesh_.request_halfedge_property<int>("MyHEProp");
 
@@ -95,6 +97,7 @@ TEST_F(HexahedralMeshBase, PropertySmartPointerPersistencyTest1) {
 TEST_F(HexahedralMeshBase, PropertySmartPointerPersistencyTest2) {
 
     generateHexahedralMesh(mesh_);
+    const size_t nvp = mesh_.n_vertex_props();
 
     for(int i = 0; i < 1; ++i) {
 
@@ -103,18 +106,18 @@ TEST_F(HexahedralMeshBase, PropertySmartPointerPersistencyTest2) {
         mesh_.set_persistent(v_prop);
     }
 
-    EXPECT_EQ(1u, mesh_.n_vertex_props());
+    EXPECT_EQ(nvp + 1, mesh_.n_vertex_props());
 
     for(int i = 0; i < 1; ++i) {
 
         VertexPropertyT<float> v_prop = mesh_.request_vertex_property<float>("FloatVProp");
 
-        EXPECT_EQ(1u, mesh_.n_vertex_props());
+        EXPECT_EQ(nvp + 1, mesh_.n_vertex_props());
 
         mesh_.set_persistent(v_prop, false);
     }
 
-    EXPECT_EQ(0u, mesh_.n_vertex_props());
+    EXPECT_EQ(nvp, mesh_.n_vertex_props());
 }
 
 TEST_F(HexahedralMeshBase, AnonymousPropertiesTest1) {
