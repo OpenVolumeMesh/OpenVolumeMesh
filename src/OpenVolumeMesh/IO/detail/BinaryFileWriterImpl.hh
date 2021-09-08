@@ -46,11 +46,11 @@ private:
     bool mesh_is_hexahedral();
 
 private:
-    std::ostream &ostream_;
-    MeshT const &mesh_;
-    PropertyCodecs const &prop_codecs_;
+    std::ostream& ostream_;
+    MeshT const& mesh_;
+    PropertyCodecs const& prop_codecs_;
 
-    WriteOptions options_;
+    WriteOptions const& options_;
 
 
     WriteBuffer chunk_buffer_;
