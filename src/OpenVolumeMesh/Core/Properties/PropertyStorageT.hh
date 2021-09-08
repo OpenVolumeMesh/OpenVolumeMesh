@@ -111,6 +111,12 @@ public:
         assert(_idx < data_.size());
         data_.erase(data_.begin() + static_cast<long>(_idx));
 	}
+    void swap(std::vector<T> &_other) {
+        if (data_.size() != _other.size()) {
+            throw std::runtime_error("PropertyStorageT::swap: vector sizes don't match");
+        }
+        std::swap(data_, _other);
+    }
 
 public:
 

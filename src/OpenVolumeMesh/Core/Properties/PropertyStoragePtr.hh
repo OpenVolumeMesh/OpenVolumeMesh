@@ -104,6 +104,8 @@ public:
     /// set all values to `val`.
     void fill(T const&val) { storage()->fill(val); }
 
+    void swap(std::vector<T> &_other) { storage()->swap(_other); }
+
 protected:
     PropertyStoragePtr(std::shared_ptr<PropertyStorageT<T>> _ptr = nullptr)
         : storage_(std::move(_ptr))
