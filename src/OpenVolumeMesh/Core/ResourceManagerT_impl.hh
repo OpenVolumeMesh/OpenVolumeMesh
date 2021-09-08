@@ -333,19 +333,9 @@ void ResourceManager::assignProperties(typename std::conditional<Move, ResourceM
 template<bool Move>
 void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)
 {
-    // TODO: we need some helper function to clean up this dispatch:
     for_each_entity([&](auto entity_tag) {
         assignProperties<Move, decltype(entity_tag)>(src);
-
     });
-    assignProperties<Move, Entity::Vertex>(src);
-    assignProperties<Move, Entity::Vertex>(src);
-    assignProperties<Move, Entity::Edge>(src);
-    assignProperties<Move, Entity::HalfEdge>(src);
-    assignProperties<Move, Entity::Face>(src);
-    assignProperties<Move, Entity::HalfFace>(src);
-    assignProperties<Move, Entity::Cell>(src);
-    assignProperties<Move, Entity::Mesh>(src);
 }
 
 
