@@ -1,4 +1,5 @@
 #include <OpenVolumeMesh/IO/BinaryFileWriter.hh>
+#include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileWriterImpl.hh>
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
@@ -7,9 +8,12 @@
 namespace OpenVolumeMesh::IO {
 
 template<typename MeshT>
-OVM_EXPORT
-WriteResult ovmb_write(std::ostream &_ostream, MeshT const &_mesh) {
-    detail::BinaryFileWriterImpl<MeshT> writer(_ostream, _mesh);
+WriteResult ovmb_write(std::ostream &_ostream,
+                       MeshT const &_mesh,
+                       WriteOptions const& _options,
+                       PropertyCodecs const &_prop_codecs)
+{
+    detail::BinaryFileWriterImpl<MeshT> writer(_ostream, _mesh, _options, _prop_codecs);
     return writer.write_file();
 }
 

@@ -2,6 +2,7 @@
 
 #include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <OpenVolumeMesh/IO/enums.hh>
+#include <OpenVolumeMesh/IO/WriteOptions.hh>
 
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/IO/detail/Encoder.hh>
@@ -12,21 +13,17 @@
 
 namespace OpenVolumeMesh::IO::detail {
 
-// TODO: move to a public header and allow using changed settings
-struct WriteOptions {
-    /// try to determine if a polyhedral mesh can in fact be stored as tet or hex mesh
-    bool detect_specialized_mesh = true;
-};
-
 template<typename MeshT>
 class BinaryFileWriterImpl
 {
 public:
     BinaryFileWriterImpl(std::ostream &_stream,
                          MeshT const &_mesh,
+                         WriteOptions const &_options = WriteOptions(),
                          PropertyCodecs const &_prop_codecs = g_default_property_codecs)
         : ostream_(_stream)
         , mesh_(_mesh)
+        , options_(_options)
         , prop_codecs_(_prop_codecs)
     {
         // preallocate to avoid reallocations

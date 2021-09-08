@@ -12,6 +12,7 @@
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 
 namespace OpenVolumeMesh::IO {
+
 class OVM_EXPORT PropertyDecoderBase {
 public:
     virtual ~PropertyDecoderBase() = default;
@@ -29,13 +30,13 @@ public:
         : ovmb_type_name_(std::move(_ovmb_type_name))
     {}
     virtual ~PropertyEncoderBase() = default;
-    //virtual void get_prop(ResourceManager &resman, EntityType type, std::string const &name) = 0;
     virtual void serialize_default(const PropertyStorageBase *prop, detail::WriteBuffer&) const = 0;
     virtual void serialize(const PropertyStorageBase *prop, detail::WriteBuffer&, size_t idx_begin, size_t idx_end) const = 0;
     std::string const &ovmb_type_name() const {return ovmb_type_name_;};
 private:
     std::string ovmb_type_name_;
 };
+
 
 class OVM_EXPORT PropertyCodecs {
 public:
