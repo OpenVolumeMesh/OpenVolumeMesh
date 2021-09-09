@@ -74,11 +74,6 @@ public:
 
     TopologyKernel& operator=(const TopologyKernel&) = default;
 
-    void assign(const TopologyKernel *other) {
-        assert(other != nullptr);
-        *this = *other;
-    }
-
     /*
      * Defines and constants
      */

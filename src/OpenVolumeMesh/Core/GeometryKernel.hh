@@ -80,13 +80,6 @@ public:
         position_ = get_prop();
     }
 
-    template<class OtherTopoKernel>
-    void assign(const GeometryKernel<VecT, OtherTopoKernel> *other)
-    {
-        TopologyKernelT::assign(other);
-        position_.assign(other->vertex_positions());
-    }
-
     using TopologyKernelT::add_vertex;
 
     /// Add a geometric point to the mesh
