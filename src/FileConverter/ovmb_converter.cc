@@ -1,6 +1,6 @@
 #include <OpenVolumeMesh/FileManager/FileManager.hh>
 #include <OpenVolumeMesh/IO/BinaryFileReader.hh>
-#include <OpenVolumeMesh/IO/BinaryFileWriter.hh>
+#include <OpenVolumeMesh/IO/ovmb_write.hh>
 
 #include <OpenVolumeMesh/Core/GeometryKernel.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>

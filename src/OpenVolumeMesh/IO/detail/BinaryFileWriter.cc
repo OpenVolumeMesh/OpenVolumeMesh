@@ -3,10 +3,10 @@
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 
-#include <OpenVolumeMesh/IO/BinaryFileWriter.hh>
+#include <OpenVolumeMesh/IO/ovmb_write.hh>
 #include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
-#include <OpenVolumeMesh/IO/detail/ovmb_codec.hh>
+#include <OpenVolumeMesh/IO/detail/BinaryFileReaderImplT_impl.hh>
 
 
 #include <sstream>
@@ -50,8 +50,7 @@ static void write_valences (WriteBuffer &_buffer,
     call_with_encoder(valence_enc, write_all);
 }
 
-template<typename MeshT>
-WriteResult BinaryFileWriterImpl<MeshT>::write_file()
+WriteResult BinaryFileWriter::write_file()
 {
     if (!ostream_.good()) {
         return WriteResult::BadStream;
@@ -61,22 +60,10 @@ WriteResult BinaryFileWriterImpl<MeshT>::write_file()
         throw std::runtime_error("run garbage collection first!");
     }
     TopoType topo_type = TopoType::Polyhedral;
-
-    if (std::is_base_of<TetrahedralMeshTopologyKernel, MeshT>::value
-            || (options_.detect_specialized_mesh && mesh_is_tetrahedral()))
-    {
-        topo_type = TopoType::Tetrahedral;
-    }
-    if (std::is_base_of<HexahedralMeshTopologyKernel, MeshT>::value
-            || (options_.detect_specialized_mesh && mesh_is_hexahedral()))
-    {
-        topo_type = TopoType::Hexahedral;
-    }
-
     FileHeader header;
     header.header_version = 0;
     header.file_version = 0;
-    header.vertex_dim = 3;
+    header.vertex_dim = geometry_writer_.dim();
     header.topo_type = topo_type;
     header.n_verts = mesh_.n_vertices();
     header.n_edges = mesh_.n_edges();
@@ -98,8 +85,6 @@ WriteResult BinaryFileWriterImpl<MeshT>::write_file()
     chunk_buffer_.reset();
     write_chunk(ChunkType::EndOfFile);
 
-    std::cout << "DEBUG: chunk buffer size: " << chunk_buffer_.allocated_size() << std::endl;
-    std::cout << "DEBUG: header buffer size: " << header_buffer_.allocated_size() << std::endl;
     if (ostream_.good()) {
         return WriteResult::Ok;
     } else {
@@ -107,8 +92,7 @@ WriteResult BinaryFileWriterImpl<MeshT>::write_file()
     }
 }
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_chunk(ChunkType type)
+void BinaryFileWriter::write_chunk(ChunkType type)
 {
     auto payload_length = chunk_buffer_.size();
     size_t padded = (payload_length + 7) & ~7LL;
@@ -132,13 +116,11 @@ void BinaryFileWriterImpl<MeshT>::write_chunk(ChunkType type)
 }
 
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_vertices(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_vertices(uint32_t first, uint32_t count)
 {
     if (count == 0) return;
 
 
-    const auto N = MeshT::PointT::dim();
 
     VertexChunkHeader header;
     header.span.base = first;
@@ -148,30 +130,16 @@ void BinaryFileWriterImpl<MeshT>::write_vertices(uint32_t first, uint32_t count)
     chunk_buffer_.reset();
     chunk_buffer_.need(
         ovmb_size<VertexChunkHeader>
-        + count * N * elem_size(header.enc));
+        + count * geometry_writer_.elem_size());
 
     Encoder encoder(chunk_buffer_);
-
     write(encoder, header);
 
-    auto end = first + count;
-    assert(end <= mesh_.n_vertices());
-
-    auto write_all = [&](auto write_one)
-    {
-        for (uint32_t i = first; i < end; ++i) {
-            const auto &pos = mesh_.vertex(VertexHandle::from_unsigned(i));
-            for (size_t dim = 0; dim < N; ++dim) {
-                write_one(encoder, pos[dim]);
-            }
-        }
-    };
-    call_with_encoder(header.enc, write_all);
+    geometry_writer_.write(chunk_buffer_, first, count);
     write_chunk(ChunkType::Vertices);
 }
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_edges(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_edges(uint32_t first, uint32_t count)
 {
     if (count == 0) return;
 
@@ -207,8 +175,7 @@ void BinaryFileWriterImpl<MeshT>::write_edges(uint32_t first, uint32_t count)
     write_chunk(ChunkType::Edges);
 }
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_faces(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_faces(uint32_t first, uint32_t count)
 {
     if (count == 0) return;
 
@@ -248,8 +215,7 @@ void BinaryFileWriterImpl<MeshT>::write_faces(uint32_t first, uint32_t count)
     write_chunk(ChunkType::Faces);
 }
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_cells(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_cells(uint32_t first, uint32_t count)
 {
     if (count == 0) return;
 
@@ -290,8 +256,7 @@ void BinaryFileWriterImpl<MeshT>::write_cells(uint32_t first, uint32_t count)
     write_chunk(ChunkType::Cells);
 }
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_propdir()
+void BinaryFileWriter::write_propdir()
 {
     ResourceManager const &resman = mesh_;
 
@@ -335,8 +300,7 @@ void BinaryFileWriterImpl<MeshT>::write_propdir()
     write_chunk(ChunkType::PropertyDirectory);
 }
 
-template<typename MeshT>
-void BinaryFileWriterImpl<MeshT>::write_all_props()
+void BinaryFileWriter::write_all_props()
 {
     uint32_t idx = 0;
     for (auto prop: props_)
@@ -354,48 +318,6 @@ void BinaryFileWriterImpl<MeshT>::write_all_props()
 
         write_chunk(ChunkType::Property);
     }
-}
-
-template<typename MeshT>
-bool
-BinaryFileWriterImpl<MeshT>::
-mesh_is_tetrahedral() {
-    // for now, just check face and cell valences, and require at least one cell.
-    if (mesh_.n_cells() == 0) {
-        return false;
-    }
-    for (const auto fh: mesh_.faces()) {
-        if (mesh_.valence(fh) != 3) {
-            return false;
-        }
-    }
-    for (const auto ch: mesh_.cells()) {
-        if (mesh_.valence(ch) != 4) {
-            return false;
-        }
-    }
-    return true;
-    // TODO: check order of faces in cells
-}
-template<typename MeshT>
-bool
-BinaryFileWriterImpl<MeshT>::
-mesh_is_hexahedral() {
-    if (mesh_.n_cells() == 0) {
-        return false;
-    }
-    for (const auto fh: mesh_.faces()) {
-        if (mesh_.valence(fh) != 4) {
-            return false;
-        }
-    }
-    for (const auto ch: mesh_.cells()) {
-        if (mesh_.valence(ch) != 6) {
-            return false;
-        }
-    }
-    return true;
-    // TODO: check order of faces in cells
 }
 
 } // namespace OpenVolumeMesh::IO::detail

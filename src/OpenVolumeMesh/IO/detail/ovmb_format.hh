@@ -227,7 +227,7 @@ inline void call_with_decoder(IntEncoding enc, F const&f)
     }
 }
 
-OVM_EXPORT inline uint8_t elem_size(IntEncoding enc) {
+OVM_EXPORT constexpr inline uint8_t elem_size(IntEncoding enc) {
     switch(enc) {
     case IntEncoding::U8: return 1;
     case IntEncoding::U16: return 2;
@@ -235,7 +235,7 @@ OVM_EXPORT inline uint8_t elem_size(IntEncoding enc) {
     default: return 0;
     }
 }
-OVM_EXPORT inline uint8_t elem_size(VertexEncoding enc) {
+OVM_EXPORT constexpr inline uint8_t elem_size(VertexEncoding enc) {
     switch(enc) {
     case VertexEncoding::Float: return sizeof(float);
     case VertexEncoding::Double: return sizeof(double);

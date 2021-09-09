@@ -12,13 +12,13 @@ namespace OpenVolumeMesh::IO {
 template<typename MeshT>
 WriteResult ovmb_write(std::ostream & _ostream,
                        MeshT const& _mesh,
-                       WriteOptions const& options = WriteOptions(),
+                       WriteOptions options = WriteOptions(),
                        PropertyCodecs const &_prop_codecs = g_default_property_codecs);
 
 template<typename MeshT>
 inline WriteResult ovmb_write(const char *_filename,
                               MeshT const& _mesh,
-                              WriteOptions const& options = WriteOptions(),
+                              WriteOptions options = WriteOptions(),
                               PropertyCodecs const &_prop_codecs = g_default_property_codecs)
 
 {
@@ -32,5 +32,5 @@ inline WriteResult ovmb_write(const char *_filename,
 } // namespace OpenVolumeMesh::IO
 
 #ifndef OVM_DO_NOT_INCLUDE_FILE_WRITER_IMPL
-#  include <OpenVolumeMesh/IO/BinaryFileWriterT_impl.hh>
+#  include <OpenVolumeMesh/IO/ovmb_write_impl.hh>
 #endif
