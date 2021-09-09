@@ -10,6 +10,7 @@
 #include <cassert>
 #include <numeric>
 #include <iostream>
+#include <type_traits>
 
 namespace OpenVolumeMesh {
 class TetrahedralMeshTopologyKernel;
@@ -21,6 +22,7 @@ namespace OpenVolumeMesh::IO::detail {
 template<typename MeshT>
 ReadResult BinaryFileReader::read_file(MeshT &out)
 {
+    static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
     if (compatibility<MeshT>() != ReadCompatibility::Ok) {
         state_ = ReadState::ErrorIncompatible;
         return ReadResult::IncompatibleMesh;
@@ -38,6 +40,7 @@ constexpr const inline auto max_handle_idx = static_cast<size_t>(std::numeric_li
 template<typename MeshT>
 ReadCompatibility BinaryFileReader::compatibility()
 {
+    static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
     read_header();
     if (state_ == ReadState::Error) { // TODO: check for more generic error state!
         return ReadCompatibility::InvalidFile;

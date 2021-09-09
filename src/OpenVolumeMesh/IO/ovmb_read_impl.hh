@@ -2,6 +2,7 @@
 #include <OpenVolumeMesh/IO/PropertyCodec.hh>
 #include <OpenVolumeMesh/IO/detail/GeometryReader.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileReader.hh>
+#include <type_traits>
 
 
 namespace OpenVolumeMesh::IO {
@@ -24,6 +25,7 @@ ReadResult ovmb_read(std::istream &_istream,
                      ReadOptions _options,
                      PropertyCodecs const &_prop_codecs)
 {
+    static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
     auto reader = make_ovmb_reader(_istream, _options, _prop_codecs);
     return reader->read_file(_mesh);
 }
