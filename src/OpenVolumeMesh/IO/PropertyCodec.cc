@@ -66,26 +66,26 @@ PropertyCodecs PropertyCodecs::with_all_default_types() {
 void PropertyCodecs::add_default_types()
 {
     using namespace Codecs;
-    register_type<bool, BoolPropCodec>("b");
-    register_type<uint8_t,  SimplePropCodec<Primitive<uint8_t>>> ("u8");
-    register_type<uint16_t, SimplePropCodec<Primitive<uint16_t>>>("u16");
-    register_type<uint32_t, SimplePropCodec<Primitive<uint32_t>>>("u32");
-    register_type<uint64_t, SimplePropCodec<Primitive<uint64_t>>>("u64");
-    register_type<int8_t,   SimplePropCodec<Primitive<int8_t>>>  ("i8");
-    register_type<int16_t,  SimplePropCodec<Primitive<int16_t>>> ("i16");
-    register_type<int32_t,  SimplePropCodec<Primitive<int32_t>>> ("i32");
-    register_type<int64_t,  SimplePropCodec<Primitive<int64_t >>>("i64");
-    register_type<float,    SimplePropCodec<Primitive<float>>>   ("f");
-    register_type<double,   SimplePropCodec<Primitive<double>>>  ("d");
+    register_codec<BoolPropCodec>("b");
+    register_codec<SimplePropCodec<Primitive<uint8_t>>> ("u8");
+    register_codec<SimplePropCodec<Primitive<uint16_t>>>("u16");
+    register_codec<SimplePropCodec<Primitive<uint32_t>>>("u32");
+    register_codec<SimplePropCodec<Primitive<uint64_t>>>("u64");
+    register_codec<SimplePropCodec<Primitive<int8_t>>>  ("i8");
+    register_codec<SimplePropCodec<Primitive<int16_t>>> ("i16");
+    register_codec<SimplePropCodec<Primitive<int32_t>>> ("i32");
+    register_codec<SimplePropCodec<Primitive<int64_t >>>("i64");
+    register_codec<SimplePropCodec<Primitive<float>>>   ("f");
+    register_codec<SimplePropCodec<Primitive<double>>>  ("d");
 
-    register_type<std::string, SimplePropCodec<Primitive<std::string>>>  ("s32");
+    register_codec<SimplePropCodec<Primitive<std::string>>>  ("s32");
 
-    register_type<VH,       SimplePropCodec<OVMHandle<VH>>>      ("vh");
-    register_type<EH,       SimplePropCodec<OVMHandle<EH>>>      ("eh");
-    register_type<HEH,      SimplePropCodec<OVMHandle<HEH>>>     ("heh");
-    register_type<FH,       SimplePropCodec<OVMHandle<FH>>>      ("fh");
-    register_type<HFH,      SimplePropCodec<OVMHandle<HFH>>>     ("hfh");
-    register_type<CH,       SimplePropCodec<OVMHandle<CH>>>      ("ch");
+    register_codec<SimplePropCodec<OVMHandle<VH>>>      ("vh");
+    register_codec<SimplePropCodec<OVMHandle<EH>>>      ("eh");
+    register_codec<SimplePropCodec<OVMHandle<HEH>>>     ("heh");
+    register_codec<SimplePropCodec<OVMHandle<FH>>>      ("fh");
+    register_codec<SimplePropCodec<OVMHandle<HFH>>>     ("hfh");
+    register_codec<SimplePropCodec<OVMHandle<CH>>>      ("ch");
 }
 
 void PropertyCodecs::add_ovm_vector_types()
@@ -111,7 +111,7 @@ template<typename T, size_t N>
 void PropertyCodecs::register_arraylike(const std::string &ovmb_type_name)
 {
     using namespace Codecs;
-    register_type<T, SimplePropCodec<ArrayLike<T, N>>>(ovmb_type_name);
+    register_codec<SimplePropCodec<ArrayLike<T, N>>>(ovmb_type_name);
 }
 
 const PropertyDecoderBase* PropertyCodecs::get_decoder(const std::string &ovmb_type_name) const
@@ -129,9 +129,10 @@ const PropertyEncoderBase* PropertyCodecs::get_encoder(const std::string &intern
 
 }
 
-template<typename T, typename Codec>
-void PropertyCodecs::register_type(const std::string &ovmb_type_name)
+template<typename Codec>
+void PropertyCodecs::register_codec(const std::string &ovmb_type_name)
 {
+    using T = typename Codec::T;
     // TODO: check if codec is already registered
     encoders_[OpenVolumeMesh::detail::internal_type_name<T>()] = std::make_unique<PropertyEncoderT<T, Codec>>(ovmb_type_name);
     decoders_[ovmb_type_name] = std::move(std::make_unique<PropertyDecoderT<T, Codec>>());

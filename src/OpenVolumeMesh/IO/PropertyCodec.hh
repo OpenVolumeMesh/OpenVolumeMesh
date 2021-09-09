@@ -49,8 +49,8 @@ public:
     /// \param T               the type
     /// \param Codec           a type with static {en,de}code_{one,n} methods
     /// \param ovmb_type_name  the name as used in the ovmb file format
-    template<typename T, typename Codec>
-    void register_type(std::string const &ovmb_type_name);
+    template<typename Codec>
+    void register_codec(std::string const &ovmb_type_name);
 
     template<typename T, size_t N = T::size()>
     void register_arraylike(std::string const &ovmb_type_name);
