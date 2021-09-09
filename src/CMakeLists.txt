@@ -71,6 +71,8 @@ set_target_properties (OpenVolumeMesh PROPERTIES
     VERSION ${OpenVolumeMesh_VERSION_MAJOR}.${OpenVolumeMesh_VERSION_MINOR}
     SOVERSION ${OpenVolumeMesh_VERSION_MAJOR}.${OpenVolumeMesh_VERSION_MINOR}
     POSITION_INDEPENDENT_CODE ON
+    AUTOMOC OFF
+    AUTOUIC OFF
     # TODO: turn this on once we have OVM_EXPORT macros in all required places:
      #CXX_VISIBILITY_PRESET hidden
     )
