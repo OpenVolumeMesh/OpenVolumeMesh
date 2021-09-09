@@ -34,14 +34,16 @@ public:
     }
 
     Tracker &operator=(Tracker<T> && other) {
-        for (const auto t: other->tracked_){
+        for (const auto t: other.tracked_){
             t->set_tracker(this);
         }
+        return *this;
     }
 
     Tracker &operator=(Tracker<T> const &) {
         // What is the right thing to do here if we have tracked elements already?
         // Keeping them seems acceptable, operator= in derived classes can do something with them.
+        return *this;
     }
 
     auto begin()  const { return tracked_.cbegin(); }
