@@ -49,7 +49,7 @@ protected:
     std::ostream& ostream_;
     TopologyKernel const& mesh_;
     std::unique_ptr<const GeometryWriterBase> geometry_writer_;
-    WriteOptions const& options_;
+    WriteOptions options_;
     PropertyCodecs const& prop_codecs_;
 
     WriteBuffer chunk_buffer_;
