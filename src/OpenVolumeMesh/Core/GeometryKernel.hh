@@ -87,6 +87,8 @@ public:
         position_.assign(other->vertex_positions());
     }
 
+    using TopologyKernelT::add_vertex;
+
     /// Add a geometric point to the mesh
     VertexHandle add_vertex(const VecT& _p) {
         VH vh = TopologyKernelT::add_vertex();
