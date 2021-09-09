@@ -25,7 +25,6 @@ struct SimplePropCodec {
         Codec::decode(dec, val);
     }
     static void decode_n(Decoder &decoder, std::vector<T> &vec, size_t idx_begin, size_t idx_end) {
-        assert(idx_begin > 0);
         assert(idx_begin < idx_end);
         assert(idx_end <= vec.size());
         for (size_t i = idx_begin; i < idx_end; ++i) {
@@ -33,7 +32,6 @@ struct SimplePropCodec {
         }
     }
     static void encode_n(Encoder &enc, std::vector<T> const&vec, size_t idx_begin, size_t idx_end) {
-        assert(idx_begin > 0);
         assert(idx_begin < idx_end);
         assert(idx_end <= vec.size());
         for (size_t i = idx_begin; i < idx_end; ++i) {
@@ -122,6 +120,13 @@ struct BoolPropCodec {
 }
 
 
+PropertyCodecs PropertyCodecs::with_all_default_types() {
+    PropertyCodecs codecs;
+    codecs.add_default_types();
+    codecs.add_ovm_vector_types();
+    return codecs;
+}
+
 void PropertyCodecs::add_default_types()
 {
     using namespace Codecs;
@@ -194,7 +199,7 @@ void PropertyCodecs::register_type(const std::string &ovmb_type_name)
     decoders_[ovmb_type_name] = std::move(std::make_unique<PropertyDecoderT<T, Codec>>());
 }
 
-const PropertyCodecs g_default_property_codecs;
+const PropertyCodecs g_default_property_codecs = PropertyCodecs::with_all_default_types();
 
 
 } // namespace OpenVolumeMesh::IO

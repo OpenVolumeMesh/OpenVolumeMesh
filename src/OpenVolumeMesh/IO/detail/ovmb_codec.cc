@@ -48,9 +48,10 @@ void write(Encoder &encoder, const FileHeader & header) {
     encoder.u8(header.file_version);
     encoder.u8(header.header_version);
     encoder.u8(header.vertex_dim);
+    write_enum(encoder, header.vertex_encoding);
     write_enum(encoder, header.topo_type);
 
-    encoder.reserved<4>();
+    encoder.reserved<3>();
 
     encoder.u64(header.n_verts);
     encoder.u64(header.n_edges);
@@ -69,9 +70,12 @@ bool read(Decoder &decoder, FileHeader &_file_header)
     }
     _file_header.file_version = decoder.u8();
     _file_header.header_version = decoder.u8();
+    if (_file_header.header_version != 0)
+        return false;
     _file_header.vertex_dim = decoder.u8();
+    read(decoder, _file_header.vertex_encoding);
     read(decoder, _file_header.topo_type);
-    decoder.reserved<4>();
+    decoder.reserved<3>();
     _file_header.n_verts = decoder.u64();
     _file_header.n_edges = decoder.u64();
     _file_header.n_faces = decoder.u64();

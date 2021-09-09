@@ -24,7 +24,7 @@ enum class ReadState {
     ReadingChunks,
     Finished,
     Error,
-    ErrorInvalidMagic,
+    ErrorInvalidFile,
     ErrorEndNotReached,
     ErrorIncompatible,
     ErrorChunkTooBig,

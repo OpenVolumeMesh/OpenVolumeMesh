@@ -7,20 +7,20 @@
 namespace OpenVolumeMesh::IO::detail {
 
 template<typename VecT>
-constexpr size_t GeometryWriterT<VecT>::dim() const
+size_t GeometryWriterT<VecT>::dim() const
 {
    return VecT::dim();
 }
 
 template<typename VecT>
-constexpr VertexEncoding GeometryWriterT<VecT>::vertex_encoding() const
+VertexEncoding GeometryWriterT<VecT>::vertex_encoding() const
 {
     return VertexEncoding::Double;
 }
 
 
 template<typename VecT>
-constexpr size_t GeometryWriterT<VecT>::elem_size() const
+size_t GeometryWriterT<VecT>::elem_size() const
 {
     return dim() * ::OpenVolumeMesh::IO::detail::elem_size(vertex_encoding());
 }

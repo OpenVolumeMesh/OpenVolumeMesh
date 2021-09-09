@@ -41,6 +41,7 @@ private:
 class OVM_EXPORT PropertyCodecs {
 public:
     PropertyCodecs() = default;
+    static PropertyCodecs with_all_default_types();
     void add_default_types();
     void add_ovm_vector_types();
 

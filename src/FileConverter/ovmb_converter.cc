@@ -1,5 +1,5 @@
 #include <OpenVolumeMesh/FileManager/FileManager.hh>
-#include <OpenVolumeMesh/IO/BinaryFileReader.hh>
+#include <OpenVolumeMesh/IO/ovmb_read.hh>
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
 
 #include <OpenVolumeMesh/Core/GeometryKernel.hh>
@@ -54,17 +54,7 @@ int main(int argc, char**argv) {
     stream_in.seekg(0, stream_in.beg);
     auto time_start = std::chrono::steady_clock::now();
     if (in_binary) {
-        OVM::IO::BinaryFileReader reader(stream_in);
-        reader.enable_topology_check(topo_check);
-        reader.enable_bottom_up_incidences(bottom_up);
-        auto compat = reader.compatibility<MeshT>();
-        if (compat != OVM::IO::ReadCompatibility::Ok) {
-            std::cout << "Error: Input file not compatible with mesh: "
-                      << to_string(compat)
-                      << std::endl;
-            return 2;
-        }
-        auto result = reader.read_file(mesh);
+        auto result = OVM::IO::ovmb_read(stream_in, mesh);
         if (result != OVM::IO::ReadResult::Ok) {
             std::cout << "Error: Reading binary file failed, state: "
             << to_string(result)

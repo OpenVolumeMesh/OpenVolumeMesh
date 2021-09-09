@@ -14,18 +14,18 @@
 
 namespace OpenVolumeMesh::IO::detail {
 
-class BinaryFileWriter
+class OVM_EXPORT BinaryFileWriter
 {
 public:
     BinaryFileWriter(
-            GeometryWriterBase const& _geometry_writer,
             std::ostream &_stream,
             TopologyKernel const &_mesh,
+            std::unique_ptr<GeometryWriterBase> _geometry_writer,
             WriteOptions const &_options = WriteOptions(),
             PropertyCodecs const &_prop_codecs = g_default_property_codecs)
-        : geometry_writer_(_geometry_writer)
-        , ostream_(_stream)
+        : ostream_(_stream)
         , mesh_(_mesh)
+        , geometry_writer_(std::move(_geometry_writer))
         , options_(_options)
         , prop_codecs_(_prop_codecs)
     {
@@ -35,8 +35,8 @@ public:
     }
     WriteResult write_file();
 private:
-    /// returns bytes of required padding
     void write_chunk(ChunkType type);
+
     void write_vertices(uint32_t first, uint32_t count);
     void write_edges   (uint32_t first, uint32_t count);
     void write_faces   (uint32_t first, uint32_t count);
@@ -46,9 +46,9 @@ private:
     void write_all_props();
 
 protected:
-    GeometryWriterBase const &geometry_writer_;
     std::ostream& ostream_;
     TopologyKernel const& mesh_;
+    std::unique_ptr<const GeometryWriterBase> geometry_writer_;
     WriteOptions const& options_;
     PropertyCodecs const& prop_codecs_;
 
@@ -68,5 +68,3 @@ protected:
 
 
 } // namespace OpenVolumeMesh::IO::detail
-
-#include <OpenVolumeMesh/IO/detail/BinaryFileWriter.cc>

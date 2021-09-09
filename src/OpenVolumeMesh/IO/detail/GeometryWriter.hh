@@ -24,9 +24,9 @@ public:
     GeometryWriterT(GeometryKernelT<VecT> const& _geometry_kernel)
         : geometry_kernel_(_geometry_kernel)
     {}
-    constexpr VertexEncoding vertex_encoding() const override;
-    constexpr size_t dim() const override;
-    constexpr size_t elem_size() const override;
+    VertexEncoding vertex_encoding() const override;
+    size_t dim() const override;
+    size_t elem_size() const override;
     void write(WriteBuffer & _writebuf, uint32_t first, uint32_t count) const override;
 
 private:

@@ -576,6 +576,7 @@ private:
     size_t n_vertices_ = 0u;
 
 public:
+    void add_n_vertices(size_t n);
     void reserve_vertices(size_t n);
     void reserve_edges(size_t n);
     void reserve_faces(size_t n);

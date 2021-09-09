@@ -1,5 +1,5 @@
-#include <OpenVolumeMesh/IO/BinaryFileReader.hh>
-#include <OpenVolumeMesh/IO/detail/BinaryFileReaderImpl.hh>
+#include <OpenVolumeMesh/IO/ovmb_read.hh>
+#include <OpenVolumeMesh/IO/detail/BinaryFileReader.hh>
 #include <fstream>
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>

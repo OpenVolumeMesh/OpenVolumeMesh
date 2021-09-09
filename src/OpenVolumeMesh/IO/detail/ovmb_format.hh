@@ -77,6 +77,7 @@ inline bool is_valid(TopoType v) {
 }
 
 enum class VertexEncoding : uint8_t {
+    None = 0, // topology-only mesh
     Float = 1,
     Double = 2,
 };
@@ -84,7 +85,9 @@ template<> inline size_t ovmb_size<VertexEncoding> = 1;
 template<> struct OVM_EXPORT is_ovmb_enum<VertexEncoding> : std::true_type {};
 
 inline bool is_valid(VertexEncoding enc) {
-    return enc == VertexEncoding::Float || enc == VertexEncoding::Double;
+    return enc == VertexEncoding::None
+            || enc == VertexEncoding::Float
+            || enc == VertexEncoding::Double;
 }
 
 struct PropertyInfo {
@@ -100,8 +103,9 @@ struct FileHeader {
     uint8_t file_version;
     uint8_t header_version;
     uint8_t vertex_dim;
+    VertexEncoding vertex_encoding;
     TopoType topo_type;
-    // 4 bytes padding
+    // 3 bytes padding
     uint64_t n_verts;
     uint64_t n_edges;
     uint64_t n_faces;
@@ -112,8 +116,9 @@ template<> inline size_t ovmb_size<FileHeader> =
         + sizeof(FileHeader::file_version)
         + sizeof(FileHeader::header_version)
         + sizeof(FileHeader::vertex_dim)
+        + sizeof(FileHeader::vertex_encoding)
         + ovmb_size<TopoType>
-        + 4 // padding
+        + 3 // padding
         + 4 * sizeof(uint64_t);
 
 static constexpr uint32_t fourcc(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
@@ -189,6 +194,7 @@ inline void call_with_encoder(VertexEncoding enc, F const&f)
 {
     switch(enc)
     {
+    case VertexEncoding::None:  assert(false); break;
     case VertexEncoding::Float:  f([](auto &w, float  v){w.flt(v);}); break;
     case VertexEncoding::Double: f([](auto &w, double v){w.dbl(v);}); break;
     }
@@ -198,6 +204,7 @@ inline void call_with_decoder(VertexEncoding enc, F const&f)
 {
     switch(enc)
     {
+    case VertexEncoding::None:  assert(false); break;
     case VertexEncoding::Float:  f([](auto &r){return r.flt();}); break;
     case VertexEncoding::Double: f([](auto &r){return r.dbl();}); break;
     }

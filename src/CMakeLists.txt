@@ -15,11 +15,12 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/detail/internal_type_name.cc
     OpenVolumeMesh/Core/Properties/PropertyStorageBase.cc
     OpenVolumeMesh/IO/enums.cc
-    OpenVolumeMesh/IO/BinaryFileReader.cc
     OpenVolumeMesh/IO/PropertySerialization.cc
     OpenVolumeMesh/IO/detail/BinaryIStream.cc
+    OpenVolumeMesh/IO/detail/BinaryFileReader.cc
+    OpenVolumeMesh/IO/detail/BinaryFileWriter.cc
     OpenVolumeMesh/IO/detail/GeometryWriter.cc
-    OpenVolumeMesh/IO/detail/BinaryFileReaderImpl.cc
+    OpenVolumeMesh/IO/detail/GeometryReader.cc
     OpenVolumeMesh/IO/detail/Decoder.cc
     OpenVolumeMesh/IO/detail/Encoder.cc
     OpenVolumeMesh/IO/detail/ovmb_format.cc

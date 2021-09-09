@@ -1,15 +1,15 @@
-#include <OpenVolumeMesh/IO/BinaryFileReader.hh>
-#include <OpenVolumeMesh/IO/detail/BinaryFileReaderImpl.hh>
+#include <OpenVolumeMesh/IO/ovmb_read.hh>
+#include <OpenVolumeMesh/IO/detail/BinaryFileReader.hh>
 
 namespace OpenVolumeMesh::IO {
 
 BinaryFileReader::BinaryFileReader(std::istream &_s)
-    : pimpl_(std::make_unique<detail::BinaryFileReaderImpl>(_s))
+    : pimpl_(std::make_unique<detail::BinaryFileReader>(_s))
 {}
 
 BinaryFileReader::BinaryFileReader(const char *filename)
     : fstream_(filename, std::ios::binary)
-    , pimpl_(std::make_unique<detail::BinaryFileReaderImpl>(fstream_))
+    , pimpl_(std::make_unique<detail::BinaryFileReader>(fstream_))
 {}
 
 BinaryFileReader::~BinaryFileReader() = default;

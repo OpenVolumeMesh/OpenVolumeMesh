@@ -4,6 +4,7 @@
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
 #include <OpenVolumeMesh/IO/enums.hh>
 #include <OpenVolumeMesh/IO/PropertySerialization.hh>
+#include <OpenVolumeMesh/IO/detail/GeometryReader.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
@@ -16,12 +17,20 @@
 
 namespace OpenVolumeMesh::IO::detail {
 
-class OVM_EXPORT BinaryFileReaderImpl
+class OVM_EXPORT BinaryFileReader
 {
 public:
-    BinaryFileReaderImpl(std::istream &_s)
+    BinaryFileReader(std::istream &_s,
+                     std::unique_ptr<GeometryReaderBase> _geometry_reader,
+                     PropertyCodecs const &_prop_codecs = g_default_property_codecs)
         : stream_(_s)
+        , geometry_reader_(std::move(_geometry_reader))
+        , prop_codecs_(_prop_codecs)
     {}
+
+    std::optional<TopoType> topo_type();
+    std::optional<uint8_t> vertex_dim();
+    std::optional<VertexEncoding> vertex_encoding();
 
     template<typename MeshT>
     ReadCompatibility compatibility();
@@ -33,27 +42,15 @@ public:
     void enable_topology_check(bool enabled) { topology_check_ = enabled;}
     void enable_bottom_up_incidences(bool enabled) { bottom_up_incidences_ = enabled;}
 private:
+    ReadResult internal_read_file(TopologyKernel &_mesh);
 
-    void read_header();
-
-    template<typename MeshT>
-    void read_chunk(MeshT &out);
-
-    template<typename MeshT>
-    void readPropDirChunk(Decoder &reader, MeshT &out);
-
-    template<typename PointT, typename AddVertexFunc>
-    void readVerticesChunk(Decoder &reader, AddVertexFunc);
-
-    template<typename AddEdgeFunc>
-    void readEdgesChunk(Decoder &reader, AddEdgeFunc);
-
-    template<typename AddFaceFunc>
-    void readFacesChunk(Decoder &reader, AddFaceFunc);
-
-    template<typename AddCellFunc>
-    void readCellsChunk(Decoder &reader, AddCellFunc);
-
+    bool read_header();
+    void read_chunk();
+    void readPropDirChunk(Decoder &reader);
+    void readVerticesChunk(Decoder &reader);
+    void readEdgesChunk(Decoder &reader);
+    void readFacesChunk(Decoder &reader);
+    void readCellsChunk(Decoder &reader);
     void readPropChunk(Decoder &reader);
 
     template<typename HandleT, typename ReadFunc, typename AddFunc>
@@ -70,7 +67,9 @@ private:
 
 private:
     detail::BinaryIStream stream_;
-    const PropertyCodecs *prop_codecs_ = &g_default_property_codecs; // TODO: setter
+    std::unique_ptr<GeometryReaderBase> geometry_reader_;
+    TopologyKernel *mesh_;
+    PropertyCodecs const& prop_codecs_;
 
     bool topology_check_ = true;
     bool bottom_up_incidences_ = true;
@@ -107,4 +106,4 @@ private:
 } // namespace OpenVolumeMesh::IO::detail
 
 
-#include <OpenVolumeMesh/IO/detail/BinaryFileReaderImplT_impl.hh>
+#include <OpenVolumeMesh/IO/detail/BinaryFileReader_impl.hh>

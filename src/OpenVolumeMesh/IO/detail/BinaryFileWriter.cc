@@ -1,4 +1,3 @@
-#pragma once
 #include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
@@ -6,7 +5,7 @@
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
 #include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
-#include <OpenVolumeMesh/IO/detail/BinaryFileReaderImplT_impl.hh>
+#include <OpenVolumeMesh/IO/detail/BinaryFileReader_impl.hh>
 
 
 #include <sstream>
@@ -63,7 +62,8 @@ WriteResult BinaryFileWriter::write_file()
     FileHeader header;
     header.header_version = 0;
     header.file_version = 0;
-    header.vertex_dim = geometry_writer_.dim();
+    header.vertex_dim = geometry_writer_->dim();
+    header.vertex_encoding = geometry_writer_->vertex_encoding();
     header.topo_type = topo_type;
     header.n_verts = mesh_.n_vertices();
     header.n_edges = mesh_.n_edges();
@@ -76,7 +76,9 @@ WriteResult BinaryFileWriter::write_file()
     header_buffer_.write_to_stream(ostream_);
 
     write_propdir();
-    write_vertices(0, static_cast<uint32_t>(header.n_verts));
+    if (geometry_writer_->vertex_encoding() != VertexEncoding::None) {
+        write_vertices(0, static_cast<uint32_t>(header.n_verts));
+    }
     write_edges(0, static_cast<uint32_t>(header.n_edges));
     write_faces(0, static_cast<uint32_t>(header.n_faces));
     write_cells(0, static_cast<uint32_t>(header.n_cells));
@@ -130,12 +132,12 @@ void BinaryFileWriter::write_vertices(uint32_t first, uint32_t count)
     chunk_buffer_.reset();
     chunk_buffer_.need(
         ovmb_size<VertexChunkHeader>
-        + count * geometry_writer_.elem_size());
+        + count * geometry_writer_->elem_size());
 
     Encoder encoder(chunk_buffer_);
     write(encoder, header);
 
-    geometry_writer_.write(chunk_buffer_, first, count);
+    geometry_writer_->write(chunk_buffer_, first, count);
     write_chunk(ChunkType::Vertices);
 }
 

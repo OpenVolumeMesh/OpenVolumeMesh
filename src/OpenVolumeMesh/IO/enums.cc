@@ -32,7 +32,7 @@ const char* to_string(ReadState rs) {
         "ReadingChunks",
         "Finished",
         "Error",
-        "ErrorInvalidMagic",
+        "ErrorInvalidFile",
         "ErrorEndNotReached",
         "ErrorIncompatible",
         "ErrorChunkTooBig",

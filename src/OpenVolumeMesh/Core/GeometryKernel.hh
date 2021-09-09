@@ -42,20 +42,6 @@
 
 namespace OpenVolumeMesh {
 
-#if 0
-template <class VecT>
-class GeometryKernelT {
-public:
-    GeometryKernelT(ResourceManager *_resman)
-        : prop_{_resman->create_persistent_property<VecT, Entity::Vertex>("ovm:position")}
-    {}
-    VecT const& operator[](VH vh) const {return prop_[vh];}
-    VecT      & operator[](VH vh)       {return prop_[vh];}
-
-private:
-    PropertyPtr<VecT, Entity::Vertex> prop_;
-};
-#endif
 template <class VecT>
 using GeometryKernelT = PropertyPtr<VecT, Entity::Vertex>;
 
@@ -204,7 +190,6 @@ public:
 private:
     GeometryKernelT<VecT> get_prop() {
         auto prop = this->template request_property<VecT, Entity::Vertex>("ovm:position");
-        this->set_persistent(prop);
         return prop;
     }
 
