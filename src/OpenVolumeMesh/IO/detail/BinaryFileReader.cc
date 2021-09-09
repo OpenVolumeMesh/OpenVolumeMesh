@@ -230,7 +230,7 @@ void BinaryFileReader::readFacesChunk(Decoder &reader)
     {
         auto add_face =  [&](auto halfedges)
         {
-            return mesh_->add_face(std::move(halfedges), topology_check_);
+            return mesh_->add_face(std::move(halfedges), options_.topology_check);
         };
         readFacesOrCells<HalfEdgeHandle>(
                     reader, header, fixed_valence, valence_enc, n_edges_read_ * 2,
@@ -274,7 +274,7 @@ void BinaryFileReader::readCellsChunk(Decoder &reader)
     {
         auto add_cell =  [&](auto halffaces)
         {
-            return mesh_->add_cell(std::move(halffaces), topology_check_);
+            return mesh_->add_cell(std::move(halffaces), options_.topology_check);
         };
         readFacesOrCells<HalfFaceHandle>(
                     reader, header, fixed_valence, valence_enc, n_faces_read_ * 2,
@@ -384,7 +384,7 @@ ReadResult BinaryFileReader::internal_read_file(TopologyKernel &out)
         return ReadResult::InvalidFile;
     }
     state_ = ReadState::Ok;
-    if (bottom_up_incidences_) {
+    if (options_.bottom_up_incidences) {
         out.enable_bottom_up_incidences(true);
     }
     return ReadResult::Ok;

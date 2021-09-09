@@ -3,6 +3,7 @@
 #include <OpenVolumeMesh/IO/detail/BinaryIStream.hh>
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
 #include <OpenVolumeMesh/IO/enums.hh>
+#include <OpenVolumeMesh/IO/ReadOptions.hh>
 #include <OpenVolumeMesh/IO/PropertySerialization.hh>
 #include <OpenVolumeMesh/IO/detail/GeometryReader.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
@@ -22,9 +23,11 @@ class OVM_EXPORT BinaryFileReader
 public:
     BinaryFileReader(std::istream &_s,
                      std::unique_ptr<GeometryReaderBase> _geometry_reader,
+                     ReadOptions const& _options,
                      PropertyCodecs const &_prop_codecs = g_default_property_codecs)
         : stream_(_s)
         , geometry_reader_(std::move(_geometry_reader))
+        , options_(_options)
         , prop_codecs_(_prop_codecs)
     {}
 
@@ -38,9 +41,6 @@ public:
     template<typename MeshT>
     ReadResult read_file(MeshT &_mesh);
 
-//    ReadResult state() const {return state_;}
-    void enable_topology_check(bool enabled) { topology_check_ = enabled;}
-    void enable_bottom_up_incidences(bool enabled) { bottom_up_incidences_ = enabled;}
 private:
     ReadResult internal_read_file(TopologyKernel &_mesh);
 
@@ -69,10 +69,8 @@ private:
     detail::BinaryIStream stream_;
     std::unique_ptr<GeometryReaderBase> geometry_reader_;
     TopologyKernel *mesh_;
+    ReadOptions options_;
     PropertyCodecs const& prop_codecs_;
-
-    bool topology_check_ = true;
-    bool bottom_up_incidences_ = true;
 
     FileHeader file_header_;
 
