@@ -22,6 +22,20 @@ ReadResult ovmb_read(std::istream & _istream,
                  ReadOptions _options = ReadOptions(),
                  PropertyCodecs const &_prop_codecs = g_default_property_codecs);
 
+template<typename MeshT>
+ReadResult ovmb_read(const char *_filename,
+                 MeshT & _mesh,
+                 ReadOptions _options = ReadOptions(),
+                 PropertyCodecs const &_prop_codecs = g_default_property_codecs)
+{
+
+    std::ifstream f(_filename, std::ios::binary);
+    if (!f.good()) {
+        return ReadResult::CannotOpenFile;
+    }
+    return ovmb_read(f, _mesh, _options, _prop_codecs);
+}
+
 } // namespace OpenVolumeMesh::IO
 
 #ifndef OVM_DO_NOT_INCLUDE_FILE_READER_IMPL

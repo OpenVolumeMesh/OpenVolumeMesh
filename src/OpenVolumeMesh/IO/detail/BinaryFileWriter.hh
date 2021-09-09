@@ -21,8 +21,8 @@ public:
             std::ostream &_stream,
             TopologyKernel const &_mesh,
             std::unique_ptr<GeometryWriterBase> _geometry_writer,
-            WriteOptions const &_options = WriteOptions(),
-            PropertyCodecs const &_prop_codecs = g_default_property_codecs)
+            WriteOptions const &_options,
+            PropertyCodecs const &_prop_codecs)
         : ostream_(_stream)
         , mesh_(_mesh)
         , geometry_writer_(std::move(_geometry_writer))

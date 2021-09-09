@@ -87,7 +87,7 @@ int main(int argc, char**argv) {
         return 1;
     }
 
-    std::ofstream stream_out(fname_out);
+    std::ofstream stream_out(fname_out, std::ios::binary);
 
     if (!stream_out.good()) {
         std::cerr << "Error: Could not open output file." << std::endl;

@@ -58,7 +58,17 @@ WriteResult BinaryFileWriter::write_file()
     if (mesh_.needs_garbage_collection()) {
         throw std::runtime_error("run garbage collection first!");
     }
+
+    // this should be handled before, in make_ovmb_writer
+    assert (options_.topology_type != WriteOptions::TopologyType::AutoDetect);
+
     TopoType topo_type = TopoType::Polyhedral;
+    if (options_.topology_type == WriteOptions::TopologyType::Tetrahedral) {
+        topo_type = TopoType::Tetrahedral;
+    } else  if (options_.topology_type == WriteOptions::TopologyType::Hexahedral) {
+        topo_type = TopoType::Hexahedral;
+    }
+
     FileHeader header;
     header.header_version = 0;
     header.file_version = 0;

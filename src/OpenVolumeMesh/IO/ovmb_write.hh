@@ -25,15 +25,15 @@ WriteResult ovmb_write(std::ostream & _ostream,
 template<typename MeshT>
 WriteResult ovmb_write(const char *_filename,
                               MeshT const& _mesh,
-                              WriteOptions options = WriteOptions(),
+                              WriteOptions _options = WriteOptions(),
                               PropertyCodecs const &_prop_codecs = g_default_property_codecs)
 
 {
     std::ofstream f(_filename, std::ios::binary);
-    if (f.good()) {
+    if (!f.good()) {
         return WriteResult::CannotOpenFile;
     }
-    return ovmb_write(f, _mesh, options, _prop_codecs);
+    return ovmb_write(f, _mesh, _options, _prop_codecs);
 }
 
 } // namespace OpenVolumeMesh::IO
