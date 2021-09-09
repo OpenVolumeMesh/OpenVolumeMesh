@@ -40,6 +40,7 @@ public:
     inline void write(int64_t  v) {u64(v);}
     inline void write(float v)    {flt(v);}
     inline void write(double v)   {dbl(v);}
+    void write(std::string const&v);
 
     // helpers
     void padding(size_t n);

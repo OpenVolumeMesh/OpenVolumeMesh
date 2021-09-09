@@ -78,6 +78,8 @@ void PropertyCodecs::add_default_types()
     register_type<float,    SimplePropCodec<Primitive<float>>>   ("f");
     register_type<double,   SimplePropCodec<Primitive<double>>>  ("d");
 
+    register_type<std::string, SimplePropCodec<Primitive<std::string>>>  ("s32");
+
     register_type<VH,       SimplePropCodec<OVMHandle<VH>>>      ("vh");
     register_type<EH,       SimplePropCodec<OVMHandle<EH>>>      ("eh");
     register_type<HEH,      SimplePropCodec<OVMHandle<HEH>>>     ("heh");

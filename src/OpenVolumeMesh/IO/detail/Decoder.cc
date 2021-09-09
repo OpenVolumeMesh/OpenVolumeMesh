@@ -60,6 +60,14 @@ float Decoder::flt()
     return ret;
 }
 
+void Decoder::read(std::string &v)
+{
+   auto len = u32();
+   need(len);
+   v.resize(len);
+   read(v.data(), len);
+}
+
 
 void Decoder::read(uint8_t *s, size_t n)
 {

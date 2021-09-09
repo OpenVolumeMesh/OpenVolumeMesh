@@ -49,6 +49,7 @@ public:
     inline void read(int64_t  &v) {v = u64();}
     inline void read(double &v)   {v = dbl();}
     inline void read(float &v)    {v = flt();}
+    void read(std::string &v);
 
 // basic types, WARNING: length unchecked!
     void     padding(uint8_t n);
