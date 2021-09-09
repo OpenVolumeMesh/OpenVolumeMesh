@@ -70,6 +70,10 @@ public:
 
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
+
+    template <class T, typename EntityTag>
+    static PropertyPtr<T, EntityTag> prop_ptr_from_storage(PropertyStorageBase *_prop);
+
     template<class EntityTag>
     void resize_props(size_t _n);
 

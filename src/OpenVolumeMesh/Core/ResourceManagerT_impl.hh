@@ -132,9 +132,7 @@ ResourceManager::internal_find_property(const std::string& _name) const
                 && prop->name() == _name
                 && prop->internal_type_name() == type_name)
         {
-            auto ps = std::static_pointer_cast<PropertyStorageT<T>>(
-                        prop->shared_from_this());
-            return PropertyPtr<T, EntityTag>(std::move(ps));
+            return prop_ptr_from_storage<T, EntityTag>(prop);
         }
     }
     return {};
@@ -349,6 +347,17 @@ PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T 
 {
     *this = mesh->request_property<T, Entity>(_name, _def);
 }
+
+
+template <class T, typename EntityTag>
+PropertyPtr<T, EntityTag> ResourceManager::
+prop_ptr_from_storage(PropertyStorageBase *_prop)
+{
+    auto ps = std::static_pointer_cast<PropertyStorageT<T>>(
+            _prop->shared_from_this());
+    return PropertyPtr<T, EntityTag>(std::move(ps));
+}
+
 
 
 } // Namespace OpenVolumeMesh
