@@ -66,7 +66,7 @@ public:
     ResourceManager(const ResourceManager &other);
     ResourceManager(ResourceManager &&other);
     ResourceManager& operator=(const ResourceManager &other);
-    ResourceManager& operator=(ResourceManager &&other);
+    ResourceManager& operator=(ResourceManager &&other) = default;
 
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
@@ -90,10 +90,10 @@ private:
     PropertyPtr<T, EntityTag> internal_create_property(std::string _name, const T _def, bool shared) const;
 
 
-    template<bool Move, typename EntityTag>
-    void assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
-    template<bool Move>
-    void assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src);
+    void assignAllPropertiesFrom(ResourceManager const&);
+
+    template<typename EntityTag>
+    void assignPropertiesFrom(ResourceManager const&);
 
     PerEntity<PersistentProperties> persistent_props_;
 
@@ -211,6 +211,7 @@ public:
 
     template<typename T, class EntityTag>
     void set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _enable = true);
+
 
     template<typename T, class EntityTag>
     void set_shared(PropertyPtr<T, EntityTag>& _prop, bool _enable = true);

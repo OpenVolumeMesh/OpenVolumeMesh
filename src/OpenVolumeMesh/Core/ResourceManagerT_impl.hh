@@ -283,35 +283,41 @@ size_t ResourceManager::n_persistent_props() const {
 }
 
 
-template<bool Move, typename EntityTag>
-void ResourceManager::assignProperties(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)
+template<typename EntityTag>
+void ResourceManager::assignPropertiesFrom(ResourceManager const& _src)
 {
-    auto &src_all = src.persistent_props_.template get<EntityTag>();
-    auto &dst_all = persistent_props_.get<EntityTag>();
+    auto &src_all = _src.template storage_tracker<EntityTag>();
+    auto &dst_all = storage_tracker<EntityTag>();
 
     // If possible, re-use existing properties instead of copying
     // everything blindly.
 
-    PersistentProperties out;
+    auto &persistent = persistent_props_.get<EntityTag>();
 
-    // TODO OPT: this will be slow for many props (quadratic) - we could do this in nlogn!
+    // TODO OPT: this will be slow for many props (quadratic) - we could do this in nlogn.
     //           sort both sets by key (name, type), then traverse in parallel
     for (const auto &srcprop: src_all) {
         bool found = false;
+        if (!srcprop->shared()) {
+            // it does not make sense to copy private props,
+            // noone could access them
+            return;
+        }
+        // try to find and update existing properties in dst
         for (auto it = dst_all.begin(); it != dst_all.end(); ++it)
         {
             auto &dstprop = *it;
+            if (!dstprop->shared()) {
+                return;
+            }
             if (dstprop->name() == srcprop->name()
                     && dstprop->internal_type_name() == srcprop->internal_type_name())
             {
                 // found a correspondence!
-                out.insert(dstprop);
-                if (Move) {
-                    dstprop->move_values_from(srcprop.get());
-                } else {
-                    dstprop->assign_values_from(srcprop.get());
+                dstprop->assign_values_from(srcprop);
+                if (srcprop->persistent() && !dstprop->persistent()) {
+                    persistent.insert(dstprop->shared_from_this());
                 }
-                dst_all.erase(it);
                 found = true;
                 break;
             }
@@ -319,26 +325,15 @@ void ResourceManager::assignProperties(typename std::conditional<Move, ResourceM
 
         if (!found)
         {
-            std::shared_ptr<PropertyStorageBase> prop;
-            if (Move) {
-                prop = srcprop;
-            } else {
-                prop = srcprop->clone();
+            auto dstprop = srcprop->clone();
+            dstprop->set_tracker(&storage_tracker<EntityTag>());
+            if (srcprop->persistent()) {
+                persistent.insert(dstprop->shared_from_this());
             }
-            prop->set_tracker(&storage_tracker<EntityTag>());
-            out.insert(std::move(prop));
         }
     }
-    dst_all = std::move(out);
 }
 
-template<bool Move>
-void ResourceManager::assignAllPropertiesFrom(typename std::conditional<Move, ResourceManager&, const ResourceManager&>::type src)
-{
-    for_each_entity([&](auto entity_tag) {
-        assignProperties<Move, decltype(entity_tag)>(src);
-    });
-}
 
 
 

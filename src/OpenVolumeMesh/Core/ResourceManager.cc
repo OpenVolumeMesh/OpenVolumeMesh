@@ -49,18 +49,18 @@ ResourceManager::ResourceManager(ResourceManager &&other)
 ResourceManager& ResourceManager::operator=(const ResourceManager &other)
 {
     if (this != &other) {
-       assignAllPropertiesFrom<false>(other);
+       assignAllPropertiesFrom(other);
     }
     return *this;
 }
 
-ResourceManager& ResourceManager::operator=(ResourceManager &&other)
+void ResourceManager::assignAllPropertiesFrom(ResourceManager const& src)
 {
-    if (this != &other) {
-       assignAllPropertiesFrom<true>(other);
-    }
-    return *this;
+    for_each_entity([&](auto entity_tag) {
+        assignPropertiesFrom<decltype(entity_tag)>(src);
+    });
 }
+
 
 detail::Tracker<PropertyStorageBase> &
 ResourceManager::storage_tracker(EntityType type) const
