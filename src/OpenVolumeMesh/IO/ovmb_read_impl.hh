@@ -1,5 +1,5 @@
 #include <OpenVolumeMesh/IO/ovmb_read.hh>
-#include <OpenVolumeMesh/IO/PropertySerialization.hh>
+#include <OpenVolumeMesh/IO/PropertyCodec.hh>
 #include <OpenVolumeMesh/IO/detail/GeometryReader.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileReader.hh>
 

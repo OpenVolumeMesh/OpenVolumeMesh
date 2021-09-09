@@ -1,7 +1,7 @@
 #pragma once
 
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
-#include <OpenVolumeMesh/IO/PropertySerialization.hh>
+#include <OpenVolumeMesh/IO/PropertyCodec.hh>
 #include <OpenVolumeMesh/IO/enums.hh>
 #include <OpenVolumeMesh/IO/WriteOptions.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>

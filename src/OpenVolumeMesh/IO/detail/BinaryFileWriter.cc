@@ -3,7 +3,7 @@
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
-#include <OpenVolumeMesh/IO/PropertySerialization.hh>
+#include <OpenVolumeMesh/IO/PropertyCodec.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileReader_impl.hh>
 

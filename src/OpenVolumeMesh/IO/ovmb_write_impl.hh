@@ -1,5 +1,5 @@
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
-#include <OpenVolumeMesh/IO/PropertySerialization.hh>
+#include <OpenVolumeMesh/IO/PropertyCodec.hh>
 #include <OpenVolumeMesh/IO/detail/GeometryWriter.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileWriter.hh>
 #include <OpenVolumeMesh/IO/detail/TopologyType.hh>

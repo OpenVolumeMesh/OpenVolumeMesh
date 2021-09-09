@@ -1,6 +1,6 @@
 #include <OpenVolumeMesh/IO/detail/BinaryFileReader.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileReader_impl.hh>
-#include <OpenVolumeMesh/IO/PropertySerialization.hh>
+#include <OpenVolumeMesh/IO/PropertyCodec.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_codec.hh>
 #include <OpenVolumeMesh/Core/Handles.hh>
