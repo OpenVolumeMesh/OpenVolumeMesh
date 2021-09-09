@@ -22,11 +22,9 @@ class OVM_EXPORT BinaryFileReader
 {
 public:
     BinaryFileReader(std::istream &_s,
-                     std::unique_ptr<GeometryReaderBase> _geometry_reader,
                      ReadOptions const& _options,
                      PropertyCodecs const &_prop_codecs = g_default_property_codecs)
         : stream_(_s)
-        , geometry_reader_(std::move(_geometry_reader))
         , options_(_options)
         , prop_codecs_(_prop_codecs)
     {}

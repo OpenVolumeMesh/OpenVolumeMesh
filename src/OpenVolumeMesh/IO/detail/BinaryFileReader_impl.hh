@@ -28,6 +28,8 @@ ReadResult BinaryFileReader::read_file(MeshT &out)
     if (state_ != ReadState::HeaderRead) {
         return ReadResult::InvalidFile;
     }
+    using GeomReader = detail::GeometryReaderT<typename MeshT::Point>;
+    geometry_reader_ = std::make_unique<GeomReader>(out.vertex_positions());
     return internal_read_file(out);
 }
 
@@ -47,7 +49,7 @@ ReadCompatibility BinaryFileReader::compatibility()
         std::cerr << "OVM::IO: file version is too new, still trying to read." << std::endl;
     }
     // TODO: allow converting vertex dimension?
-    if (file_header_.vertex_dim != geometry_reader_->dim()) {
+    if (file_header_.vertex_dim != MeshT::Point::dim()) {
         return ReadCompatibility::MeshVertexDimensionIncompatible;
     }
     // TODO: check geometry type (float, double)

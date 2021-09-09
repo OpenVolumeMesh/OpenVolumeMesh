@@ -51,10 +51,8 @@ public:
             std::string ovmb_filename = filename;
             ovmb_filename += 'b';
             std::ifstream stream(ovmb_filename, std::ios::binary);
-            HexahedralMesh hexmesh;
             auto result = OpenVolumeMesh::IO::make_ovmb_reader(
                         stream,
-                        hexmesh,
                         OpenVolumeMesh::IO::ReadOptions(),
                         OpenVolumeMesh::IO::g_default_property_codecs);
             auto topo_type = result->topo_type();

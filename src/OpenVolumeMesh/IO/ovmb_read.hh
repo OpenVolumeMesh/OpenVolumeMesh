@@ -12,7 +12,6 @@ namespace OpenVolumeMesh::IO {
 template<typename MeshT>
 std::unique_ptr<detail::BinaryFileReader>
 make_ovmb_reader(std::istream & _ostream,
-                 MeshT & _mesh,
                  ReadOptions const &_options,
                  PropertyCodecs const &_prop_codecs);
 
