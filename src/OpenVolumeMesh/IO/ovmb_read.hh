@@ -9,17 +9,29 @@
 
 namespace OpenVolumeMesh::IO {
 
-template<typename MeshT>
 std::unique_ptr<detail::BinaryFileReader>
-make_ovmb_reader(std::istream & _ostream,
-                 ReadOptions const &_options,
-                 PropertyCodecs const &_prop_codecs);
+inline make_ovmb_reader(std::istream & _istream,
+            const ReadOptions &_options,
+            PropertyCodecs const &_prop_codecs)
+{
+    return std::make_unique<detail::BinaryFileReader>(
+                _istream,
+                _options,
+                _prop_codecs);
 
+}
+
+/// The _istream MUST be opened in using std::ios::binary!
 template<typename MeshT>
-ReadResult ovmb_read(std::istream & _istream,
-                 MeshT & _mesh,
-                 ReadOptions _options = ReadOptions(),
-                 PropertyCodecs const &_prop_codecs = g_default_property_codecs);
+ReadResult ovmb_read(std::istream &_istream,
+                     MeshT &_mesh,
+                     ReadOptions _options,
+                     PropertyCodecs const &_prop_codecs)
+{
+    static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
+    auto reader = make_ovmb_reader(_istream, _options, _prop_codecs);
+    return reader->read_file(_mesh);
+}
 
 template<typename MeshT>
 ReadResult ovmb_read(const char *_filename,
@@ -36,7 +48,3 @@ ReadResult ovmb_read(const char *_filename,
 }
 
 } // namespace OpenVolumeMesh::IO
-
-#ifndef OVM_DO_NOT_INCLUDE_FILE_READER_IMPL
-#  include <OpenVolumeMesh/IO/ovmb_read_impl.hh>
-#endif

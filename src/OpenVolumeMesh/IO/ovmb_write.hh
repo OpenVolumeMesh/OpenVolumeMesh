@@ -16,6 +16,7 @@ make_ovmb_writer(std::ostream & _ostream,
             WriteOptions options,
             PropertyCodecs const &_prop_codecs);
 
+/// The _istream MUST be opened in using std::ios::binary!
 template<typename MeshT>
 WriteResult ovmb_write(std::ostream & _ostream,
                        MeshT const& _mesh,
