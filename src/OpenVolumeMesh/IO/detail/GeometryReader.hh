@@ -33,3 +33,6 @@ extern template class OVM_EXPORT GeometryReaderT<Vec3f>;
 extern template class OVM_EXPORT GeometryReaderT<Vec3d>;
 
 } // namespace OpenVolumeMesh::IO::detail
+
+
+#include <OpenVolumeMesh/IO/detail/GeometryReaderT_impl.hh>

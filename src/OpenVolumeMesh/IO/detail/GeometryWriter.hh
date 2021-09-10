@@ -36,4 +36,6 @@ private:
 extern template class OVM_EXPORT GeometryWriterT<Vec3f>;
 extern template class OVM_EXPORT GeometryWriterT<Vec3d>;
 
+
 } // namespace OpenVolumeMesh::IO::detail
+#include <OpenVolumeMesh/IO/detail/GeometryWriterT_impl.hh>
