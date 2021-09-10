@@ -75,7 +75,7 @@ public:
 
 public:
 
-	explicit PropertyStorageT(
+    explicit PropertyStorageT(
             detail::Tracker<PropertyStorageBase> *tracker,
             std::string _name,
             EntityType _entity_type,
@@ -87,36 +87,38 @@ public:
 
 public:
     void reserve(size_t _n) final {
-		data_.reserve(_n);
-	}
+        data_.reserve(_n);
+    }
     void resize(size_t _n) final  {
         data_.resize(_n, def_);
-	}
+    }
     size_t size() const final  {
-		return data_.size();
-	}
+        return data_.size();
+    }
     void clear() final  {
-		data_.clear();
-	}
+        data_.clear();
+    }
     void push_back() final  {
-		data_.push_back(def_);
-	}
+        data_.push_back(def_);
+    }
     void swap(size_t _i0, size_t _i1) final  {
         std::swap(data_[_i0], data_[_i1]);
     }
     void copy(size_t _src_idx, size_t _dst_idx) final{
-		data_[_dst_idx] = data_[_src_idx];
-	}
+        data_[_dst_idx] = data_[_src_idx];
+    }
     void delete_element(size_t _idx) final {
         assert(_idx < data_.size());
         data_.erase(data_.begin() + static_cast<long>(_idx));
-	}
+    }
     void swap(std::vector<T> &_other) {
         if (data_.size() != _other.size()) {
             throw std::runtime_error("PropertyStorageT::swap: vector sizes don't match");
         }
         std::swap(data_, _other);
     }
+
+    std::unique_ptr<BasePropertyPtr> make_property_ptr();
 
 public:
 
@@ -138,37 +140,37 @@ public:
     }
 
 public:
-	// data access interface
+    // data access interface
 
-	/// Get pointer to array (does not work for T==bool)
-	const T* data() const {
+    /// Get pointer to array (does not work for T==bool)
+    const T* data() const {
 
-		if (data_.empty())
-			return 0;
+        if (data_.empty())
+            return 0;
 
         return data_.data();
-	}
+    }
 
-	/// Get reference to property vector (be careful, improper usage, e.g. resizing, may crash)
-	vector_type& data_vector() {
-		return data_;
-	}
+    /// Get reference to property vector (be careful, improper usage, e.g. resizing, may crash)
+    vector_type& data_vector() {
+        return data_;
+    }
 
     const vector_type& data_vector() const {
         return data_;
     }
 
-	/// Access the i'th element. No range check is performed!
+    /// Access the i'th element. No range check is performed!
     reference operator[](size_t _idx) {
         assert(_idx < data_.size());
-		return data_[_idx];
-	}
+        return data_[_idx];
+    }
 
-	/// Const access to the i'th element. No range check is performed!
+    /// Const access to the i'th element. No range check is performed!
     const_reference operator[](size_t _idx) const {
         assert(_idx < data_.size());
-		return data_[_idx];
-	}
+        return data_[_idx];
+    }
 
     const_reference at(size_t _idx) const { return data_.at(_idx); }
     reference       at(size_t _idx)       { return data_.at(_idx); }
@@ -177,13 +179,13 @@ public:
         auto res = std::make_shared<PropertyStorageT<T>>(*this);
         res->set_tracker(nullptr);
         return res;
-	}
+    }
 
-	typename vector_type::const_iterator begin() const { return data_.begin(); }
+    typename vector_type::const_iterator begin() const { return data_.begin(); }
 
-	typename vector_type::iterator begin() { return data_.begin(); }
+    typename vector_type::iterator begin() { return data_.begin(); }
 
-	typename vector_type::const_iterator end() const { return data_.end(); }
+    typename vector_type::const_iterator end() const { return data_.end(); }
 
     typename vector_type::iterator end() { return data_.end(); }
 
@@ -211,7 +213,7 @@ public:
     }
 
 private:
-	vector_type data_;
+    vector_type data_;
     T def_;
 };
 

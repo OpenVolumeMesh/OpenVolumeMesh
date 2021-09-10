@@ -48,6 +48,12 @@ namespace OpenVolumeMesh {
 
 class ResourceManager;
 
+class OVM_EXPORT BasePropertyPtr {
+public:
+    virtual ~BasePropertyPtr() = default;
+    virtual std::string const& name() const& = 0;
+};
+
 /**
  * \class PropertyPtr
  *
@@ -56,6 +62,7 @@ class ResourceManager;
 
 template <typename T, typename EntityTag>
 class PropertyPtr : public HandleIndexing<EntityTag, PropertyStoragePtr<T>>
+                  , public BasePropertyPtr
 {
     static_assert(is_entity<EntityTag>::value);
     using PropertyStoragePtr<T>::storage;
@@ -63,11 +70,27 @@ public:
     // defined in ResourceManagerT_impl to avoid circular references
     PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def);
 
+    std::string const& name() const& override {return PropertyStoragePtr<T>::name();};
+
     friend class ResourceManager;
+    template<typename _T>
+    friend class PropertyStorageT;
 
 protected:
     using HandleIndexing<EntityTag, PropertyStoragePtr<T>>::HandleIndexing;
 };
+
+template<typename T>
+std::unique_ptr<BasePropertyPtr>
+PropertyStorageT<T>::make_property_ptr()
+{
+    return entitytag_dispatch(entity_type(), [&](auto entity){
+        using EntityTag = decltype(entity);
+        auto sp = std::static_pointer_cast<PropertyStorageT<T>>(shared_from_this());
+        auto pp = new PropertyPtr<T, EntityTag>(std::move(sp));
+        return std::unique_ptr<BasePropertyPtr>(pp);
+    });
+}
 
 template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
 template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;

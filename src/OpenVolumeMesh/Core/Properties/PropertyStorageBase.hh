@@ -46,6 +46,7 @@
 namespace OpenVolumeMesh {
 
 class ResourceManager;
+class BasePropertyPtr;
 
 template<typename T>
 class PropertyStorageT;
@@ -160,6 +161,8 @@ public:
         }
         return static_cast<const PropertyStorageT<T>*>(this);
     }
+
+    virtual std::unique_ptr<BasePropertyPtr> make_property_ptr() = 0;
 
     /// Copy data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void assign_values_from(const PropertyStorageBase *other) = 0;
