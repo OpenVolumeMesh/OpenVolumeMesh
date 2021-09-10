@@ -118,6 +118,8 @@ public:
         std::swap(data_, _other);
     }
 
+    /// This is made for use in OpenFlipper's Plugin-PropertyVis,
+    /// we recommend avoiding it. No guarantees on preserving this API.
     std::unique_ptr<BasePropertyPtr> make_property_ptr();
 
 public:

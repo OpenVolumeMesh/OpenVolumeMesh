@@ -90,7 +90,7 @@ public:
     }
 
     /// Set the coordinates of point _vh
-    [[deprecated("Use VecT& vertex(VH) instead.")]]
+    //[[deprecated("Use VecT& vertex(VH) instead.")]]
     void set_vertex(VertexHandle _vh, const VecT& _p) {
 
         assert(_vh.idx() < (int)position_.size());
