@@ -1,8 +1,9 @@
 #pragma once
 
-#include <OpenVolumeMesh/IO/PropertyCodec.hh>
-#include <OpenVolumeMesh/IO/PropertyCodecT_impl.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecs.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecsT_impl.hh>
 #include <OpenVolumeMesh/IO/detail/Encoder.hh>
+#include <OpenVolumeMesh/IO/detail/Decoder.hh>
 
 #include <Eigen/Core>
 
@@ -17,16 +18,20 @@ struct EigenDenseFixedMatrix
     using T = Eigen::Matrix<_Scalar, _Rows, _Cols>;
 
     static void encode(detail::Encoder &enc, const T &val) {
-        for (const auto x: val.reshaped()) {
-            enc.write(x);
-        }
-    }
-    static void decode(detail::Decoder &reader, T &val) {
-        for (const auto x: val.reshaped()) {
-            reader.read(x);
+        for (size_t r = 0; r < val.rows(); ++r) {
+            for (size_t c = 0; c < val.cols(); ++r) {
+                enc.write(val(r, c));
+            }
         }
     }
 
+    static void decode(detail::Decoder &reader, T &val) {
+        for (size_t r = 0; r < val.rows(); ++r) {
+            for (size_t c = 0; c < val.cols(); ++r) {
+                reader.read(val(r, c));
+            }
+        }
+    }
 };
 
 } // namespace OpenVolumeMesh::IO::Codecs
@@ -45,6 +50,8 @@ void register_eigen_codecs(PropertyCodecs &_codecs)
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 3, 1>>>("3f");
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 4, 1>>>("4f");
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 9, 1>>>("9f");
+
+    // matrices stored as column-major:
 
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<double, 2, 2>>>("2x2d");
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<double, 3, 3>>>("3x3d");

@@ -1,4 +1,4 @@
-#include <OpenVolumeMesh/IO/PropertyCodec.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 #include <memory>
@@ -6,7 +6,7 @@
 #include <array>
 #include <vector>
 
-#include <OpenVolumeMesh/IO/PropertyCodecT_impl.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecsT_impl.hh>
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 
 namespace OpenVolumeMesh::IO {

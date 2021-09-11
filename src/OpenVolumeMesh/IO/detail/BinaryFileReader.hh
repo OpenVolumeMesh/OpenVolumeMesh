@@ -4,7 +4,7 @@
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
 #include <OpenVolumeMesh/IO/enums.hh>
 #include <OpenVolumeMesh/IO/ReadOptions.hh>
-#include <OpenVolumeMesh/IO/PropertyCodec.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/GeometryReader.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
 #include <OpenVolumeMesh/Config/Export.hh>

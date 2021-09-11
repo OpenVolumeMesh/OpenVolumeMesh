@@ -1,6 +1,6 @@
 #pragma once
 
-#include <OpenVolumeMesh/IO/PropertyCodec.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
 

@@ -3,7 +3,7 @@
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/IO/enums.hh>
 #include <OpenVolumeMesh/IO/WriteOptions.hh>
-#include <OpenVolumeMesh/IO/PropertyCodec.hh>
+#include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileWriter.hh>
 #include <fstream>
 
