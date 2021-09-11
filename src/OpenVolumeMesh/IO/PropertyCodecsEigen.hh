@@ -18,16 +18,16 @@ struct EigenDenseFixedMatrix
     using T = Eigen::Matrix<_Scalar, _Rows, _Cols>;
 
     static void encode(detail::Encoder &enc, const T &val) {
-        for (size_t r = 0; r < val.rows(); ++r) {
-            for (size_t c = 0; c < val.cols(); ++r) {
+        for (size_t r = 0; r < _Rows; ++r) {
+            for (size_t c = 0; c < _Cols; ++r) {
                 enc.write(val(r, c));
             }
         }
     }
 
     static void decode(detail::Decoder &reader, T &val) {
-        for (size_t r = 0; r < val.rows(); ++r) {
-            for (size_t c = 0; c < val.cols(); ++r) {
+        for (size_t r = 0; r < _Rows; ++r) {
+            for (size_t c = 0; c < _Cols; ++r) {
                 reader.read(val(r, c));
             }
         }
