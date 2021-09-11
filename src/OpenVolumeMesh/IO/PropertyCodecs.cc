@@ -78,14 +78,14 @@ void PropertyCodecs::add_default_types()
     register_codec<SimplePropCodec<Primitive<float>>>   ("f");
     register_codec<SimplePropCodec<Primitive<double>>>  ("d");
 
-    register_codec<SimplePropCodec<Primitive<std::string>>>  ("s32");
+    register_codec<SimplePropCodec<Primitive<std::string>>>("s32");
 
-    register_codec<SimplePropCodec<OVMHandle<VH>>>      ("vh");
-    register_codec<SimplePropCodec<OVMHandle<EH>>>      ("eh");
-    register_codec<SimplePropCodec<OVMHandle<HEH>>>     ("heh");
-    register_codec<SimplePropCodec<OVMHandle<FH>>>      ("fh");
-    register_codec<SimplePropCodec<OVMHandle<HFH>>>     ("hfh");
-    register_codec<SimplePropCodec<OVMHandle<CH>>>      ("ch");
+    register_codec<SimplePropCodec<OVMHandle<VH>>> ("vh");
+    register_codec<SimplePropCodec<OVMHandle<EH>>> ("eh");
+    register_codec<SimplePropCodec<OVMHandle<HEH>>>("heh");
+    register_codec<SimplePropCodec<OVMHandle<FH>>> ("fh");
+    register_codec<SimplePropCodec<OVMHandle<HFH>>>("hfh");
+    register_codec<SimplePropCodec<OVMHandle<CH>>> ("ch");
 }
 
 void PropertyCodecs::add_ovm_vector_types()
