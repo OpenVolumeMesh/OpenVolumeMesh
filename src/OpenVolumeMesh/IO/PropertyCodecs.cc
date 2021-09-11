@@ -107,12 +107,6 @@ void PropertyCodecs::add_ovm_vector_types()
     register_arraylike<VectorT<int32_t, 4>>("4i32");
 }
 
-template<typename T, size_t N>
-void PropertyCodecs::register_arraylike(const std::string &ovmb_type_name)
-{
-    using namespace Codecs;
-    register_codec<SimplePropCodec<ArrayLike<T, N>>>(ovmb_type_name);
-}
 
 const PropertyDecoderBase* PropertyCodecs::get_decoder(const std::string &ovmb_type_name) const
 {
@@ -127,15 +121,6 @@ const PropertyEncoderBase* PropertyCodecs::get_encoder(const std::string &intern
     if (it == encoders_.end()) return nullptr;
     return it->second.get();
 
-}
-
-template<typename Codec>
-void PropertyCodecs::register_codec(const std::string &ovmb_type_name)
-{
-    using T = typename Codec::T;
-    // TODO: check if codec is already registered
-    encoders_[OpenVolumeMesh::detail::internal_type_name<T>()] = std::make_unique<PropertyEncoderT<T, Codec>>(ovmb_type_name);
-    decoders_[ovmb_type_name] = std::move(std::make_unique<PropertyDecoderT<T, Codec>>());
 }
 
 const PropertyCodecs g_default_property_codecs = PropertyCodecs::with_all_default_types();
