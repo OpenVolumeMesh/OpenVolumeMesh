@@ -13,13 +13,14 @@ namespace OpenVolumeMesh::IO::Codecs {
 template<typename _Scalar, int _Rows, int _Cols>
 struct EigenDenseFixedMatrix
 {
+    // TODO: replace with register_matrixlike
     static_assert(_Rows > 0);
     static_assert(_Cols > 0);
     using T = Eigen::Matrix<_Scalar, _Rows, _Cols>;
 
     static void encode(detail::Encoder &enc, const T &val) {
         for (size_t r = 0; r < _Rows; ++r) {
-            for (size_t c = 0; c < _Cols; ++r) {
+            for (size_t c = 0; c < _Cols; ++c) {
                 enc.write(val(r, c));
             }
         }
@@ -27,7 +28,7 @@ struct EigenDenseFixedMatrix
 
     static void decode(detail::Decoder &reader, T &val) {
         for (size_t r = 0; r < _Rows; ++r) {
-            for (size_t c = 0; c < _Cols; ++r) {
+            for (size_t c = 0; c < _Cols; ++c) {
                 reader.read(val(r, c));
             }
         }

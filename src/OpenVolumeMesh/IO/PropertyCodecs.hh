@@ -54,6 +54,8 @@ public:
 
     template<typename T, size_t N = T::size()>
     void register_arraylike(std::string const &ovmb_type_name);
+    template<typename T, size_t Rows, size_t Cols>
+    void register_matrixlike(std::string const &ovmb_type_name);
 
     const PropertyDecoderBase* get_decoder(std::string const &ovmb_type_name) const;
     const PropertyEncoderBase* get_encoder(std::string const &internal_type_name) const;

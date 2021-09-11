@@ -146,17 +146,43 @@ struct OVMHandle {
 template<typename _T, size_t N, typename SubCodec=Primitive<typename _T::value_type>>
 struct ArrayLike {
     using T = _T;
-    static void encode(Encoder &enc, const T &val) {
+    static void encode(Encoder &enc, const T &val)
+    {
         for (size_t i = 0; i < N; ++i) {
             SubCodec::encode(enc, val[i]);
         }
     }
-    static void decode(Decoder &reader, T &val) {
+
+    static void decode(Decoder &reader, T &val)
+    {
         for (size_t i = 0; i < N; ++i) {
             SubCodec::decode(reader, val[i]);
         }
     }
 };
+
+template<typename _T, size_t _Rows, size_t _Cols, typename SubCodec=Primitive<typename _T::value_type>>
+struct MatrixLike {
+    using T = _T;
+    static void encode(Encoder &enc, const T &val)
+    {
+        for (size_t r = 0; r < _Rows; ++r) {
+            for (size_t c = 0; c < _Cols; ++c) {
+                SubCodec::encode(enc, val(r, c));
+            }
+        }
+    }
+
+    static void decode(Decoder &reader, T &val)
+    {
+        for (size_t r = 0; r < _Rows; ++r) {
+            for (size_t c = 0; c < _Cols; ++c) {
+                SubCodec::decode(reader, val(r, c));
+            }
+        }
+    }
+};
+
 } // namespace Codecs
 
 template<typename T, size_t N>
@@ -164,6 +190,13 @@ void PropertyCodecs::register_arraylike(const std::string &ovmb_type_name)
 {
     using namespace Codecs;
     register_codec<SimplePropCodec<ArrayLike<T, N>>>(ovmb_type_name);
+}
+
+template<typename T, size_t Rows, size_t Cols>
+void PropertyCodecs::register_matrixlike(const std::string &ovmb_type_name)
+{
+    using namespace Codecs;
+    register_codec<SimplePropCodec<MatrixLike<T, Rows, Cols>>>(ovmb_type_name);
 }
 
 template<typename Codec>
