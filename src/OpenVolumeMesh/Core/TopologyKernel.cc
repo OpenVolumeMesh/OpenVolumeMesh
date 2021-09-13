@@ -82,12 +82,12 @@ void TopologyKernel::reserve_cells(size_t n)
 
 void TopologyKernel::add_n_vertices(size_t n)
 {
+    resize_vprops(n_vertices_ + n);
     n_vertices_ += n;
     vertex_deleted_.resize(n_vertices_, false);
     if(has_vertex_bottom_up_incidences()) {
         outgoing_hes_per_vertex_.resize(n_vertices_);
     }
-    resize_vprops(n_vertices_);
 }
 
 VertexHandle TopologyKernel::add_vertex() {
