@@ -25,8 +25,8 @@ inline make_ovmb_reader(std::istream & _istream,
 template<typename MeshT>
 ReadResult ovmb_read(std::istream &_istream,
                      MeshT &_mesh,
-                     ReadOptions _options,
-                     PropertyCodecs const &_prop_codecs)
+                     ReadOptions _options = ReadOptions(),
+                     PropertyCodecs const &_prop_codecs = g_default_property_codecs)
 {
     static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
     auto reader = make_ovmb_reader(_istream, _options, _prop_codecs);
