@@ -184,7 +184,7 @@ public:
 
 private:
     GeometryKernelT<VecT> get_prop() {
-        auto prop = this->template request_property<VecT, Entity::Vertex>("ovm:position");
+        auto prop = this->template request_property<VecT, Entity::Vertex>("ovm:position", VecT(0));
         return prop;
     }
 
