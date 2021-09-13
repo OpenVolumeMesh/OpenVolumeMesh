@@ -275,3 +275,10 @@ template<> inline size_t ovmb_size<TopoChunkHeader> =  ovmb_size<ArraySpan> + 1 
 
 
 } // namespace OpenVolumeMesh::IO::detail
+namespace OpenVolumeMesh::IO {
+
+// provide types that appear in public interfaces in non-detail namespace:
+using detail::TopoType;
+using detail::VertexEncoding;
+
+} // namespace OpenVolumeMesh::IO
