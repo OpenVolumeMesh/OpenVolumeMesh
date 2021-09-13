@@ -4,6 +4,7 @@
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_codec.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/Core/Handles.hh>
 
 #include <istream>
@@ -22,17 +23,27 @@ namespace OpenVolumeMesh::IO::detail {
 template<typename MeshT>
 ReadResult BinaryFileReader::read_file(MeshT &out)
 {
-    static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
-    if (compatibility<MeshT>() != ReadCompatibility::Ok) {
-        state_ = ReadState::ErrorIncompatible;
-        return ReadResult::IncompatibleMesh;
-    }
-    if (state_ != ReadState::HeaderRead) {
+    try {
+        static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
+        if (compatibility<MeshT>() != ReadCompatibility::Ok) {
+            state_ = ReadState::ErrorIncompatible;
+            return ReadResult::IncompatibleMesh;
+        }
+        if (state_ != ReadState::HeaderRead) {
+            return ReadResult::InvalidFile;
+        }
+        using GeomReader = detail::GeometryReaderT<typename MeshT::Point>;
+        geometry_reader_ = std::make_unique<GeomReader>(out.vertex_positions());
+        return internal_read_file(out);
+    } catch (parse_error &e) {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = std::string("parse_error: ") + e.what();
         return ReadResult::InvalidFile;
+    } catch (std::exception &e) {
+        state_ = ReadState::Error;
+        error_msg_ = std::string("exception: ") + e.what();
+        return ReadResult::OtherError;
     }
-    using GeomReader = detail::GeometryReaderT<typename MeshT::Point>;
-    geometry_reader_ = std::make_unique<GeomReader>(out.vertex_positions());
-    return internal_read_file(out);
 }
 
 constexpr const inline auto max_handle_idx = static_cast<size_t>(std::numeric_limits<int>::max());

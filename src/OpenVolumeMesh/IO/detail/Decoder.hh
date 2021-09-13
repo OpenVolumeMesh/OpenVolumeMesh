@@ -3,6 +3,8 @@
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
+
 #include <istream>
 #include <ostream>
 #include <array>
@@ -90,7 +92,8 @@ void Decoder::reserved()
     read(buf);
     for (const auto ch: buf) {
         if (ch != 0) {
-            throw std::runtime_error("reserved entry != 0");
+            throw write_error("reserved entry != 0 at position " +
+                              std::to_string(pos()));
         }
     }
 }

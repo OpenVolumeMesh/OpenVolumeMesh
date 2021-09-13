@@ -35,6 +35,7 @@ public:
     }
     WriteResult write_file();
 private:
+    WriteResult do_write_file();
     void write_chunk(ChunkType type);
 
     void write_vertices(uint32_t first, uint32_t count);
@@ -44,6 +45,7 @@ private:
 
     void write_propdir();
     void write_all_props();
+    std::string const &get_error_msg() const {return error_msg_;}
 
 protected:
     std::ostream& ostream_;
@@ -64,6 +66,7 @@ protected:
         const PropertyEncoderBase *encoder;
     };
     std::vector<Property> props_;
+    std::string error_msg_;
 };
 
 

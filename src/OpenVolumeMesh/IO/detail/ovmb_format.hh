@@ -1,5 +1,6 @@
 #pragma once
 
+#include <OpenVolumeMesh/Core/Entities.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <istream>
 #include <ostream>
@@ -9,11 +10,6 @@
 #include <vector>
 #include <limits>
 #include <cassert>
-
-
-namespace OpenVolumeMesh {
-enum class EntityType;
-}
 
 namespace OpenVolumeMesh::IO::detail {
 

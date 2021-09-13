@@ -1,5 +1,5 @@
-
 #include <OpenVolumeMesh/IO/detail/Encoder.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
 
 #include <cassert>
@@ -54,7 +54,7 @@ void Encoder::flt(float val)
 void Encoder::write(const std::string &v)
 {
     if (v.size() > std::numeric_limits<uint32_t>::max()) {
-        throw std::runtime_error("string too long to write!");
+        throw write_error("string too long to write!");
     }
     u32(static_cast<uint32_t>(v.size()));
     write(v.data(), v.size());

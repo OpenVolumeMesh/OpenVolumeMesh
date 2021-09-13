@@ -1,5 +1,6 @@
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
 
 #include <cassert>
@@ -95,7 +96,7 @@ void Decoder::seek(size_t off) {
 void Decoder::need(size_t n)
 {
    if (remaining_bytes() < n) {
-       throw std::runtime_error("read beyond buffer");
+       throw parse_error("read beyond buffer");
    }
 }
 
@@ -103,7 +104,7 @@ void Decoder::padding(uint8_t n)
 {
     for (int i = 0; i < n; ++i) {
         if (cur_[i] != 0) {
-            throw std::runtime_error("padding not 0");
+            throw parse_error("padding not 0");
         }
     }
     cur_ += n;

@@ -62,17 +62,19 @@ private:
 
     bool validate_span(uint64_t total, uint64_t read, ArraySpan const&span);
     std::vector<uint32_t> read_valences(Decoder &reader, IntEncoding enc, size_t count);
+    std::string const &get_error_msg() const {return error_msg_;}
 
 private:
     detail::BinaryIStream stream_;
     std::unique_ptr<GeometryReaderBase> geometry_reader_;
-    TopologyKernel *mesh_;
+    TopologyKernel *mesh_ = nullptr;
     ReadOptions options_;
     PropertyCodecs const& prop_codecs_;
 
     FileHeader file_header_;
 
     ReadState state_ = ReadState::Init;
+    std::string error_msg_;
     bool reached_eof_chunk = false;
 
     uint64_t n_verts_read_ = 0;

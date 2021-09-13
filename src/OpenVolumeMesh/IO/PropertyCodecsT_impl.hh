@@ -3,6 +3,7 @@
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 
 
 namespace OpenVolumeMesh::IO {
@@ -87,7 +88,7 @@ deserialize(
     if (idx_begin > idx_end
             || idx_end > prop->size())
     {
-        throw std::runtime_error("invalid prop range");
+        throw parse_error("invalid prop range");
     }
     Codec::decode_n(_decoder, prop->data_vector(), idx_begin, idx_end);
 }

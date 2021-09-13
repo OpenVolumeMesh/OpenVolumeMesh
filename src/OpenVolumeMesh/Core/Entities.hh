@@ -3,10 +3,11 @@
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <type_traits>
 #include <cstddef>
+#include <cstdint>
 
 namespace OpenVolumeMesh {
 
-enum class EntityType {
+enum class EntityType : uint8_t {
     Vertex, Edge, HalfEdge, Face, HalfFace, Cell, Mesh
 };
 inline static const size_t n_entity_types = 7;

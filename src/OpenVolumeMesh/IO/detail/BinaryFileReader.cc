@@ -3,6 +3,7 @@
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/IO/detail/ovmb_codec.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/Core/Handles.hh>
 
 #include <istream>
@@ -483,7 +484,15 @@ readPropDirChunk(Decoder &reader)
             props_.emplace_back(); // important to have the right indices
             continue;
         }
-        auto prop = prop_decoder->request_property(*mesh_, as_entity_type(prop_info.entity_type), prop_info.name, prop_info.serialized_default);
+
+        EntityType entity_type;
+        try {
+            entity_type = as_entity_type(prop_info.entity_type);
+        } catch (std::runtime_error &e) {
+            throw parse_error(e.what());
+        }
+
+        auto prop = prop_decoder->request_property(*mesh_, entity_type, prop_info.name, prop_info.serialized_default);
         props_.emplace_back(prop_info.entity_type, std::move(prop), prop_decoder);
     }
 }

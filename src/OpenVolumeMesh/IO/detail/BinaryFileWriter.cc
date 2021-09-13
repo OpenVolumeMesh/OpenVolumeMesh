@@ -5,6 +5,7 @@
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileReader_impl.hh>
 
 
@@ -51,12 +52,25 @@ static void write_valences (WriteBuffer &_buffer,
 
 WriteResult BinaryFileWriter::write_file()
 {
+    try {
+        return do_write_file();
+    }  catch (write_error &e) {
+        error_msg_ = std::string("write_error: ") + e.what();
+        return WriteResult::Error;
+    }  catch (std::exception &e) {
+        error_msg_ = std::string("exception: ") + e.what();
+        return WriteResult::Error;
+    }
+}
+
+WriteResult BinaryFileWriter::do_write_file()
+{
     if (!ostream_.good()) {
         return WriteResult::BadStream;
     }
     using TopoType = TopoType;
     if (mesh_.needs_garbage_collection()) {
-        throw std::runtime_error("run garbage collection first!");
+        throw write_error("run garbage collection first!");
     }
 
     // this should be handled before, in make_ovmb_writer

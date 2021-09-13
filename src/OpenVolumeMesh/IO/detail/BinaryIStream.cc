@@ -1,5 +1,6 @@
 #include <OpenVolumeMesh/IO/detail/BinaryIStream.hh>
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 
 namespace OpenVolumeMesh::IO::detail {
 
@@ -25,7 +26,7 @@ BinaryIStream::BinaryIStream(std::istream &_s, uint64_t _size)
 Decoder BinaryIStream::make_decoder(size_t n)
 {
     if (remaining_bytes() < n) {
-        throw std::runtime_error("make_reader: not enough bytes left.");
+        throw parse_error("make_reader: not enough bytes left.");
     }
     std::vector<uint8_t> vec(n);
     s_.read(reinterpret_cast<char*>(vec.data()), n);

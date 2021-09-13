@@ -1,4 +1,5 @@
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
 #include <memory>
@@ -25,7 +26,7 @@ struct BoolPropCodec {
         uint8_t v = val ? 1 : 0;
         reader.read(v);
         if (v != 0 && v != 1) {
-            throw std::runtime_error("invalid bool encoding");
+            throw parse_error("invalid bool encoding");
         }
         val = !!v;
     }

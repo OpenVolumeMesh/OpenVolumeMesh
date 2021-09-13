@@ -3,6 +3,7 @@
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/IO/detail/WriteBuffer.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <istream>
 #include <ostream>
 #include <array>
@@ -74,7 +75,8 @@ template<typename LengthT, typename Vec>
 void Encoder::writeVec(Vec const &vec)
 {
     if (vec.size() > std::numeric_limits<LengthT>::max()) {
-        throw std::runtime_error("vector too long for length data type");
+        throw write_error("vector too long for length data type: " +
+                          std::to_string(vec.size()));
         // TODO: maybe just truncate?
     }
     auto len = static_cast<LengthT>(vec.size());

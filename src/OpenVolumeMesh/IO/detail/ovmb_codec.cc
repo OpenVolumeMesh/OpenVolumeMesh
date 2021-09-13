@@ -1,4 +1,5 @@
 #include <OpenVolumeMesh/IO/detail/ovmb_codec.hh>
+#include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/IO/detail/Encoder.hh>
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
 
@@ -14,7 +15,7 @@ void read_enum(Decoder& decoder, Enum& out)
     decoder.read(v);
     out = static_cast<Enum>(v);
     if (!is_valid(out)) {
-        throw std::runtime_error("Invalid enum value");
+        throw parse_error("Invalid enum value");
     }
 }
 
@@ -113,7 +114,7 @@ void read(Decoder &decoder, ChunkHeader &header) {
     read(decoder, header.flags);
     header.file_length = decoder.u64();
     if (header.padding_bytes > header.file_length) {
-        throw std::runtime_error("Cannot have more padding than total length");
+        throw parse_error("Cannot have more padding than total length");
     }
     header.payload_length = header.file_length - header.padding_bytes;
 }

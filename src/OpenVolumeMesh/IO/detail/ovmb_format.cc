@@ -1,5 +1,7 @@
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
+#include <string>
+
 namespace OpenVolumeMesh::IO::detail {
 
 const std::array<uint8_t, 8> ovmb_magic {'O', 'V', 'M', 'B', '\n', '\r', '\n', 0xff};
@@ -15,12 +17,13 @@ EntityType as_entity_type(PropertyEntity pe)
     case PropertyEntity::HalfFace: return EntityType::HalfFace;
     case PropertyEntity::Mesh:     return EntityType::Mesh;
     }
-    throw std::runtime_error("unknown property entity.");
+    throw std::runtime_error(std::string("unknown property entity: ") +
+                             std::to_string(static_cast<uint8_t>(pe)));
 }
 
-PropertyEntity as_prop_entity(EntityType pe)
+PropertyEntity as_prop_entity(EntityType et)
 {
-    switch (pe) {
+    switch (et) {
     case EntityType::Vertex:   return PropertyEntity::Vertex;
     case EntityType::Edge:     return PropertyEntity::Edge;
     case EntityType::Face:     return PropertyEntity::Face;
@@ -29,7 +32,8 @@ PropertyEntity as_prop_entity(EntityType pe)
     case EntityType::HalfFace: return PropertyEntity::HalfFace;
     case EntityType::Mesh:     return PropertyEntity::Mesh;
     }
-    throw std::runtime_error("unknown entity type.");
+    throw std::runtime_error(std::string("unknown property entity: ") +
+                             std::to_string(static_cast<uint8_t>(et)));
 }
 
 IntEncoding suitable_int_encoding(uint32_t max_value)
