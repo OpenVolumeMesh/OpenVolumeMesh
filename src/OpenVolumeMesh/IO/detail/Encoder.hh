@@ -12,6 +12,7 @@
 #include <vector>
 #include <limits>
 #include <cstring>
+#include <string>
 
 
 namespace OpenVolumeMesh::IO::detail {

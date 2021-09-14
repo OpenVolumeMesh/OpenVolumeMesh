@@ -18,7 +18,7 @@ EntityType as_entity_type(PropertyEntity pe)
     case PropertyEntity::Mesh:     return EntityType::Mesh;
     }
     throw std::runtime_error(std::string("unknown property entity: ") +
-                             std::to_string(static_cast<uint8_t>(pe)));
+                             std::to_string(static_cast<size_t>(pe)));
 }
 
 PropertyEntity as_prop_entity(EntityType et)
@@ -33,7 +33,7 @@ PropertyEntity as_prop_entity(EntityType et)
     case EntityType::Mesh:     return PropertyEntity::Mesh;
     }
     throw std::runtime_error(std::string("unknown property entity: ") +
-                             std::to_string(static_cast<uint8_t>(et)));
+                             std::to_string(static_cast<size_t>(et)));
 }
 
 IntEncoding suitable_int_encoding(uint32_t max_value)
