@@ -2,6 +2,97 @@
 
 \page binary_file_format Binary File Format
 
-\todo document
+\todo complete documentation
+
+All integers are stored as little endian (LSB first).
+
+A \c OVMB file consists of a file header followed by a number of chunks of different types, which each consist of a chunk header potentially followed by a payload.
+
+Several chunk types allow specifying a subset of the data:
+
+\code
+struct ArraySpan {
+    uint64_t base;  // index of first element in this chunk
+    uint32_t count; // number of elements in chunk
+};
+\endcode
+
+This aids mesh streaming implementations that can flexibly interleave different chunk types.
+Once we support chunk compression, this will also be useful for fast parallelized (de)compression.
+
+\subsection file_header File header
+
+\code
+struct FileHeader {
+    uint8_t file_version;
+    uint8_t header_version;
+    uint8_t vertex_dim;
+    VertexEncoding vertex_encoding; // 1 byte: None = 0 (pure-topology mesh), Float = 1, Double = 2
+    TopoType topo_type;             // 1 byte: Polyhedral = 0, Tetrahedral = 1, Hexahedral = 2
+    // 3 bytes padding, must be zeroes
+    uint64_t n_verts;
+    uint64_t n_edges;
+    uint64_t n_faces;
+    uint64_t n_cells;
+};
+\endcode
+
+\subsection chunk_header Chunk header
+
+\code
+struct ChunkHeader {
+    ChunkType type;        // 4 Bytes
+    uint8_t version;
+    uint8_t padding_bytes; // number of zero padding bytes at the end (for alignment)
+    uint8_t compression;   // not specified yet, must always be 0
+    ChunkFlags flags;      // 1 for a mandatory chunk, 0 for optional chunks
+    uint64_t file_length;  // number of payload bytes, excluding chunk header and padding
+}
+\endcode
+
+Chunks can be marked as mandatory to signal to readers that they may not be skipped
+if the reader implementation does not support them.
+
+The below chunk definitions refer to version 0 of each chunk by default.
+
+\subsection dirp_chunk Property Directory chunk (DIRP)
+
+A property directory chunk may occur zero or one time. It specifies the names, types and associated entity for each stored property. It also contains the serialized default value.
+
+\subsection vert_chunk Vertices chunk (VERT)
+
+The VERT chunks define mesh geometry, i.e., vertex positions.
+
+\code
+struct VertexChunkHeader {
+    ArraySpan span;
+    VertexEncoding enc; // must match the VertexEncoding given in the file header
+    // 3 bytes padding
+};
+\end
+
+\subsection topo_chunk Topology chunks (EDGE, \c FACE, \c CELL)
+
+Topology chunks list the sub-entity handles for the respective entities.
+
+\code
+struct TopoChunkHeader {
+    ArraySpan span;
+    IntEncoding enc; // 1 = uint8_t, 2 = uint16_t, 4 = uint32_t
+    // 3 bytes padding
+    uint64_t handle_offset; // a value to add to every contained handle, can be used for file compression
+};
+\endcode
+
+Faces and Cells have variable valence (number of sub-entities), however in practice often a mesh consists of faces or cells of only one type. For this purpose, their topology chunks can either specify a fixed valence, or start with a list of valence values.
+
+\subsection prop_chunk Property chunk (PROP)
+
+Property chunks refer to the property directory and contain the actual property data of a single property.
+
+\subsection eof_chunk End-of-file chunk (EOF)
+
+The EOF chunk signals the end of file and serves to detect file truncation.
+A valid OVMB file needs to contain exactly one EOF chunk at the very end.
 
 **/
