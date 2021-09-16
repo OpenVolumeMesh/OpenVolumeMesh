@@ -31,21 +31,21 @@ attaching properties of any kind to the entities.
 In this documentation, we first give a concise overview of the implemented concepts
 in Section \ref concepts. In Section \ref iterators_and_circulators, we introduce
 all necessary iterators provided by %OpenVolumeMesh. This library is additionally shipped with
-a file format that allows for reading and permanent storage of the volumetric meshes from/to files.
-Its specification can be found in \ref file_format. For information on the property system,
+support for two file formats that allows for reading and permanent storage of the volumetric meshes from/to files.
+their specification can be found in \ref binary_file_format and \ref ascii_file_format, respectively.
+For information on the property system,
 please refer to Section \ref property_system. Step-by-step tutorials and code examples can be
 found in the tutorials section. %OpenVolumeMesh comes with a complete CMake build system
 which facilitates building the library platform-independently. It is written in pure C++
 using the standard template library and does not have any external dependencies except
-for GoogleTest which is (optionally) needed for building the unit tests. As per default,
-the unit tests are excluded from the build but can turned on as desired. Find information
-on how to build %OpenVolumeMesh in Section \ref building_openvolumemesh.
+for GoogleTest which is (optionally) needed for building the unit tests. GoogleTest is automatically downloaded when building unit tests.
+Find information on how to build %OpenVolumeMesh in Section \ref building_openvolumemesh.
 
 \b Overview:
 
 \li \subpage concepts
 \li \subpage iterators_and_circulators
-\li \subpage file_format
+\li \subpage file_formats
 \li \subpage property_system
 \li \subpage building_openvolumemesh
 

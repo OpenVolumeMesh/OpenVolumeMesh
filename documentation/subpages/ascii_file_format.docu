@@ -1,17 +1,13 @@
 /**
 
-\page file_format File Format
+\page ascii_file_format Text-based File Format
 
 %OpenVolumeMesh comes with a file format specification
 that is implemented in the OpenVolumeMesh::IO::FileManager class.
-As for now, the file format only supports plain text, but a support
-for binary files is planned. Also the serialization of the
-persistent properties is not implemented, yet.
-A full generic support is planned for the future.
 %OpenVolumeMesh files should have the file name extension *.ovm.
 Find the file format specification below.
 
-\section file_spec File Format Specification
+\subsection file_spec File Format Specification
 
 
 \verbatim
@@ -40,7 +36,7 @@ d hf1_n ... hfd_n           # The last polyhedron's definition
 # Properties coming soon...
 \endverbatim
 
-\section file_example A Simple Example File
+\subsection file_example A Simple Example File
 
 \include Cube_with_props.ovm
 

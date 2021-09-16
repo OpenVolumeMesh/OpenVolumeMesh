@@ -1,0 +1,14 @@
+/** 
+
+\page file_formats File formats
+
+This library ships with support for two file formats that allows for reading and permanent storage of the volumetric meshes from/to files.
+their specification can be found in \ref binary_file_format and \ref ascii_file_format, respectively.
+
+\b Overview:
+
+\li \subpage ascii_file_format
+\li \subpage binary_file_format
+
+
+**/

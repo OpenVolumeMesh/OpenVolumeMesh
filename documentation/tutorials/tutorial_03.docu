@@ -22,14 +22,15 @@ void someFunction() {
     // Add property
     OpenVolumeMesh::VertexPropertyT<float> floatProp =
     		myMesh.request_vertex_property<float>("Vertex Weights");
+    // non-persistent properties get deleted once the last user goes out of scope,
+    // we set it persistent so we can access it again later:
+    myMesh.set_persistent(floatProp);
     
     // Now, iterate over all vertices and set property value to some number
     float val = 0.0f;
-    for(OpenVolumeMesh::VertexIter v_it = myMesh.vertices_begin();
-            v_it != myMesh.vertices_end(); ++v_it) {
-    
+    for(const auto vh: myMesh.vertices()) {
             // Set property value
-            floatProp[*v_it] = val;
+            floatProp[vh] = val;
     
             // Increase value by 1.5
             val += 1.5f;
@@ -38,7 +39,6 @@ void someFunction() {
     // Call some other function
     someOtherFunction(myMesh);
     
-    // Only at this point the property is destroyed and memory is released
 }
 
 void someOtherFunction(OpenVolumeMesh::GeometricPolyhedralMeshV3d& _mesh) {
@@ -55,5 +55,10 @@ void someOtherFunction(OpenVolumeMesh::GeometricPolyhedralMeshV3d& _mesh) {
 For all other entities, this works the same way. Use class OpenVolumeMesh::EdgePropertyT
 as edge property, OpenVolumeMesh::HalfFacePropertyT for half-face properties,
 and so on...
+
+When saving a mesh to a file, only properties marked as \c persistent will be stored.
+Additionally, non-standard property types need to be registered with encoder/decoder implementations to be stored in files.
+
+\todo Document using a `mesh` property
 
 **/

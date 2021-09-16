@@ -2,9 +2,18 @@
 
 \page ovm_tutorial_04 Tutorial 04: Using File I/O
 
+
+The %OpenVolumeMesh library defines and implements two file formats,
+the classic text-based *.ovm format (cf.  \ref ascii_file_format )
+as well as a newer binary format, *.ovmb. (cf. \ref binary_file_format )
+
+We recommend saving files in the *.ovmb file format, it is more space efficient,
+faster to read and write and has better support for custom property types.
+
 The %OpenVolumeMesh library is equipped with a file manager class that
 allows reading polyhedral meshes from file as well as writing mesh objects
-to files. The format for these files is specified in Section \ref file_format.
+to files. The format for these files is specified in Section
+\ref file_formats.
 
 In this tutorial, we will learn how to use the file manager in order to
 permanently store mesh objects and read them.

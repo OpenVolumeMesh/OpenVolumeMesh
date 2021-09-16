@@ -2,7 +2,7 @@
 
 \page concepts Concepts of OpenVolumeMesh
 
-\section halfedges From Half-Edges to Half-Faces
+\subsection halfedges From Half-Edges to Half-Faces
 
 The concepts of %OpenVolumeMesh are closely related to those of %OpenMesh (http://www.openmesh.org).
 For further reading on the concepts of %OpenMesh, refer to "OpenMesh - A generic and efficient polygon mesh data structure" by
@@ -33,7 +33,7 @@ by its incident half-edges. See Figure 1 for an illustration of this concept.
 
 \image html halfedge_halfface.png "Figure 1. Left: Two half-edges as in OpenMesh. Right: A face split into two half-faces."
 
-\section incidences Incidence Relations
+\subsection incidences Incidence Relations
 
 The entities in %OpenVolumeMesh are arranged hierarchically and we distinguish between
 two incidence relations:
@@ -41,7 +41,7 @@ two incidence relations:
 \li The (intrinsic) top-down incidences and
 \li the bottom-up incidences.
 
-\subsection top_down The Top-Down Incidence Relation
+\subsubsection top_down The Top-Down Incidence Relation
 
 Each entity of dimension n is defined as a tuple of entities of dimension n-1,
 except for the vertices. So, edges are defined as a pair of vertices, (half-)faces are defined as
@@ -55,7 +55,7 @@ Figure 2 illustrates this hierarchy.
 
 \image html volume_mesh_hierarchy.png "Figure 2. Each entity is defined as a tuple of lower-dimensional entities."
 
-\subsection bottom_up The Bottom-Up Incidence Relation
+\subsubsection bottom_up The Bottom-Up Incidence Relation
 
 In many cases, the incidence list to higher dimensional entities for a given entity is
 required. Therefore, %OpenVolumeMesh offers the opportunity to explicitly compute
@@ -85,7 +85,7 @@ allocating only a minimum of storage overhead.
 
 \note Note that most of the iterators and circulators rely on these incidence lists, so, many of them do not work if bottom-up incidences are disabled.
 
-\section modularity Modularity - Take only what you need
+\subsection modularity Modularity - Take only what you need
 
 There exist numerous applications for volumetric mesh data structures including
 mesh generation, finite element analysis, rendering, etc. Each of them focussing
@@ -101,11 +101,11 @@ overhead in cases where only topological information of a mesh is needed.
 The topology kernel implements only a minimal set of (intrinsic) operations on
 a mesh such as adding/deleting entities, computing incidence relations and instantiate
 iterator objects. All other additional functions are provided by the so-called attribute classes
-which are presented in the next section.
+which are presented in the next subsection.
 
 \image html ovm_class_diagram.png "Figure 3. The class diagram of the OpenVolumeMesh core" width=600
 
-\section index_based Using handles to address the entities of a mesh
+\subsection index_based Using handles to address the entities of a mesh
 
 %OpenVolumeMesh is an index-based data structure where generally all entities
 are stored in linear memory arrays (STL vectors). So, each of the entities
@@ -120,9 +120,9 @@ rather than a reference to the entity itself. A special constant,
 OpenVolumeMesh::TopologyKernel::InvalidVertexHandle, etc., for each entity
 is used when trying to access non-existing entities.
 
-\section genericity Genericity
+\subsection genericity Genericity
 
-\subsection generic_embedding Generic Embedding
+\subsubsection generic_embedding Generic Embedding
 
 The %OpenVolumeMesh library is designed to be as generic as possible. So, at one hand,
 the developer can choose the vector space into which a mesh is embedded. For example,
@@ -156,7 +156,7 @@ void SomeClass::someFunction() {
 }
 \endcode
 
-\subsection generic_properties Generic Dynamic Properties
+\subsubsection generic_properties Generic Dynamic Properties
 
 Similar to the %OpenMesh data structure, it is possible to attach multiple dynamic properties
 to any of the entities in %OpenVolumeMesh at run-time. The underlying property container class makes
@@ -195,11 +195,10 @@ void SomeClass::someFunction {
   		myMesh.request_vertex_property< std::string >("LabelProperty");
 
   // Fill property values
-  for(OpenVolumeMesh::VertexIter v_it = myMesh.vertices_begin();
-        v_it != myMesh.vertices_end(); ++v_it) {
+  for(const auto vh: myMesh.vertices()) {
 
     // Assign same label to each vertex
-    label[*v_it] = "My Label";
+    label[vh] = "My Label";
   }
   
   // Now, attach weight property (data type float) to the mesh
@@ -207,11 +206,10 @@ void SomeClass::someFunction {
   		myMesh.request_edge_property< float >(); // Also anonymous properties are supported
 
   // Fill property values
-  for(OpenVolumeMesh::EdgeIter e_it = myMesh.edges_begin();
-        e_it != myMesh.edges_end(); ++e_it) {
+  for(const auto eh: myMesh.edges()) {
 
     // Assign same weight to each edge
-    weight[*e_it] = 3.14f;
+    weight[eh] = 3.14f;
   }
 
   // The properties are automatically released
@@ -219,7 +217,7 @@ void SomeClass::someFunction {
 }
 \endcode
 
-\section attribs Using attributes to provide extra functionality
+\subsection attribs Using attributes to provide extra functionality
 
 Due to the fact that %OpenVolumeMesh is designed to be as compact as possible providing
 the opportunity to only use code that is really needed in a particular case, all extra
