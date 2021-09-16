@@ -5,19 +5,15 @@
 \section building_prerequisites Prerequisites
 
 %OpenVolumeMesh is equipped with a CMake (http://www.cmake.org) build system that should
-make compiling the library on any platform pretty simple. Make sure you have at least CMake version 2.6
-installed on your machine. Get the latest CMake sources or binaries at http://www.cmake.org.
+make compiling the library on any platform pretty simple. Make sure you have at least CMake version 3.12
+installed on your machine. Get the latest CMake sources or binaries at http://www.cmake.org or from your operating system's package manager.
 
-If you are interested in contributing to %OpenVolumeMesh by developing on its
-code base, we highly recommend to install the Google testing framework which can be found here: https://github.com/google/googletest
-This framework is needed in order to build and execute our included unit tests.
-
-\section config_and_build Configuring and building OpenVolumeMesh on Linux and MacOSX
+\section config_and_build Configuring and building OpenVolumeMesh on Linux and MacOS
 
 Open a terminal and extract the %OpenVolumeMesh sources or check out the latest subversion revision:
 
 \verbatim
-git clone https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh.git
+git clone https://gitlab.vci.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh.git
 \endverbatim
 
 It is recommended to build %OpenVolumeMesh out-of-source, so create a folder named e.g. "build" \e outside
@@ -28,46 +24,42 @@ cmake /path/to/OpenVolumeMesh/sources
 \endverbatim
 
 Note that CMake configures the build such that it builds with debug symbols per default.
-If you want to build with release settings (with optimizations turned on), use the tool
+If you want to modify the build configuration, e.g. build with release settings (with optimizations turned on), you can use use the tool
 
 \verbatim
 ccmake .
 \endverbatim
 
+or
+
+\verbatim
+cmake-gui .
+\endverbatim
+
 inside your build folder. Once everything is configured as desired, just type
 
 \verbatim
-make
+cmake --build .
 \endverbatim
 
 inside the build folder. The built libraries can be found in the sub-folder
-\c Build/lib. %OpenVolumeMesh will be built as a static as well as a dynamic library.
-If you want to build %OpenVolumeMesh's documentation, simply type
+\c Build/lib. %OpenVolumeMesh will be built as a static as dynamic library depending on the \c BUILD_SHARED_LIBS cmake setting.
+
+If you want to build %OpenVolumeMesh's documentation, run
 
 \verbatim
-make doc
+cmake --build . doc
 \endverbatim
 inside the build folder. The generated doxygen documentation files can then be found in
-\c Build/share/Doc/html.
+\c Build/share/doc/OpenVolumeMesh/html.
 
 If you want to install the library as well as its header files, type:
 
 \verbatim
-sudo make install
+sudo cmake --install .
 \endverbatim
 
 This installs the requested files into the \c lib and \c include folders in \c /usr/local (this is the default
-value that can easily be changed using \c ccmake).
-
-There is also a simple example in the \c examples folder in OpenVolumeMesh's root directory.
-This example has its own target defined in the CMake configuration file found in \c examples/CMakeLists.txt.
-This target is excluded from target \c all and has to be built explicitly.
-You can easily build it by typing:
-
-\verbatim
-make simple_mesh
-\endverbatim
-
-The binary can then be found in \c Build/Examples, or whatever you have specified in the CMake configuration.
+value for the cmake configuration value \c CMAKE_INSTALL_PREFIX ).
 
 **/
