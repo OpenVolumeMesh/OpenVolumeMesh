@@ -14,16 +14,13 @@ the OpenVolumeMesh::HalfEdgeIter iterator class:
 \code
 // Instantiate e.g. a geometric hexahedral mesh
 OpenVolumeMesh::GeometricHexahedralMeshV3d myMesh;
+using HEH = OpenVolumeMesh::HalfEdgeHandle;
 
 // Fill mesh with geometry
-...
 
 // Iterate over all half-edges
-for(OpenVolumeMesh::HalfEdgeIter he_it = myMesh.halfedges_begin();
-        he_it != myMesh.halfedges_end(); ++he_it) {
-
-    // Now dereferencing he_it returns a half-edge handle
-    ...
+for(const HEH heh: myMesh.halfedges()) {
+    // ...
 }
 \endcode
 
@@ -35,20 +32,18 @@ See Section \ref bottom_up for information on the bottom-up incidences.
 \code
 // Instantiate a polyhedral mesh
 OpenVolumeMesh::GeometricPolyhedralMeshV3f myMesh;
+using HEH = OpenVolumeMesh::HalfEdgeHandle;
+using VH = OpenVolumeMesh::VertexHandle;
 
 // Fill mesh with geometry
 ...
 
-typedef OpenVolumeMesh::VertexHandle VertexHandle;
-
 // Get first vertex in mesh
-VertexHandle vh = *(myMesh.vertices_begin());
+VH vh = *(myMesh.vertices_begin());
 
 // Iterate over all outgoing half-edges of vertex vh
-for(OpenVolumeMesh::VertexOHalfEdgeIter voh_it = myMesh.voh_iter(vh);
-        voh_it.valid(); ++voh_it) {
-
-    // Now dereferencing voh_it returns a half-edge handle
+for(const HEH voh: myMesh.outgoing_halfedges(vh)) {
+    // `voh` is a halfedge with from_vertex == vh
     ...
 }
 \endcode
@@ -73,20 +68,18 @@ face with the reference hexahedron). Consider the following code:
 \code
 // Instantiate a hexahedral mesh
 OpenVolumeMesh::GeometricHexahedralMeshV3d myMesh;
+using CH = OpenVolumeMesh::CellHandle;
 
 // Fill mesh with geometry
 ...
 
 // Get handle of first cell
-OpenVolumeMesh::CellHandle ch = *(myMesh.cells_begin());
+CH ch = *(myMesh.cells_begin());
 
 // Iterate over the hexahedra in the same sheet that are adjacent
 // to the reference hexahedron (cell handle ch)
-for(OpenVolumeMesh::CellSheetCellIter csc_it = myMesh.csc_iter(ch);
-        csc_it.valid(); ++csc_it) {
-
-    // Now dereferencing csc_it returns a cell handle
-    ...
+for (const CH ch: myMesh.cell_sheet_cells()) {
+    // ...
 }
 \endcode
 
