@@ -9,7 +9,7 @@ namespace OpenVolumeMesh::IO::detail {
 class OVM_EXPORT WriteBuffer {
 public:
     void reset();
-    std::vector<uint8_t> const & vec() const {return data_;};
+    std::vector<uint8_t> vec() const;;
 
     void write_to_stream(std::ostream &s);
     size_t size() const {return pos_;}

@@ -189,6 +189,8 @@ types:
         type: array_span
       - id: prop_idx
         type: u4
+      - id: data
+        size-eos: true
 
   propdir_chunk:
     seq:

@@ -23,6 +23,10 @@ void WriteBuffer::reset()
     pos_ = 0;
 }
 
+std::vector<uint8_t> WriteBuffer::vec() const {
+    return {data_.begin(), data_.begin() + pos_};
+}
+
 void WriteBuffer::write(const uint8_t *s, size_t n)
 {
     need(n);

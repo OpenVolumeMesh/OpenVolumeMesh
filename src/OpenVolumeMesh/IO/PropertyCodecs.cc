@@ -19,12 +19,10 @@ namespace Codecs {
 struct BoolPropCodec {
     using T = bool;
     static void encode_one(Encoder &enc, const T &val) {
-        uint8_t v = val ? 1 : 0;
-        enc.write(v);
+        enc.u8(val);
     }
     static void decode_one(Decoder &reader, T &val) {
-        uint8_t v = val ? 1 : 0;
-        reader.read(v);
+        uint8_t v = reader.u8();
         if (v != 0 && v != 1) {
             throw parse_error("invalid bool encoding");
         }
@@ -37,15 +35,13 @@ struct BoolPropCodec {
             for (size_t bit = 0; bit < n_bits; ++bit) {
                 bitset.set(bit, vec[i+bit]);
             }
-            uint8_t tmp = static_cast<uint8_t>(bitset.to_ulong());
-            enc.write(tmp);
+            enc.u8(static_cast<uint8_t>(bitset.to_ulong()));
         }
     }
     static void decode_n(Decoder &decoder, std::vector<T> &vec, size_t idx_begin, size_t idx_end) {
         decoder.need((idx_end-idx_begin+7)/8);
         for (size_t i = idx_begin; i < idx_end; i += 8) {
-            uint8_t tmp = 0;
-            decoder.read(tmp);
+            uint8_t tmp = decoder.u8();
             std::bitset<8> bitset(tmp);
             size_t n_bits = std::min(size_t(8), idx_end-i);
             for (size_t bit = 0; bit < n_bits; ++bit) {
