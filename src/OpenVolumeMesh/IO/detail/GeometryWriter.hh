@@ -14,7 +14,7 @@ public:
     virtual size_t dim() const = 0;
     virtual VertexEncoding vertex_encoding() const = 0;
     virtual size_t elem_size() const = 0;
-    virtual void write(WriteBuffer & _writebuf, uint32_t first, uint32_t count) const = 0;
+    virtual void write(WriteBuffer & _writebuf, ArraySpan const& _span) const = 0;
 };
 
 template<typename VecT>
@@ -27,7 +27,7 @@ public:
     VertexEncoding vertex_encoding() const override;
     size_t dim() const override;
     size_t elem_size() const override;
-    void write(WriteBuffer & _writebuf, uint32_t first, uint32_t count) const override;
+    void write(WriteBuffer & _writebuf, ArraySpan const& _span) const override;
 
 private:
     GeometryKernelT<VecT> const& geometry_kernel_;

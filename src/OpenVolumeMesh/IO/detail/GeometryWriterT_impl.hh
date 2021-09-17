@@ -26,16 +26,17 @@ size_t GeometryWriterT<VecT>::elem_size() const
 }
 
 template<typename VecT>
-void GeometryWriterT<VecT>::write(WriteBuffer &_writebuf, uint32_t first, uint32_t count) const
+void GeometryWriterT<VecT>::write(WriteBuffer & _writebuf,
+                                  ArraySpan const& _span) const
 {
 
     Encoder encoder(_writebuf);
-    auto end = first + count;
+    auto end = _span.first + _span.count;
     assert(end <= geometry_kernel_.size());
 
     auto write_all = [&](auto write_one)
     {
-        for (uint32_t i = first; i < end; ++i) {
+        for (uint32_t i = _span.first; i < end; ++i) {
             auto vh = VertexHandle::from_unsigned(i);
             const auto &pos = geometry_kernel_[vh];
             for (size_t dim = 0; dim < this->dim(); ++dim) {

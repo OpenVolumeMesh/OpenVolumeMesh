@@ -18,38 +18,6 @@ class HexahedralMeshTopologyKernel;
 
 namespace OpenVolumeMesh::IO::detail {
 
-static void write_valences (WriteBuffer &_buffer,
-                            std::vector<uint32_t> const &_valences)
-{
-    auto minmax = std::minmax_element(_valences.begin(), _valences.end());
-    uint32_t minval = *minmax.first;
-    uint32_t maxval = *minmax.second;
-
-    Encoder encoder(_buffer);
-
-    if (minval == maxval && minval < 0xff) {
-        encoder.u8(minval);
-        encoder.reserved<3>();
-        return;
-    }
-    encoder.u8(0); // variable valences
-    auto valence_enc = suitable_int_encoding(maxval);
-    write(encoder, valence_enc);
-    encoder.reserved<2>();
-
-    size_t bytes_required = 4 + _valences.size() * elem_size(valence_enc);
-
-    _buffer.need(bytes_required);
-
-    auto write_all = [&](auto write_one) {
-        for (const auto val: _valences) {
-            write_one(encoder, val);
-        }
-    };
-
-    call_with_encoder(valence_enc, write_all);
-}
-
 WriteResult BinaryFileWriter::write_file()
 {
     try {
@@ -84,10 +52,9 @@ WriteResult BinaryFileWriter::do_write_file()
     }
 
     FileHeader header;
-    header.header_version = 0;
-    header.file_version = 0;
+    header.header_version = 1;
+    header.file_version = 1;
     header.vertex_dim = geometry_writer_->dim();
-    header.vertex_encoding = geometry_writer_->vertex_encoding();
     header.topo_type = topo_type;
     header.n_verts = mesh_.n_vertices();
     header.n_edges = mesh_.n_edges();
@@ -101,11 +68,11 @@ WriteResult BinaryFileWriter::do_write_file()
 
     write_propdir();
     if (geometry_writer_->vertex_encoding() != VertexEncoding::None) {
-        write_vertices(0, static_cast<uint32_t>(header.n_verts));
+        write_vertices({0, static_cast<uint32_t>(header.n_verts)});
     }
-    write_edges(0, static_cast<uint32_t>(header.n_edges));
-    write_faces(0, static_cast<uint32_t>(header.n_faces));
-    write_cells(0, static_cast<uint32_t>(header.n_cells));
+    write_edges({0, static_cast<uint32_t>(header.n_edges)});
+    write_faces({0, static_cast<uint32_t>(header.n_faces)});
+    write_cells({0, static_cast<uint32_t>(header.n_cells)});
     write_all_props();
 
     chunk_buffer_.reset();
@@ -141,145 +108,187 @@ void BinaryFileWriter::write_chunk(ChunkType type)
     header_buffer_.write_to_stream(ostream_);
 }
 
-
-void BinaryFileWriter::write_vertices(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_vertices(ArraySpan const&_span)
 {
-    if (count == 0) return;
-
-
+    if (_span.count == 0) return;
 
     VertexChunkHeader header;
-    header.span.base = first;
-    header.span.count = count;
-    header.enc = VertexEncoding::Double;
+    header.span = _span;
+    header.vertex_encoding = VertexEncoding::Double;
 
     chunk_buffer_.reset();
     chunk_buffer_.need(
         ovmb_size<VertexChunkHeader>
-        + count * geometry_writer_->elem_size());
+        + _span.count * geometry_writer_->elem_size());
 
     Encoder encoder(chunk_buffer_);
     write(encoder, header);
 
-    geometry_writer_->write(chunk_buffer_, first, count);
+    geometry_writer_->write(chunk_buffer_, _span);
     write_chunk(ChunkType::Vertices);
 }
 
-void BinaryFileWriter::write_edges(uint32_t first, uint32_t count)
-{
-    if (count == 0) return;
 
+/// Write header and valence information of a topo chunk.
+template<typename ValenceValueOrFunc>
+static void start_topo_chunk(WriteBuffer &_buffer,
+                             ArraySpan const &_span,
+                             TopoEntity _topo_entity,
+                             IntEncoding _handle_encoding,
+                             ValenceValueOrFunc _valence)
+{
+    if (_span.count == 0) return;
+    auto end = _span.first + _span.count;
 
     TopoChunkHeader header;
-    header.span.base = first;
-    header.span.count = count;
-    header.enc = suitable_int_encoding(mesh_.n_vertices());
+    header.span = _span;
+    header.entity = _topo_entity;
+    header.handle_encoding = _handle_encoding;
     header.handle_offset = 0;
 
 
-    chunk_buffer_.reset();
-    chunk_buffer_.need(
-                ovmb_size<TopoChunkHeader>
-                + count * 2 * elem_size(header.enc));
+    uint64_t valence_sum = 0;
+    if constexpr (std::is_integral_v<ValenceValueOrFunc>) {
+        header.valence = _valence;
+        header.valence_encoding = IntEncoding::None;
+    } else {
+        uint32_t min_valence = std::numeric_limits<uint32_t>::max();
+        uint32_t max_valence = std::numeric_limits<uint32_t>::min();
 
-    Encoder encoder(chunk_buffer_);
+        for (uint64_t idx = _span.first; idx < end; ++idx) {
+            auto val = _valence(idx);
+            if (val < min_valence) { min_valence = val;}
+            if (val > max_valence) { max_valence = val;}
+            valence_sum += val;
+        }
+        if (min_valence == max_valence && min_valence <= std::numeric_limits<uint8_t>::max()) {
+            header.valence = min_valence;
+            header.valence_encoding = IntEncoding::None;
+        } else {
+            header.valence = 0;
+            header.valence_encoding = suitable_int_encoding(max_valence);
+        }
+    }
+
+    _buffer.reset();
+    Encoder encoder(_buffer);
     write(encoder, header);
 
-    auto end = first + count;
+    if (header.valence != 0) {
+        // fixed valence
+        _buffer.need(
+                    ovmb_size<TopoChunkHeader>
+                    + _span.count * header.valence * elem_size(header.handle_encoding));
+    } else {
+        if constexpr (std::is_integral_v<ValenceValueOrFunc>) {
+            assert(false);
+        } else {
+            // variable valence
+            _buffer.need(
+                        ovmb_size<TopoChunkHeader>
+                        + _span.count * elem_size(header.valence_encoding)
+                        +  valence_sum * elem_size(header.handle_encoding));
+
+            auto write_all = [&](auto write_one) {
+                for (uint64_t idx = _span.first; idx < end; ++idx) {
+                    write_one(encoder, _valence(idx));
+                }
+            };
+            call_with_encoder(header.valence_encoding, write_all);
+        }
+    }
+}
+
+void BinaryFileWriter::write_edges(ArraySpan const&_span)
+{
+    if (_span.count == 0) return;
+    auto end = _span.first + _span.count;
     assert(end <= mesh_.n_edges());
 
-    auto write_all = [&](auto write_one)
-    {
-        for (uint32_t i = first; i < end; ++i) {
+    auto handle_encoding = suitable_int_encoding(mesh_.n_vertices());
+
+    start_topo_chunk(chunk_buffer_,
+                     _span,
+                     TopoEntity::Edge,
+                     handle_encoding,
+                     2);
+
+    Encoder encoder(chunk_buffer_);
+    auto write_all = [&](auto write_one) {
+        for (uint64_t i = _span.first; i < end; ++i) {
             auto heh = mesh_.halfedge_handle(EdgeHandle::from_unsigned(i), 0);
             write_one(encoder, mesh_.from_vertex_handle(heh).uidx());
             write_one(encoder, mesh_.  to_vertex_handle(heh).uidx());
         }
     };
-    call_with_encoder(header.enc, write_all);
 
-    write_chunk(ChunkType::Edges);
+    call_with_encoder(handle_encoding, write_all);
+
+    write_chunk(ChunkType::Topo);
 }
 
-void BinaryFileWriter::write_faces(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_faces(ArraySpan const&_span)
 {
-    if (count == 0) return;
+    if (_span.count == 0) return;
+    auto end = _span.first + _span.count;
+    assert(end <= mesh_.n_edges());
 
-    chunk_buffer_.reset();
+    auto handle_encoding = suitable_int_encoding(mesh_.n_halfedges());
+
+    auto get_valence = [&](uint64_t idx){return mesh_.valence(FH::from_unsigned(idx));};
+
+    start_topo_chunk(chunk_buffer_,
+                     _span,
+                     TopoEntity::Face,
+                     handle_encoding,
+                     get_valence);
+
+
     Encoder encoder(chunk_buffer_);
-
-    TopoChunkHeader header;
-    header.span.base = first;
-    header.span.count = count;
-    header.enc = suitable_int_encoding(mesh_.n_halfedges());
-    header.handle_offset = 0;
-
-    write(encoder, header);
-
-    std::vector<uint32_t> valences;
-    valences.reserve(count);
-    auto end = first + count;
-    assert(end <= mesh_.n_faces());
-
-    for (uint32_t i = first; i < end; ++i) {
-        auto fh = FaceHandle::from_unsigned(i);
-        valences.push_back(mesh_.valence(fh));
-    }
-    write_valences(chunk_buffer_, valences);
-
     auto write_all = [&](auto write_one)
     {
-        for (uint32_t i = first; i < end; ++i) {
+        for (uint64_t i = _span.first; i < end; ++i) {
             auto fh = FaceHandle::from_unsigned(i);
             for (const auto heh: mesh_.face_halfedges(fh)) {
                 write_one(encoder, heh.uidx());
             }
         }
     };
-    call_with_encoder(header.enc, write_all);
 
-    write_chunk(ChunkType::Faces);
+    call_with_encoder(handle_encoding, write_all);
+    write_chunk(ChunkType::Topo);
 }
 
-void BinaryFileWriter::write_cells(uint32_t first, uint32_t count)
+void BinaryFileWriter::write_cells(ArraySpan const&_span)
 {
-    if (count == 0) return;
+    if (_span.count == 0) return;
+    auto end = _span.first + _span.count;
+    assert(end <= mesh_.n_edges());
 
-    chunk_buffer_.reset();
+    auto handle_encoding = suitable_int_encoding(mesh_.n_halffaces());
+
+    auto get_valence = [&](uint64_t idx){return mesh_.valence(CH::from_unsigned(idx));};
+
+    start_topo_chunk(chunk_buffer_,
+                     _span,
+                     TopoEntity::Cell,
+                     handle_encoding,
+                     get_valence);
+
+
     Encoder encoder(chunk_buffer_);
-
-    TopoChunkHeader header;
-    header.span.base = first;
-    header.span.count = count;
-    header.enc = suitable_int_encoding(mesh_.n_halffaces());
-    header.handle_offset = 0;
-
-    write(encoder, header);
-
-    std::vector<uint32_t> valences;
-    valences.reserve(count);
-    auto end = first + count;
-    assert(end <= mesh_.n_cells());
-
-    for (uint32_t i = first; i < end; ++i) {
-        auto ch = CellHandle::from_unsigned(i);
-        valences.push_back(mesh_.valence(ch));
-    }
-
-    write_valences(chunk_buffer_, valences);
-
     auto write_all = [&](auto write_one)
     {
-        for (uint32_t i = first; i < end; ++i) {
+        for (uint64_t i = _span.first; i < end; ++i) {
             auto ch = CellHandle::from_unsigned(i);
             for (const auto hfh: mesh_.cell_halffaces(ch)) {
                 write_one(encoder, hfh.uidx());
             }
         }
     };
-    call_with_encoder(header.enc, write_all);
 
-    write_chunk(ChunkType::Cells);
+    call_with_encoder(handle_encoding, write_all);
+    write_chunk(ChunkType::Topo);
 }
 
 void BinaryFileWriter::write_propdir()
@@ -335,12 +344,12 @@ void BinaryFileWriter::write_all_props()
         Encoder encoder(chunk_buffer_);
 
         PropChunkHeader chunk_header;
-        chunk_header.span.base = 0;
+        chunk_header.span.first = 0;
         chunk_header.span.count = prop.prop->size();
         chunk_header.idx = idx++;
         write(encoder, chunk_header);
 
-        prop.encoder->serialize(prop.prop, chunk_buffer_, chunk_header.span.base, chunk_header.span.base + chunk_header.span.count);
+        prop.encoder->serialize(prop.prop, chunk_buffer_, chunk_header.span.first, chunk_header.span.first + chunk_header.span.count);
 
         write_chunk(ChunkType::Property);
     }

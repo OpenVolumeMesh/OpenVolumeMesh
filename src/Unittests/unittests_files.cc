@@ -56,7 +56,8 @@ public:
                         OpenVolumeMesh::IO::ReadOptions(),
                         OpenVolumeMesh::IO::g_default_property_codecs);
             auto topo_type = result->topo_type();
-            return topo_type.value() == OpenVolumeMesh::IO::detail::TopoType::Hexahedral;
+            return topo_type.has_value() &&
+                    topo_type.value() == OpenVolumeMesh::IO::TopoType::Hexahedral;
         } else {
             OpenVolumeMesh::IO::FileManager fileManager;
             return fileManager.isHexahedralMesh(filename);

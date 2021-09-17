@@ -10,6 +10,7 @@
 #include <cassert>
 #include <numeric>
 #include <iostream>
+#include <string>
 
 namespace OpenVolumeMesh {
 class TetrahedralMeshTopologyKernel;
@@ -18,121 +19,262 @@ class HexahedralMeshTopologyKernel;
 
 namespace OpenVolumeMesh::IO::detail {
 
-template<typename HandleT, typename ReadFunc, typename AddFunc>
-void BinaryFileReader::readFacesOrCells(
-        Decoder &reader,
-        TopoChunkHeader const &header,
-        uint8_t fixed_valence,
-        IntEncoding valence_enc,
-
-        uint64_t n,
-        ReadFunc read_handle,
-        AddFunc add_entity)
-{
-    std::vector<HandleT> handles;
-    if (header.span.count == 0) {
-        state_ = ReadState::ErrorEmptyList;
-        return;
-    }
-
-    auto add_all = [&](auto get_valence)
-    {
-        for (uint64_t i = 0; i < header.span.count; ++i) {
-            auto val = get_valence(i);
-            handles.resize(val);
-            for (uint64_t h = 0; h < val; ++h) {
-                size_t idx = read_handle(reader) + header.span.base;
-                if (idx < n) {
-                    handles[h] = HandleT::from_unsigned(idx);
-                } else {
-                    state_ = ReadState::ErrorHandleRange;
-                    return;
-                }
-            }
-            add_entity(handles);
-        }
-
-    };
-
-    auto esize = elem_size(header.enc);
-
-    if (fixed_valence == 0) {
-        auto valences = read_valences(reader, valence_enc, header.span.count);
-        auto max_valence = *std::max_element(valences.begin(), valences.end());
-        auto total_handles = std::accumulate(valences.begin(), valences.end(), 0ULL);
-        if (reader.remaining_bytes() != total_handles * esize) {
-            state_ = ReadState::Error;
-            return;
-        }
-        handles.reserve(max_valence);
-        add_all([&](size_t idx){return valences[idx];});
-    } else {
-        if (reader.remaining_bytes() != header.span.count * fixed_valence * esize) {
-            state_ = ReadState::Error;
-            return;
-        }
-        handles.reserve(fixed_valence);
-        add_all([val=fixed_valence](size_t){return val;});
-    }
-}
-
 bool BinaryFileReader::read_header()
 {
-    if (state_ == ReadState::Init) {
-        //stream_.seek(0);
-        auto decoder = stream_.make_decoder(ovmb_size<FileHeader>);
-        auto ok = read(decoder, file_header_);
-        if (ok) {
-            state_ = ReadState::HeaderRead;
-            return true;
-        } else {
-            state_ = ReadState::ErrorInvalidFile;
-            return false;
+    try {
+        if (state_ == ReadState::Init) {
+            //stream_.seek(0);
+            auto decoder = stream_.make_decoder(ovmb_size<FileHeader>);
+            auto ok = read(decoder, file_header_);
+            if (ok) {
+                state_ = ReadState::HeaderRead;
+                return true;
+            } else {
+                state_ = ReadState::ErrorInvalidFile;
+                return false;
+            }
         }
+        return true;
+    } catch (parse_error &e) {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = std::string("parse_error: ") + e.what();
+        return false;
     }
-    return true;
 }
 
 
 bool BinaryFileReader::validate_span(uint64_t total, uint64_t read, ArraySpan const&span)
 {
-    if (span.base != read) {
+    if (span.first != read) {
         state_ = ReadState::Error;
+        error_msg_ = "Invalid span start, must resume where the last chunk of the same topo type left off";
         return false;
     }
     if (total - read < span.count) {
         state_ = ReadState::Error;
+        error_msg_ = "Invalid span, end exceeds total entity count";
         return false;
     }
     return true;
 }
 
-std::vector<uint32_t> BinaryFileReader::read_valences(Decoder &reader, IntEncoding enc, size_t count)
+template<typename T, typename FuncMakeT>
+bool
+BinaryFileReader::read_n_ints(Decoder &reader,
+                              IntEncoding enc,
+                              std::vector<T> &out_vec,
+                              size_t count,
+                              FuncMakeT make_t)
 {
     if (!is_valid(enc)) {
         state_ = ReadState::ErrorInvalidEncoding;
-        return {};
+        return false;
+    }
+    auto needed = count * elem_size(enc);
+    if (reader.remaining_bytes() < needed)
+    {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = "read_n_ints: not enough data in chunk, need " +
+                std::to_string(needed) + ", have " +
+                std::to_string(reader.remaining_bytes());
+        return false;
     }
 
-    std::vector<uint32_t> valences;
-    valences.reserve(count);
+    out_vec.clear();
+    out_vec.reserve(count);
+
     auto read_all = [&](auto read_one)
     {
-        if (reader.remaining_bytes() < count * elem_size(enc)) {
-            state_ = ReadState::Error;
-            return;
-        }
         for (size_t i = 0; i < count; ++i) {
-            valences.push_back(read_one(reader));
+            out_vec.push_back(make_t(read_one(reader)));
         }
     };
 
     call_with_decoder(enc, read_all);
 
-    return valences;
+    return true;
 }
 
-void BinaryFileReader::readPropChunk(Decoder &reader)
+void BinaryFileReader::read_topo_chunk(Decoder &reader)
+{
+    TopoChunkHeader header;
+    read(reader, header);
+
+    if (header.span.count == 0) {
+        state_ = ReadState::ErrorEmptyList;
+        error_msg_ = "TOPO chunk contains no data";
+        return;
+    }
+
+    if (!is_valid(header.handle_encoding)) {
+        state_ = ReadState::ErrorInvalidEncoding;
+        error_msg_ = "TOPO chunk: invalid handle encoding";
+        return;
+    }
+
+    if (!is_valid(header.entity)) {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = "TOPO chunk: Invalid topology entity " + std::to_string(static_cast<size_t>(header.entity));
+        return;
+    }
+
+    if (header.valence != 0 && header.valence_encoding != IntEncoding::None) {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = "TOPO edge chunk: valence encoding must be None for fixed valences";
+        return;
+    }
+
+
+    ValenceVec valences;
+
+    uint64_t total_handles = header.valence * header.span.count;
+
+    if (header.valence == 0)
+    {
+        if (header.valence_encoding == IntEncoding::None) {
+            state_ = ReadState::ErrorInvalidFile;
+            error_msg_ = "TOPO edge chunk: valence encoding must not be None for variable valences";
+            return;
+        }
+        auto success = read_n_ints(reader,
+                                   header.valence_encoding,
+                                   valences,
+                                   header.span.count,
+                                   [](uint32_t x){return x;});
+        if (!success) {
+            return;
+        }
+        assert(header.span.count == valences.size());
+        total_handles = std::accumulate(valences.begin(), valences.end(), 0ULL);
+    }
+    auto handle_size = elem_size(header.handle_encoding);
+    auto expected_bytes = total_handles * handle_size;
+    if (reader.remaining_bytes() != expected_bytes) {
+        state_ = ReadState::Error;
+        error_msg_ = "TOPO chunk: number of remaining bytes incorrect, expecting "
++   std::to_string(expected_bytes) + ", have " + std::to_string(reader.remaining_bytes());
+        return;
+    }
+
+    switch (header.entity)  {
+    case OpenVolumeMesh::IO::detail::TopoEntity::Edge:
+        read_edges(reader, header);
+        return;
+    case OpenVolumeMesh::IO::detail::TopoEntity::Face:
+        read_faces(reader, header, valences);
+        return;
+    case OpenVolumeMesh::IO::detail::TopoEntity::Cell:
+        read_cells(reader, header, valences);
+        return;
+    }
+}
+
+void BinaryFileReader::read_edges(Decoder &reader, const TopoChunkHeader &header)
+{
+    if (!validate_span(file_header_.n_edges, n_edges_read_, header.span)) {
+        return;
+    }
+    if (header.valence != 2) {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = "TOPO edge chunk: valence must be 2";
+        return;
+    }
+
+    auto read_all = [&](auto read_one)
+    {
+        for (size_t i = 0; i < header.span.count; ++i) {
+            uint64_t src = read_one(reader) + header.span.first;
+            uint64_t dst = read_one(reader) + header.span.first;
+            if (src >= n_verts_read_ || dst >= n_verts_read_) {
+                state_ = ReadState::ErrorHandleRange;
+            } else {
+                auto vh_src = VertexHandle::from_unsigned(src);
+                auto vh_dst = VertexHandle::from_unsigned(dst);
+                mesh_->add_edge(vh_src, vh_dst, true);
+            }
+        }
+    };
+
+    call_with_decoder(header.handle_encoding, read_all);
+
+    if (state_ == ReadState::ReadingChunks) {
+        n_edges_read_ += header.span.count;
+    }
+}
+
+void BinaryFileReader::read_faces(Decoder &reader, const TopoChunkHeader &header, const ValenceVec &_valences)
+{
+    if (!validate_span(file_header_.n_faces, n_faces_read_, header.span))
+        return;
+
+    if (file_header_.topo_type == TopoType::Tetrahedral && header.valence != 3) {
+        state_ = ReadState::ErrorInvalidTopoType;
+        error_msg_ = "TOPO chunk: Faces of tetrahedral meshes must have a fixed valence of 3";
+        return;
+    }
+    if (file_header_.topo_type == TopoType::Hexahedral && header.valence != 4) {
+        state_ = ReadState::ErrorInvalidTopoType;
+        error_msg_ = "TOPO chunk: Faces of hexahedral meshes must have a fixed valence of 4";
+        return;
+    }
+    assert(header.valence != 0 || _valences.size() == header.span.count);
+    for (uint64_t i = 0; i < header.span.count; ++i)
+    {
+        uint32_t valence = header.valence == 0 ? _valences[i] : header.valence;
+        std::vector<HEH> halfedges;
+        halfedges.reserve(valence);
+        auto success = read_n_ints(reader,
+                                   header.handle_encoding,
+                                   halfedges,
+                                   valence,
+                                   [&](uint32_t x){return HEH::from_unsigned(x + header.handle_offset);});
+        if (!success) break;
+        mesh_->add_face(std::move(halfedges), options_.topology_check);
+    };
+
+    if (state_ == ReadState::ReadingChunks) {
+        n_faces_read_ += header.span.count;
+    }
+}
+
+void BinaryFileReader::read_cells(Decoder &reader, const TopoChunkHeader &header, const ValenceVec &_valences)
+{
+    if (!validate_span(file_header_.n_cells, n_cells_read_, header.span))
+        return;
+
+    if (file_header_.topo_type == TopoType::Tetrahedral && header.valence != 4) {
+        state_ = ReadState::ErrorInvalidTopoType;
+        error_msg_ = "TOPO chunk: Cells of tetrahedral meshes must have a fixed valence of 4";
+        return;
+    }
+
+    if (file_header_.topo_type == TopoType::Hexahedral && header.valence != 6) {
+        state_ = ReadState::ErrorInvalidTopoType;
+        error_msg_ = "TOPO chunk: Cells of hexahedral meshes must have a fixed valence of 6";
+        return;
+    }
+
+    for (uint64_t i = 0; i < header.span.count; ++i)
+    {
+        uint32_t valence = header.valence == 0 ? _valences[i] : header.valence;
+        std::vector<HFH> halffaces;
+        halffaces.reserve(valence);
+        auto success = read_n_ints(reader,
+                                   header.handle_encoding,
+                                   halffaces,
+                                   valence,
+                                   [&](uint32_t x){return HFH::from_unsigned(x + header.handle_offset);});
+        if (!success) break;
+        mesh_->add_cell(std::move(halffaces), options_.topology_check);
+    };
+
+    if (state_ == ReadState::ReadingChunks) {
+        n_cells_read_ += header.span.count;
+    }
+
+}
+
+void BinaryFileReader::read_prop_chunk(Decoder &reader)
 {
     PropChunkHeader header;
     read(reader, header);
@@ -155,155 +297,32 @@ void BinaryFileReader::readPropChunk(Decoder &reader)
         case PropertyEntity::HalfFace: n = 2 * n_faces_read_; break;
         case PropertyEntity::Mesh:     n = 1; break;
     }
-    if (header.span.base >= n || n - header.span.base < header.span.count) {
+    if (header.span.first >= n || n - header.span.first < header.span.count) {
         state_ = ReadState::ErrorHandleRange;
         return;
     }
     prop.decoder->deserialize(prop.prop.get(),
             reader,
-            static_cast<size_t>(header.span.base),
-            static_cast<size_t>(header.span.base + header.span.count));
+            static_cast<size_t>(header.span.first),
+            static_cast<size_t>(header.span.first + header.span.count));
 }
 
-void BinaryFileReader::readEdgesChunk(Decoder &reader)
-{
-    TopoChunkHeader header;
-    read(reader, header);
-    if (!is_valid(header.enc)) {
-        state_ = ReadState::ErrorInvalidEncoding;
-        return;
-    }
-    if (!validate_span(file_header_.n_edges, n_edges_read_, header.span))
-        return;
-
-
-    auto read_all = [&](auto read_one)
-    {
-        if (reader.remaining_bytes() != header.span.count * 2 * elem_size(header.enc)) {
-            std::cerr << "edge chunk size " << std::endl;
-            state_ = ReadState::ErrorInvalidChunkSize;
-            return;
-        }
-        for (size_t i = 0; i < header.span.count; ++i) {
-            uint64_t src = read_one(reader) + header.span.base;
-            uint64_t dst = read_one(reader) + header.span.base;
-            if (src >= n_verts_read_ || dst >= n_verts_read_) {
-                state_ = ReadState::ErrorHandleRange;
-            } else {
-                auto vh_src = VertexHandle::from_unsigned(src);
-                auto vh_dst = VertexHandle::from_unsigned(dst);
-                mesh_->add_edge(vh_src, vh_dst, true);
-            }
-        }
-    };
-
-    call_with_decoder(header.enc, read_all);
-
-    if (state_ == ReadState::ReadingChunks) {
-        n_edges_read_ += header.span.count;
-    }
-}
-
-void BinaryFileReader::readFacesChunk(Decoder &reader)
-{
-    TopoChunkHeader header;
-    read(reader, header);
-
-    uint32_t fixed_valence = reader.u8();
-    IntEncoding valence_enc; read(reader, valence_enc);
-    reader.reserved<2>();
-
-    if (!is_valid(header.enc)) {
-        state_ = ReadState::ErrorInvalidEncoding;
-        return;
-    }
-    if (!validate_span(file_header_.n_faces, n_faces_read_, header.span))
-        return;
-    if (file_header_.topo_type == TopoType::Tetrahedral && fixed_valence != 3) {
-        state_ = ReadState::ErrorInvalidTopoType;
-        return;
-    }
-    if (file_header_.topo_type == TopoType::Hexahedral && fixed_valence != 4) {
-        state_ = ReadState::ErrorInvalidTopoType;
-        return;
-    }
-    auto read_all = [&](auto read_one)
-    {
-        auto add_face =  [&](auto halfedges)
-        {
-            return mesh_->add_face(std::move(halfedges), options_.topology_check);
-        };
-        readFacesOrCells<HalfEdgeHandle>(
-                    reader, header, fixed_valence, valence_enc, n_edges_read_ * 2,
-                    read_one, add_face);
-    };
-
-    call_with_decoder(header.enc, read_all);
-
-    if (state_ == ReadState::ReadingChunks) {
-        n_faces_read_ += header.span.count;
-    }
-}
-
-void BinaryFileReader::readCellsChunk(Decoder &reader)
-{
-    TopoChunkHeader header;
-    read(reader, header);
-
-    uint32_t fixed_valence = reader.u8();
-    IntEncoding valence_enc; read(reader, valence_enc);
-    reader.reserved<2>();
-
-    if (!is_valid(header.enc)) {
-        state_ = ReadState::ErrorInvalidEncoding;
-        return;
-    }
-
-    if (!validate_span(file_header_.n_cells, n_cells_read_, header.span))
-        return;
-
-    if (file_header_.topo_type == TopoType::Tetrahedral && fixed_valence != 4) {
-        state_ = ReadState::ErrorInvalidTopoType;
-        return;
-    }
-
-    if (file_header_.topo_type == TopoType::Hexahedral && fixed_valence != 6) {
-        state_ = ReadState::ErrorInvalidTopoType;
-        return;
-    }
-    auto read_all = [&](auto read_one)
-    {
-        auto add_cell =  [&](auto halffaces)
-        {
-            return mesh_->add_cell(std::move(halffaces), options_.topology_check);
-        };
-        readFacesOrCells<HalfFaceHandle>(
-                    reader, header, fixed_valence, valence_enc, n_faces_read_ * 2,
-                    read_one, add_cell);
-    };
-
-    call_with_decoder(header.enc, read_all);
-
-    if (state_ == ReadState::ReadingChunks) {
-        n_cells_read_ += header.span.count;
-    }
-}
 
 void
 BinaryFileReader::
-readVerticesChunk(Decoder &reader)
+read_vertices_chunk(Decoder &reader)
 {
     VertexChunkHeader header;
     read(reader, header);
 
-    if (!is_valid(header.enc)) {
+    if (!is_valid(header.vertex_encoding)) {
         state_ = ReadState::ErrorInvalidEncoding;
         return;
     }
     if (!validate_span(file_header_.n_verts, n_verts_read_, header.span))
         return;
 
-    auto pos_size = elem_size(file_header_.vertex_encoding) * file_header_.vertex_dim;
+    auto pos_size = elem_size(header.vertex_encoding) * file_header_.vertex_dim;
     if (reader.remaining_bytes() != header.span.count  * pos_size) {
 #if 0
         std::cerr << "vert chunk size" << std::endl;
@@ -314,7 +333,7 @@ readVerticesChunk(Decoder &reader)
         return;
     }
 
-    geometry_reader_->read(reader, file_header_.vertex_encoding, header.span.base, header.span.count);
+    geometry_reader_->read(reader, header.vertex_encoding, header.span.first, header.span.count);
 
     if (state_ == ReadState::ReadingChunks) {
         n_verts_read_ += header.span.count;
@@ -333,13 +352,6 @@ std::optional<uint8_t> BinaryFileReader::vertex_dim()
     if (!read_header())
         return {};
     return file_header_.vertex_dim;
-}
-
-std::optional<VertexEncoding> BinaryFileReader::vertex_encoding()
-{
-    if (!read_header())
-        return {};
-    return file_header_.vertex_encoding;
 }
 
 
@@ -429,23 +441,17 @@ read_chunk()
             reached_eof_chunk = true;
             break;
         case ChunkType::PropertyDirectory:
-            readPropDirChunk(chunk_reader);
+            read_propdir_chunk(chunk_reader);
             break;
         case ChunkType::Property:
-            readPropChunk(chunk_reader);
+            read_prop_chunk(chunk_reader);
             break;
         case ChunkType::Vertices:
-            readVerticesChunk(chunk_reader);
+            read_vertices_chunk(chunk_reader);
             break;
-        case ChunkType::Edges:
-            readEdgesChunk(chunk_reader);
-                break;
-            case ChunkType::Faces:
-            readFacesChunk(chunk_reader);
-                break;
-            case ChunkType::Cells:
-            readCellsChunk(chunk_reader);
-                break;
+        case ChunkType::Topo:
+            read_topo_chunk(chunk_reader);
+            break;
         default:
             if (header.isMandatory()) {
                 state_ = ReadState::ErrorUnsupportedChunkType;
@@ -457,6 +463,13 @@ read_chunk()
     }
     if (state_ != ReadState::ReadingChunks)
         return;
+    if (!chunk_reader.finished()) {
+        state_ = ReadState::ErrorInvalidFile;
+        error_msg_ = "Extra data at end of chunk, remaining bytes:" +
+                std::to_string(chunk_reader.remaining_bytes());
+        return;
+
+    }
     assert(chunk_reader.finished());
     // TODO: this is ugly
     stream_.make_decoder(header.padding_bytes).padding(header.padding_bytes);
@@ -465,7 +478,7 @@ read_chunk()
 
 void
 BinaryFileReader::
-readPropDirChunk(Decoder &reader)
+read_propdir_chunk(Decoder &reader)
 {
     if (props_.size() != 0) {
         // we can only have one property directory!
@@ -496,6 +509,7 @@ readPropDirChunk(Decoder &reader)
         props_.emplace_back(prop_info.entity_type, std::move(prop), prop_decoder);
     }
 }
+
 
 
 

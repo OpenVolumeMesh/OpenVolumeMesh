@@ -60,6 +60,19 @@ inline bool is_valid(PropertyEntity ent) {
 OVM_EXPORT EntityType as_entity_type(PropertyEntity pe);
 OVM_EXPORT PropertyEntity as_prop_entity(EntityType pe);
 
+enum class TopoEntity : uint8_t {
+    Edge     = 1,
+    Face     = 2,
+    Cell     = 3,
+};
+template<> inline size_t ovmb_size<TopoEntity> = 1;
+template<> struct OVM_EXPORT is_ovmb_enum<TopoEntity> : std::true_type {};
+
+inline bool is_valid(TopoEntity ent) {
+    return static_cast<uint8_t>(ent) >= 1
+        && static_cast<uint8_t>(ent) <= 3;
+}
+
 enum class TopoType : uint8_t {
     Polyhedral  = 0,
     Tetrahedral = 1,
@@ -99,9 +112,8 @@ struct FileHeader {
     uint8_t file_version;
     uint8_t header_version;
     uint8_t vertex_dim;
-    VertexEncoding vertex_encoding;
     TopoType topo_type;
-    // 3 bytes padding
+    // 4 bytes reserved
     uint64_t n_verts;
     uint64_t n_edges;
     uint64_t n_faces;
@@ -112,9 +124,8 @@ template<> inline size_t ovmb_size<FileHeader> =
         + sizeof(FileHeader::file_version)
         + sizeof(FileHeader::header_version)
         + sizeof(FileHeader::vertex_dim)
-        + sizeof(FileHeader::vertex_encoding)
         + ovmb_size<TopoType>
-        + 3 // padding
+        + 4 // reserved
         + 4 * sizeof(uint64_t);
 
 static constexpr uint32_t fourcc(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
@@ -128,9 +139,7 @@ static constexpr uint32_t fourcc(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
 enum class ChunkType : uint32_t{
     Any               = 0, // not used in files!
     Vertices          = FOURCC("VERT"),
-    Edges             = FOURCC("EDGE"),
-    Faces             = FOURCC("FACE"),
-    Cells             = FOURCC("CELL"),
+    Topo              = FOURCC("TOPO"),
     PropertyDirectory = FOURCC("DIRP"),
     Property          = FOURCC("PROP"),
     EndOfFile         = FOURCC("EOF "),
@@ -181,7 +190,7 @@ template<> inline size_t ovmb_size<ChunkHeader> =
         + sizeof(ChunkHeader::version)
         + sizeof(ChunkHeader::padding_bytes)
         + sizeof(ChunkHeader::compression)
-        + sizeof(ChunkFlags)
+        + ovmb_size<ChunkFlags>
         + sizeof(ChunkHeader::file_length);
 
 
@@ -247,10 +256,10 @@ OVM_EXPORT constexpr inline uint8_t elem_size(VertexEncoding enc) {
 }
 
 struct ArraySpan {
-    uint64_t base;  // index of first element in this chunk
+    uint64_t first;  // index of first element in this chunk
     uint32_t count; // number of elements in chunk
 };
-template<> inline size_t ovmb_size<ArraySpan> = sizeof(ArraySpan::base) + sizeof(ArraySpan::count);
+template<> inline size_t ovmb_size<ArraySpan> = sizeof(ArraySpan::first) + sizeof(ArraySpan::count);
 
 struct PropChunkHeader {
     ArraySpan span;
@@ -260,18 +269,26 @@ template<> inline size_t ovmb_size<PropChunkHeader> = ovmb_size<ArraySpan> + siz
 
 struct VertexChunkHeader {
     ArraySpan span;
-    VertexEncoding enc;
-    // 3 bytes padding
+    VertexEncoding vertex_encoding;
+    // 3 bytes reserved
 };
 template<> inline size_t ovmb_size<VertexChunkHeader> = ovmb_size<ArraySpan> + 1 + 3;
 
 struct TopoChunkHeader {
     ArraySpan span;
-    IntEncoding enc;
-    // 3 bytes padding
+    TopoEntity entity;
+    uint8_t valence; // 0 for variable valence
+    IntEncoding valence_encoding; // 'None' if valence is not variable
+    IntEncoding handle_encoding;
     uint64_t handle_offset; // a value to add to every contained handle, can be used for file compression
 };
-template<> inline size_t ovmb_size<TopoChunkHeader> =  ovmb_size<ArraySpan> + 1 + 3 + sizeof(TopoChunkHeader::handle_offset);
+template<> inline size_t ovmb_size<TopoChunkHeader> =  (
+        ovmb_size<ArraySpan> +
+        ovmb_size<TopoEntity> +
+        sizeof(TopoChunkHeader::valence) +
+        ovmb_size<IntEncoding> +
+        ovmb_size<IntEncoding> +
+        + sizeof(TopoChunkHeader::handle_offset));
 
 
 } // namespace OpenVolumeMesh::IO::detail

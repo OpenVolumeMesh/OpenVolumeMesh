@@ -30,7 +30,18 @@ ReadResult ovmb_read(std::istream &_istream,
 {
     static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
     auto reader = make_ovmb_reader(_istream, _options, _prop_codecs);
-    return reader->read_file(_mesh);
+    auto result =  reader->read_file(_mesh);
+#ifndef NDEBUG
+    if (result != ReadResult::Ok) {
+        std::cerr << "Error reading ovmb file: "
+                  << to_string(result)
+                  << " ("
+                  << reader->get_error_msg()
+                  << ")"
+                  << std::endl;
+    }
+#endif
+    return result;
 }
 
 template<typename MeshT>

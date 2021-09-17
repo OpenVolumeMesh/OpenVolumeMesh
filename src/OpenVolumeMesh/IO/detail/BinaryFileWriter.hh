@@ -38,10 +38,10 @@ private:
     WriteResult do_write_file();
     void write_chunk(ChunkType type);
 
-    void write_vertices(uint32_t first, uint32_t count);
-    void write_edges   (uint32_t first, uint32_t count);
-    void write_faces   (uint32_t first, uint32_t count);
-    void write_cells   (uint32_t first, uint32_t count);
+    void write_vertices(ArraySpan const&span);
+    void write_edges   (ArraySpan const&span);
+    void write_faces   (ArraySpan const&span);
+    void write_cells   (ArraySpan const&span);
 
     void write_propdir();
     void write_all_props();

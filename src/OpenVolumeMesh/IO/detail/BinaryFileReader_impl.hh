@@ -54,20 +54,22 @@ ReadCompatibility BinaryFileReader::compatibility()
     static_assert(std::is_base_of_v<TopologyKernel, MeshT>);
     read_header();
     if (state_ == ReadState::Error) { // TODO: check for more generic error state!
+        error_msg_ = "Error reading header.";
         return ReadCompatibility::InvalidFile;
     }
-    if (file_header_.header_version > 0) {
+    if (file_header_.header_version != 1) {
+        error_msg_ = "Header version unsupported";
         return ReadCompatibility::FileVersionUnsupported;
     }
-    if (file_header_.file_version > 0) {
+    if (file_header_.file_version != 1) {
+#ifndef NDEBUG
         std::cerr << "OVM::IO: file version is too new, still trying to read." << std::endl;
+#endif
     }
     // TODO: allow converting vertex dimension?
     if (file_header_.vertex_dim != MeshT::Point::dim()) {
         return ReadCompatibility::MeshVertexDimensionIncompatible;
     }
-    // TODO: check geometry type (float, double)
-
     if (std::is_base_of<TetrahedralMeshTopologyKernel, MeshT>::value) {
         if (file_header_.topo_type != TopoType::Tetrahedral) {
             return ReadCompatibility::MeshTopologyIncompatible;

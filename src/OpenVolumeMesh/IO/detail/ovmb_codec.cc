@@ -49,10 +49,9 @@ void write(Encoder &encoder, const FileHeader & header) {
     encoder.u8(header.file_version);
     encoder.u8(header.header_version);
     encoder.u8(header.vertex_dim);
-    write_enum(encoder, header.vertex_encoding);
     write_enum(encoder, header.topo_type);
 
-    encoder.reserved<3>();
+    encoder.reserved<4>();
 
     encoder.u64(header.n_verts);
     encoder.u64(header.n_edges);
@@ -71,12 +70,11 @@ bool read(Decoder &decoder, FileHeader &_file_header)
     }
     _file_header.file_version = decoder.u8();
     _file_header.header_version = decoder.u8();
-    if (_file_header.header_version != 0)
+    if (_file_header.header_version != 1)
         return false;
     _file_header.vertex_dim = decoder.u8();
-    read(decoder, _file_header.vertex_encoding);
     read(decoder, _file_header.topo_type);
-    decoder.reserved<3>();
+    decoder.reserved<4>();
     _file_header.n_verts = decoder.u64();
     _file_header.n_edges = decoder.u64();
     _file_header.n_faces = decoder.u64();
@@ -86,13 +84,13 @@ bool read(Decoder &decoder, FileHeader &_file_header)
 }
 
 void write(Encoder &encoder, const ArraySpan &span) {
-    encoder.u64(span.base);
+    encoder.u64(span.first);
     encoder.u32(span.count);
 }
 
 void read(Decoder &decoder, ArraySpan &_out) {
     decoder.need(ovmb_size<ArraySpan>);
-    _out.base = decoder.u64();
+    _out.first = decoder.u64();
     _out.count = decoder.u32();
 }
 
@@ -135,7 +133,7 @@ void read(Decoder &decoder, PropChunkHeader &_out)
 void write(Encoder &encoder, const VertexChunkHeader & val)
 {
     write(encoder, val.span);
-    write(encoder, val.enc);
+    write(encoder, val.vertex_encoding);
     encoder.reserved<3>();
 }
 
@@ -143,15 +141,17 @@ void read(Decoder &decoder, VertexChunkHeader &_out)
 {
     decoder.need(ovmb_size<VertexChunkHeader>);
     read(decoder, _out.span);
-    read(decoder, _out.enc);
+    read(decoder, _out.vertex_encoding);
     decoder.reserved<3>();
 }
 
 void write(Encoder &encoder, const TopoChunkHeader & val)
 {
     write(encoder, val.span);
-    write(encoder, val.enc);
-    encoder.reserved<3>();
+    write(encoder, val.entity);
+    encoder.u8(val.valence);
+    write(encoder, val.valence_encoding);
+    write(encoder, val.handle_encoding);
     encoder.u64(val.handle_offset);
 }
 
@@ -159,24 +159,26 @@ void read(Decoder &decoder, TopoChunkHeader &_out)
 {
     decoder.need(ovmb_size<TopoChunkHeader>);
     read(decoder, _out.span);
-    read(decoder, _out.enc);
-    decoder.reserved<3>();
+    read(decoder, _out.entity);
+    _out.valence = decoder.u8();
+    read(decoder, _out.valence_encoding);
+    read(decoder, _out.handle_encoding);
     _out.handle_offset = decoder.u64();
 }
 
 void write(Encoder &encoder, PropertyInfo const &val) {
     write(encoder, val.entity_type);
-    encoder.writeVec<uint8_t>(val.name);
-    encoder.writeVec<uint16_t>(val.data_type_name);
+    encoder.writeVec<uint32_t>(val.name);
+    encoder.writeVec<uint32_t>(val.data_type_name);
     encoder.writeVec<uint32_t>(val.serialized_default);
 }
 
 void read(Decoder &decoder, PropertyInfo &_out)
 {
-    decoder.need(2+1+2+4);
+    decoder.need(2+3*4);
     read(decoder, _out.entity_type);
-    decoder.readVec<uint8_t>(_out.name);
-    decoder.readVec<uint16_t>(_out.data_type_name);
+    decoder.readVec<uint32_t>(_out.name);
+    decoder.readVec<uint32_t>(_out.data_type_name);
     decoder.readVec<uint32_t>(_out.serialized_default);
 }
 

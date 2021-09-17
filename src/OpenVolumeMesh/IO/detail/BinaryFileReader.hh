@@ -31,7 +31,6 @@ public:
 
     std::optional<TopoType> topo_type();
     std::optional<uint8_t> vertex_dim();
-    std::optional<VertexEncoding> vertex_encoding();
 
     template<typename MeshT>
     ReadCompatibility compatibility();
@@ -39,30 +38,31 @@ public:
     template<typename MeshT>
     ReadResult read_file(MeshT &_mesh);
 
+    std::string const &get_error_msg() const {return error_msg_;}
+
 private:
     ReadResult internal_read_file(TopologyKernel &_mesh);
 
     bool read_header();
     void read_chunk();
-    void readPropDirChunk(Decoder &reader);
-    void readVerticesChunk(Decoder &reader);
-    void readEdgesChunk(Decoder &reader);
-    void readFacesChunk(Decoder &reader);
-    void readCellsChunk(Decoder &reader);
-    void readPropChunk(Decoder &reader);
+    void read_propdir_chunk(Decoder &reader);
+    void read_vertices_chunk(Decoder &reader);
+    void read_prop_chunk(Decoder &reader);
 
-    template<typename HandleT, typename ReadFunc, typename AddFunc>
-    void readFacesOrCells(Decoder &reader,
-                          TopoChunkHeader const &header,
-                          uint8_t fixed_valence,
-                          IntEncoding valence_enc,
-                          uint64_t n,
-                          ReadFunc read_handle,
-                          AddFunc add_entity);
+    using ValenceVec = std::vector<uint32_t>;
+    template<typename T, typename FuncMakeT>
+    bool read_n_ints(Decoder &reader,
+                     IntEncoding enc,
+                     std::vector<T> &out_vec,
+                     size_t count,
+                     FuncMakeT make_t);
+
+    void read_topo_chunk(Decoder &reader);
+    void read_edges(Decoder &reader, TopoChunkHeader const &header);
+    void read_faces(Decoder &reader, TopoChunkHeader const &header, const ValenceVec &_valences);
+    void read_cells(Decoder &reader, TopoChunkHeader const &header, const ValenceVec &_valences);
 
     bool validate_span(uint64_t total, uint64_t read, ArraySpan const&span);
-    std::vector<uint32_t> read_valences(Decoder &reader, IntEncoding enc, size_t count);
-    std::string const &get_error_msg() const {return error_msg_;}
 
 private:
     detail::BinaryIStream stream_;

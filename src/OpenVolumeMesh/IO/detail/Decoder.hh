@@ -92,7 +92,7 @@ void Decoder::reserved()
     read(buf);
     for (const auto ch: buf) {
         if (ch != 0) {
-            throw write_error("reserved entry != 0 at position " +
+            throw parse_error("reserved entry != 0 at position " +
                               std::to_string(pos()));
         }
     }
