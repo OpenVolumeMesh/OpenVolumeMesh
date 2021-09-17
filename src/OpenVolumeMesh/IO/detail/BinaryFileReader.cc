@@ -187,6 +187,7 @@ void BinaryFileReader::read_edges(Decoder &reader, const TopoChunkHeader &header
             uint64_t dst = read_one(reader) + header.span.first;
             if (src >= n_verts_read_ || dst >= n_verts_read_) {
                 state_ = ReadState::ErrorHandleRange;
+                return;
             } else {
                 auto vh_src = VertexHandle::from_unsigned(src);
                 auto vh_dst = VertexHandle::from_unsigned(dst);
@@ -218,6 +219,15 @@ void BinaryFileReader::read_faces(Decoder &reader, const TopoChunkHeader &header
         return;
     }
     assert(header.valence != 0 || _valences.size() == header.span.count);
+
+    auto read_heh = [&](uint32_t x)
+    {
+        auto idx = x + header.handle_offset;
+        if (idx >= 2 * n_edges_read_) {
+            throw parse_error("Invalid Halfedge handle");
+        }
+        return HEH::from_unsigned(idx);
+    };
     for (uint64_t i = 0; i < header.span.count; ++i)
     {
         uint32_t valence = header.valence == 0 ? _valences[i] : header.valence;
@@ -227,7 +237,7 @@ void BinaryFileReader::read_faces(Decoder &reader, const TopoChunkHeader &header
                                    header.handle_encoding,
                                    halfedges,
                                    valence,
-                                   [&](uint32_t x){return HEH::from_unsigned(x + header.handle_offset);});
+                                   read_heh);
         if (!success) break;
         mesh_->add_face(std::move(halfedges), options_.topology_check);
     };
@@ -254,6 +264,17 @@ void BinaryFileReader::read_cells(Decoder &reader, const TopoChunkHeader &header
         return;
     }
 
+    assert(header.valence != 0 || _valences.size() == header.span.count);
+
+    auto read_hfh = [&](uint32_t x)
+    {
+        auto idx = x + header.handle_offset;
+        if (idx >= 2 * n_faces_read_) {
+            throw parse_error("Invalid Halfface handle");
+        }
+        return HFH::from_unsigned(idx);
+    };
+
     for (uint64_t i = 0; i < header.span.count; ++i)
     {
         uint32_t valence = header.valence == 0 ? _valences[i] : header.valence;
@@ -263,7 +284,7 @@ void BinaryFileReader::read_cells(Decoder &reader, const TopoChunkHeader &header
                                    header.handle_encoding,
                                    halffaces,
                                    valence,
-                                   [&](uint32_t x){return HFH::from_unsigned(x + header.handle_offset);});
+                                   read_hfh);
         if (!success) break;
         mesh_->add_cell(std::move(halffaces), options_.topology_check);
     };
