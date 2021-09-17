@@ -181,17 +181,6 @@ types:
             'int_encoding::u16': u2
             'int_encoding::u32': u4
 
-
-
-  prop_chunk:
-    seq:
-      - id: span
-        type: array_span
-      - id: prop_idx
-        type: u4
-      - id: data
-        size-eos: true
-
   propdir_chunk:
     seq:
       - id: entry
@@ -202,7 +191,7 @@ types:
     seq:
       - id: len
         type: u4
-      - id: data
+      - id: str
         type: str
         encoding: UTF-8
         size: len
@@ -213,8 +202,6 @@ types:
         type: u4
       - id: data
         size: len
-
-
 
   propdir_entry:
     seq:
@@ -227,3 +214,13 @@ types:
         type: string4
       - id: serialized_default
         type: bytes4
+
+  prop_chunk:
+    seq:
+      - id: span
+        type: array_span
+      - id: prop_idx
+        type: u4
+      - id: data
+        size-eos: true
+
