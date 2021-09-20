@@ -34,17 +34,17 @@ configure_file (
 )
 
 
-# If we are in a subdirectory of another project that has a ACGCommon module
-# (e.g. OpenFlipper), we will use acg_add_library; otherwise behave "normally".
-include(ACGCommon OPTIONAL RESULT_VARIABLE IN_ACG_BUILD)
-if(IN_ACG_BUILD)
-    message("OVM is being built as part of an ACG project, using acg_add_library!")
+# If we are in a subdirectory of another project that has a VCICommon module
+# (e.g. OpenFlipper), we will use vci_add_library; otherwise behave "normally".
+include(VCICommon OPTIONAL RESULT_VARIABLE IN_VCI_BUILD)
+if(IN_VCI_BUILD)
+    message("OVM is being built as part of an VCI project, using vci_add_library!")
     if (WIN32 OR EMSCRIPTEN)
-        acg_add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
+        vci_add_library(OpenVolumeMesh STATIC ${SOURCE_FILES})
     else()
-        acg_add_library(OpenVolumeMesh SHARED ${SOURCE_FILES})
+        vci_add_library(OpenVolumeMesh SHARED ${SOURCE_FILES})
     endif()
-else(IN_ACG_BUILD)
+else(IN_VCI_BUILD)
     if (WIN32)
         # Windows .dll build is not supported yet.
         # TODO: turn this on once we have OVM_EXPORT macros in all required places,
@@ -54,7 +54,7 @@ else(IN_ACG_BUILD)
         option(BUILD_SHARED_LIBS "Build shared library (*.dll, *.so, *.dylib) instead of static library (*.a, *.lib)" ON)
         add_library(OpenVolumeMesh ${SOURCE_FILES})
     endif()
-endif(IN_ACG_BUILD)
+endif(IN_VCI_BUILD)
 
 add_library(OpenVolumeMesh::OpenVolumeMesh ALIAS OpenVolumeMesh)
 
