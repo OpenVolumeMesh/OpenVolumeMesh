@@ -60,7 +60,7 @@ have inveterate underlying implemented concepts. So, any ambitious developer
 is invited to participate in the development process to make OpenVolumeMesh
 a well-working, reliable, and useful library. Please feel free to commit
 suggestions, bug reports, or patches to the OpenVolumeMesh project management
-system (redmine), which you find at
+system (gitlab issue tracker), which you find at
 
 <https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh>,
 
@@ -74,11 +74,11 @@ or you can send them directly to the following e-mail address which is
 OpenVolumeMesh is shipped as source project and can be built on all common
 architectures and operating systems including:
 
-- Windows 7/8/10 with Visual Studio 2013 or higher
+- Windows with Visual Studio 19.10 or newer
 
-- MacOSX with latest XCode 
+- MacOSX with XCode 12.5 or newer
 
-- Linux with GCC 6 and higher
+- Linux with GCC 7 or Clang 6 or newer
 
 Note that OpenVolumeMesh uses CMake as build system, so make sure that
 the latest version of CMake is installed on your computer. Download
@@ -92,7 +92,7 @@ have Doxygen installed on your computer. Download Doxygen under
 # 2. Building OpenVolumeMesh
 
 OpenVolumeMesh is equipped with a CMake build system <http://www.cmake.org>.
-Make sure that at least version 3.7 of CMake is installed on your computer.
+Make sure that at least version 3.12 of CMake is installed on your computer.
 Once CMake is installed, perform the following steps (on Linux, Mac OSX):
 
 - Create a build directory somewhere outside the source directory
@@ -103,8 +103,7 @@ Once CMake is installed, perform the following steps (on Linux, Mac OSX):
   "cmake /path/to/OpenVolumeMesh/sources".
 
 - If you want to change the build configuration, say from debug to release,
-  type "ccmake .". Note that unless not explicitly specified otherwise, CMake
-  sets the build configuration such that it will be built with debug flags on.
+  type `ccmake .` or `cmake-gui .`.
 
 - Once everything is configured to your satisfaction, type "make" followed
   by "sudo make install" in order to build and install the library.
