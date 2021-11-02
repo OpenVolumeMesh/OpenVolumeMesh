@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <limits>
+#include <string>
 
 
 namespace OpenVolumeMesh::IO::detail {
