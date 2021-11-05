@@ -231,7 +231,7 @@ void BinaryFileWriter::write_faces(ArraySpan const&_span)
 {
     if (_span.count == 0) return;
     auto end = _span.first + _span.count;
-    assert(end <= mesh_.n_edges());
+    assert(end <= mesh_.n_faces());
 
     auto handle_encoding = suitable_int_encoding(mesh_.n_halfedges());
 
@@ -263,7 +263,7 @@ void BinaryFileWriter::write_cells(ArraySpan const&_span)
 {
     if (_span.count == 0) return;
     auto end = _span.first + _span.count;
-    assert(end <= mesh_.n_edges());
+    assert(end <= mesh_.n_cells());
 
     auto handle_encoding = suitable_int_encoding(mesh_.n_halffaces());
 
