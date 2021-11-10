@@ -2,6 +2,7 @@
 
 #include <OpenVolumeMesh/IO/ovmb_read.hh>
 #include <OpenVolumeMesh/FileManager/FileManager.hh>
+#include <stdexcept>
 
 namespace OpenVolumeMesh::IO {
 
@@ -10,10 +11,10 @@ template<typename MeshT>
 bool read_file(std::string const&_filename, MeshT &_mesh,
                bool _topo_check = true, bool _bottom_up_incidences = true)
 {
-    if (_filename.size() < 5) {
-        return false;
+    if (_filename.size() < 4) {
+        throw std::runtime_error("Filename too short: must end in .ovm or .ovmb");
     }
-    std::string_view last4{_filename.end() - 4, _filename.end()};
+    std::string last4 = _filename.substr(_filename.size() - 4, 4);
     if (last4 == ".ovm") {
         FileManager file_manager;
         return file_manager.readFile(_filename, _mesh, _topo_check, _bottom_up_incidences);
@@ -24,7 +25,7 @@ bool read_file(std::string const&_filename, MeshT &_mesh,
         auto result = ovmb_read(_filename.c_str(), _mesh, options);
         return result == ReadResult::Ok;
     } else {
-        // unknown file extension
+        throw std::runtime_error("Unknown file extension: must end in .ovm or .ovmb");
         return false;
     }
 }
