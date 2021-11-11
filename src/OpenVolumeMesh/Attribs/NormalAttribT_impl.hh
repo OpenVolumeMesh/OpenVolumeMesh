@@ -106,7 +106,7 @@ void NormalAttrib<GeomKernelT>::compute_vertex_normal(const VertexHandle& _vh) {
     }
 
     normal.normalize();
-
+    v_normals_[_vh] = normal;
 }
 
 } // Namespace OpenVolumeMesh
