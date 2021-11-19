@@ -1,4 +1,8 @@
-Version 2.2 (2021/08/13)
+Version 2.2.2 (2021-11-19)
+  - CMake: disable automoc/autouic for better integration into projects that use Qt
+  - NormalAttrib fix: actually save the computed normal
+
+Version 2.2 (2021-08-13)
   Behaviour improvements:
     - TetrahedralMeshTopologyKernel:
         - split_edge and split_face now copy cell properties of the deleted cells to the newly created ones
