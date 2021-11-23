@@ -81,7 +81,7 @@ namespace OpenVolumeMesh {
      * A recommendation would be to rewrite FileManager class in order to be generic.
      */
 
-    class OVM_EXPORT VtkColorReader {
+    class VtkColorReader {
 
     public:
       

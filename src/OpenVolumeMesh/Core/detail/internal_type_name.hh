@@ -13,6 +13,6 @@ namespace OpenVolumeMesh::detail {
 OVM_EXPORT std::string internal_type_name(std::type_info const &ti);
 
 template<typename T>
-OVM_EXPORT std::string internal_type_name() {return internal_type_name(typeid(T));}
+std::string internal_type_name() {return internal_type_name(typeid(T));}
 
 } //namespace OpenVolumeMesh::detail

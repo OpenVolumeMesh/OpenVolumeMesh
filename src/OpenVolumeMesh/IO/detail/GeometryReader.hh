@@ -29,8 +29,8 @@ private:
     GeometryKernelT<VecT> & geometry_kernel_;
 };
 
-extern template class OVM_EXPORT GeometryReaderT<Vec3f>;
-extern template class OVM_EXPORT GeometryReaderT<Vec3d>;
+extern template class GeometryReaderT<Vec3f>;
+extern template class GeometryReaderT<Vec3d>;
 
 } // namespace OpenVolumeMesh::IO::detail
 

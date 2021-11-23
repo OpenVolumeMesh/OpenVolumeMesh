@@ -205,8 +205,8 @@ void PropertyCodecs::register_codec(const std::string &ovmb_type_name)
 {
     using T = typename Codec::T;
     // TODO: check if codec is already registered
-    encoders_[OpenVolumeMesh::detail::internal_type_name<T>()] = std::make_unique<PropertyEncoderT<T, Codec>>(ovmb_type_name);
-    decoders_[ovmb_type_name] = std::move(std::make_unique<PropertyDecoderT<T, Codec>>());
+    encoders_[OpenVolumeMesh::detail::internal_type_name<T>()] = std::make_shared<PropertyEncoderT<T, Codec>>(ovmb_type_name);
+    decoders_[ovmb_type_name] = std::make_shared<PropertyDecoderT<T, Codec>>();
 }
 
 

@@ -61,8 +61,9 @@ public:
     const PropertyEncoderBase* get_encoder(std::string const &internal_type_name) const;
 private:
     // TODO: add namespaces for types, to never mix up user types and OVM types
-    std::map<std::string, std::unique_ptr<PropertyDecoderBase>> decoders_;
-    std::map<std::string, std::unique_ptr<PropertyEncoderBase>> encoders_;
+    // NB: a unique_ptr would suffice, however MSVC gives compile errors for map with unique_ptr as value type in a DLL build
+    std::map<std::string, std::shared_ptr<PropertyDecoderBase>> decoders_;
+    std::map<std::string, std::shared_ptr<PropertyEncoderBase>> encoders_;
 };
 
 OVM_EXPORT extern const PropertyCodecs g_default_property_codecs;

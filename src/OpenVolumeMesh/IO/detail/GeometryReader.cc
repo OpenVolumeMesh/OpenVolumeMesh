@@ -2,7 +2,7 @@
 
 namespace OpenVolumeMesh::IO::detail {
 
-template class GeometryReaderT<Vec3f>;
-template class GeometryReaderT<Vec3d>;
+template class OVM_EXPORT GeometryReaderT<Vec3f>;
+template class OVM_EXPORT GeometryReaderT<Vec3d>;
 
 } // namespace OpenVolumeMesh::IO::detail
