@@ -36,6 +36,8 @@ set(BUILD_GMOCK OFF)
 include(GoogleTest)
 set(INSTALL_GTEST OFF)
 
+set_target_properties(gtest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
 enable_testing()
 
 set(TARGET_NAME "${OVM_TARGET_PREFIX}unittests")
