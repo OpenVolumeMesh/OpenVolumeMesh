@@ -40,16 +40,11 @@ set GTEST_MAIN_LIBRARY=%GTEST_PREFIX%\lib\gtest_main.lib
 
 IF %errorlevel% NEQ 0 exit /b %errorlevel%
 
-cd ..
-
-cd src\Unittests\TestFiles
-
-..\..\..\build-release\Unittests\Release\unittests.exe
-
-cd ..\..\..\
+"C:\Program Files\CMake\bin\ctest.exe" -C Release .
 
 IF %errorlevel% NEQ 0 exit /b %errorlevel%
 
+cd ..
 
 mkdir build-debug
 
@@ -64,11 +59,6 @@ set GTEST_MAIN_LIBRARY=%GTEST_PREFIX%\lib\gtest_maind.lib
 
 IF %errorlevel% NEQ 0 exit /b %errorlevel%
 
-cd ..
-
-cd src\Unittests\TestFiles
-
-..\..\..\build-debug\Unittests\Debug\unittests.exe
-
+"C:\Program Files\CMake\bin\ctest.exe" -C Debug .
 
 IF %errorlevel% NEQ 0 exit /b %errorlevel%

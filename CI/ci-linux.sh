@@ -52,7 +52,7 @@ make unittests
 cd Unittests
 
 #execute tests
-./unittests --gtest_color=yes --gtest_output=xml
+../Build/bin/unittests --gtest_color=yes --gtest_output=xml
 
 cd ..
 cd ..
@@ -81,6 +81,6 @@ make unittests
 cd Unittests
 
 # Run the unittests
-./unittests --gtest_color=yes --gtest_output=xml
+../Build/bin/unittests --gtest_color=yes --gtest_output=xml
 
 

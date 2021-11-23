@@ -56,6 +56,4 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/TestFiles/"
     DESTINATION "${CMAKE_BINARY_DIR}/Unittests"
     )
 
-set_target_properties(${TARGET_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests
-    )
+#set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Unittests )
