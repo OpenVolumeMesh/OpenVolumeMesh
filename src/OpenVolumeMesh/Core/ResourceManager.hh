@@ -64,8 +64,8 @@ public:
     virtual ~ResourceManager() = default;
 
     ResourceManager(const ResourceManager &other);
-    ResourceManager(ResourceManager &&other);
     ResourceManager& operator=(const ResourceManager &other);
+    ResourceManager(ResourceManager &&other) = default;
     ResourceManager& operator=(ResourceManager &&other) = default;
 
 private:

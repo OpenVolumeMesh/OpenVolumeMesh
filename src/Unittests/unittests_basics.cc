@@ -2050,12 +2050,17 @@ TEST_F(PolyhedralMeshBase, AssignmentAndCopyConstruction) {
   mesh_.set_vertex(v0, Vec3d(2, 2, 2));
   EXPECT_EQ(copy.vertex(v0)[0], 1);
 
-  copy = mesh_;
-  EXPECT_EQ(copy.vertex(v0)[0], 2);
-  copy.set_vertex(v0, Vec3d(3, 3, 3));
+  PolyhedralMesh assigned;
+  assigned = mesh_;
+  EXPECT_EQ(assigned.vertex(v0)[0], 2);
+  assigned.set_vertex(v0, Vec3d(3, 3, 3));
   EXPECT_EQ(mesh_.vertex(v0)[0], 2);
 
-  PolyhedralMesh moved{std::move(mesh_)};
+  PolyhedralMesh moved;
+  moved = std::move(std::move(mesh_));
   EXPECT_EQ(moved.vertex(v0)[0], 2);
+
+  PolyhedralMesh move_constructed{std::move(copy)};
+  EXPECT_EQ(move_constructed.vertex(v0)[0], 1);
 
 }

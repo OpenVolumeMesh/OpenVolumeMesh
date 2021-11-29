@@ -55,32 +55,28 @@ public:
 
     GeometryKernel()
         : TopologyKernelT()
-        , position_{get_prop()}
+        , position_{make_prop()}
     {}
 
-    GeometryKernel(GeometryKernel&& other)
-        : TopologyKernelT(std::move(other))
-        , position_{get_prop()}
-    {}
 
     GeometryKernel(GeometryKernel const& other)
         : TopologyKernelT(other)
-        , position_{get_prop()}
-    {}
-
-    GeometryKernel& operator=(GeometryKernel &&other)
+        , position_{make_prop()}
     {
-        TopologyKernelT::operator=(std::move(other));
-        position_ = get_prop();
-        return *this;
+        std::copy(other.position_.begin(), other.position_.end(),
+                  position_.begin());
     }
 
     GeometryKernel& operator=(GeometryKernel const&other)
     {
         TopologyKernelT::operator=(other);
-        position_ = get_prop();
+        std::copy(other.position_.begin(), other.position_.end(),
+                  position_.begin());
         return *this;
     }
+
+    GeometryKernel& operator=(GeometryKernel &&other) = default;
+    GeometryKernel(GeometryKernel&& other) = default;
 
     using TopologyKernelT::add_vertex;
 
@@ -186,8 +182,14 @@ public:
 
 private:
     GeometryKernelT<VecT> get_prop() {
-        auto prop = this->template request_property<VecT, Entity::Vertex>("ovm:position", VecT(0));
-        return prop;
+        auto prop = this->template get_property<VecT, Entity::Vertex>("ovm:position");
+        assert(prop.has_value());
+        return *prop;
+    }
+    GeometryKernelT<VecT> make_prop() {
+        auto prop = this->template create_shared_property<VecT, Entity::Vertex>("ovm:position", VecT(0));
+        assert(prop.has_value());
+        return *prop;
     }
 
 private:

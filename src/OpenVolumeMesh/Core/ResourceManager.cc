@@ -38,16 +38,14 @@ namespace OpenVolumeMesh {
 
 ResourceManager::ResourceManager(const ResourceManager &other)
 {
-    *this = other;
+    assignAllPropertiesFrom(other);
 }
 
-ResourceManager::ResourceManager(ResourceManager &&other)
-{
-    *this = std::move(other);
-
-}
 ResourceManager& ResourceManager::operator=(const ResourceManager &other)
 {
+    for_each_entity([&](auto entity_tag) {
+        resize_props<decltype(entity_tag)>(other.n<decltype(entity_tag)>());
+    });
     if (this != &other) {
        assignAllPropertiesFrom(other);
     }
