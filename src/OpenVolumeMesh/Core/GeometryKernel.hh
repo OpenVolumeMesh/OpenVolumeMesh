@@ -72,12 +72,14 @@ public:
     {
         TopologyKernelT::operator=(std::move(other));
         position_ = get_prop();
+        return *this;
     }
 
     GeometryKernel& operator=(GeometryKernel const&other)
     {
         TopologyKernelT::operator=(other);
         position_ = get_prop();
+        return *this;
     }
 
     using TopologyKernelT::add_vertex;
