@@ -96,10 +96,15 @@ TYPED_TEST(PolyhedralFileTest, LoadFile)
 
   ASSERT_TRUE(this->readFile("Cylinder.ovm", mesh));
 
+
   EXPECT_EQ(399u, mesh.n_vertices());
   EXPECT_EQ(1070u, mesh.n_edges());
   EXPECT_EQ(960u, mesh.n_faces());
   EXPECT_EQ(288u, mesh.n_cells());
+  auto v0 = mesh.vertex(VH(0));
+  EXPECT_DOUBLE_EQ(v0[0], 4.97203);
+  EXPECT_DOUBLE_EQ(v0[1], 0.504645);
+  EXPECT_DOUBLE_EQ(v0[2], 0.913112);
 }
 
 TYPED_TEST(PolyhedralFileTest, LoadNonManifoldMesh) {
@@ -149,6 +154,10 @@ TYPED_TEST(PolyhedralFileTest, SaveFile) {
   EXPECT_EQ(1070u, mesh.n_edges());
   EXPECT_EQ(960u, mesh.n_faces());
   EXPECT_EQ(288u, mesh.n_cells());
+  auto v0 = mesh.vertex(VH(0));
+  EXPECT_DOUBLE_EQ(v0[0], 4.97203);
+  EXPECT_DOUBLE_EQ(v0[1], 0.504645);
+  EXPECT_DOUBLE_EQ(v0[2], 0.913112);
 }
 
 TYPED_TEST(PolyhedralFileTest, SaveFileWithProps) {
