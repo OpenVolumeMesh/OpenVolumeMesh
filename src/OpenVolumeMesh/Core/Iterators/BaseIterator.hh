@@ -10,7 +10,7 @@ class TopologyKernel;
 
 template <
 class OH /* Output handle type */>
-class BaseIterator {
+class OVM_EXPORT BaseIterator {
 public:
 
     // STL compliance
