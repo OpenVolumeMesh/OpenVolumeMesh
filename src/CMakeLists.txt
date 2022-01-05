@@ -78,6 +78,7 @@ set_target_properties (OpenVolumeMesh PROPERTIES
     AUTOMOC OFF
     AUTOUIC OFF
     CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN TRUE
     )
 
 
