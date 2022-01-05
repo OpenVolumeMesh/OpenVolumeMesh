@@ -51,6 +51,8 @@ if (OVM_STANDALONE_BUILD)
     set(CMAKE_CXX_STANDARD ${OVM_CXX_STANDARD})
     set(CMAKE_CXX_STANDARD_REQUIRED YES)
     set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 else()
     # OVM_TARGET_PREFIX is prepended to targets with generic names,
     # i.e., "doc", "unittests"
