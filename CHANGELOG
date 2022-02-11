@@ -1,3 +1,6 @@
+Version 2.2.5 (2022-02-11)
+  - Add VtkColorReader class (thanks to PA Beaufort)
+
 Version 2.2.4 (2022-02-11)
   - Unittest build fix
 
