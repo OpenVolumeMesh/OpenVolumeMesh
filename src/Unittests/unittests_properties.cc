@@ -168,3 +168,32 @@ TEST_F(PolyhedralMeshBase, PropValueCopyTest) {
     prop.copy(0, 1);
     EXPECT_EQ(prop[VertexHandle(1)], 1234);
 }
+
+TEST_F(PolyhedralMeshBase, EntitySwapInt)
+{
+    generatePolyhedralMesh(mesh_);
+    auto prop = mesh_.create_private_property<int, Entity::Vertex>();
+    auto v0 = VertexHandle(0);
+    auto v1 = VertexHandle(1);
+    prop[v0] = 23;
+    prop[v1] = 42;
+    mesh_.swap_vertex_indices(v0, v1);
+    EXPECT_EQ(prop[v0], 42);
+    EXPECT_EQ(prop[v1], 23);
+}
+
+TEST_F(PolyhedralMeshBase, EntitySwapBool)
+{
+    generatePolyhedralMesh(mesh_);
+    auto prop = mesh_.create_private_property<bool, Entity::Vertex>();
+    auto v0 = VertexHandle(0);
+    auto v1 = VertexHandle(1);
+    prop[v0] = false;
+    prop[v1] = true;
+    mesh_.swap_vertex_indices(v0, v1);
+    EXPECT_EQ(prop[v0], true);
+    EXPECT_EQ(prop[v1], false);
+}
+
+
+

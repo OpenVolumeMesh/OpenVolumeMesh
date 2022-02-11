@@ -1,3 +1,6 @@
+Version 2.2.3 (2022-02-11)
+  - Bugfix: swap_*_indices would not properly swap bool properties
+
 Version 2.2.2 (2021-11-19)
   - CMake: disable automoc/autouic for better integration into projects that use Qt
   - NormalAttrib fix: actually save the computed normal
