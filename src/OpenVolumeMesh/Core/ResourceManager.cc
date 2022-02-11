@@ -43,6 +43,7 @@ ResourceManager::ResourceManager(const ResourceManager &other)
 
 ResourceManager& ResourceManager::operator=(const ResourceManager &other)
 {
+    if (this == &other) return *this;
     for_each_entity([&](auto entity_tag) {
         resize_props<decltype(entity_tag)>(other.n<decltype(entity_tag)>());
     });
