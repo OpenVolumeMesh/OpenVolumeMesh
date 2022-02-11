@@ -172,7 +172,7 @@ TEST_F(PolyhedralMeshBase, PropValueCopyTest) {
 TEST_F(PolyhedralMeshBase, EntitySwapInt)
 {
     generatePolyhedralMesh(mesh_);
-    auto prop = mesh_.create_private_property<int, Entity::Vertex>();
+    auto prop = mesh_.request_vertex_property<int>();
     auto v0 = VertexHandle(0);
     auto v1 = VertexHandle(1);
     prop[v0] = 23;
@@ -185,7 +185,7 @@ TEST_F(PolyhedralMeshBase, EntitySwapInt)
 TEST_F(PolyhedralMeshBase, EntitySwapBool)
 {
     generatePolyhedralMesh(mesh_);
-    auto prop = mesh_.create_private_property<bool, Entity::Vertex>();
+    auto prop = mesh_.request_vertex_property<bool>();
     auto v0 = VertexHandle(0);
     auto v1 = VertexHandle(1);
     prop[v0] = false;
