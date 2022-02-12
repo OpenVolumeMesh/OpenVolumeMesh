@@ -1,3 +1,7 @@
+Version 2.2.6 (2022-02-12)
+  - Fix `swap_vertex_indices` for two vertices connected by an edge (before, the edge was unchanged).
+        (cherry-picked from 3.0.1)
+
 Version 2.2.5 (2022-02-11)
   - Add VtkColorReader class (thanks to PA Beaufort)
 
