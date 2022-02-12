@@ -15,6 +15,7 @@ macos-M1-c++17:
 
 cppcheck:
   script: "CI/ci-cppcheck.sh"
+  allow_failure: true
   tags:
     - Linux
   artifacts:
