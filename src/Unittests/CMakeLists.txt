@@ -3,6 +3,7 @@ SET(SOURCE_FILES
     unittests_files.cc
     unittests_common.cc
     unittests.cc
+    unittests_swap_entities.cc
     unittests_iterators.cc
     unittests_smart_tagger.cc
     unittests_properties.cc)

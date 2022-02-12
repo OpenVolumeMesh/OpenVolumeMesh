@@ -1783,9 +1783,9 @@ void TopologyKernel::swap_vertex_indices(VertexHandle _h1, VertexHandle _h2)
 
     if (has_vertex_bottom_up_incidences())
     {
+        std::set<EH> processed_edges; // to ensure ids are only swapped once (in the case that the two swapped vertices are connected by an edge)
         for (unsigned int i = 0; i < 2; ++i) // For both swapped vertices
         {
-            std::set<EH> processed_edges; // to ensure ids are only swapped once (in the case that the two swapped vertices are connected by an edge)
             for (const auto heh: outgoing_hes_per_vertex_[ids[i]]) {
                 const auto eh = heh.edge_handle();
 

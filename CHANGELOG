@@ -1,3 +1,6 @@
+Version 3.0.1 (2022-02-12)
+  - Fix `swap_vertex_indices` for two vertices connected by an edge (before, the edge was unchanged).
+
 Version 3.0 (2022-02-11)
   - Minimum C++ version is now 17 instead of 11
   - Property system redesign:
