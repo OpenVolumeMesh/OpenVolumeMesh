@@ -222,7 +222,7 @@ namespace OpenVolumeMesh {
 	  halffacehandles.push_back(_mesh.halfface(faces[i]));
 
 	for (unsigned int i = 0; i < halffacehandles.size(); i++)
-	  if (halffacehandles[i] == HalfFaceHandle(-1))
+	  if (!halffacehandles[i].is_valid())
 	    {
 	      FaceHandle fh = _mesh.add_face(faces[i]);
 	      halffacehandles[i] = _mesh.halfface_handle(fh, 0);
