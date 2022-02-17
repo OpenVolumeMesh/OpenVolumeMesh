@@ -68,7 +68,7 @@ public:
         return *this;
     }
 
-    bool is_valid() const { return idx_ != -1; }
+    bool is_valid() const { return idx_ >= 0; }
 
     constexpr bool operator<(const HandleT& _idx) const { return (this->idx_ < _idx.idx_); }
 
