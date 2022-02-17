@@ -1,5 +1,8 @@
+Version 3.0.2 (2022-02-17)
+  - Handle::is_valid(): treat all negative indices as invalid, not just -1. Bug discovered by Heng Liu.
+
 Version 3.0.1 (2022-02-12)
-  - Fix `swap_vertex_indices` for two vertices connected by an edge (before, the edge was unchanged).
+  - Fix `swap_vertex_indices` for two vertices connected by an edge (before, the edge was unchanged). Bug discovered by Denis Kalmykov.
 
 Version 3.0 (2022-02-11)
   - Minimum C++ version is now 17 instead of 11
@@ -48,7 +51,7 @@ Version 2.2.4 (2022-02-11)
   - Unittest build fix
 
 Version 2.2.3 (2022-02-11)
-  - Bugfix: swap_*_indices would not properly swap bool properties
+  - Bugfix: swap_*_indices would not properly swap bool properties (bug discovered by Denis Kalmykov)
 
 Version 2.2.2 (2021-11-19)
   - CMake: disable automoc/autouic for better integration into projects that use Qt
