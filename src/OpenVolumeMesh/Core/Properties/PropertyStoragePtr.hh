@@ -68,6 +68,7 @@ public:
 
     virtual ~PropertyStoragePtr() = default;
 
+    std::vector<T> const& data_vector() const { return storage()->data_vector(); }
     const_iterator begin() const { return storage()->begin(); }
     const_iterator end() const   { return storage()->end(); }
     iterator begin() { return storage()->begin(); }
