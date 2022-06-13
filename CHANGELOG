@@ -1,3 +1,8 @@
+Version 3.0.3 (2022-06-13):
+  - Hotfix: disable mesh assignment operators for now, they are currently broken
+            and can leave properties in bad states.
+            cf. gitlab issue #34.
+
 Version 3.0.2 (2022-02-17)
   - Handle::is_valid(): treat all negative indices as invalid, not just -1. Bug discovered by Heng Liu.
 

@@ -36,6 +36,7 @@
 
 namespace OpenVolumeMesh {
 
+#if 0
 ResourceManager::ResourceManager(const ResourceManager &other)
 {
     assignAllPropertiesFrom(other);
@@ -59,6 +60,7 @@ void ResourceManager::assignAllPropertiesFrom(ResourceManager const& src)
         assignPropertiesFrom<decltype(entity_tag)>(src);
     });
 }
+#endif
 
 
 detail::Tracker<PropertyStorageBase> &

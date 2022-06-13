@@ -63,10 +63,10 @@ public:
     ResourceManager() = default;
     virtual ~ResourceManager() = default;
 
-    ResourceManager(const ResourceManager &other);
-    ResourceManager& operator=(const ResourceManager &other);
+    ResourceManager(const ResourceManager &other) = delete;
     ResourceManager(ResourceManager &&other) = default;
-    ResourceManager& operator=(ResourceManager &&other) = default;
+    ResourceManager& operator=(const ResourceManager &other) = delete;
+    ResourceManager& operator=(ResourceManager &&other) = delete;
 
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;

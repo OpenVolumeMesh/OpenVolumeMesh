@@ -2036,6 +2036,7 @@ TEST_F(PolyhedralMeshBase, HandleDefaultConstructors) {
     ASSERT_FALSE(ch.is_valid());
 }
 
+#if 0
 TEST_F(PolyhedralMeshBase, AssignmentAndCopyConstruction) {
 
   /*
@@ -2064,3 +2065,4 @@ TEST_F(PolyhedralMeshBase, AssignmentAndCopyConstruction) {
   EXPECT_EQ(move_constructed.vertex(v0)[0], 1);
 
 }
+#endif

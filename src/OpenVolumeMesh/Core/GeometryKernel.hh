@@ -59,23 +59,28 @@ public:
     {}
 
 
-    GeometryKernel(GeometryKernel const& other)
+
+    GeometryKernel(GeometryKernel const& other) = delete;
+#if 0
         : TopologyKernelT(other)
         , position_{make_prop()}
     {
         std::copy(other.position_.begin(), other.position_.end(),
                   position_.begin());
     }
+#endif
 
-    GeometryKernel& operator=(GeometryKernel const&other)
+    GeometryKernel& operator=(GeometryKernel const&other) = delete;
+#if 0
     {
         TopologyKernelT::operator=(other);
         std::copy(other.position_.begin(), other.position_.end(),
                   position_.begin());
         return *this;
     }
+#endif
 
-    GeometryKernel& operator=(GeometryKernel &&other) = default;
+    GeometryKernel& operator=(GeometryKernel &&other) = delete;
     GeometryKernel(GeometryKernel&& other) = default;
 
     using TopologyKernelT::add_vertex;
