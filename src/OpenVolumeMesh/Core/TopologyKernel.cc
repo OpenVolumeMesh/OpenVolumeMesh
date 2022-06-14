@@ -302,6 +302,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
     // Start with one incident halfface and go into the first direction
     auto start_hf = incident_hfs.front();
     auto cur_hf = start_hf;
+    auto cur_heh = heh;
 
     do {
         new_halffaces.push_back(cur_hf);
@@ -314,7 +315,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
                 || is_deleted(incident_cell(cur_hf)))
             break;
 
-        cur_hf = adjacent_halfface_in_cell(cur_hf, heh);
+        cur_hf = adjacent_halfface_in_cell(cur_hf, cur_heh);
         if(cur_hf == InvalidHalfFaceHandle) {
             return;
         }
@@ -330,6 +331,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
     if(new_halffaces.size() != incident_hfs.size()) {
 
         cur_hf = start_hf;
+        cur_heh = opposite_halfedge_handle(heh);
 
         while(true) {
             cur_hf = opposite_halfface_handle(cur_hf);
@@ -340,7 +342,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
                 break;
             }
 
-            cur_hf = adjacent_halfface_in_cell(cur_hf, heh);
+            cur_hf = adjacent_halfface_in_cell(cur_hf, cur_heh);
             if (cur_hf == InvalidHalfFaceHandle) {
                 return;
             }
@@ -2093,7 +2095,6 @@ HalfFaceHandle
 TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
                                           HalfEdgeHandle _halfEdgeHandle) const
 {
-
     assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
     assert(_halfEdgeHandle.is_valid() && (size_t)_halfEdgeHandle.idx() < edges_.size() * 2u);
     assert(has_face_bottom_up_incidences());
@@ -2108,7 +2109,25 @@ TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
     bool skipped = false;
     HalfFaceHandle idx = InvalidHalfFaceHandle;
 
-    const auto eh = edge_handle(_halfEdgeHandle);
+    // For face-selfadjacent cells, we have to ensure the actual halfedge information
+    // is used here, BUT...
+    // To support legacy code, we have to flip the halfedge if it's the wrong one
+    HalfEdgeHandle hehOpp = opposite_halfedge_handle(_halfEdgeHandle);
+    bool hasHalfedge = false;
+    bool hasOppHalfedge = false;
+    const auto hf = halfface(_halfFaceHandle);
+    for (HalfEdgeHandle heh: hf.halfedges()) {
+        if (heh == hehOpp)
+            hasOppHalfedge = true;
+        else if (heh == _halfEdgeHandle)
+            hasHalfedge = true;
+    }
+    if (!hasHalfedge) {
+        if (hasOppHalfedge)
+            _halfEdgeHandle = hehOpp;
+        else
+            return InvalidHalfFaceHandle;
+    }
 
     for(const auto &hfh: cell(ch).halffaces()) {
         if(hfh == _halfFaceHandle) {
@@ -2118,9 +2137,11 @@ TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
                 return idx;
             }
         } else {
-            const auto &hfh_face = face(face_handle(hfh));
-            for (const auto heh: hfh_face.halfedges()) {
-                if(edge_handle(heh) == eh) {
+            const auto hf_cur = halfface(hfh);
+            for (const auto heh: hf_cur.halfedges()) {
+                // For face-selfadjacent cells, we look for a halfface that
+                // contains the opposite halfedge but isnt the opposite halfface
+                if(opposite_halfedge_handle(heh) == _halfEdgeHandle && hfh != opposite_halfface_handle(_halfFaceHandle)) {
                     if (idx.is_valid()) {
                         // we found two(!) other halffaces that contain the given edge.
                         // likely the given halfedge is not part of the given halfface
