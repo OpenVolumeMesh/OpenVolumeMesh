@@ -301,9 +301,7 @@ public:
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             n_hf = TopologyKernel::opposite_halfface_handle(n_hf);
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
-            HalfEdgeHandle o_he = TopologyKernel::opposite_halfedge_handle(n_he);
-            if(o_he == TopologyKernel::InvalidHalfEdgeHandle) break;
-            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, o_he);
+            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, n_he);
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             else return n_hf;
         }
@@ -317,9 +315,7 @@ public:
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             n_hf = TopologyKernel::opposite_halfface_handle(n_hf);
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
-            HalfEdgeHandle o_he = TopologyKernel::opposite_halfedge_handle(n_he);
-            if(o_he == TopologyKernel::InvalidHalfEdgeHandle) break;
-            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, o_he);
+            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, n_he);
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             else return TopologyKernel::opposite_halfface_handle(n_hf);
         }
@@ -370,4 +366,3 @@ private:
 };
 
 } // Namespace OpenVolumeMesh
-
