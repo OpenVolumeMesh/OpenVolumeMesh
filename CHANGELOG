@@ -1,6 +1,9 @@
 Version 3.0.4 (2022-06-16):
   Improvements contributed by Hendrik Brückler of UOS:
-  - Support for self-adjacent cells (i.e., cells that contain both halffaces of a face)
+  - Support for self-adjacent cells (i.e., cells that contain both halffaces of a face),
+      where we had inconsistent behaviour previously:
+    - adjacent_halfface_in_cell() now considers halfedge direction (if relevant)
+    - reorder_incident_halffaces() now calls the above with correct halfedge orientation
   - Fix a bug in Hex mesh adjacent_halfface_on_sheet
 
 Version 3.0.3 (2022-06-13):
