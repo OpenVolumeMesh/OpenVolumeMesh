@@ -5,6 +5,7 @@ SET(SOURCE_FILES
     unittests.cc
     unittests_swap_entities.cc
     unittests_iterators.cc
+    unittests_mesh_copies.cc
     unittests_smart_tagger.cc
     unittests_properties.cc)
 

@@ -53,6 +53,7 @@ const HalfFaceHandle    TopologyKernel::InvalidHalfFaceHandle = HalfFaceHandle(-
 const CellHandle        TopologyKernel::InvalidCellHandle     = CellHandle(-1);
 
 //========================================================================================
+
 void TopologyKernel::reserve_vertices(size_t n)
 {
     ResourceManager::reserve_vprops(n);

@@ -58,26 +58,26 @@ public:
         , position_{make_prop()}
     {}
 
-
-
-    GeometryKernel(GeometryKernel const& other) = delete;
-#if 0
+    GeometryKernel(GeometryKernel const& other)
         : TopologyKernelT(other)
         , position_{make_prop()}
     {
         std::copy(other.position_.begin(), other.position_.end(),
                   position_.begin());
     }
-#endif
 
     GeometryKernel& operator=(GeometryKernel const&other) = delete;
 #if 0
     {
-        TopologyKernelT::operator=(other);
-        std::copy(other.position_.begin(), other.position_.end(),
-                  position_.begin());
+      if (&this == other)
         return *this;
-    }
+      TopologyKernelT::operator=(other);
+      // TODO: what is the state of our position prop now? is it invalidated?
+      position_.resize(other.position_.size());
+      std::copy(other.position_.begin(), other.position_.end(),
+                position_.begin());
+      return *this;
+    };
 #endif
 
     GeometryKernel& operator=(GeometryKernel &&other) = delete;

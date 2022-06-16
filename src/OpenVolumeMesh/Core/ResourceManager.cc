@@ -36,12 +36,15 @@
 
 namespace OpenVolumeMesh {
 
-#if 0
 ResourceManager::ResourceManager(const ResourceManager &other)
 {
-    assignAllPropertiesFrom(other);
+  // TODO: we want to at least copy persistent props.
+  //       For now, leave this Resman with no props.
+
+  //assignAllPropertiesFrom(other);
 }
 
+#if 0
 ResourceManager& ResourceManager::operator=(const ResourceManager &other)
 {
     if (this == &other) return *this;

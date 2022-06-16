@@ -72,6 +72,12 @@ public:
     TopologyKernel() = default;
     ~TopologyKernel() override = default;
 
+    TopologyKernel(TopologyKernel const& other) = default;
+
+    TopologyKernel(TopologyKernel      &&other) = delete;
+    TopologyKernel& operator=(TopologyKernel && other) = delete;
+    TopologyKernel& operator=(TopologyKernel const& other)= delete;
+
     /*
      * Defines and constants
      */
@@ -118,6 +124,7 @@ public:
      */
 
 protected:
+
     template <class Circulator>
     static Circulator make_end_circulator(const Circulator& _circ)
     {

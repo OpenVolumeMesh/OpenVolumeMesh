@@ -63,11 +63,13 @@ public:
     ResourceManager() = default;
     virtual ~ResourceManager() = default;
 
-    ResourceManager(const ResourceManager &other) = delete;
-    ResourceManager(ResourceManager &&other) = default;
+    ResourceManager(const ResourceManager &other);
+    ResourceManager(ResourceManager &&other) = delete;
     ResourceManager& operator=(const ResourceManager &other) = delete;
     ResourceManager& operator=(ResourceManager &&other) = delete;
 
+protected:
+    void clone_from(ResourceManager const& other);
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
