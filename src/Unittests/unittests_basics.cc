@@ -1209,9 +1209,9 @@ TEST_F(HexahedralMeshBase, SimpleHexMeshNavigation) {
             HalfFaceHandle(3), CellHandle(1)));
 
     EXPECT_HANDLE_EQ(HalfFaceHandle(20), mesh_.adjacent_halfface_on_sheet(
-            HalfFaceHandle(9), HalfEdgeHandle(12)));
+            HalfFaceHandle(10), HalfEdgeHandle(12)));
     EXPECT_HANDLE_EQ(HalfFaceHandle(21), mesh_.adjacent_halfface_on_sheet(
-            HalfFaceHandle(8), HalfEdgeHandle(12)));
+            HalfFaceHandle(11), HalfEdgeHandle(12)));
 
     HexahedralMesh::CellSheetCellIter csc_it = mesh_.csc_iter(CellHandle(0), HexahedralMesh::YF);
     EXPECT_HANDLE_EQ(CellHandle(1), *csc_it);
