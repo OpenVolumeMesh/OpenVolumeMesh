@@ -22,14 +22,24 @@ TEST_F(MeshCopyTest, CopyConstructor)
   VertexHandle v2 = mesh.add_vertex(pos2);
   EdgeHandle e0 = mesh.add_edge(v0, v2);
 
+  const std::string propname = "somename";
+  auto mesh_prop = *mesh.create_persistent_property<int, Entity::Vertex>(propname);
+  mesh_prop[v0] = 92;
+  mesh_prop[v2] = 94;
   mesh.enable_deferred_deletion(true);
   mesh.delete_vertex(v1);
+
+
+
+
   PolyhedralMesh copy{mesh};
 
-  ASSERT_EQ(copy.n_vertices(), mesh.n_vertices());
+  ASSERT_EQ(mesh.n_vertices(), 3);
+  ASSERT_EQ(mesh.n_logical_vertices(), 2);
+  ASSERT_EQ(copy.n_vertices(), 3);
+  ASSERT_EQ(copy.n_logical_vertices(), 2);
   ASSERT_EQ(mesh.is_deleted(v1), true);
   ASSERT_EQ(copy.is_deleted(v1), true);
-  ASSERT_EQ(copy.n_logical_vertices(), mesh.n_logical_vertices());
   ASSERT_EQ(copy.n_edges(), mesh.n_edges());
   ASSERT_EQ(copy.n_faces(), mesh.n_faces());
   ASSERT_EQ(copy.n_cells(), mesh.n_cells());
@@ -42,17 +52,26 @@ TEST_F(MeshCopyTest, CopyConstructor)
   // TODO: test cell topology
 
   VertexHandle orig_v3 = mesh.add_vertex(pos0+pos1);
-  ASSERT_EQ(copy.n_vertices(), mesh.n_vertices()-1);
+
+  ASSERT_EQ(copy.n_vertices(), 3);
+  ASSERT_EQ(copy.n_logical_vertices(), 2);
+
   mesh.set_vertex(v0, Vec3d(41));
   mesh.set_vertex(v1, Vec3d(55));
   EXPECT_EQ(copy.vertex(v0), pos0);
   EXPECT_EQ(copy.vertex(v1), pos1);
-  mesh.clear();
-  ASSERT_EQ(copy.n_logical_vertices(), 2);
+  mesh.clear(false);
+  //mesh.clear(true);
+  EXPECT_EQ(copy.n_logical_vertices(), 2);
   EXPECT_EQ(copy.vertex(v0), pos0);
   EXPECT_EQ(copy.vertex(v1), pos1);
 
-  // TODO: test persistent properties
+
+  auto copy_prop = *copy.get_property<int, Entity::Vertex>(propname);
+  EXPECT_EQ(mesh_prop.size(), mesh.n_vertices());
+  EXPECT_EQ(copy_prop.size(), copy.n_vertices());
+  EXPECT_EQ(copy_prop[v0], 92);
+  EXPECT_EQ(copy_prop[v2], 94);
   // TODO: test tet and hex meshes
   // TODO: a deep comparison operator would help here. or save to (in-memory) file to compare binary representation?
 }

@@ -42,6 +42,16 @@ ResourceManager::ResourceManager(const ResourceManager &other)
   //       For now, leave this Resman with no props.
 
   //assignAllPropertiesFrom(other);
+  for_each_entity([&](auto entity_tag) {
+      using ET = decltype(entity_tag);
+      const auto &other_props = other.persistent_props_.get<ET>();
+      auto &our_props = persistent_props_.get<ET>();
+      for(const auto &p: other_props) {
+        auto copy = p->clone();
+        copy->set_tracker(&storage_tracker<ET>());
+        our_props.insert(copy->shared_from_this());
+      }
+    });
 }
 
 #if 0
