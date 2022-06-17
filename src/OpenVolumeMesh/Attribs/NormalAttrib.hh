@@ -67,44 +67,44 @@ public:
     void update_face_normals();
 
     const typename GeomKernelT::PointT& operator[](const VertexHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_vertices());
+        assert((unsigned int)_h.idx() < kernel_->n_vertices());
         return v_normals_[_h.idx()];
     }
 
     const typename GeomKernelT::PointT& operator[](const FaceHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_faces());
+        assert((unsigned int)_h.idx() < kernel_->n_faces());
         return f_normals_[_h.idx()];
     }
 
     const typename GeomKernelT::PointT operator[](const HalfFaceHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_halffaces());
+        assert((unsigned int)_h.idx() < kernel_->n_halffaces());
         double mult = 1.0;
         if(_h.idx() % 2 == 1) mult = -1.0;
-        return f_normals_[kernel_.face_handle(_h).idx()] * mult;
+        return f_normals_[kernel_->face_handle(_h).idx()] * mult;
     }
 
     typename GeomKernelT::PointT& operator[](const VertexHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_vertices());
+        assert((unsigned int)_h.idx() < kernel_->n_vertices());
         return v_normals_[_h];
     }
 
     typename GeomKernelT::PointT& operator[](const FaceHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_faces());
+        assert((unsigned int)_h.idx() < kernel_->n_faces());
         return f_normals_[_h];
     }
 
     typename GeomKernelT::PointT operator[](const HalfFaceHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_halffaces());
+        assert((unsigned int)_h.idx() < kernel_->n_halffaces());
         double mult = 1.0;
         if(_h.idx() % 2 == 1) mult = -1.0;
-        return f_normals_[kernel_.face_handle(_h)] * mult;
+        return f_normals_[kernel_->face_handle(_h)] * mult;
     }
 
 private:
 
     void compute_vertex_normal(const VertexHandle& _vh);
 
-    GeomKernelT& kernel_;
+    const GeomKernelT* kernel_;
 
     VertexPropertyT<typename GeomKernelT::PointT> v_normals_;
     FacePropertyT<typename GeomKernelT::PointT> f_normals_;

@@ -48,7 +48,6 @@ ColorAttrib<ColT>::ColorAttrib(TopologyKernel& _kernel, const ColT _def) :
         fcolor_prop_(_kernel.request_face_property<ColT>("face_color", _def)),
         hfcolor_prop_(_kernel.request_halfface_property<ColT>("halfface_color", _def)),
         ccolor_prop_(_kernel.request_cell_property<ColT>("cell_color", _def)),
-        kernel_(_kernel),
         vertex_colors_available_(false),
         halfedge_colors_available_(false),
         edge_colors_available_(false),
@@ -68,54 +67,42 @@ ColorAttrib<ColT>::~ColorAttrib() {
 template <class ColT>
 void ColorAttrib<ColT>::clear_vertex_colors()
 {
-    for (const auto vh: kernel_.vertices()) {
-        vcolor_prop_[vh] = default_color_;
-    }
+    vcolor_prop_.fill(default_color_);
     vertex_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_halfedge_colors()
 {
-    for (const auto heh: kernel_.halfedges()) {
-        hecolor_prop_[heh] = default_color_;
-    }
+    hecolor_prop_.fill(default_color_);
     halfedge_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_edge_colors()
 {
-    for (const auto eh: kernel_.edges()) {
-        ecolor_prop_[eh] = default_color_;
-    }
+    ecolor_prop_.fill(default_color_);
     edge_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_halfface_colors()
 {
-    for (const auto hfh: kernel_.halffaces()) {
-        hfcolor_prop_[hfh] = default_color_;
-    }
+    hfcolor_prop_.fill(default_color_);
     halfface_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_face_colors()
 {
-    for (const auto fh: kernel_.faces()) {
-        fcolor_prop_[fh] = default_color_;
-    }
+    fcolor_prop_.fill(default_color_);
     face_colors_available_   = false;
 }
 
 template <class ColT>
 void ColorAttrib<ColT>::clear_cell_colors()
 {
-    for (const auto ch: kernel_.cells()) {
-        ccolor_prop_[ch] = default_color_;
-    }
+    ccolor_prop_.fill(default_color_);
     cell_colors_available_   = false;
 }
 

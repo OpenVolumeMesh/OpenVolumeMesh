@@ -54,45 +54,45 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
                                       bool _preserveManifoldness)
 {
     const auto &status = *this;
-    auto def = kernel_.deferred_deletion_enabled();
-    kernel_.enable_deferred_deletion(true);
-    for (const auto vh: kernel_.vertices()) {
+    auto def = kernel_->deferred_deletion_enabled();
+    kernel_->enable_deferred_deletion(true);
+    for (const auto vh: kernel_->vertices()) {
         if (status[vh].deleted()) {
-            kernel_.delete_vertex(vh);
+            kernel_->delete_vertex(vh);
         }
     }
-    for (const auto eh: kernel_.edges()) {
-        if (status[eh].deleted() && !kernel_.is_deleted(eh)) {
-            kernel_.delete_edge(eh);
+    for (const auto eh: kernel_->edges()) {
+        if (status[eh].deleted() && !kernel_->is_deleted(eh)) {
+            kernel_->delete_edge(eh);
         }
     }
-    for (const auto fh: kernel_.faces()) {
-        if (status[fh].deleted() && !kernel_.is_deleted(fh)) {
-            kernel_.delete_face(fh);
+    for (const auto fh: kernel_->faces()) {
+        if (status[fh].deleted() && !kernel_->is_deleted(fh)) {
+            kernel_->delete_face(fh);
         }
     }
-    for (const auto ch: kernel_.cells()) {
-        if (status[ch].deleted() && !kernel_.is_deleted(ch)) {
-            kernel_.delete_cell(ch);
+    for (const auto ch: kernel_->cells()) {
+        if (status[ch].deleted() && !kernel_->is_deleted(ch)) {
+            kernel_->delete_cell(ch);
         }
     }
 
 
     if (_preserveManifoldness) {
-        kernel_.enable_bottom_up_incidences(true);
-        for (const auto fh: kernel_.faces()) {
-            if (kernel_.incident_cell(kernel_.halfface_handle(fh, 0)).is_valid()) continue;
-            if (kernel_.incident_cell(kernel_.halfface_handle(fh, 1)).is_valid()) continue;
-            kernel_.delete_face(fh);
+        kernel_->enable_bottom_up_incidences(true);
+        for (const auto fh: kernel_->faces()) {
+            if (kernel_->incident_cell(kernel_->halfface_handle(fh, 0)).is_valid()) continue;
+            if (kernel_->incident_cell(kernel_->halfface_handle(fh, 1)).is_valid()) continue;
+            kernel_->delete_face(fh);
         }
-        for (const auto eh: kernel_.edges()) {
-            if (kernel_.valence(eh) == 0) {
-                kernel_.delete_edge(eh);
+        for (const auto eh: kernel_->edges()) {
+            if (kernel_->valence(eh) == 0) {
+                kernel_->delete_edge(eh);
             }
         }
-        for (const auto vh: kernel_.vertices()) {
-            if (kernel_.valence(vh) == 0) {
-                kernel_.delete_vertex(vh);
+        for (const auto vh: kernel_->vertices()) {
+            if (kernel_->valence(vh) == 0) {
+                kernel_->delete_vertex(vh);
             }
         }
     }
@@ -101,31 +101,31 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
             || !hfh_to_update.empty()
             || !ch_to_update.empty())
     {
-        size_t nv = kernel_.n_vertices();
-        size_t nhe = kernel_.n_halfedges();
-        size_t nhf = kernel_.n_halffaces();
-        size_t nc = kernel_.n_cells();
+        size_t nv = kernel_->n_vertices();
+        size_t nhe = kernel_->n_halfedges();
+        size_t nhf = kernel_->n_halffaces();
+        size_t nc = kernel_->n_cells();
 
-        auto old_vh = kernel_.request_vertex_property<int>();
+        auto old_vh = kernel_->request_vertex_property<int>();
         for (size_t i = 0; i < nv; ++i) { old_vh[VertexHandle(i)] = i; }
-        auto old_heh = kernel_.request_halfedge_property<int>();
+        auto old_heh = kernel_->request_halfedge_property<int>();
         for (size_t i = 0; i < nhe; ++i) { old_heh[HalfEdgeHandle(i)] = i; }
-        auto old_hfh = kernel_.request_halfface_property<int>();
+        auto old_hfh = kernel_->request_halfface_property<int>();
         for (size_t i = 0; i < nhf; ++i) { old_hfh[HalfFaceHandle(i)] = i; }
-        auto old_ch = kernel_.request_cell_property<int>();
+        auto old_ch = kernel_->request_cell_property<int>();
         for (size_t i = 0; i < nc; ++i) { old_ch[CellHandle(i)] = i; }
 
-        kernel_.collect_garbage();
+        kernel_->collect_garbage();
 
         std::vector<VertexHandle> new_vh;    new_vh.resize(nv);
         std::vector<CellHandle> new_ch;      new_ch.resize(nc);
         std::vector<HalfEdgeHandle> new_heh; new_heh.resize(nhe);
         std::vector<HalfFaceHandle> new_hfh; new_hfh.resize(nhf);
 
-        for (const auto vh: kernel_.vertices()) { new_vh[old_vh[vh]] = vh; }
-        for (const auto heh: kernel_.halfedges()) { new_heh[old_heh[heh]] = heh; }
-        for (const auto hfh: kernel_.halffaces()) { new_hfh[old_hfh[hfh]] = hfh; }
-        for (const auto ch: kernel_.cells()) { new_ch[old_ch[ch]] = ch; }
+        for (const auto vh: kernel_->vertices()) { new_vh[old_vh[vh]] = vh; }
+        for (const auto heh: kernel_->halfedges()) { new_heh[old_heh[heh]] = heh; }
+        for (const auto hfh: kernel_->halffaces()) { new_hfh[old_hfh[hfh]] = hfh; }
+        for (const auto ch: kernel_->cells()) { new_ch[old_ch[ch]] = ch; }
 
         for (auto *vh: vh_to_update) { if (vh->is_valid()) *vh = new_vh[vh->idx()]; }
         for (auto *heh: hh_to_update) { if (heh->is_valid()) *heh = new_heh[heh->idx()]; }
@@ -133,10 +133,10 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
         for (auto *ch: ch_to_update) { if (ch->is_valid()) *ch = new_ch[ch->idx()]; }
 
     } else {
-        kernel_.collect_garbage();
+        kernel_->collect_garbage();
     }
 
-    kernel_.enable_deferred_deletion(def);
+    kernel_->enable_deferred_deletion(def);
 
     // TODO: provide compatibility implementation
 #if 0
@@ -209,19 +209,19 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
     // entities marked as deleted from bottom to top
     mark_higher_dim_entities();
 
-    std::vector<int> vertexIndexMap(kernel_.n_vertices(), -1);
+    std::vector<int> vertexIndexMap(kernel_->n_vertices(), -1);
 
     // Turn off bottom-up incidences
-    bool v_bu = kernel_.has_vertex_bottom_up_incidences();
-    bool e_bu = kernel_.has_edge_bottom_up_incidences();
-    bool f_bu = kernel_.has_face_bottom_up_incidences();
+    bool v_bu = kernel_->has_vertex_bottom_up_incidences();
+    bool e_bu = kernel_->has_edge_bottom_up_incidences();
+    bool f_bu = kernel_->has_face_bottom_up_incidences();
 
-    kernel_.enable_bottom_up_incidences(false);
+    kernel_->enable_bottom_up_incidences(false);
 
-    std::vector<bool> tags(kernel_.n_cells(), false);
+    std::vector<bool> tags(kernel_->n_cells(), false);
     std::vector<bool>::iterator tag_it = tags.begin();
 
-    for(CellIter c_it = kernel_.cells_begin(); c_it != kernel_.cells_end(); ++c_it, ++tag_it) {
+    for(CellIter c_it = kernel_->cells_begin(); c_it != kernel_->cells_end(); ++c_it, ++tag_it) {
         *tag_it = c_status_[*c_it].deleted();
 
         if (track_ch) {
@@ -239,12 +239,12 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
             }
         }
     }
-    kernel_.delete_multiple_cells(tags);
+    kernel_->delete_multiple_cells(tags);
 
-    tags.resize(kernel_.n_faces(), false);
+    tags.resize(kernel_->n_faces(), false);
     tag_it = tags.begin();
 
-    for(FaceIter f_it = kernel_.faces_begin(); f_it != kernel_.faces_end(); ++f_it, ++tag_it) {
+    for(FaceIter f_it = kernel_->faces_begin(); f_it != kernel_->faces_end(); ++f_it, ++tag_it) {
         *tag_it = f_status_[*f_it].deleted();
 
         if (track_hfh) {
@@ -271,12 +271,12 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
             }
         }
     }
-    kernel_.delete_multiple_faces(tags);
+    kernel_->delete_multiple_faces(tags);
 
-    tags.resize(kernel_.n_edges(), false);
+    tags.resize(kernel_->n_edges(), false);
     tag_it = tags.begin();
 
-    for(EdgeIter e_it = kernel_.edges_begin(); e_it != kernel_.edges_end(); ++e_it, ++tag_it) {
+    for(EdgeIter e_it = kernel_->edges_begin(); e_it != kernel_->edges_end(); ++e_it, ++tag_it) {
         *tag_it = e_status_[*e_it].deleted();
 
         if (track_hh) {
@@ -303,12 +303,12 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
             }
         }
     }
-    kernel_.delete_multiple_edges(tags);
+    kernel_->delete_multiple_edges(tags);
 
-    tags.resize(kernel_.n_vertices(), false);
+    tags.resize(kernel_->n_vertices(), false);
     tag_it = tags.begin();
 
-    for(VertexIter v_it = kernel_.vertices_begin(); v_it != kernel_.vertices_end(); ++v_it, ++tag_it) {
+    for(VertexIter v_it = kernel_->vertices_begin(); v_it != kernel_->vertices_end(); ++v_it, ++tag_it) {
         *tag_it = v_status_[*v_it].deleted();
 
         if (track_vh) {
@@ -325,7 +325,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
             }
         }
     }
-    kernel_.delete_multiple_vertices(tags);
+    kernel_->delete_multiple_vertices(tags);
 
     // update given handles
     if (track_vh) {
@@ -363,25 +363,25 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
 
     // Todo: Resize props
 
-    if(v_bu) kernel_.enable_vertex_bottom_up_incidences(true);
-    if(e_bu) kernel_.enable_edge_bottom_up_incidences(true);
-    if(f_bu) kernel_.enable_face_bottom_up_incidences(true);
+    if(v_bu) kernel_->enable_vertex_bottom_up_incidences(true);
+    if(e_bu) kernel_->enable_edge_bottom_up_incidences(true);
+    if(f_bu) kernel_->enable_face_bottom_up_incidences(true);
 
     // Step 6
     if(_preserveManifoldness) {
-        if(kernel_.has_full_bottom_up_incidences()) {
+        if(kernel_->has_full_bottom_up_incidences()) {
 
             // Go over all faces and find those
             // that are not incident to any cell
-            for(FaceIter f_it = kernel_.faces_begin(); f_it != kernel_.faces_end(); ++f_it) {
+            for(FaceIter f_it = kernel_->faces_begin(); f_it != kernel_->faces_end(); ++f_it) {
 
                 // Get half-faces
-                HalfFaceHandle hf0 = kernel_.halfface_handle(*f_it, 0);
-                HalfFaceHandle hf1 = kernel_.halfface_handle(*f_it, 1);
+                HalfFaceHandle hf0 = kernel_->halfface_handle(*f_it, 0);
+                HalfFaceHandle hf1 = kernel_->halfface_handle(*f_it, 1);
 
                 // If neither of the half-faces is incident to a cell, delete face
-                if(kernel_.incident_cell(hf0) == TopologyKernel::InvalidCellHandle &&
-                        kernel_.incident_cell(hf1) == TopologyKernel::InvalidCellHandle) {
+                if(kernel_->incident_cell(hf0) == TopologyKernel::InvalidCellHandle &&
+                        kernel_->incident_cell(hf1) == TopologyKernel::InvalidCellHandle) {
 
                     f_status_[*f_it].set_deleted(true);
                 }
@@ -389,13 +389,13 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
 
             // Go over all edges and find those
             // whose half-edges are not incident to any half-face
-            for(EdgeIter e_it = kernel_.edges_begin(); e_it != kernel_.edges_end(); ++e_it) {
+            for(EdgeIter e_it = kernel_->edges_begin(); e_it != kernel_->edges_end(); ++e_it) {
 
                 // Get half-edges
-                HalfEdgeHandle he = kernel_.halfedge_handle(*e_it, 0);
+                HalfEdgeHandle he = kernel_->halfedge_handle(*e_it, 0);
 
                 // If the half-edge isn't incident to a half-face, delete edge
-                HalfEdgeHalfFaceIter hehf_it = kernel_.hehf_iter(he);
+                HalfEdgeHalfFaceIter hehf_it = kernel_->hehf_iter(he);
 
                 if(!hehf_it.valid()) {
 
@@ -404,7 +404,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
                 } else {
                     bool validFace = false;
                     for(; hehf_it.valid(); ++hehf_it) {
-                        if(!f_status_[kernel_.face_handle(*hehf_it)].deleted()) {
+                        if(!f_status_[kernel_->face_handle(*hehf_it)].deleted()) {
                             validFace = true;
                             break;
                         }
@@ -417,10 +417,10 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
 
             // Go over all vertices and find those
             // that are not incident to any edge
-            for(VertexIter v_it = kernel_.vertices_begin(); v_it != kernel_.vertices_end(); ++v_it) {
+            for(VertexIter v_it = kernel_->vertices_begin(); v_it != kernel_->vertices_end(); ++v_it) {
 
                 // If neither of the half-edges is incident to a half-face, delete edge
-                VertexOHalfEdgeIter voh_it = kernel_.voh_iter(*v_it);
+                VertexOHalfEdgeIter voh_it = kernel_->voh_iter(*v_it);
 
                 if(!voh_it.valid()) {
 
@@ -429,7 +429,7 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
 
                     bool validEdge = false;
                     for(; voh_it.valid(); ++voh_it) {
-                        if(!e_status_[kernel_.edge_handle(*voh_it)].deleted()) {
+                        if(!e_status_[kernel_->edge_handle(*voh_it)].deleted()) {
                             validEdge = true;
                             break;
                         }

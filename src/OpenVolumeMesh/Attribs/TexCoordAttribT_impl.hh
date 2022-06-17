@@ -41,7 +41,6 @@ namespace OpenVolumeMesh {
 template <class TexCoordT>
 TexCoordAttrib<TexCoordT>::TexCoordAttrib(TopologyKernel& _kernel, const TexCoordT _def) :
         vtexcoord_prop_(_kernel.request_vertex_property<TexCoordT>("vertex_texcoord", _def)),
-        kernel_(_kernel),
         vertex_texcoords_available_(false),
         default_texcoord_(_def)
 {
@@ -49,15 +48,12 @@ TexCoordAttrib<TexCoordT>::TexCoordAttrib(TopologyKernel& _kernel, const TexCoor
 }
 
 template <class TexCoordT>
-TexCoordAttrib<TexCoordT>::~TexCoordAttrib() {
-
-}
+TexCoordAttrib<TexCoordT>::~TexCoordAttrib() = default;
 
 template <class TexCoordT>
 void TexCoordAttrib<TexCoordT>::clear_vertex_texcoords()
 {
-    for (VertexIter v_it = kernel_.vertices_begin(); v_it != kernel_.vertices_end(); ++v_it)
-        vtexcoord_prop_[v_it->idx()] = default_texcoord_;
+    vtexcoord_prop_.fill(default_texcoord_);
     vertex_texcoords_available_   = false;
 }
 

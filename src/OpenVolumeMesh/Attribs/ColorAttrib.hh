@@ -57,12 +57,10 @@ public:
     // Vertices
     //==================
     const ColT& operator[](const VertexHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_vertices());
         return vcolor_prop_[_h];
     }
 
     ColT& operator[](const VertexHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_vertices());
         vertex_colors_available_ = true;
         return vcolor_prop_[_h];
     }
@@ -71,12 +69,10 @@ public:
     // Edges
     //==================
     const ColT& operator[](const EdgeHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_edges());
         return ecolor_prop_[_h];
     }
 
     ColT& operator[](const EdgeHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_edges());
         edge_colors_available_ = true;
         return ecolor_prop_[_h];
     }
@@ -85,12 +81,10 @@ public:
     // Half-Edges
     //==================
     const ColT& operator[](const HalfEdgeHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_halfedges());
         return hecolor_prop_[_h];
     }
 
     ColT& operator[](const HalfEdgeHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_halfedges());
         halfedge_colors_available_ = true;
         return hecolor_prop_[_h];
     }
@@ -99,12 +93,10 @@ public:
     // Faces
     //==================
     const ColT& operator[](const FaceHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_faces());
         return fcolor_prop_[_h];
     }
 
     ColT& operator[](const FaceHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_faces());
         face_colors_available_ = true;
         return fcolor_prop_[_h];
     }
@@ -113,12 +105,10 @@ public:
     // Half-Faces
     //==================
     const ColT& operator[](const HalfFaceHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_halffaces());
         return hfcolor_prop_[_h];
     }
 
     ColT& operator[](const HalfFaceHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_halffaces());
         halfface_colors_available_ = true;
         return hfcolor_prop_[_h];
     }
@@ -127,12 +117,10 @@ public:
     // Cells
     //==================
     const ColT& operator[](const CellHandle& _h) const {
-        assert((unsigned int)_h.idx() < kernel_.n_cells());
         return ccolor_prop_[_h];
     }
 
     ColT& operator[](const CellHandle& _h) {
-        assert((unsigned int)_h.idx() < kernel_.n_cells());
         cell_colors_available_ = true;
         return ccolor_prop_[_h];
     }
@@ -162,8 +150,6 @@ private:
     HalfFacePropertyT<ColT> hfcolor_prop_;
     CellPropertyT<ColT> ccolor_prop_;
 
-    TopologyKernel& kernel_;
-
     bool vertex_colors_available_;
     bool halfedge_colors_available_;
     bool edge_colors_available_;
@@ -172,7 +158,6 @@ private:
     bool cell_colors_available_;
 
     ColT default_color_;
-
 };
 
 } // Namespace OpenVolumeMesh

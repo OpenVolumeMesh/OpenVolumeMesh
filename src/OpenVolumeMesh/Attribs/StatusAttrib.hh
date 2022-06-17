@@ -257,7 +257,7 @@ private:
 
     void mark_higher_dim_entities();
 
-    TopologyKernel& kernel_;
+    TopologyKernel* kernel_;
 
     VertexPropertyT<OpenVolumeMeshStatus> v_status_;
     EdgePropertyT<OpenVolumeMeshStatus> e_status_;

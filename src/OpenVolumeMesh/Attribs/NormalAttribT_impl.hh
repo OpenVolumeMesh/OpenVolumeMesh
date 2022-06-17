@@ -43,7 +43,7 @@ namespace OpenVolumeMesh {
 
 template <class GeomKernelT>
 NormalAttrib<GeomKernelT>::NormalAttrib(GeomKernelT& _kernel) :
-kernel_(_kernel),
+kernel_(&_kernel),
 v_normals_(_kernel.template request_vertex_property<typename GeomKernelT::PointT>("vertex_normals", typename GeomKernelT::PointT(0.0))),
 f_normals_(_kernel.template request_face_property<typename GeomKernelT::PointT>("face_normals", typename GeomKernelT::PointT(0.0)))
 {
@@ -58,7 +58,7 @@ NormalAttrib<GeomKernelT>::~NormalAttrib() {
 template <class GeomKernelT>
 void NormalAttrib<GeomKernelT>::update_vertex_normals() {
 
-    if(!kernel_.has_face_bottom_up_incidences()) {
+    if(!kernel_->has_face_bottom_up_incidences()) {
         std::cerr << "Error: update_vertex_normals() needs bottom-up incidences!" << std::endl;
         return;
     }
@@ -66,7 +66,7 @@ void NormalAttrib<GeomKernelT>::update_vertex_normals() {
     // Compute face normals
     update_face_normals();
 
-    for(const auto &_vh: kernel_.vertices())
+    for(const auto &_vh: kernel_->vertices())
     {
         compute_vertex_normal(_vh);
     }
@@ -75,13 +75,13 @@ void NormalAttrib<GeomKernelT>::update_vertex_normals() {
 template <class GeomKernelT>
 void NormalAttrib<GeomKernelT>::update_face_normals() {
 
-    if(!kernel_.has_face_bottom_up_incidences()) {
+    if(!kernel_->has_face_bottom_up_incidences()) {
         std::cerr << "Error: update_normals() needs bottom-up incidences!" << std::endl;
         return;
     }
 
-    for (const auto &_fh: kernel_.faces()) {
-        f_normals_[_fh] = kernel_.normal(kernel_.halfface_handle(_fh, 0));
+    for (const auto &_fh: kernel_->faces()) {
+        f_normals_[_fh] = kernel_->normal(_fh.halfface_handle(0));
     }
 }
 
@@ -89,12 +89,12 @@ template <class GeomKernelT>
 void NormalAttrib<GeomKernelT>::compute_vertex_normal(const VertexHandle& _vh) {
 
     std::set<HalfFaceHandle> halffaces;
-    for(VertexOHalfEdgeIter voh_it = kernel_.voh_iter(_vh);
+    for(VertexOHalfEdgeIter voh_it = kernel_->voh_iter(_vh);
             voh_it.valid(); ++voh_it) {
 
-        for(HalfEdgeHalfFaceIter hehf_it = kernel_.hehf_iter(*voh_it);
+        for(HalfEdgeHalfFaceIter hehf_it = kernel_->hehf_iter(*voh_it);
                 hehf_it.valid(); ++hehf_it) {
-            if(kernel_.is_boundary(*hehf_it)) {
+            if(kernel_->is_boundary(*hehf_it)) {
                 halffaces.insert(*hehf_it);
             }
         }
