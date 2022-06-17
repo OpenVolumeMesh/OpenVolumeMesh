@@ -1,3 +1,10 @@
+Version 3.0.5 (2022-06-17):
+  - Safe copy construction for meshes:
+    After removal of copy/move constructors/assignments in 3.0.3, after
+    we discovered dangerous bugs in property handling, this release
+    re-introduces a simpler mesh copy constructor that only clones persistent
+    properties.
+
 Version 3.0.4 (2022-06-16):
   Improvements contributed by Hendrik Brückler of UOS:
   - Support for self-adjacent cells (i.e., cells that contain both halffaces of a face),
