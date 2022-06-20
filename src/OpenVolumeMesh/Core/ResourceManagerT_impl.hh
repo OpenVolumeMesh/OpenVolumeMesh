@@ -48,6 +48,10 @@ ResourceManager::storage_tracker() const
 }
 
 
+// Change all properties to be private, such that they are
+// not visible anymore from the mesh API.
+// Crucially, this does not delete props that are in use,
+// i.e., they are kept in storage_tracker for index updates.
 template<typename EntityTag>
 void ResourceManager::clear_props()
 {
@@ -55,6 +59,10 @@ void ResourceManager::clear_props()
         prop->set_persistent(false);
     }
     persistent_props_.get<EntityTag>().clear();
+
+    for (auto prop: storage_tracker<EntityTag>()) {
+        prop->set_shared(false);
+    }
 }
 
 template <typename Handle>
