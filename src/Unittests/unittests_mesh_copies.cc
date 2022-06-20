@@ -1,8 +1,10 @@
 #include "unittests_common.hh"
 
-#include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
-#include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
-#include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
+#include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
+#include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
+#include <OpenVolumeMesh/Mesh/HexahedralMesh.hh>
+
+// TODO: parameterize tests on mesh type
 
 using namespace OpenVolumeMesh;
 using OpenVolumeMesh::Geometry::Vec3d;

@@ -69,11 +69,11 @@ public:
     }
 
     bool operator[](const HalfEdgeHandle& _h) const {
-        return e_interface_[kernel_.edge_handle(_h)];
+        return e_interface_[kernel_->edge_handle(_h)];
     }
 
     boolref operator[](const HalfEdgeHandle& _h) {
-        return e_interface_[kernel_.edge_handle(_h)];
+        return e_interface_[kernel_->edge_handle(_h)];
     }
 
     bool operator[](const FaceHandle& _h) const {
@@ -85,14 +85,14 @@ public:
     }
 
     bool operator[](const HalfFaceHandle& _h) const {
-        return f_interface_[kernel_.face_handle(_h)];
+        return f_interface_[kernel_->face_handle(_h)];
     }
 
     boolref operator[](const HalfFaceHandle& _h) {
-        return f_interface_[kernel_.face_handle(_h)];
+        return f_interface_[kernel_->face_handle(_h)];
     }
 
-    TopologyKernel& kernel_;
+    const TopologyKernel* kernel_;
 
     VertexPropertyT<bool> v_interface_;
     EdgePropertyT<bool> e_interface_;

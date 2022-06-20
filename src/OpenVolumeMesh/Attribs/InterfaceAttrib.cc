@@ -4,7 +4,7 @@
 namespace OpenVolumeMesh {
 
 InterfaceAttrib::InterfaceAttrib(TopologyKernel &_kernel)
-    : kernel_(_kernel),
+    : kernel_(&_kernel),
       v_interface_(&_kernel, "interface", false),
       e_interface_(&_kernel, "interface", false),
       f_interface_(&_kernel, "interface", false)
