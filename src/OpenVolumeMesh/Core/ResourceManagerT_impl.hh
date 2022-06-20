@@ -291,6 +291,7 @@ size_t ResourceManager::n_persistent_props() const {
 }
 
 
+#if 0
 template<typename EntityTag>
 void ResourceManager::assignPropertiesFrom(ResourceManager const& _src)
 {
@@ -341,9 +342,11 @@ void ResourceManager::assignPropertiesFrom(ResourceManager const& _src)
         }
     }
 }
+#endif
 
 
 
+// We define this here to avoid circular dependencies:
 
 template <class T, typename Entity>
 PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T const &_def)

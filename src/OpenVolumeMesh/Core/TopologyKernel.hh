@@ -73,10 +73,10 @@ public:
     ~TopologyKernel() override = default;
 
     TopologyKernel(TopologyKernel const& other) = default;
-
     TopologyKernel(TopologyKernel      &&other) = delete;
+
+    TopologyKernel& operator=(TopologyKernel const& other) = default;
     TopologyKernel& operator=(TopologyKernel && other) = delete;
-    TopologyKernel& operator=(TopologyKernel const& other)= delete;
 
     /*
      * Defines and constants

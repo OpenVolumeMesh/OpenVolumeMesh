@@ -38,10 +38,39 @@ namespace OpenVolumeMesh {
 
 ResourceManager::ResourceManager(const ResourceManager &other)
 {
-  // TODO: we want to at least copy persistent props.
-  //       For now, leave this Resman with no props.
+  clone_persistent_properties_from(other);
+}
 
-  //assignAllPropertiesFrom(other);
+
+/**
+ * This turns all existing properties on the mesh into *private* properties,
+ * i.e., they can not be found via the mesh API anymore.
+ * However, properties in use (i.e. with a PropertyPtr)
+ * are resized to fit the new n_"entity" value and continue to work.
+ * Be aware that their contents might be semantically wrong for the mesh
+ * after assignment.
+ */
+
+ResourceManager& ResourceManager::operator=(const ResourceManager &other)
+{
+    if (this == &other) return *this;
+
+    // make existing properties anonymous (invisible to mesh API users)
+    clear_all_props();
+
+    // Resize remaining, anonymized properties:
+    for_each_entity([&](auto entity_tag) {
+        resize_props<decltype(entity_tag)>(other.n<decltype(entity_tag)>());
+    });
+
+    clone_persistent_properties_from(other);
+
+
+    return *this;
+}
+
+void ResourceManager::clone_persistent_properties_from(ResourceManager const& other)
+{
   for_each_entity([&](auto entity_tag) {
       using ET = decltype(entity_tag);
       const auto &other_props = other.persistent_props_.get<ET>();
@@ -53,27 +82,6 @@ ResourceManager::ResourceManager(const ResourceManager &other)
       }
     });
 }
-
-#if 0
-ResourceManager& ResourceManager::operator=(const ResourceManager &other)
-{
-    if (this == &other) return *this;
-    for_each_entity([&](auto entity_tag) {
-        resize_props<decltype(entity_tag)>(other.n<decltype(entity_tag)>());
-    });
-    if (this != &other) {
-       assignAllPropertiesFrom(other);
-    }
-    return *this;
-}
-
-void ResourceManager::assignAllPropertiesFrom(ResourceManager const& src)
-{
-    for_each_entity([&](auto entity_tag) {
-        assignPropertiesFrom<decltype(entity_tag)>(src);
-    });
-}
-#endif
 
 
 detail::Tracker<PropertyStorageBase> &

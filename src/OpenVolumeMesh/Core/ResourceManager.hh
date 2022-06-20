@@ -64,12 +64,12 @@ public:
     virtual ~ResourceManager() = default;
 
     ResourceManager(const ResourceManager &other);
+    ResourceManager& operator=(const ResourceManager &other);
+
     ResourceManager(ResourceManager &&other) = delete;
-    ResourceManager& operator=(const ResourceManager &other) = delete;
     ResourceManager& operator=(ResourceManager &&other) = delete;
 
 protected:
-    void clone_from(ResourceManager const& other);
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
@@ -92,10 +92,7 @@ private:
     PropertyPtr<T, EntityTag> internal_create_property(std::string _name, const T _def, bool shared) const;
 
 
-    void assignAllPropertiesFrom(ResourceManager const&);
-
-    template<typename EntityTag>
-    void assignPropertiesFrom(ResourceManager const&);
+    void clone_persistent_properties_from(ResourceManager const&);
 
     PerEntity<PersistentProperties> persistent_props_;
 

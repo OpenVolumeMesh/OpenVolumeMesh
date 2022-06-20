@@ -66,19 +66,19 @@ public:
                   position_.begin());
     }
 
-    GeometryKernel& operator=(GeometryKernel const&other) = delete;
-#if 0
+    GeometryKernel& operator=(GeometryKernel const&other)
     {
-      if (&this == other)
+      if (this == &other)
         return *this;
       TopologyKernelT::operator=(other);
-      // TODO: what is the state of our position prop now? is it invalidated?
-      position_.resize(other.position_.size());
+      // re-create position property:
+      //ResourceManager::set_shared(position_, false);
+      position_ = make_prop();
+
       std::copy(other.position_.begin(), other.position_.end(),
                 position_.begin());
       return *this;
     };
-#endif
 
     GeometryKernel& operator=(GeometryKernel &&other) = delete;
     GeometryKernel(GeometryKernel&& other) = default;
