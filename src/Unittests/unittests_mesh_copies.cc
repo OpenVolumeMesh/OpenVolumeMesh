@@ -124,3 +124,15 @@ TEST_F(MeshCopyTest, CopyConstructor)
   // TODO: test tet and hex meshes
   // TODO: a deep comparison operator would help here. or save to (in-memory) file to compare binary representation?
 }
+
+TEST_F(MeshCopyTest, AssignMixedTopologies)
+{
+    PolyhedralMesh poly;
+    TetrahedralMesh tet;
+    HexahedralMesh hex;
+    tet = poly;
+    hex = poly;
+    poly = tet;
+    poly = hex;
+    // TODO: add some content and ensure it transfers correctly.
+}

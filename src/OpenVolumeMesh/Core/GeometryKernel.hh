@@ -42,6 +42,7 @@
 
 namespace OpenVolumeMesh {
 
+// TODO: rename this and put in detail namespace:
 template <class VecT>
 using GeometryKernelT = PropertyPtr<VecT, Entity::Vertex>;
 
@@ -52,6 +53,9 @@ public:
     using PointT = VecT; // OVM legacy
     using Point = VecT;  // OpenMesh compatiblity
     using KernelT = TopologyKernelT;
+
+    template<typename OtherVec, typename OtherTopo>
+    friend class GeometryKernel;
 
     GeometryKernel()
         : TopologyKernelT()
@@ -66,15 +70,33 @@ public:
                   position_.begin());
     }
 
-    GeometryKernel& operator=(GeometryKernel const&other)
+    GeometryKernel operator=(GeometryKernel const& other)
     {
-      if (this == &other)
-        return *this;
-      TopologyKernelT::operator=(other);
+        if (this == &other)
+            return *this;
+        // I wish this was not necessary, but with only the templated
+        // assignment operator, clang gives us a compile error that
+        // the assignment operator is implicitly deleted.
+        // Also, this helps only comparing identity if we actually have
+        // the same type as `other`.
+        return this->template operator=<TopologyKernelT>(other);
+    }
+
+    /// Mesh assignment between different topology types:
+    /// Be careful, no check is performed to see if the topology of
+    /// `other` is actually legal for `this`, e.g. when assigning a
+    /// PolyhedralMesh to a TetrahedralMesh, make sure it really only
+    /// contains tets, etc.
+    template<typename OtherTopoKernelT>
+    GeometryKernel
+    operator=(GeometryKernel<VecT, OtherTopoKernelT> const& other)
+    {
+      TopologyKernel::operator=(static_cast<TopologyKernel const&>(other));
+
       // re-create position property:
-      //ResourceManager::set_shared(position_, false);
       position_ = make_prop();
 
+      // TODO: assignment with different (convertible) vector types would be neat.
       std::copy(other.position_.begin(), other.position_.end(),
                 position_.begin());
       return *this;
