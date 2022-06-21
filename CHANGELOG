@@ -6,6 +6,9 @@ Version 3.1.0 (???):
   - Bugfixes:
     - Fix CellFaceIter:operator--() wraparound bug
 
+Version 3.0.6 (2022-06-21)
+  - Hotfix: insert missing OVM_EXPORT in BoundaryItemIter
+
 Version 3.0.5 (2022-06-17):
   - Safe copy construction for meshes:
     After removal of copy/move constructors/assignments in 3.0.3, after
@@ -105,7 +108,7 @@ Version 2.1 (2019/09/09)
 - Renamed *T.cc into *T_impl.hh to avoid ugly problems ith several IDEs
 - Fix bug in halfface reordering
 - Track if garbage collection is necessary.
-- Ignore non-serializable datatypes when saving properties instead of throwing exception. 
+- Ignore non-serializable datatypes when saving properties instead of throwing exception.
 - Add support for C++11 range-for for iterator pairs
 - mark vertex_cells and halfedge_cells as const
 - Implement Property copy(src_idx, dst_idx) analogue of OpenMesh properties

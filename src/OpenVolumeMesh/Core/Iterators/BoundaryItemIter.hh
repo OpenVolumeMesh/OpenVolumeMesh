@@ -20,7 +20,7 @@
 namespace OpenVolumeMesh {
 
 template <class Iter, class Handle>
-class BoundaryItemIter : public BaseIterator<Handle> {
+class OVM_EXPORT BoundaryItemIter : public BaseIterator<Handle> {
 public:
     typedef BaseIterator<Handle> BaseIter;
 
