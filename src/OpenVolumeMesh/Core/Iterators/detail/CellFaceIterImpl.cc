@@ -19,12 +19,12 @@ CellFaceIterImpl& CellFaceIterImpl::operator--() {
     if (hf_iter_ == halffaces.begin()) {
         hf_iter_ = halffaces.end();
         --lap_;
-        if (lap_ < 0)
+        if (lap_ < 0) {
             BaseIter::valid(false);
+            return *this;
+        }
     }
-    else {
-        --hf_iter_;
-    }
+    --hf_iter_;
     BaseIter::cur_handle(BaseIter::mesh()->face_handle(*hf_iter_));
     return *this;
 }
