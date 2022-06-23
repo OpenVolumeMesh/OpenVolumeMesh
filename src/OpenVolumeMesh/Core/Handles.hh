@@ -84,11 +84,11 @@ public:
     /// return unsigned idx - handle must be valid
     unsigned int uidx() const { assert(is_valid()); return static_cast<size_t>(idx_); }
 
-    /// set idx
+    /// set idx; TODO: deprecate, provides no advantage over `h = VH(123);`
     void idx(const int& _idx) { idx_ = _idx; }
 
     /// make handle invalid
-    void reset() & { idx_ = -1; }
+    void reset() { idx_ = -1; }
 
     static Derived from_unsigned(size_t _idx)
     {
