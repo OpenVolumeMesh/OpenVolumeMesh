@@ -93,7 +93,7 @@ int main(int _argc, char* _argv[]) {
     }
 
     // Write mesh to file
-    fileManager.writeFile(filename.c_str(), mesh);
+    fileManager.writeFile(filename, mesh);
 
     return 0;
 }
