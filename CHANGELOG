@@ -1,5 +1,10 @@
-Version ??? (???):
-  - Add basic tests for attributes, make InterfaceAttrib assignable as well.
+Version 3.1.0 (???):
+  - Features:
+    - Implement mesh copy assignment
+  - Improvements:
+    - Add basic tests for attributes, make InterfaceAttrib assignable as well.
+  - Bugfixes:
+    - Fix CellFaceIter:operator--() wraparound bug
 
 Version 3.0.5 (2022-06-17):
   - Safe copy construction for meshes:
