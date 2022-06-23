@@ -51,18 +51,20 @@ BaseIter(_mesh, _ref_h, _max_laps) {
 
     assert(_ref_h.is_valid());
 
-    TetrahedralMeshTopologyKernel::Cell cell = _mesh->cell(_ref_h);
+    assert(_mesh->valence(_ref_h) == 4);
+    // TODO: refactor, this implementation is terribly inefficient:
 
-    assert(cell.halffaces().size() == 4);
+    TetrahedralMeshTopologyKernel::Cell cell = _mesh->cell(_ref_h);
 
     // Get first half-face
     HalfFaceHandle curHF = cell.halffaces()[0];
     assert(curHF.is_valid());
 
     // Get first half-edge
-    assert(_mesh->halfface(curHF).halfedges().size() == 3);
+    assert(_mesh->valence(curHF.face_handle()) == 3);
     HalfEdgeHandle curHE = *_mesh->halfface(curHF).halfedges().begin();
     assert(curHE.is_valid());
+
 
     vertices_[0] = _mesh->halfedge(curHE).to_vertex();
 
