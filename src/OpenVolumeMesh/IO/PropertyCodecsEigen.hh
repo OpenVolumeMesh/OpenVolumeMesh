@@ -58,9 +58,9 @@ void register_eigen_codecs(PropertyCodecs &_codecs)
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<double, 3, 3>>>("3x3d");
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<double, 4, 4>>>("4x4d");
 
-    _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 2, 2>>>("2x2d");
-    _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 3, 3>>>("3x3d");
-    _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 4, 4>>>("4x4d");
+    _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 2, 2>>>("2x2f");
+    _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 3, 3>>>("3x3f");
+    _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<float, 4, 4>>>("4x4f");
 
     // TODO: dynamic (dense/sparse) types
 }
