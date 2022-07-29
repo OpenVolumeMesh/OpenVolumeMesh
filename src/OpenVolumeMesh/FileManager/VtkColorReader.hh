@@ -154,7 +154,7 @@ namespace OpenVolumeMesh {
 
 
 	HalfEdgeHandle heh;
-	heh = _mesh.halfedge(edge[0], edge[1]);
+	heh = _mesh.find_halfedge(edge[0], edge[1]);
 	if (!heh.is_valid())
 	  {
 	    EdgeHandle eh = _mesh.add_edge(edge[0], edge[1]);
@@ -178,7 +178,7 @@ namespace OpenVolumeMesh {
 
 
 	HalfFaceHandle hfh;
-	hfh = _mesh.halfface(triangle);
+	hfh = _mesh.find_halfface(triangle);
 	if (!hfh.is_valid())
 	  {
 	    FaceHandle fh = _mesh.add_face(triangle);
@@ -219,7 +219,7 @@ namespace OpenVolumeMesh {
 
 	std::vector<HalfFaceHandle> halffacehandles;
 	for (unsigned int i = 0; i < faces.size(); i++)
-	  halffacehandles.push_back(_mesh.halfface(faces[i]));
+	  halffacehandles.push_back(_mesh.find_halfface(faces[i]));
 
 	for (unsigned int i = 0; i < halffacehandles.size(); i++)
 	  if (!halffacehandles[i].is_valid())
