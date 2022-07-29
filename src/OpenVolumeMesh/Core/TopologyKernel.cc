@@ -1945,9 +1945,20 @@ OpenVolumeMeshFace TopologyKernel::opposite_halfface(HalfFaceHandle _halfFaceHan
     return halfface(_halfFaceHandle.opposite_handle());
 }
 
+
 //========================================================================================
 
+
 HalfEdgeHandle TopologyKernel::halfedge(VertexHandle _vh1, VertexHandle _vh2) const
+{
+  return find_halfedge(_vh1, _vh2);
+}
+
+
+//========================================================================================
+
+
+HalfEdgeHandle TopologyKernel::find_halfedge(VertexHandle _vh1, VertexHandle _vh2) const
 {
     assert(is_valid(_vh1));
     assert(is_valid(_vh2));
@@ -1963,8 +1974,36 @@ HalfEdgeHandle TopologyKernel::halfedge(VertexHandle _vh1, VertexHandle _vh2) co
 
 //========================================================================================
 
-HalfFaceHandle TopologyKernel::halfface(const std::vector<VertexHandle>& _vs) const {
+HalfEdgeHandle TopologyKernel::find_halfedge_in_cell(VertexHandle _vh1, VertexHandle _vh2, CellHandle _ch) const
+{
+  assert(is_valid(_vh1));
+  assert(is_valid(_vh2));
 
+  for( auto hfh : cell(_ch).halffaces())
+  {
+    for(auto heh : halfface(hfh).halfedges() )
+    {
+      if(from_vertex_handle(heh) == _vh1 && to_vertex_handle(heh) == _vh2)
+        return heh;
+      if(from_vertex_handle(heh) == _vh2 && to_vertex_handle(heh) == _vh1)
+        return opposite_halfedge_handle(heh);
+     }
+  }
+
+  return InvalidHalfEdgeHandle;
+}
+
+//========================================================================================
+
+HalfFaceHandle TopologyKernel::halfface(const std::vector<VertexHandle>& _vs) const
+{
+  return find_halfface(_vs);
+}
+
+//========================================================================================
+
+HalfFaceHandle TopologyKernel::find_halfface(const std::vector<VertexHandle>& _vs) const
+{
     assert(_vs.size() > 2);
 
     VertexHandle v0 = _vs[0], v1 = _vs[1], v2 = _vs[2];
@@ -1983,7 +2022,52 @@ HalfFaceHandle TopologyKernel::halfface(const std::vector<VertexHandle>& _vs) co
     return halfface(hes);
 }
 
+//========================================================================================
+
+HalfFaceHandle TopologyKernel::find_halfface_in_cell(const std::vector<VertexHandle>& _vs, CellHandle _ch) const
+{
+  assert(_vs.size() > 2);
+
+  VertexHandle v0 = _vs[0], v1 = _vs[1], v2 = _vs[2];
+
+  assert(v0.is_valid() && v1.is_valid() && v2.is_valid());
+
+  // check all halfedges of cell until (v0 -> v1) is found and then verify (v0 -> v1 -> v2)
+  for( auto hfh : cell(_ch).halffaces())
+  {
+    for(auto heh : halfface(hfh).halfedges() )
+    {
+      if(from_vertex_handle(heh) == v0 && to_vertex_handle(heh) == v1)
+        if(to_vertex_handle(next_halfedge_in_halfface(heh,hfh)) == v2)
+          return hfh;
+
+      // check if opposite halfedge gives desired halfedge
+      if(from_vertex_handle(heh) == v1 && to_vertex_handle(heh) == v0)
+      {
+        HalfEdgeHandle heh_opp = opposite_halfedge_handle(heh);
+        HalfFaceHandle hfh_opp = adjacent_halfface_in_cell(hfh,heh);
+        if(to_vertex_handle(next_halfedge_in_halfface(heh_opp,hfh_opp)) == v2)
+          return hfh_opp;
+      }
+    }
+  }
+
+  return InvalidHalfFaceHandle;
+}
+
+
+//========================================================================================
+
+
 HalfFaceHandle TopologyKernel::halfface_extensive(const std::vector<VertexHandle>& _vs) const
+{
+  return find_halfface_extensive(_vs);
+}
+
+//========================================================================================
+
+
+HalfFaceHandle TopologyKernel::find_halfface_extensive(const std::vector<VertexHandle>& _vs) const
 {
   //TODO: schöner machen
 
@@ -2030,7 +2114,15 @@ HalfFaceHandle TopologyKernel::halfface_extensive(const std::vector<VertexHandle
 
 //========================================================================================
 
-HalfFaceHandle TopologyKernel::halfface(const std::vector<HalfEdgeHandle>& _hes) const {
+HalfFaceHandle TopologyKernel::halfface(const std::vector<HalfEdgeHandle>& _hes) const
+{
+  return find_halfface(_hes);
+}
+
+//========================================================================================
+
+HalfFaceHandle TopologyKernel::find_halfface(const std::vector<HalfEdgeHandle>& _hes) const
+{
 
     assert(_hes.size() >= 2);
 
@@ -2088,6 +2180,50 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(HalfEdgeHandle _heh, Ha
 
     return InvalidHalfEdgeHandle;
 }
+
+
+//========================================================================================
+
+
+std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh) const
+{
+  assert(!halfface(hfh).halfedges().empty());
+
+  return get_halfface_vertices(hfh, halfface(hfh).halfedges().front());
+}
+
+
+//========================================================================================
+
+
+std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, VertexHandle vh) const
+{
+  Face hf = halfface(hfh);
+  for (size_t i = 0; i < hf.halfedges().size(); ++i)
+    if (halfedge(hf.halfedges()[i]).from_vertex() == vh)
+      return get_halfface_vertices(hfh, hf.halfedges()[i]);
+
+  return std::vector<VertexHandle>();
+}
+
+
+//========================================================================================
+
+
+std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const
+{
+  std::vector<VertexHandle> vertices;
+
+  // add vertices of halfface
+  for (unsigned int i = 0; i < halfface(hfh).halfedges().size(); ++i)
+  {
+    vertices.push_back(halfedge(heh).from_vertex());
+    heh = next_halfedge_in_halfface(heh, hfh);
+  }
+
+  return vertices;
+}
+
 
 //========================================================================================
 //

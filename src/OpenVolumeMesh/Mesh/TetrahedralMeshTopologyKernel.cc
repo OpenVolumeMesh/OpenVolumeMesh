@@ -550,37 +550,6 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(HalfF
     return vertices;
 }
 
-std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_halfface_vertices(HalfFaceHandle hfh) const
-{
-    return get_halfface_vertices(hfh, halfface(hfh).halfedges().front());
-}
-
-std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, VertexHandle vh) const
-{
-    Face hf = halfface(hfh);
-    for (unsigned int i = 0; i < 3; ++i)
-        if (halfedge(hf.halfedges()[i]).from_vertex() == vh)
-            return get_halfface_vertices(hfh, hf.halfedges()[i]);
-
-    return std::vector<VertexHandle>();
-}
-
-// cppcheck-suppress unusedFunction ; public interface
-std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const
-{
-    std::vector<VertexHandle> vertices;
-
-    // add vertices of halfface
-    for (unsigned int i = 0; i < 3; ++i)
-    {
-        Edge e = halfedge(heh);
-        vertices.push_back(e.from_vertex());
-        heh = next_halfedge_in_halfface(heh, hfh);
-    }
-
-    return vertices;
-}
-
 VertexHandle TetrahedralMeshTopologyKernel::halfface_opposite_vertex(HalfFaceHandle hfh) const
 {
     if (is_boundary(hfh)) {

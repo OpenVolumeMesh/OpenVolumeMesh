@@ -655,22 +655,34 @@ public:
     Face opposite_halfface(HalfFaceHandle _halfFaceHandle) const;
 
     /// Get halfedge from vertex _vh1 to _vh2
-    HalfEdgeHandle halfedge(VertexHandle _vh1, VertexHandle _vh2) const;
+    HalfEdgeHandle find_halfedge(VertexHandle _vh1, VertexHandle _vh2) const;
+    HalfEdgeHandle halfedge     (VertexHandle _vh1, VertexHandle _vh2) const; // deprecated, use the one above instead!!!
+
+    /// Get halfedge from vertex _vh1 to _vh2 but restricted to halfedges of cell _ch
+    HalfEdgeHandle find_halfedge_in_cell(VertexHandle _vh1, VertexHandle _vh2, CellHandle _ch) const;
 
     /// Get half-face from list of incident vertices (in connected order)
     ///
     /// \note Only the first three vertices are checked
-    HalfFaceHandle halfface(const std::vector<VertexHandle>& _vs) const;
+    HalfFaceHandle find_halfface(const std::vector<VertexHandle>& _vs) const;
+    HalfFaceHandle halfface     (const std::vector<VertexHandle>& _vs) const; // deprecated, use the one above instead!!!
 
     /// Get half-face from list of incident vertices (in connected order)
     ///
+    /// \note Only the first three vertices are checked
+    HalfFaceHandle find_halfface_in_cell(const std::vector<VertexHandle>& _vs, CellHandle _ch) const;
+
+  /// Get half-face from list of incident vertices (in connected order)
+    ///
     /// \note All vertices are checked
-    HalfFaceHandle halfface_extensive(const std::vector<VertexHandle>& _vs) const;
+    HalfFaceHandle find_halfface_extensive(const std::vector<VertexHandle>& _vs) const;
+    HalfFaceHandle halfface_extensive     (const std::vector<VertexHandle>& _vs) const; // deprecated, use the one above instead!!!
 
     /// Get half-face from list of incident half-edges
     ///
     /// \note Only the first two half-edges are checked
-    HalfFaceHandle halfface(const std::vector<HalfEdgeHandle>& _hes) const;
+    HalfFaceHandle find_halfface(const std::vector<HalfEdgeHandle>& _hes) const;
+    HalfFaceHandle halfface     (const std::vector<HalfEdgeHandle>& _hes) const; // deprecated, use the one above instead!!!
 
     /// Get next halfedge within a halfface
     HalfEdgeHandle next_halfedge_in_halfface(HalfEdgeHandle _heh, HalfFaceHandle _hfh) const;
@@ -718,7 +730,15 @@ public:
         return cell(_ch).halffaces().size();
     }
 
-    //=====================================================================
+    /// Get vertices of a halfface
+    std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh) const;
+    /// Get vertices of a halfface orderd to start from vh
+    std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, VertexHandle vh) const;
+    /// Get vertices of a halfface orderd to start from from_vertex_handle(heh)
+    std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const;
+
+
+  //=====================================================================
     // Delete entities
     //=====================================================================
 

@@ -78,10 +78,6 @@ public:
     std::vector<VertexHandle> get_cell_vertices(HalfFaceHandle hfh) const;
     std::vector<VertexHandle> get_cell_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const;
 
-    std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh) const;
-    std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, VertexHandle vh) const;
-    std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const;
-
     VertexHandle halfface_opposite_vertex(HalfFaceHandle hfh) const;
 
 
