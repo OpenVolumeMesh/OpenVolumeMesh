@@ -1,3 +1,7 @@
+Version 3.0.6 (2022-07-29):
+  - Fix OVMB property codec names for Eigen float matrices (was "d" instead of "f").
+    Files that were saved with float matrices are unfortunately unreadable and need to be manually fixed.
+
 Version 3.0.5 (2022-06-17):
   - Safe copy construction for meshes:
     After removal of copy/move constructors/assignments in 3.0.3, after
