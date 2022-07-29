@@ -656,6 +656,7 @@ public:
 
     /// Get halfedge from vertex _vh1 to _vh2
     HalfEdgeHandle find_halfedge(VertexHandle _vh1, VertexHandle _vh2) const;
+    [[deprecated("please use find_halfedge instead")]]
     HalfEdgeHandle halfedge     (VertexHandle _vh1, VertexHandle _vh2) const; // deprecated, use the one above instead!!!
 
     /// Get halfedge from vertex _vh1 to _vh2 but restricted to halfedges of cell _ch
@@ -665,6 +666,7 @@ public:
     ///
     /// \note Only the first three vertices are checked
     HalfFaceHandle find_halfface(const std::vector<VertexHandle>& _vs) const;
+    [[deprecated("please use find_halfface instead")]]
     HalfFaceHandle halfface     (const std::vector<VertexHandle>& _vs) const; // deprecated, use the one above instead!!!
 
     /// Get half-face from list of incident vertices (in connected order)
@@ -676,12 +678,14 @@ public:
     ///
     /// \note All vertices are checked
     HalfFaceHandle find_halfface_extensive(const std::vector<VertexHandle>& _vs) const;
+    [[deprecated("please use find_halfface_extensive instead")]]
     HalfFaceHandle halfface_extensive     (const std::vector<VertexHandle>& _vs) const; // deprecated, use the one above instead!!!
 
     /// Get half-face from list of incident half-edges
     ///
     /// \note Only the first two half-edges are checked
     HalfFaceHandle find_halfface(const std::vector<HalfEdgeHandle>& _hes) const;
+    [[deprecated("please use find_halfface instead")]]
     HalfFaceHandle halfface     (const std::vector<HalfEdgeHandle>& _hes) const; // deprecated, use the one above instead!!!
 
     /// Get next halfedge within a halfface
