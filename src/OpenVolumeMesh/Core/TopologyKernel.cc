@@ -2010,16 +2010,16 @@ HalfFaceHandle TopologyKernel::find_halfface(const std::vector<VertexHandle>& _v
 
     assert(v0.is_valid() && v1.is_valid() && v2.is_valid());
 
-    HalfEdgeHandle he0 = halfedge(v0, v1);
+    HalfEdgeHandle he0 = find_halfedge(v0, v1);
     if(!he0.is_valid()) return InvalidHalfFaceHandle;
-    HalfEdgeHandle he1 = halfedge(v1, v2);
+    HalfEdgeHandle he1 = find_halfedge(v1, v2);
     if(!he1.is_valid()) return InvalidHalfFaceHandle;
 
     std::vector<HalfEdgeHandle> hes;
     hes.push_back(he0);
     hes.push_back(he1);
 
-    return halfface(hes);
+    return find_halfface(hes);
 }
 
 //========================================================================================
@@ -2078,7 +2078,7 @@ HalfFaceHandle TopologyKernel::find_halfface_extensive(const std::vector<VertexH
 
   assert(v0.is_valid() && v1.is_valid());
 
-  HalfEdgeHandle he0 = halfedge(v0, v1);
+  HalfEdgeHandle he0 = find_halfedge(v0, v1);
   if(!he0.is_valid()) return InvalidHalfFaceHandle;
 
   for(HalfEdgeHalfFaceIter hehf_it = hehf_iter(he0); hehf_it.valid(); ++hehf_it)

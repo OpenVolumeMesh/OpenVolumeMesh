@@ -97,7 +97,7 @@ TetrahedralMeshTopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, 
 
 HalfEdgeHandle TetrahedralMeshTopologyKernel::add_halfedge(VertexHandle _fromVertex, VertexHandle _toVertex)
 {
-    HalfEdgeHandle he = halfedge(_fromVertex, _toVertex);
+    HalfEdgeHandle he = find_halfedge(_fromVertex, _toVertex);
     if (he != InvalidHalfEdgeHandle)
         return he;
     else
@@ -106,7 +106,7 @@ HalfEdgeHandle TetrahedralMeshTopologyKernel::add_halfedge(VertexHandle _fromVer
 
 HalfFaceHandle TetrahedralMeshTopologyKernel::add_halfface(const std::vector<HalfEdgeHandle>& _halfedges, bool _topologyCheck)
 {
-    HalfFaceHandle hf = halfface(_halfedges);
+    HalfFaceHandle hf = find_halfface(_halfedges);
     if (hf != InvalidHalfFaceHandle)
         return hf;
     else
@@ -593,7 +593,7 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<VertexHandle>& _vertic
     vs.push_back(_vertices[0]);
     vs.push_back(_vertices[1]);
     vs.push_back(_vertices[2]);
-    hf0 = TopologyKernel::halfface(vs);
+    hf0 = TopologyKernel::find_halfface(vs);
     if(!hf0.is_valid()) {
         FaceHandle fh = TopologyKernel::add_face(vs);
         hf0 = halfface_handle(fh, 0);
@@ -603,7 +603,7 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<VertexHandle>& _vertic
     vs.push_back(_vertices[0]);
     vs.push_back(_vertices[2]);
     vs.push_back(_vertices[3]);
-    hf1 = TopologyKernel::halfface(vs);
+    hf1 = TopologyKernel::find_halfface(vs);
     if(!hf1.is_valid()) {
         FaceHandle fh = TopologyKernel::add_face(vs);
         hf1 = halfface_handle(fh, 0);
@@ -613,7 +613,7 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<VertexHandle>& _vertic
     vs.push_back(_vertices[0]);
     vs.push_back(_vertices[3]);
     vs.push_back(_vertices[1]);
-    hf2 = TopologyKernel::halfface(vs);
+    hf2 = TopologyKernel::find_halfface(vs);
     if(!hf2.is_valid()) {
         FaceHandle fh = TopologyKernel::add_face(vs);
         hf2 = halfface_handle(fh, 0);
@@ -623,7 +623,7 @@ TetrahedralMeshTopologyKernel::add_cell(const std::vector<VertexHandle>& _vertic
     vs.push_back(_vertices[1]);
     vs.push_back(_vertices[3]);
     vs.push_back(_vertices[2]);
-    hf3 = TopologyKernel::halfface(vs);
+    hf3 = TopologyKernel::find_halfface(vs);
     if(!hf3.is_valid()) {
         FaceHandle fh = TopologyKernel::add_face(vs);
         hf3 = halfface_handle(fh, 0);
