@@ -1,3 +1,9 @@
+Version 3.2.0 (2022-07-29):
+  - Feature: add new `find_halfface_in_cell(VH,VH,CH)` function to TopologyKernel
+  - Feature: add new `find_halfedge_in_cell(vector<VH>,CH)` function to TopologyKernel
+  - Feature: Move get_halfface_vertices from Tet-TopoKernel to general TopologyKernel
+  - Improvement: Rename half{face,edge}*() to find_half{face,edge}*(), deprecate old APIs
+
 Version 3.1.1 (2022-07-29):
   - Fix OVMB property codec names for Eigen float matrices (was "d" instead of "f").
     Files that were saved with float matrices are unfortunately unreadable and need to be manually fixed.
