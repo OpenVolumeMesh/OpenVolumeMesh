@@ -49,16 +49,16 @@ uint64_t Decoder::u64()
 
 double Decoder::dbl()
 {
-    double ret = 0.;
-    read(reinterpret_cast<uint8_t*>(&ret), sizeof(double));
-    return ret;
+    // in c++20, we will be able to use bit_cast
+    auto v = u64();
+    return reinterpret_cast<double&>(v);
 }
 
 float Decoder::flt()
 {
-    float ret = 0.;
-    read(reinterpret_cast<uint8_t*>(&ret), sizeof(float));
-    return ret;
+    // in c++20, we will be able to use bit_cast
+    auto v = u32();
+    return reinterpret_cast<float&>(v);
 }
 
 void Decoder::read(std::string &v)
