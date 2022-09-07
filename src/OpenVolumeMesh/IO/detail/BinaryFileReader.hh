@@ -71,7 +71,7 @@ private:
     ReadOptions options_;
     PropertyCodecs const& prop_codecs_;
 
-    FileHeader file_header_ = {0};
+    FileHeader file_header_;
 
     ReadState state_ = ReadState::Init;
     std::string error_msg_;

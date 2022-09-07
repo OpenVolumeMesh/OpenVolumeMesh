@@ -109,15 +109,15 @@ struct PropertyInfo {
 
 OVM_EXPORT extern const std::array<uint8_t, 8> ovmb_magic;
 struct FileHeader {
-    uint8_t file_version;
-    uint8_t header_version;
-    uint8_t vertex_dim;
-    TopoType topo_type;
+    uint8_t file_version = 0;
+    uint8_t header_version = 0;
+    uint8_t vertex_dim = 0;
+    TopoType topo_type = TopoType::Polyhedral;
     // 4 bytes reserved
-    uint64_t n_verts;
-    uint64_t n_edges;
-    uint64_t n_faces;
-    uint64_t n_cells;
+    uint64_t n_verts = 0;
+    uint64_t n_edges = 0;
+    uint64_t n_faces = 0;
+    uint64_t n_cells = 0;
 };
 template<> inline size_t ovmb_size<FileHeader> =
         sizeof(ovmb_magic)
