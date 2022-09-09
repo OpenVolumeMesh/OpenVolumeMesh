@@ -1020,17 +1020,16 @@ private:
 
 public:
 
-    /// \brief Get halfface that is adjacent (w.r.t. a common edge) within the same cell
+    /// \brief Get halfface that is adjacent (w.r.t. a common halfedge) within the same cell.
+    ///        It correctly handles self-adjacent cells where the halfedge orientation matters.
+    ///        For legacy reasons the halfedge orientation can be arbitrary if there are no self-adjacencies in the cell.
     ///
     /// \return Handle of the adjacent half-face if \a _halfFaceHandle is not
     ///         at a boundary, \a InvalidHalfFaceHandle otherwise.
     ///
     /// \warning The mesh must have face bottom-up incidences.
 
-    HalfFaceHandle adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle, EdgeHandle _edgeHandle) const;
-
     // TODO: We might also want a "common halfedge" API that may assume he \in hf once the deprecated function is eliminated for good
-    [[deprecated("please use unambiguous adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle, EdgeHandle _egeHandle)  providing an edge_handle instead")]]
     HalfFaceHandle adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle, HalfEdgeHandle _halfEdgeHandle) const;
 
     /// Get cell that is incident to the given halfface

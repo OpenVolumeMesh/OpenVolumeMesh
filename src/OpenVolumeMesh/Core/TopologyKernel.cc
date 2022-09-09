@@ -15,6 +15,7 @@
  *                                                                           *
  *  If other files instantiate templates or use macros                       *
  *  or inline functions from this file, or you compile this file and         *
+ *  or inline functions from this file, or you compile this file and         *
  *  link it with other files to produce an executable, this file does        *
  *  not by itself cause the resulting executable to be covered by the        *
  *  GNU Lesser General Public License. This exception does not however       *
@@ -316,7 +317,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
                 || is_deleted(incident_cell(cur_hf)))
             break;
 
-        cur_hf = adjacent_halfface_in_cell(cur_hf, _eh);
+        cur_hf = adjacent_halfface_in_cell(cur_hf, cur_heh);
         if(cur_hf == InvalidHalfFaceHandle) {
             return;
         }
@@ -343,7 +344,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
                 break;
             }
 
-            cur_hf = adjacent_halfface_in_cell(cur_hf, _eh);
+            cur_hf = adjacent_halfface_in_cell(cur_hf, cur_heh);
             if (cur_hf == InvalidHalfFaceHandle) {
                 return;
             }
@@ -2045,7 +2046,7 @@ HalfFaceHandle TopologyKernel::find_halfface_in_cell(const std::vector<VertexHan
       if(from_vertex_handle(heh) == v1 && to_vertex_handle(heh) == v0)
       {
         HalfEdgeHandle heh_opp = opposite_halfedge_handle(heh);
-        HalfFaceHandle hfh_opp = adjacent_halfface_in_cell(hfh,edge_handle(heh));
+        HalfFaceHandle hfh_opp = adjacent_halfface_in_cell(hfh,heh);
         if(to_vertex_handle(next_halfedge_in_halfface(heh_opp,hfh_opp)) == v2)
           return hfh_opp;
       }
@@ -2238,40 +2239,6 @@ is_incident( FaceHandle _fh, EdgeHandle _eh) const
       return true;
 
   return false;
-}
-
-
-//========================================================================================
-
-
-HalfFaceHandle
-TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
-                                          EdgeHandle     _edgeHandle) const
-{
-  assert(_halfFaceHandle.is_valid() && (size_t) _halfFaceHandle.idx() < faces_.size() * 2u);
-  assert(_edgeHandle.is_valid() && (size_t) _edgeHandle.idx() < edges_.size());
-  assert(has_face_bottom_up_incidences());
-  assert(is_incident(face_handle(_halfFaceHandle), _edgeHandle));
-
-  const auto ch = incident_cell(_halfFaceHandle);
-  if (ch.is_valid())
-  {
-    for (const auto &hfh: cell(ch).halffaces())
-    {
-      if (hfh != _halfFaceHandle)
-      {
-        const auto hf = halfface(hfh);
-        for (HalfEdgeHandle heh: hf.halfedges())
-          if (edge_handle(heh) == _edgeHandle)
-            return hfh;
-      }
-    }
-
-    // must be self-adjacent because of assert(is_incident(_halfFaceHandle, _edgeHandle);
-    return _halfFaceHandle;
-  }
-  // return invalid handle if on boundary
-  return InvalidHalfFaceHandle;
 }
 
 
