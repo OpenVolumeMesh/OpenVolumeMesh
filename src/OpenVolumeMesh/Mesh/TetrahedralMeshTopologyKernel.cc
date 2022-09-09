@@ -504,7 +504,7 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(CellH
     }
     if (!heh.is_valid())
     {
-        hfh = adjacent_halfface_in_cell(hfh, f.halfedges()[0]);
+        hfh = adjacent_halfface_in_cell(hfh, edge_handle(f.halfedges()[0]));
         heh = prev_halfedge_in_halfface(opposite_halfedge_handle(f.halfedges()[0]), hfh);
     }
 
