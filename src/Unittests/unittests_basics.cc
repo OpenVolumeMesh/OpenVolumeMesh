@@ -522,12 +522,13 @@ TEST_F(PolyhedralMeshBase, VolumeMeshConnectivity) {
     // Should be halfface 7
     EXPECT_HANDLE_EQ(HalfFaceHandle(7), ad_hf2);
 
-    HalfFaceHandle ad_hf3 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(5), mesh_.edge_handle(HalfEdgeHandle(24)));
+//  Note: removed test since the given edge is not incident to the given face, which breaks novel assertion
+//    HalfFaceHandle ad_hf3 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(5), mesh_.edge_handle(HalfEdgeHandle(24)));
     // Should be invalid
-    EXPECT_HANDLE_EQ(PolyhedralMesh::InvalidHalfFaceHandle, ad_hf3);
+//    EXPECT_HANDLE_EQ(PolyhedralMesh::InvalidHalfFaceHandle, ad_hf3);
 
     HalfFaceHandle ad_hf4 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(12), mesh_.edge_handle(HalfEdgeHandle(24)));
-    // Should be invalid
+    // Should be halfface 4
     EXPECT_HANDLE_EQ(HalfFaceHandle(20), ad_hf4);
 
     HalfFaceHandle ad_hf5 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(0), mesh_.edge_handle(HalfEdgeHandle(0)));
