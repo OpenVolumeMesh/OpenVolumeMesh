@@ -2249,7 +2249,7 @@ TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
                                           EdgeHandle     _edgeHandle) const
 {
   assert(_halfFaceHandle.is_valid() && (size_t) _halfFaceHandle.idx() < faces_.size() * 2u);
-  assert(_halfEdgeHandle.is_valid() && (size_t) _halfEdgeHandle.idx() < edges_.size() * 2u);
+  assert(_edgeHandle.is_valid() && (size_t) _edgeHandle.idx() < edges_.size());
   assert(has_face_bottom_up_incidences());
   assert(is_incident(face_handle(_halfFaceHandle), _edgeHandle));
 
