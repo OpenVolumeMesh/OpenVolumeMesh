@@ -2226,75 +2226,125 @@ std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle h
 
 
 //========================================================================================
-//
+
+
+bool
+TopologyKernel::
+is_incident( FaceHandle _fh, EdgeHandle _eh) const
+{
+  const auto f = face(_fh);
+  for (HalfEdgeHandle heh: f.halfedges())
+    if(edge_handle(heh) == _eh)
+      return true;
+
+  return false;
+}
+
+
+//========================================================================================
+
+
+HalfFaceHandle
+TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
+                                          EdgeHandle     _edgeHandle) const
+{
+  assert(_halfFaceHandle.is_valid() && (size_t) _halfFaceHandle.idx() < faces_.size() * 2u);
+  assert(_halfEdgeHandle.is_valid() && (size_t) _halfEdgeHandle.idx() < edges_.size() * 2u);
+  assert(has_face_bottom_up_incidences());
+  assert(is_incident(face_handle(_halfFaceHandle), _edgeHandle));
+
+  const auto ch = incident_cell(_halfFaceHandle);
+  if (ch.is_valid())
+  {
+    for (const auto &hfh: cell(ch).halffaces())
+    {
+      if (hfh != _halfFaceHandle)
+      {
+        const auto hf = halfface(hfh);
+        for (HalfEdgeHandle heh: hf.halfedges())
+          if (edge_handle(heh) == _edgeHandle)
+            return hfh;
+      }
+    }
+
+    // must be self-adjacent because of assert(is_incident(_halfFaceHandle, _edgeHandle);
+    return _halfFaceHandle;
+  }
+  // return invalid handle if on boundary
+  return InvalidHalfFaceHandle;
+}
+
+
+//========================================================================================
+
 
 HalfFaceHandle
 TopologyKernel::adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle,
                                           HalfEdgeHandle _halfEdgeHandle) const
 {
-    assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
-    assert(_halfEdgeHandle.is_valid() && (size_t)_halfEdgeHandle.idx() < edges_.size() * 2u);
-    assert(has_face_bottom_up_incidences());
+  assert(_halfFaceHandle.is_valid() && (size_t)_halfFaceHandle.idx() < faces_.size() * 2u);
+  assert(_halfEdgeHandle.is_valid() && (size_t)_halfEdgeHandle.idx() < edges_.size() * 2u);
+  assert(has_face_bottom_up_incidences());
 
-    const auto ch = incident_cell(_halfFaceHandle);
-    if(!ch.is_valid()) {
-        // Specified halfface is on the outside of the complex
-        return InvalidHalfFaceHandle;
-    }
-
-    // Make sure that _halfFaceHandle is incident to _halfEdgeHandle
-    bool skipped = false;
-    HalfFaceHandle idx = InvalidHalfFaceHandle;
-
-    // For face-selfadjacent cells, we have to ensure the actual halfedge information
-    // is used here, BUT...
-    // To support legacy code, we have to flip the halfedge if it's the wrong one
-    HalfEdgeHandle hehOpp = opposite_halfedge_handle(_halfEdgeHandle);
-    bool hasHalfedge = false;
-    bool hasOppHalfedge = false;
-    const auto hf = halfface(_halfFaceHandle);
-    for (HalfEdgeHandle heh: hf.halfedges()) {
-        if (heh == hehOpp)
-            hasOppHalfedge = true;
-        else if (heh == _halfEdgeHandle)
-            hasHalfedge = true;
-    }
-    if (!hasHalfedge) {
-        if (hasOppHalfedge)
-            _halfEdgeHandle = hehOpp;
-        else
-            return InvalidHalfFaceHandle;
-    }
-
-    for(const auto &hfh: cell(ch).halffaces()) {
-        if(hfh == _halfFaceHandle) {
-            assert(!skipped); // a halfface may only appear once in a cell!
-            skipped = true;
-            if (idx.is_valid()) {
-                return idx;
-            }
-        } else {
-            const auto hf_cur = halfface(hfh);
-            for (const auto heh: hf_cur.halfedges()) {
-                // For face-selfadjacent cells, we look for a halfface that
-                // contains the opposite halfedge but isnt the opposite halfface
-                if(opposite_halfedge_handle(heh) == _halfEdgeHandle && hfh != opposite_halfface_handle(_halfFaceHandle)) {
-                    if (idx.is_valid()) {
-                        // we found two(!) other halffaces that contain the given edge.
-                        // likely the given halfedge is not part of the given halfface
-                        return InvalidHalfFaceHandle;
-                    }
-                    if (skipped) {
-                        return hfh;
-                    } else {
-                        idx = hfh;
-                        continue;
-                    }
-                }
-            }
-        }
-    }
+  const auto ch = incident_cell(_halfFaceHandle);
+  if(!ch.is_valid()) {
+    // Specified halfface is on the outside of the complex
     return InvalidHalfFaceHandle;
+  }
+
+  // Make sure that _halfFaceHandle is incident to _halfEdgeHandle
+  bool skipped = false;
+  HalfFaceHandle idx = InvalidHalfFaceHandle;
+
+  // For face-selfadjacent cells, we have to ensure the actual halfedge information
+  // is used here, BUT...
+  // To support legacy code, we have to flip the halfedge if it's the wrong one
+  HalfEdgeHandle hehOpp = opposite_halfedge_handle(_halfEdgeHandle);
+  bool hasHalfedge = false;
+  bool hasOppHalfedge = false;
+  const auto hf = halfface(_halfFaceHandle);
+  for (HalfEdgeHandle heh: hf.halfedges()) {
+    if (heh == hehOpp)
+      hasOppHalfedge = true;
+    else if (heh == _halfEdgeHandle)
+      hasHalfedge = true;
+  }
+  if (!hasHalfedge) {
+    if (hasOppHalfedge)
+      _halfEdgeHandle = hehOpp;
+    else
+      return InvalidHalfFaceHandle;
+  }
+
+  for(const auto &hfh: cell(ch).halffaces()) {
+    if(hfh == _halfFaceHandle) {
+      assert(!skipped); // a halfface may only appear once in a cell!
+      skipped = true;
+      if (idx.is_valid()) {
+        return idx;
+      }
+    } else {
+      const auto hf_cur = halfface(hfh);
+      for (const auto heh: hf_cur.halfedges()) {
+        // For face-selfadjacent cells, we look for a halfface that
+        // contains the opposite halfedge but isnt the opposite halfface
+        if(opposite_halfedge_handle(heh) == _halfEdgeHandle && hfh != opposite_halfface_handle(_halfFaceHandle)) {
+          if (idx.is_valid()) {
+            // we found two(!) other halffaces that contain the given edge.
+            // likely the given halfedge is not part of the given halfface
+            return InvalidHalfFaceHandle;
+          }
+          if (skipped) {
+            return hfh;
+          } else {
+            idx = hfh;
+            continue;
+          }
+        }
+      }
+    }
+  }
+  return InvalidHalfFaceHandle;
 }
 
 

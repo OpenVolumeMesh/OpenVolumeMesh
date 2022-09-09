@@ -741,8 +741,10 @@ public:
     /// Get vertices of a halfface orderd to start from from_vertex_handle(heh)
     std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const;
 
+    /// check whether face _fh and edge _eh are incident
+    bool is_incident( FaceHandle _fh, EdgeHandle _eh) const;
 
-  //=====================================================================
+    //=====================================================================
     // Delete entities
     //=====================================================================
 
@@ -1018,19 +1020,17 @@ private:
 
 public:
 
-    // TODO: this should probably be "common edge", the halfedge direction is ignored,
-    // and existing code likly relies on this behaviour.
-    // We probably also want a "common halfedge" API that may assume he \in hf
-    //
-    /// \brief Get halfface that is adjacent (w.r.t. a common halfedge) within the same cell
-    ///
-    /// \param without_he_hf_incidences: for use when creating he-hf incidences
+    /// \brief Get halfface that is adjacent (w.r.t. a common edge) within the same cell
     ///
     /// \return Handle of the adjacent half-face if \a _halfFaceHandle is not
     ///         at a boundary, \a InvalidHalfFaceHandle otherwise.
     ///
     /// \warning The mesh must have face bottom-up incidences.
 
+    HalfFaceHandle adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle, EdgeHandle _edgeHandle) const;
+
+    // TODO: We might also want a "common halfedge" API that may assume he \in hf once the deprecated function is eliminated for good
+    [[deprecated("please use unambiguous adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle, EdgeHandle _egeHandle)  providing an edge_handle instead")]]
     HalfFaceHandle adjacent_halfface_in_cell(HalfFaceHandle _halfFaceHandle, HalfEdgeHandle _halfEdgeHandle) const;
 
     /// Get cell that is incident to the given halfface
