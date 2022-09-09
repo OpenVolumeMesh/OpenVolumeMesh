@@ -514,23 +514,23 @@ TEST_F(PolyhedralMeshBase, VolumeMeshConnectivity) {
     EXPECT_HANDLE_EQ(CellHandle(1), mesh_.incident_cell(HalfFaceHandle(20)));
 
     // Test adjacency function
-    HalfFaceHandle ad_hf1 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(1), HalfEdgeHandle(3));
+    HalfFaceHandle ad_hf1 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(1), mesh_.edge_handle(HalfEdgeHandle(3)));
     // Should be halfface 5
     EXPECT_HANDLE_EQ(HalfFaceHandle(5), ad_hf1);
 
-    HalfFaceHandle ad_hf2 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(1), HalfEdgeHandle(7));
+    HalfFaceHandle ad_hf2 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(1), mesh_.edge_handle(HalfEdgeHandle(7)));
     // Should be halfface 7
     EXPECT_HANDLE_EQ(HalfFaceHandle(7), ad_hf2);
 
-    HalfFaceHandle ad_hf3 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(5), HalfEdgeHandle(24));
+    HalfFaceHandle ad_hf3 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(5), mesh_.edge_handle(HalfEdgeHandle(24)));
     // Should be invalid
     EXPECT_HANDLE_EQ(PolyhedralMesh::InvalidHalfFaceHandle, ad_hf3);
 
-    HalfFaceHandle ad_hf4 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(12), HalfEdgeHandle(24));
+    HalfFaceHandle ad_hf4 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(12), mesh_.edge_handle(HalfEdgeHandle(24)));
     // Should be invalid
     EXPECT_HANDLE_EQ(HalfFaceHandle(20), ad_hf4);
 
-    HalfFaceHandle ad_hf5 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(0), HalfEdgeHandle(0));
+    HalfFaceHandle ad_hf5 = mesh_.adjacent_halfface_in_cell(HalfFaceHandle(0), mesh_.edge_handle(HalfEdgeHandle(0)));
     // Should be invalid
     EXPECT_HANDLE_EQ(PolyhedralMesh::InvalidHalfFaceHandle, ad_hf5);
 

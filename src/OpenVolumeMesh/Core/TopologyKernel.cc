@@ -316,7 +316,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
                 || is_deleted(incident_cell(cur_hf)))
             break;
 
-        cur_hf = adjacent_halfface_in_cell(cur_hf, cur_heh);
+        cur_hf = adjacent_halfface_in_cell(cur_hf, _eh);
         if(cur_hf == InvalidHalfFaceHandle) {
             return;
         }
@@ -343,7 +343,7 @@ void TopologyKernel::reorder_incident_halffaces(EdgeHandle _eh) {
                 break;
             }
 
-            cur_hf = adjacent_halfface_in_cell(cur_hf, cur_heh);
+            cur_hf = adjacent_halfface_in_cell(cur_hf, _eh);
             if (cur_hf == InvalidHalfFaceHandle) {
                 return;
             }
@@ -2045,7 +2045,7 @@ HalfFaceHandle TopologyKernel::find_halfface_in_cell(const std::vector<VertexHan
       if(from_vertex_handle(heh) == v1 && to_vertex_handle(heh) == v0)
       {
         HalfEdgeHandle heh_opp = opposite_halfedge_handle(heh);
-        HalfFaceHandle hfh_opp = adjacent_halfface_in_cell(hfh,heh);
+        HalfFaceHandle hfh_opp = adjacent_halfface_in_cell(hfh,edge_handle(heh));
         if(to_vertex_handle(next_halfedge_in_halfface(heh_opp,hfh_opp)) == v2)
           return hfh_opp;
       }

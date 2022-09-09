@@ -256,11 +256,11 @@ BaseIter(_mesh, _ref_h, _max_laps) {
     vertices_.push_back(_mesh->halfedge(curHE).from_vertex());
 
     curHE = _mesh->prev_halfedge_in_halfface(curHE, curHF);
-    curHF = _mesh->adjacent_halfface_in_cell(curHF, curHE);
+    curHF = _mesh->adjacent_halfface_in_cell(curHF, edge_handle(curHE));
     curHE = _mesh->opposite_halfedge_handle(curHE);
     curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
     curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
-    curHF = _mesh->adjacent_halfface_in_cell(curHF, curHE);
+    curHF = _mesh->adjacent_halfface_in_cell(curHF, edge_handle(curHE));
     curHE = _mesh->opposite_halfedge_handle(curHE);
 
     vertices_.push_back(_mesh->halfedge(curHE).to_vertex());

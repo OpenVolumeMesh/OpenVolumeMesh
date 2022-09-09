@@ -297,11 +297,11 @@ public:
 
         // Try the 1st way
         while(true) {
-            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, n_he);
+            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, edge_handle(n_he));
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             n_hf = TopologyKernel::opposite_halfface_handle(n_hf);
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
-            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, n_he);
+            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, edge_handle(n_he));
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             else return n_hf;
         }
@@ -311,11 +311,11 @@ public:
 
         // Try the 2nd way
         while(true) {
-            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, n_he);
+            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, edge_handle(n_he));
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             n_hf = TopologyKernel::opposite_halfface_handle(n_hf);
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
-            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, n_he);
+            n_hf = TopologyKernel::adjacent_halfface_in_cell(n_hf, edge_handle(n_he));
             if(n_hf == TopologyKernel::InvalidHalfFaceHandle) break;
             else return TopologyKernel::opposite_halfface_handle(n_hf);
         }
