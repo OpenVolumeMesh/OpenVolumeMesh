@@ -10,10 +10,6 @@ export PATH
 
 OPTIONS=""
 
-OPTIONS="${OPTIONS} -DGTEST_LIBRARY=${HOME}/sw/gtest-1.7.0/lib/libgtest.a"
-OPTIONS="${OPTIONS} -DGTEST_INCLUDE_DIR=${HOME}/sw/gtest-1.7.0/include/"
-OPTIONS="${OPTIONS} -DGTEST_MAIN_LIBRARY=${HOME}/sw/gtest-1.7.0/lib/libgtest_main.a"
-
 if [ "$LANGUAGE" == "C++17" ]; then
   echo "Building with C++17";
 elif [ "$LANGUAGE" == "C++20" ]; then

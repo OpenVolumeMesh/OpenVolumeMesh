@@ -43,14 +43,22 @@ void Encoder::dbl(double val)
 {
     // assume that double endianness is the same as word endianness.
     // in c++20, we will be able to use bit_cast
-    u64(reinterpret_cast<uint64_t&>(val));
+    //
+    uint64_t tmp = 0;
+    static_assert(sizeof(tmp) == sizeof(val));
+    ::memcpy(&tmp, &val, sizeof(tmp));
+    u64(tmp);
 }
 
 void Encoder::flt(float val)
 {
     // assume that float endianness is the same as word endianness.
     // in c++20, we will be able to use bit_cast
-    u32(reinterpret_cast<uint32_t&>(val));
+
+    uint32_t tmp = 0;
+    static_assert(sizeof(tmp) == sizeof(val));
+    ::memcpy(&tmp, &val, sizeof(tmp));
+    u32(tmp);
 }
 
 void Encoder::write(const std::string &v)

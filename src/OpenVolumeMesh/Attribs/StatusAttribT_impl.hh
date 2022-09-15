@@ -101,19 +101,19 @@ void StatusAttrib::garbage_collection(std_API_Container_VHandlePointer & vh_to_u
             || !hfh_to_update.empty()
             || !ch_to_update.empty())
     {
-        size_t nv = kernel_->n_vertices();
-        size_t nhe = kernel_->n_halfedges();
-        size_t nhf = kernel_->n_halffaces();
-        size_t nc = kernel_->n_cells();
+        auto nv = static_cast<int>(kernel_->n_vertices());
+        auto nhe = static_cast<int>(kernel_->n_halfedges());
+        auto nhf = static_cast<int>(kernel_->n_halffaces());
+        auto nc = static_cast<int>(kernel_->n_cells());
 
         auto old_vh = kernel_->request_vertex_property<int>();
-        for (size_t i = 0; i < nv; ++i) { old_vh[VertexHandle(i)] = i; }
+        for (int i = 0; i < nv; ++i) { old_vh[VertexHandle(i)] = i; }
         auto old_heh = kernel_->request_halfedge_property<int>();
-        for (size_t i = 0; i < nhe; ++i) { old_heh[HalfEdgeHandle(i)] = i; }
+        for (int i = 0; i < nhe; ++i) { old_heh[HalfEdgeHandle(i)] = i; }
         auto old_hfh = kernel_->request_halfface_property<int>();
-        for (size_t i = 0; i < nhf; ++i) { old_hfh[HalfFaceHandle(i)] = i; }
+        for (int i = 0; i < nhf; ++i) { old_hfh[HalfFaceHandle(i)] = i; }
         auto old_ch = kernel_->request_cell_property<int>();
-        for (size_t i = 0; i < nc; ++i) { old_ch[CellHandle(i)] = i; }
+        for (int i = 0; i < nc; ++i) { old_ch[CellHandle(i)] = i; }
 
         kernel_->collect_garbage();
 

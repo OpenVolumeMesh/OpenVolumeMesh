@@ -172,24 +172,24 @@ PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _
 
 template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
-ResourceManager::create_persistent_property(const std::string& _name, const T _def)
+ResourceManager::create_persistent_property(std::string _name, const T _def)
 {
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    auto ptr =  internal_create_property<T, EntityTag>(_name, _def, true);
+    auto ptr =  internal_create_property<T, EntityTag>(std::move(_name), _def, true);
     set_persistent(ptr);
     return ptr;
 }
 
 template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
-ResourceManager::create_shared_property(const std::string& _name, const T _def)
+ResourceManager::create_shared_property(std::string _name, const T _def)
 {
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    return internal_create_property<T, EntityTag>(_name, _def, true);
+    return internal_create_property<T, EntityTag>(std::move(_name), _def, true);
 }
 template<typename T, typename EntityTag>
 PropertyPtr<T, EntityTag>

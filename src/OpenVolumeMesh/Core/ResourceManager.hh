@@ -174,17 +174,17 @@ public:
      */
     template<typename T, typename EntityTag>
     [[deprecated("Use create_{shared,persistent}_property instead")]]
-    std::optional<PropertyPtr<T, EntityTag>> create_property(const std::string& _name = std::string(), const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_property(std::string _name = std::string(), const T _def = T());
 
     /** Create new shared property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
-    std::optional<PropertyPtr<T, EntityTag>> create_shared_property(const std::string& _name, const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_shared_property(std::string _name, const T _def = T());
 
     /** Create new shared + persistent property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
-    std::optional<PropertyPtr<T, EntityTag>> create_persistent_property(const std::string& _name, const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_persistent_property(std::string _name, const T _def = T());
 
     /** Create private property - useful for const meshes
      */
@@ -261,20 +261,20 @@ public:
     /** Create new shared vertex property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<VertexPropertyPtr<T>> create_shared_vertex_property(const std::string& _name, const T _def = T())
-    { return create_shared_property<T, Entity::Vertex>(_name, std::move(_def)); }
+    std::optional<VertexPropertyPtr<T>> create_shared_vertex_property(std::string _name, const T _def = T())
+    { return create_shared_property<T, Entity::Vertex>(std::move(_name), std::move(_def)); }
 
     /** Create new shared + persistent vertex property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<VertexPropertyPtr<T>> create_persistent_vertex_property(const std::string& _name, const T _def = T())
-    { return create_persistent_property<T, Entity::Vertex>(_name, std::move(_def)); }
+    std::optional<VertexPropertyPtr<T>> create_persistent_vertex_property(std::string _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Vertex>(std::move(_name), std::move(_def)); }
 
     /** Create private vertex property - useful for const meshes
      */
     template<typename T>
     VertexPropertyPtr<T> create_private_vertex_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_vertex_property(_name, std::move(_def)); }
+    { return create_private_vertex_property(std::move(_name), std::move(_def)); }
 
     /** Get existing shared vertex property. If the property does not exist, return no value.
      */
@@ -304,20 +304,20 @@ public:
     /** Create new shared edge property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<EdgePropertyPtr<T>> create_shared_edge_property(const std::string& _name, const T _def = T())
-    { return create_shared_property<T, Entity::Edge>(_name, std::move(_def)); }
+    std::optional<EdgePropertyPtr<T>> create_shared_edge_property(std::string _name, const T _def = T())
+    { return create_shared_property<T, Entity::Edge>(std::move(_name), std::move(_def)); }
 
     /** Create new shared + persistent edge property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<EdgePropertyPtr<T>> create_persistent_edge_property(const std::string& _name, const T _def = T())
-    { return create_persistent_property<T, Entity::Edge>(_name, std::move(_def)); }
+    std::optional<EdgePropertyPtr<T>> create_persistent_edge_property(std::string _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Edge>(std::move(_name), std::move(_def)); }
 
     /** Create private edge property - useful for const meshes
      */
     template<typename T>
     EdgePropertyPtr<T> create_private_edge_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_edge_property(_name, std::move(_def)); }
+    { return create_private_edge_property(std::move(_name), std::move(_def)); }
 
     /** Get existing shared edge property. If the property does not exist, return no value.
      */
@@ -347,20 +347,20 @@ public:
     /** Create new shared halfedge property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<HalfEdgePropertyPtr<T>> create_shared_halfedge_property(const std::string& _name, const T _def = T())
-    { return create_shared_property<T, Entity::HalfEdge>(_name, std::move(_def)); }
+    std::optional<HalfEdgePropertyPtr<T>> create_shared_halfedge_property(std::string _name, const T _def = T())
+    { return create_shared_property<T, Entity::HalfEdge>(std::move(_name), std::move(_def)); }
 
     /** Create new shared + persistent halfedge property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<HalfEdgePropertyPtr<T>> create_persistent_halfedge_property(const std::string& _name, const T _def = T())
-    { return create_persistent_property<T, Entity::HalfEdge>(_name, std::move(_def)); }
+    std::optional<HalfEdgePropertyPtr<T>> create_persistent_halfedge_property(std::string _name, const T _def = T())
+    { return create_persistent_property<T, Entity::HalfEdge>(std::move(_name), std::move(_def)); }
 
     /** Create private halfedge property - useful for const meshes
      */
     template<typename T>
     HalfEdgePropertyPtr<T> create_private_halfedge_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_halfedge_property(_name, std::move(_def)); }
+    { return create_private_halfedge_property(std::move(_name), std::move(_def)); }
 
     /** Get existing shared halfedge property. If the property does not exist, return no value.
      */
@@ -390,20 +390,20 @@ public:
     /** Create new shared face property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<FacePropertyPtr<T>> create_shared_face_property(const std::string& _name, const T _def = T())
-    { return create_shared_property<T, Entity::Face>(_name, std::move(_def)); }
+    std::optional<FacePropertyPtr<T>> create_shared_face_property(std::string _name, const T _def = T())
+    { return create_shared_property<T, Entity::Face>(std::move(_name), std::move(_def)); }
 
     /** Create new shared + persistent face property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<FacePropertyPtr<T>> create_persistent_face_property(const std::string& _name, const T _def = T())
-    { return create_persistent_property<T, Entity::Face>(_name, std::move(_def)); }
+    std::optional<FacePropertyPtr<T>> create_persistent_face_property(std::string _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Face>(std::move(_name), std::move(_def)); }
 
     /** Create private face property - useful for const meshes
      */
     template<typename T>
     FacePropertyPtr<T> create_private_face_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_face_property(_name, std::move(_def)); }
+    { return create_private_face_property(std::move(_name), std::move(_def)); }
 
     /** Get existing shared face property. If the property does not exist, return no value.
      */
@@ -433,20 +433,20 @@ public:
     /** Create new shared halfface property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<HalfFacePropertyPtr<T>> create_shared_halfface_property(const std::string& _name, const T _def = T())
-    { return create_shared_property<T, Entity::HalfFace>(_name, std::move(_def)); }
+    std::optional<HalfFacePropertyPtr<T>> create_shared_halfface_property(std::string _name, const T _def = T())
+    { return create_shared_property<T, Entity::HalfFace>(std::move(_name), std::move(_def)); }
 
     /** Create new shared + persistent halfface property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<HalfFacePropertyPtr<T>> create_persistent_halfface_property(const std::string& _name, const T _def = T())
-    { return create_persistent_property<T, Entity::HalfFace>(_name, std::move(_def)); }
+    std::optional<HalfFacePropertyPtr<T>> create_persistent_halfface_property(std::string _name, const T _def = T())
+    { return create_persistent_property<T, Entity::HalfFace>(std::move(_name), std::move(_def)); }
 
     /** Create private halfface property - useful for const meshes
      */
     template<typename T>
     HalfFacePropertyPtr<T> create_private_halfface_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_halfface_property(_name, std::move(_def)); }
+    { return create_private_halfface_property(std::move(_name), std::move(_def)); }
 
     /** Get existing shared halfface property. If the property does not exist, return no value.
      */
@@ -476,20 +476,20 @@ public:
     /** Create new shared cell property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<CellPropertyPtr<T>> create_shared_cell_property(const std::string& _name, const T _def = T())
-    { return create_shared_property<T, Entity::Cell>(_name, std::move(_def)); }
+    std::optional<CellPropertyPtr<T>> create_shared_cell_property(std::string _name, const T _def = T())
+    { return create_shared_property<T, Entity::Cell>(std::move(_name), std::move(_def)); }
 
     /** Create new shared + persistent cell property: if the property already exists, return no value.
      */
     template<typename T>
-    std::optional<CellPropertyPtr<T>> create_persistent_cell_property(const std::string& _name, const T _def = T())
-    { return create_persistent_property<T, Entity::Cell>(_name, std::move(_def)); }
+    std::optional<CellPropertyPtr<T>> create_persistent_cell_property(std::string _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Cell>(std::move(_name), std::move(_def)); }
 
     /** Create private cell property - useful for const meshes
      */
     template<typename T>
     CellPropertyPtr<T> create_private_cell_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_cell_property(_name, std::move(_def)); }
+    { return create_private_cell_property(std::move(_name), std::move(_def)); }
 
     /** Get existing shared cell property. If the property does not exist, return no value.
      */
@@ -505,7 +505,6 @@ public:
     bool cell_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::Cell>(_name);
     }
-
 
 
 };
