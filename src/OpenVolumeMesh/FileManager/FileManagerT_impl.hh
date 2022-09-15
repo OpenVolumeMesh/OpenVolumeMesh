@@ -136,7 +136,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> n_vertices;
 
-        _mesh.reserve_vertices(n_vertices);
+        _mesh.reserve_vertices(static_cast<size_t>(n_vertices));
 
         // Read in vertices
         for(uint64_t i = 0u; i < n_vertices; ++i) {
@@ -173,7 +173,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> n_edges;
 
-        _mesh.reserve_edges(n_edges);
+        _mesh.reserve_edges(static_cast<size_t>(n_edges));
 
         // Read in edges
         for(uint64_t i = 0u; i < n_edges; ++i) {
@@ -218,7 +218,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> n_faces;
 
-        _mesh.reserve_faces(n_faces);
+        _mesh.reserve_faces(static_cast<size_t>(n_faces));
 
         std::vector<HalfEdgeHandle> hes;
 
@@ -235,7 +235,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr >> val;
 
             hes.clear();
-            hes.reserve(val);
+            hes.reserve(static_cast<size_t>(val));
             // Read half-edge indices
             for(unsigned int e = 0; e < val; ++e) {
 
@@ -278,7 +278,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
         sstr.str(line);
         sstr >> n_cells;
 
-        _mesh.reserve_cells(n_cells);
+        _mesh.reserve_cells(static_cast<size_t>(n_cells));
 
         std::vector<HalfFaceHandle> hfs;
         // Read in cells
@@ -294,7 +294,7 @@ bool FileManager::readStream(std::istream &_istream, MeshT &_mesh,
             sstr >> val;
 
             hfs.clear();
-            hfs.reserve(val);
+            hfs.reserve(static_cast<size_t>(val));
 
             // Read half-face indices
             for(unsigned int f = 0; f < val; ++f) {
