@@ -49,16 +49,22 @@ uint64_t Decoder::u64()
 
 double Decoder::dbl()
 {
+    uint64_t tmp {u64()};
+    double val = 0.;
+    static_assert(sizeof(tmp) == sizeof(val));
     // in c++20, we will be able to use bit_cast
-    auto v = u64();
-    return reinterpret_cast<double&>(v);
+    ::memcpy(&val, &tmp, sizeof(val));
+    return val;
 }
 
 float Decoder::flt()
 {
+    uint32_t tmp {u32()};
+    float val = 0.f;
+    static_assert(sizeof(tmp) == sizeof(val));
     // in c++20, we will be able to use bit_cast
-    auto v = u32();
-    return reinterpret_cast<float&>(v);
+    ::memcpy(&val, &tmp, sizeof(val));
+    return val;
 }
 
 void Decoder::read(std::string &v)
