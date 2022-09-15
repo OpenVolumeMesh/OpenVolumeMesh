@@ -199,7 +199,7 @@ TEST_F(PolyhedralMeshBase, PropertyAtAccess)
     try {
         prop.at(VertexHandle(654321)) = 1;
         FAIL() << "Expected exception";
-    } catch (std::out_of_range &e) {
+    } catch (std::out_of_range &) {
     }
 
 }
