@@ -69,7 +69,6 @@ public:
     ResourceManager(ResourceManager &&other) = delete;
     ResourceManager& operator=(ResourceManager &&other) = delete;
 
-protected:
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
 
@@ -208,9 +207,9 @@ public:
         return internal_find_property<T, EntityTag>(_name).has_value();
     }
 
+
     template<typename T, class EntityTag>
     void set_persistent(PropertyPtr<T, EntityTag>& _prop, bool _enable = true);
-
 
     template<typename T, class EntityTag>
     void set_shared(PropertyPtr<T, EntityTag>& _prop, bool _enable = true);
@@ -228,21 +227,15 @@ public:
 
 /// convenience functions:
 
-    [[deprecated("Use clear_props<Entity::Vertex>() instead.")]]
     inline void clear_vertex_props()   { clear_props<Entity::Vertex>();}
-    [[deprecated("Use clear_props<Entity::Edge>() instead.")]]
     inline void clear_edge_props()     { clear_props<Entity::Edge>();}
-    [[deprecated("Use clear_props<Entity::HalfEdge>() instead.")]]
     inline void clear_halfedge_props() { clear_props<Entity::HalfEdge>();}
-    [[deprecated("Use clear_props<Entity::Face>() instead.")]]
     inline void clear_face_props()     { clear_props<Entity::Face>();}
-    [[deprecated("Use clear_props<Entity::HalfFace>() instead.")]]
     inline void clear_halfface_props() { clear_props<Entity::HalfFace>();}
-    [[deprecated("Use clear_props<Entity::Cell>() instead.")]]
     inline void clear_cell_props()     { clear_props<Entity::Cell>();}
-    [[deprecated("Use clear_props<Entity::Mesh>() instead.")]]
     inline void clear_mesh_props()     { clear_props<Entity::Mesh>();}
 
+    // TODO: should we deprecate request_*_property, replace with get_or_create_*_property for more clarity?
     template<class T> VertexPropertyT<T>   request_vertex_property  (const std::string& _name = std::string(), const T _def = T());
     template<class T> EdgePropertyT<T>     request_edge_property    (const std::string& _name = std::string(), const T _def = T());
     template<class T> HalfEdgePropertyT<T> request_halfedge_property(const std::string& _name = std::string(), const T _def = T());
@@ -251,95 +244,267 @@ public:
     template<class T> CellPropertyT<T>     request_cell_property    (const std::string& _name = std::string(), const T _def = T());
     template<class T> MeshPropertyT<T>     request_mesh_property    (const std::string& _name = std::string(), const T _def = T());
 
+    ///////////////////////////////////////////////////////////////////////
+    //// convenience functions for properties of various types:        ////
+    //// generated using codegen/ResourceManager_convenience_functions ////
+    ///////////////////////////////////////////////////////////////////////
 
-    //[[deprecated("Use n_props<Entity::Vertex>() instead.")]]
-    size_t n_vertex_props() const   { return n_props<Entity::Vertex>();}
-    //[[deprecated("Use n_props<Entity::Edge instead.")]]
-    size_t n_edge_props() const     { return n_props<Entity::Edge>();}
-    //[[deprecated("Use n_props<Entity::HalfEdge>() instead.")]]
-    size_t n_halfedge_props() const { return n_props<Entity::HalfEdge>();}
-    //[[deprecated("Use n_props<Entity::Face>() instead.")]]
-    size_t n_face_props() const     { return n_props<Entity::Face>();}
-    //[[deprecated("Use n_props<Entity::HalfFace>() instead.")]]
-    size_t n_halfface_props() const { return n_props<Entity::HalfFace>();}
-    //[[deprecated("Use n_props<Entity::Cell>() instead.")]]
-    size_t n_cell_props() const     { return n_props<Entity::Cell>();}
-    //[[deprecated("Use n_props<Entity::Mesh>() instead.")]]
-    size_t n_mesh_props() const     { return n_props<Entity::Mesh>();}
 
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Vertex>() instead.")]]
+    ////
+    //// Vertex properties:
+    ////
+
+    size_t n_vertex_props()     const {return n_props<Entity::Vertex>();}
     auto vertex_props_begin()   const {return persistent_props_begin<Entity::Vertex>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Vertex>() instead.")]]
     auto vertex_props_end()     const {return persistent_props_end  <Entity::Vertex>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Edge>() instead.")]]
-    auto edge_props_begin()     const {return persistent_props_begin<Entity::Edge>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Edge>() instead.")]]
-    auto edge_props_end()       const {return persistent_props_end  <Entity::Edge>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfEdge>() instead.")]]
-    auto halfedge_props_begin() const {return persistent_props_begin<Entity::HalfEdge>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfEdge>() instead.")]]
-    auto halfedge_props_end()   const {return persistent_props_end  <Entity::HalfEdge>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Face>() instead.")]]
-    auto face_props_begin()     const {return persistent_props_begin<Entity::Face>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Face>() instead.")]]
-    auto face_props_end()       const {return persistent_props_end  <Entity::Face>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfFace>() instead.")]]
-    auto halfface_props_begin() const {return persistent_props_begin<Entity::HalfFace>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::HalfFace>() instead.")]]
-    auto halfface_props_end()   const {return persistent_props_end  <Entity::HalfFace>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Cell>() instead.")]]
-    auto cell_props_begin()     const {return persistent_props_begin<Entity::Cell>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Cell>() instead.")]]
-    auto cell_props_end()       const {return persistent_props_end  <Entity::Cell>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Mesh>() instead.")]]
-    auto mesh_props_begin()     const {return persistent_props_begin<Entity::Mesh>();}
-    [[deprecated("Use persistent_props_{begin,end}<Entity::Mesh>() instead.")]]
-    auto mesh_props_end()       const {return persistent_props_end  <Entity::Mesh>();}
 
+    /** Create new shared vertex property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<VertexPropertyPtr<T>> create_shared_vertex_property(const std::string& _name, const T _def = T())
+    { return create_shared_property<T, Entity::Vertex>(_name, std::move(_def)); }
 
+    /** Create new shared + persistent vertex property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<VertexPropertyPtr<T>> create_persistent_vertex_property(const std::string& _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Vertex>(_name, std::move(_def)); }
+
+    /** Create private vertex property - useful for const meshes
+     */
+    template<typename T>
+    VertexPropertyPtr<T> create_private_vertex_property(std::string _name = {}, const T _def = T()) const
+    { return create_private_vertex_property(_name, std::move(_def)); }
+
+    /** Get existing shared vertex property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<VertexPropertyPtr<T>> get_vertex_property(const std::string& _name);
+
+    /** Get a const view on an existing shared vertex property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<const VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) const;
 
     template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::Vertex>() instead.")]]
     bool vertex_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::Vertex>(_name);
     }
 
+
+
+    ////
+    //// Edge properties:
+    ////
+
+    size_t n_edge_props()     const {return n_props<Entity::Edge>();}
+    auto edge_props_begin()   const {return persistent_props_begin<Entity::Edge>();}
+    auto edge_props_end()     const {return persistent_props_end  <Entity::Edge>();}
+
+    /** Create new shared edge property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<EdgePropertyPtr<T>> create_shared_edge_property(const std::string& _name, const T _def = T())
+    { return create_shared_property<T, Entity::Edge>(_name, std::move(_def)); }
+
+    /** Create new shared + persistent edge property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<EdgePropertyPtr<T>> create_persistent_edge_property(const std::string& _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Edge>(_name, std::move(_def)); }
+
+    /** Create private edge property - useful for const meshes
+     */
+    template<typename T>
+    EdgePropertyPtr<T> create_private_edge_property(std::string _name = {}, const T _def = T()) const
+    { return create_private_edge_property(_name, std::move(_def)); }
+
+    /** Get existing shared edge property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<EdgePropertyPtr<T>> get_edge_property(const std::string& _name);
+
+    /** Get a const view on an existing shared edge property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<const EdgePropertyPtr<T>> get_edge_property(const std::string& _name) const;
+
     template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::Edge>() instead.")]]
     bool edge_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::Edge>(_name);
     }
 
+
+
+    ////
+    //// HalfEdge properties:
+    ////
+
+    size_t n_halfedge_props()     const {return n_props<Entity::HalfEdge>();}
+    auto halfedge_props_begin()   const {return persistent_props_begin<Entity::HalfEdge>();}
+    auto halfedge_props_end()     const {return persistent_props_end  <Entity::HalfEdge>();}
+
+    /** Create new shared halfedge property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<HalfEdgePropertyPtr<T>> create_shared_halfedge_property(const std::string& _name, const T _def = T())
+    { return create_shared_property<T, Entity::HalfEdge>(_name, std::move(_def)); }
+
+    /** Create new shared + persistent halfedge property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<HalfEdgePropertyPtr<T>> create_persistent_halfedge_property(const std::string& _name, const T _def = T())
+    { return create_persistent_property<T, Entity::HalfEdge>(_name, std::move(_def)); }
+
+    /** Create private halfedge property - useful for const meshes
+     */
+    template<typename T>
+    HalfEdgePropertyPtr<T> create_private_halfedge_property(std::string _name = {}, const T _def = T()) const
+    { return create_private_halfedge_property(_name, std::move(_def)); }
+
+    /** Get existing shared halfedge property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<HalfEdgePropertyPtr<T>> get_halfedge_property(const std::string& _name);
+
+    /** Get a const view on an existing shared halfedge property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<const HalfEdgePropertyPtr<T>> get_halfedge_property(const std::string& _name) const;
+
     template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::HalfEdge>() instead.")]]
     bool halfedge_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::HalfEdge>(_name);
     }
 
+
+
+    ////
+    //// Face properties:
+    ////
+
+    size_t n_face_props()     const {return n_props<Entity::Face>();}
+    auto face_props_begin()   const {return persistent_props_begin<Entity::Face>();}
+    auto face_props_end()     const {return persistent_props_end  <Entity::Face>();}
+
+    /** Create new shared face property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<FacePropertyPtr<T>> create_shared_face_property(const std::string& _name, const T _def = T())
+    { return create_shared_property<T, Entity::Face>(_name, std::move(_def)); }
+
+    /** Create new shared + persistent face property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<FacePropertyPtr<T>> create_persistent_face_property(const std::string& _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Face>(_name, std::move(_def)); }
+
+    /** Create private face property - useful for const meshes
+     */
+    template<typename T>
+    FacePropertyPtr<T> create_private_face_property(std::string _name = {}, const T _def = T()) const
+    { return create_private_face_property(_name, std::move(_def)); }
+
+    /** Get existing shared face property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<FacePropertyPtr<T>> get_face_property(const std::string& _name);
+
+    /** Get a const view on an existing shared face property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<const FacePropertyPtr<T>> get_face_property(const std::string& _name) const;
+
     template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::Face>() instead.")]]
     bool face_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::Face>(_name);
     }
 
+
+
+    ////
+    //// HalfFace properties:
+    ////
+
+    size_t n_halfface_props()     const {return n_props<Entity::HalfFace>();}
+    auto halfface_props_begin()   const {return persistent_props_begin<Entity::HalfFace>();}
+    auto halfface_props_end()     const {return persistent_props_end  <Entity::HalfFace>();}
+
+    /** Create new shared halfface property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<HalfFacePropertyPtr<T>> create_shared_halfface_property(const std::string& _name, const T _def = T())
+    { return create_shared_property<T, Entity::HalfFace>(_name, std::move(_def)); }
+
+    /** Create new shared + persistent halfface property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<HalfFacePropertyPtr<T>> create_persistent_halfface_property(const std::string& _name, const T _def = T())
+    { return create_persistent_property<T, Entity::HalfFace>(_name, std::move(_def)); }
+
+    /** Create private halfface property - useful for const meshes
+     */
+    template<typename T>
+    HalfFacePropertyPtr<T> create_private_halfface_property(std::string _name = {}, const T _def = T()) const
+    { return create_private_halfface_property(_name, std::move(_def)); }
+
+    /** Get existing shared halfface property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<HalfFacePropertyPtr<T>> get_halfface_property(const std::string& _name);
+
+    /** Get a const view on an existing shared halfface property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<const HalfFacePropertyPtr<T>> get_halfface_property(const std::string& _name) const;
+
     template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::HalfFace>() instead.")]]
     bool halfface_property_exists(const std::string& _name) const {
-        return property_exists<T, Entity::HalfFace>( _name);
+        return property_exists<T, Entity::HalfFace>(_name);
     }
 
+
+
+    ////
+    //// Cell properties:
+    ////
+
+    size_t n_cell_props()     const {return n_props<Entity::Cell>();}
+    auto cell_props_begin()   const {return persistent_props_begin<Entity::Cell>();}
+    auto cell_props_end()     const {return persistent_props_end  <Entity::Cell>();}
+
+    /** Create new shared cell property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<CellPropertyPtr<T>> create_shared_cell_property(const std::string& _name, const T _def = T())
+    { return create_shared_property<T, Entity::Cell>(_name, std::move(_def)); }
+
+    /** Create new shared + persistent cell property: if the property already exists, return no value.
+     */
+    template<typename T>
+    std::optional<CellPropertyPtr<T>> create_persistent_cell_property(const std::string& _name, const T _def = T())
+    { return create_persistent_property<T, Entity::Cell>(_name, std::move(_def)); }
+
+    /** Create private cell property - useful for const meshes
+     */
+    template<typename T>
+    CellPropertyPtr<T> create_private_cell_property(std::string _name = {}, const T _def = T()) const
+    { return create_private_cell_property(_name, std::move(_def)); }
+
+    /** Get existing shared cell property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<CellPropertyPtr<T>> get_cell_property(const std::string& _name);
+
+    /** Get a const view on an existing shared cell property. If the property does not exist, return no value.
+     */
+    template<typename T>
+    std::optional<const CellPropertyPtr<T>> get_cell_property(const std::string& _name) const;
+
     template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::Cell>() instead.")]]
     bool cell_property_exists(const std::string& _name) const {
-        return property_exists<T, Entity::Cell>( _name);
+        return property_exists<T, Entity::Cell>(_name);
     }
-
-    template <class T>
-    //[[deprecated("Use propery_exists<T, Entity::Mesh>() instead.")]]
-    bool mesh_property_exists(const std::string& _name) const {
-        return property_exists<T, Entity::Mesh>( _name);
-    }
-
 
 
 

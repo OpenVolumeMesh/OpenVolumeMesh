@@ -92,6 +92,7 @@ PropertyStorageT<T>::make_property_ptr()
     });
 }
 
+// aliases for legacy code:
 template<typename T> using VertexPropertyT   = PropertyPtr<T, Entity::Vertex>;
 template<typename T> using EdgePropertyT     = PropertyPtr<T, Entity::Edge>;
 template<typename T> using HalfEdgePropertyT = PropertyPtr<T, Entity::HalfEdge>;
@@ -99,5 +100,14 @@ template<typename T> using FacePropertyT     = PropertyPtr<T, Entity::Face>;
 template<typename T> using HalfFacePropertyT = PropertyPtr<T, Entity::HalfFace>;
 template<typename T> using CellPropertyT     = PropertyPtr<T, Entity::Cell>;
 template<typename T> using MeshPropertyT     = PropertyPtr<T, Entity::Mesh>;
+
+// aliases with more consistent naming:
+template<typename T> using VertexPropertyPtr   = PropertyPtr<T, Entity::Vertex>;
+template<typename T> using EdgePropertyPtr     = PropertyPtr<T, Entity::Edge>;
+template<typename T> using HalfEdgePropertyPtr = PropertyPtr<T, Entity::HalfEdge>;
+template<typename T> using FacePropertyPtr     = PropertyPtr<T, Entity::Face>;
+template<typename T> using HalfFacePropertyPtr = PropertyPtr<T, Entity::HalfFace>;
+template<typename T> using CellPropertyPtr     = PropertyPtr<T, Entity::Cell>;
+template<typename T> using MeshPropertyPtr     = PropertyPtr<T, Entity::Mesh>;
 
 } // Namespace OpenVolumeMesh
