@@ -100,7 +100,7 @@ public:
       std::copy(other.position_.begin(), other.position_.end(),
                 position_.begin());
       return *this;
-    };
+    }
 
     GeometryKernel& operator=(GeometryKernel &&other) = delete;
     GeometryKernel(GeometryKernel&& other) = default;
