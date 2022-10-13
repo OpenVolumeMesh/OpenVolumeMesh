@@ -1,8 +1,9 @@
-Version 3.2.2 (2022-09-15):
+Version 3.2.2 (2022-10-13):
   - Add various convenience property convenience functions, e.g.
         - `mesh.create_{shared, persistent, private}_{vertex, edge, ...}_property()`
         - `mesh.get_{vertex, edge, ...}_property()`
   - Un-deprecate other convenience functions, e.g. mesh.clear_{vertex, ...}_props()
+  - (Fix some compiler warnings)
 
 Version 3.2.1 (2022-08-18):
   - Fix OVMB float endianness (#43)
