@@ -272,8 +272,8 @@ class VectorT {
         /// component-wise self-multiplication
         template<typename OtherScalar>
         auto operator*=(const VectorT<OtherScalar, DIM>& _rhs) ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] * *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] * *_rhs.data()), Scalar>::value,
                 vector_type&>::type {
             for (int i = 0; i < DIM; ++i) {
                 data()[i] *= _rhs.data()[i];
@@ -284,8 +284,8 @@ class VectorT {
         /// component-wise self-division
         template<typename OtherScalar>
         auto operator/=(const VectorT<OtherScalar, DIM>& _rhs) ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] / *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] / *_rhs.data()), Scalar>::value,
                 vector_type&>::type {
             for (int i = 0; i < DIM; ++i) {
                 data()[i] /= _rhs.data()[i];
@@ -296,8 +296,8 @@ class VectorT {
         /// vector difference from this
         template<typename OtherScalar>
         auto operator-=(const VectorT<OtherScalar, DIM>& _rhs) ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] - *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] - *_rhs.data()), Scalar>::value,
                 vector_type&>::type {
             for (int i = 0; i < DIM; ++i) {
                 data()[i] -= _rhs.data()[i];
@@ -308,8 +308,8 @@ class VectorT {
         /// vector self-addition
         template<typename OtherScalar>
         auto operator+=(const VectorT<OtherScalar, DIM>& _rhs) ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] + *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] + *_rhs.data()), Scalar>::value,
                 vector_type&>::type {
             for (int i = 0; i < DIM; ++i) {
                 data()[i] += _rhs.data()[i];
@@ -320,8 +320,8 @@ class VectorT {
         /// component-wise vector multiplication
         template<typename OtherScalar>
         auto operator*(const VectorT<OtherScalar, DIM>& _rhs) const ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] * *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] * *_rhs.data()), Scalar>::value,
                 vector_type>::type {
             return vector_type(*this) *= _rhs;
         }
@@ -329,8 +329,8 @@ class VectorT {
         /// component-wise vector division
         template<typename OtherScalar>
         auto operator/(const VectorT<OtherScalar, DIM>& _rhs) const ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] / *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] / *_rhs.data()), Scalar>::value,
                 vector_type>::type {
             return vector_type(*this) /= _rhs;
         }
@@ -338,8 +338,8 @@ class VectorT {
         /// component-wise vector addition
         template<typename OtherScalar>
         auto operator+(const VectorT<OtherScalar, DIM>& _rhs) const ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] + *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] + *_rhs.data()), Scalar>::value,
                 vector_type>::type {
             return vector_type(*this) += _rhs;
         }
@@ -347,8 +347,8 @@ class VectorT {
         /// component-wise vector difference
         template<typename OtherScalar>
         auto operator-(const VectorT<OtherScalar, DIM>& _rhs) const ->
-            typename std::enable_if<
-                sizeof(decltype(this->values_[0] - *_rhs.data())) >= 0,
+            typename std::enable_if<std::is_convertible<
+                decltype(this->values_[0] - *_rhs.data()), Scalar>::value,
                 vector_type>::type {
             return vector_type(*this) -= _rhs;
         }
@@ -691,9 +691,9 @@ auto operator*(const OtherScalar& _s, const VectorT<Scalar, DIM> &rhs) ->
 /// output a vector by printing its space-separated compontens
 template<typename Scalar, int DIM>
 auto operator<<(std::ostream& os, const VectorT<Scalar, DIM> &_vec) ->
-    typename std::enable_if<
-        sizeof(decltype(os << _vec[0])) >= 0, std::ostream&>::type {
-
+    typename std::enable_if_t<
+        sizeof(decltype(os << _vec[0])) >= 0, std::ostream&>
+{
     os << _vec[0];
     for (size_t i = 1; i < DIM; ++i) {
         os << " " << _vec[i];
@@ -704,8 +704,9 @@ auto operator<<(std::ostream& os, const VectorT<Scalar, DIM> &_vec) ->
 /// read the space-separated components of a vector from a stream
 template<typename Scalar, int DIM>
 auto operator>> (std::istream& is, VectorT<Scalar, DIM> &_vec) ->
-    typename std::enable_if<
-        sizeof(decltype(is >> _vec[0])) >= 0, std::istream &>::type {
+    typename std::enable_if_t<
+        sizeof(decltype(is >> _vec[0])) >= 0, std::istream &>
+{
     for (size_t i = 0; i < DIM; ++i)
         is >> _vec[i];
     return is;
