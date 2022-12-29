@@ -40,5 +40,12 @@ bool BoundaryItemIter<CellIter, CellHandle>::has_incidences() const {
     return true;
 }
 
+template class OVM_EXPORT BoundaryItemIter<VertexIter, VertexHandle>;
+template class OVM_EXPORT BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>;
+template class OVM_EXPORT BoundaryItemIter<EdgeIter, EdgeHandle>;
+template class OVM_EXPORT BoundaryItemIter<HalfFaceIter, HalfFaceHandle>;
+template class OVM_EXPORT BoundaryItemIter<FaceIter, FaceHandle>;
+template class OVM_EXPORT BoundaryItemIter<CellIter, CellHandle>;
+
 
 } // namespace OpenVolumeMesh

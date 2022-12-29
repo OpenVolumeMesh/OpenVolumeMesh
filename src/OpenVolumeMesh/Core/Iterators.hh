@@ -90,27 +90,27 @@
 namespace OpenVolumeMesh {
 
 
-template class OVM_EXPORT GenericCirculator<detail::VertexIHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::VertexEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::VertexHalfFaceIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::VertexIHalfEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::VertexEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::VertexHalfFaceIterImpl>;
 
-template class OVM_EXPORT GenericCirculator<detail::HalfEdgeFaceIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::HalfEdgeFaceIterImpl>;
 
-template class OVM_EXPORT GenericCirculator<detail::EdgeHalfFaceIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::EdgeFaceIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::EdgeCellIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::EdgeHalfFaceIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::EdgeFaceIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::EdgeCellIterImpl>;
 
-template class OVM_EXPORT GenericCirculator<detail::HalfFaceHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::HalfFaceEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::HalfFaceHalfEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::HalfFaceEdgeIterImpl>;
 
-template class OVM_EXPORT GenericCirculator<detail::FaceVertexIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::FaceHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::FaceEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::FaceVertexIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::FaceHalfEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::FaceEdgeIterImpl>;
 
-template class OVM_EXPORT GenericCirculator<detail::CellHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::CellEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::CellHalfFaceIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::CellFaceIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::CellHalfEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::CellEdgeIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::CellHalfFaceIterImpl>;
+extern template class OVM_EXPORT GenericCirculator<detail::CellFaceIterImpl>;
 
 
 
