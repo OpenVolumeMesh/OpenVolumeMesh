@@ -2,6 +2,7 @@ SET(SOURCE_FILES
     unittests_attribs.cc
     unittests_basics.cc
     unittests_files.cc
+    unittests_local_topology.cc
     unittests_common.cc
     unittests.cc
     unittests_swap_entities.cc

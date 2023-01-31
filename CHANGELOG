@@ -1,3 +1,9 @@
+Version 3.3.0 (2023-01-31):
+  - New: Unstable/ for work-in-progress APIs
+  - New: local topology helper classes in Unstable/Topology/:
+        - Consistent local entity labeling
+        - TetTopology and TriangleTopology
+
 Version 3.2.2 (2022-10-13):
   - Add various convenience property convenience functions, e.g.
         - `mesh.create_{shared, persistent, private}_{vertex, edge, ...}_property()`
