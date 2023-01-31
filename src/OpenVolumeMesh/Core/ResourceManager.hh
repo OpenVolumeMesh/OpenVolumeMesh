@@ -244,11 +244,6 @@ public:
     template<class T> CellPropertyT<T>     request_cell_property    (const std::string& _name = std::string(), const T _def = T());
     template<class T> MeshPropertyT<T>     request_mesh_property    (const std::string& _name = std::string(), const T _def = T());
 
-    ///////////////////////////////////////////////////////////////////////
-    //// convenience functions for properties of various types:        ////
-    //// generated using codegen/ResourceManager_convenience_functions ////
-    ///////////////////////////////////////////////////////////////////////
-
 
     ////
     //// Vertex properties:
@@ -274,7 +269,7 @@ public:
      */
     template<typename T>
     VertexPropertyPtr<T> create_private_vertex_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_vertex_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::Vertex>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared vertex property. If the property does not exist, return no value.
      */
@@ -321,7 +316,7 @@ public:
      */
     template<typename T>
     EdgePropertyPtr<T> create_private_edge_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_edge_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::Edge>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared edge property. If the property does not exist, return no value.
      */
@@ -368,7 +363,7 @@ public:
      */
     template<typename T>
     HalfEdgePropertyPtr<T> create_private_halfedge_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_halfedge_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::HalfEdge>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared halfedge property. If the property does not exist, return no value.
      */
@@ -415,7 +410,7 @@ public:
      */
     template<typename T>
     FacePropertyPtr<T> create_private_face_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_face_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::Face>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared face property. If the property does not exist, return no value.
      */
@@ -462,7 +457,7 @@ public:
      */
     template<typename T>
     HalfFacePropertyPtr<T> create_private_halfface_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_halfface_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::HalfFace>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared halfface property. If the property does not exist, return no value.
      */
@@ -509,7 +504,7 @@ public:
      */
     template<typename T>
     CellPropertyPtr<T> create_private_cell_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_cell_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::Cell>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared cell property. If the property does not exist, return no value.
      */
@@ -529,8 +524,6 @@ public:
     bool cell_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::Cell>(_name);
     }
-
-
 
 
 
