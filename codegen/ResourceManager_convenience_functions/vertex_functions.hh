@@ -28,12 +28,16 @@
     /** Get existing shared vertex property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<VertexPropertyPtr<T>> get_vertex_property(const std::string& _name);
+    std::optional<VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) {
+        return get_property<T, Entity::Vertex>(_name);
+    }
 
     /** Get a const view on an existing shared vertex property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) const;
+    std::optional<const VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) const {
+        return get_property<T, Entity::Vertex>(_name);
+    }
 
     template <class T>
     bool vertex_property_exists(const std::string& _name) const {

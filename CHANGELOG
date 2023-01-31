@@ -1,4 +1,5 @@
 Version 3.3.0 (2023-01-31):
+  - Bugfix: get_*_property() convenience functions were declared but not defined.
   - New: Unstable/ for work-in-progress APIs
   - New: local topology helper classes in Unstable/Topology/:
         - Consistent local entity labeling

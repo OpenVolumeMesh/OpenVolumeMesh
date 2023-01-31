@@ -279,12 +279,16 @@ public:
     /** Get existing shared vertex property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<VertexPropertyPtr<T>> get_vertex_property(const std::string& _name);
+    std::optional<VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) {
+        return get_property<T, Entity::Vertex>(_name);
+    }
 
     /** Get a const view on an existing shared vertex property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) const;
+    std::optional<const VertexPropertyPtr<T>> get_vertex_property(const std::string& _name) const {
+        return get_property<T, Entity::Vertex>(_name);
+    }
 
     template <class T>
     bool vertex_property_exists(const std::string& _name) const {
@@ -322,12 +326,16 @@ public:
     /** Get existing shared edge property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<EdgePropertyPtr<T>> get_edge_property(const std::string& _name);
+    std::optional<EdgePropertyPtr<T>> get_edge_property(const std::string& _name) {
+        return get_property<T, Entity::Edge>(_name);
+    }
 
     /** Get a const view on an existing shared edge property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const EdgePropertyPtr<T>> get_edge_property(const std::string& _name) const;
+    std::optional<const EdgePropertyPtr<T>> get_edge_property(const std::string& _name) const {
+        return get_property<T, Entity::Edge>(_name);
+    }
 
     template <class T>
     bool edge_property_exists(const std::string& _name) const {
@@ -365,12 +373,16 @@ public:
     /** Get existing shared halfedge property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<HalfEdgePropertyPtr<T>> get_halfedge_property(const std::string& _name);
+    std::optional<HalfEdgePropertyPtr<T>> get_halfedge_property(const std::string& _name) {
+        return get_property<T, Entity::HalfEdge>(_name);
+    }
 
     /** Get a const view on an existing shared halfedge property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const HalfEdgePropertyPtr<T>> get_halfedge_property(const std::string& _name) const;
+    std::optional<const HalfEdgePropertyPtr<T>> get_halfedge_property(const std::string& _name) const {
+        return get_property<T, Entity::HalfEdge>(_name);
+    }
 
     template <class T>
     bool halfedge_property_exists(const std::string& _name) const {
@@ -408,12 +420,16 @@ public:
     /** Get existing shared face property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<FacePropertyPtr<T>> get_face_property(const std::string& _name);
+    std::optional<FacePropertyPtr<T>> get_face_property(const std::string& _name) {
+        return get_property<T, Entity::Face>(_name);
+    }
 
     /** Get a const view on an existing shared face property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const FacePropertyPtr<T>> get_face_property(const std::string& _name) const;
+    std::optional<const FacePropertyPtr<T>> get_face_property(const std::string& _name) const {
+        return get_property<T, Entity::Face>(_name);
+    }
 
     template <class T>
     bool face_property_exists(const std::string& _name) const {
@@ -451,12 +467,16 @@ public:
     /** Get existing shared halfface property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<HalfFacePropertyPtr<T>> get_halfface_property(const std::string& _name);
+    std::optional<HalfFacePropertyPtr<T>> get_halfface_property(const std::string& _name) {
+        return get_property<T, Entity::HalfFace>(_name);
+    }
 
     /** Get a const view on an existing shared halfface property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const HalfFacePropertyPtr<T>> get_halfface_property(const std::string& _name) const;
+    std::optional<const HalfFacePropertyPtr<T>> get_halfface_property(const std::string& _name) const {
+        return get_property<T, Entity::HalfFace>(_name);
+    }
 
     template <class T>
     bool halfface_property_exists(const std::string& _name) const {
@@ -494,17 +514,24 @@ public:
     /** Get existing shared cell property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<CellPropertyPtr<T>> get_cell_property(const std::string& _name);
+    std::optional<CellPropertyPtr<T>> get_cell_property(const std::string& _name) {
+        return get_property<T, Entity::Cell>(_name);
+    }
 
     /** Get a const view on an existing shared cell property. If the property does not exist, return no value.
      */
     template<typename T>
-    std::optional<const CellPropertyPtr<T>> get_cell_property(const std::string& _name) const;
+    std::optional<const CellPropertyPtr<T>> get_cell_property(const std::string& _name) const {
+        return get_property<T, Entity::Cell>(_name);
+    }
 
     template <class T>
     bool cell_property_exists(const std::string& _name) const {
         return property_exists<T, Entity::Cell>(_name);
     }
+
+
+
 
 
 };
