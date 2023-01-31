@@ -1,40 +1,16 @@
------
-                            OpenVolumeMesh                                 
-        Copyright (C) 2011-2018 by Computer Graphics Group, RWTH Aachen         
-                         www.openvolumemesh.org                             
------
-                                                                           
-  OpenVolumeMesh is free software: you can redistribute it and/or modify   
-  it under the terms of the GNU Lesser General Public License as           
-  published by the Free Software Foundation, either version 3 of           
-  the License, or (at your option) any later version with the              
-  following exceptions:                                                    
-                                                                           
-  OpenVolumeMesh is distributed in the hope that it will be useful,        
-  but WITHOUT ANY WARRANTY; without even the implied warranty of           
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            
-  GNU Lesser General Public License for more details.                      
-                                                                           
-  You should have received a copy of the GNU LesserGeneral Public          
-  License along with OpenVolumeMesh. If not,                              
-  see <http://www.gnu.org/licenses/>.                                      
-                                                                           
+# OpenVolumeMesh
 
+![OpenVolumeMesh Logo](/documentation/images/OpenVolumeMesh_text_128.png)
 
-# Overview:
+A generic C++ data structure for arbitrary polyhedral meshes,
+with specializations for tetrahedral and hexahedral meshes.
 
-0. Introduction
-1. System Requirements
-2. Building OpenVolumeMesh
-3. License Information
+[[_TOC_]]
 
+## Introduction
 
-# 0. Introduction
-
-Thank you for downloading and using the OpenVolumeMesh library. OpenVolumeMesh
-is a generic data structure for the comfortable handling of arbitrary
-polyhedral meshes. Its concepts are closely related to OpenMesh
-<http://www.openmesh.org>. In particular, OpenVolumeMesh carries the general
+The concepts of OVM are closely related to [OpenMesh](http://www.openmesh.org).
+In particular, OpenVolumeMesh carries the general
 idea of storing edges as so-called (directed) half-edges over to the face
 definitions. So, faces are split up into so-called half-faces having opposing
 orientations. Furthermore, in OpenVolumeMesh the data is arranged in a top-down
@@ -49,10 +25,10 @@ adjacencies, are used to provide a set of iterators and circulators that are
 comfortable in use. As in OpenMesh, OpenVolumeMesh provides an entirely generic
 underlying property system that allows attaching properties of any kind to the
 entities. In order to learn more about the implementational details of
-OpenVolumeMesh, please refer to the only documentation which is available
+OpenVolumeMesh, please refer to the online documentation available
 at <http://openvolumemesh.org/Documentation/OpenVolumeMesh-Doc-Latest>.
 
-OpenVolumeMesh is entirely written in C++ making heavy use of the
+OpenVolumeMesh is entirely written in C++, making heavy use of the
 standard template library as well as template programming paradigms.
 Although OpenVolumeMesh has been developed to the best of my knowledge,
 it does not claim to be free from defects nor does it raises the claim to
@@ -64,40 +40,34 @@ system (gitlab issue tracker), which you find at
 
 <https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh>,
 
-or you can send them directly to the following e-mail address which is
+or you can e-mail them directly to <martin.heistermann@unibe.ch> or <moebius@cs.rwth-aachen.de>.
 
-<moebius@cs.rwth-aachen.de>.
-
-
-# 1. System Requirements
-
-OpenVolumeMesh is shipped as source project and can be built on all common
-architectures and operating systems including:
-
-- Windows with Visual Studio 19.10 or newer
-
-- MacOSX with XCode 12.5 or newer
-
-- Linux with GCC 7 or Clang 6 or newer
-
-Note that OpenVolumeMesh uses CMake as build system, so make sure that
-the latest version of CMake is installed on your computer. Download
-CMake under <http://www.cmake.org>.
-
-Note also that, in order to build the documentation, you will need to
-have Doxygen installed on your computer. Download Doxygen under
-<http://www.doxygen.org>. The use of Doxygen is not mandatory though.
+The initial version of OpenVolumeMesh is described in detail in [
+Kremer, M., Bommes, D., Kobbelt, L. (2013). *OpenVolumeMesh – A Versatile Index-Based Data Structure for 3D Polytopal Complexes*. IMR 2012](https://graphics.rwth-aachen.de/media/papers/MKremer_OVM.pdf)
 
 
-# 2. Building OpenVolumeMesh
+## Building and linking OpenVolumeMesh
 
-OpenVolumeMesh is equipped with a CMake build system <http://www.cmake.org>.
-Make sure that at least version 3.12 of CMake is installed on your computer.
-Once CMake is installed, perform the following steps (on Linux, Mac OSX):
+You can build and install OpenVolumeMesh as static or shared library which can be linked
+into C++ projects using any build system.
 
-- Create a build directory somewhere outside the source directory
-  of OpenVolumeMesh. Name it e.g. "OVM-build-release", or whatever
-  name might be suitable.
+If your project uses CMake, you can integrate OpenVolumeMesh into
+its build either using `add_subdirectory` to build OVM together with your project,
+or using `find_package(OpenVolumeMesh)` to find a previously-installed standalone
+library build.
+
+Either option produces an `OpenVolumeMesh::OpenVolumeMesh` target.
+
+### Build requirements
+
+* [CMake](http://www.cmake.org) 3.12 or newer
+* A C++17-compatible compiler (tested with GCC, Clang and MSVC)
+* (Optional) [Doxyen](http://www.doxygen.org) for building the reference documentation
+* (Optional, downloaded by CMake) [Google Test](https://github.com/google/googletest.git) for building the unit test suite.
+
+### Command-line build
+
+- Create a new build directory, e.g. "OVM-build-release", or whatever name might be suitable.
 
 - Change into the recently created directory and type
   "cmake /path/to/OpenVolumeMesh/sources".
@@ -105,8 +75,21 @@ Once CMake is installed, perform the following steps (on Linux, Mac OSX):
 - If you want to change the build configuration, say from debug to release,
   type `ccmake .` or `cmake-gui .`.
 
-- Once everything is configured to your satisfaction, type "make" followed
-  by "sudo make install" in order to build and install the library.
+- Once everything is configured to your satisfaction, type `cmake --build .` followed
+  by `sudo cmake --build . -t install ` in order to build and install the library.
+
+### MacOS/XCode build
+
+- You can use cmake to generate XCode project files
+
+### Windows / Visual Studio build
+
+- You can either directly open the project using Visual Studio's CMake integration, or generate project files by using cmake directly.
+
+#### Using Visual Studio's CMake integration
+- TODO
+
+#### Generating project files
 
 On Windows, start the CMake gui tool and set the path to OpenVolumeMesh's
 sources. Then select the target project type (Visual Studio 20xx)
@@ -115,8 +98,74 @@ click on "Generate". You will now find a Visual Studio project file
 in the specified build folder (which is "Build" per default). Open this
 file in Visual Studio and select "Build all".
 
+## Concepts
 
-# 3. License Information
+### Supported mesh types
+- Manifold volumetric meshes, limited support for non-manifold configurations
+- self-adjacent entities
+
+TODO: define exactly what configurations are allowed
+
+### Entities
+
+OpenVolumeMesh Entities are comprised of
+- Vertices
+- Edges and half-edges (directed edges), made of two vertices
+- Faces and half-faces (directed faces), made up of a sequence of half-edges
+- Cells, consisting of a set of half-faces
+
+![Half-entities diagram](/documentation/images/halfedge_halfface.png)
+![Entity Hierarchy diagram](/documentation/images/volume_mesh_hierarchy.png)
+
+Entities are always stored in a top-down manner, i.e., entities of dimension $n$
+are defined by their constituient entities of dimension $n-1$.
+
+For every entity, there is a `Handle` type, which is a type-safe way of indexing meshes.
+
+### Bottom-Up Incidence relations
+
+For efficient mesh nagivation, OpenVolumMesh also provides bottom-up incidence
+relations, i.e., iterators for higher-dimensional entities.
+This support is optional: The different bottom-up incidences can be disabled
+for lower memory usage and higher performance.
+
+### Properties
+
+OpenVolumeMesh supports storing data with any entity type using properties.
+
+TODO: show examples
+
+### Attributes
+
+TODO
+
+### File I/O
+
+- `.vtk`
+- `.ovm`: ASCII based file format
+- `.ovmb`: efficient binary file format
+
+## Getting Started
+
+TODO
+
+## Related projects
+
+Notable users of OVM include:
+- [OpenFlipper](https://openflipper.org) - Interactive framework and GUI for geometry processing, supports visualisation, generation and processing of volumetric meshes using OVM
+- [libHexEx](https://www.graphics.rwth-aachen.de/software/libHexEx/) - Robust extraction of hexahedral meshes from integer-grid maps
+- Volume Parametrization Quantization for Hexahedral Meshing:
+    - [TrulySeamless3D](https://github.com/HendrikBrueckler/TrulySeamless3D): Numerical sanitization of volumetric seamless maps
+    - [MC3D](https://github.com/HendrikBrueckler/MC3D): Structured Volume Decomposition
+    - [QGP3D](https://github.com/HendrikBrueckler/QGP3D): Quantization for volumetric motorcycle complexes
+
+Other C++ libraries that aid in handling unstructured volumetric meshes include:
+
+- [CGoGN](https://cgogn.github.io/) - combinatorial maps
+- [CGAL Combinatorial Maps](https://doc.cgal.org/latest/Combinatorial_map/index.html)
+- [CinoLib](https://github.com/mlivesu/cinolib)
+
+## License Information
 
 OpenVolumeMesh is free software licensed under the terms of the
 GNU Lesser General Public License Version 3 as published by the Free Software
@@ -125,3 +174,4 @@ above mentioned license terms. A copy of the license can be found
 in the license sub-folder of this source-tree or under
 <http://www.gnu.org/licenses>. By downloading and using the OpenVolumeMesh
 library you automatically agree to these terms.
+
