@@ -3,34 +3,9 @@
 
 namespace OpenVolumeMesh {
 
-template <>
-size_t BoundaryItemIter<VertexIter, VertexHandle>::n_items() const {
-    return BaseIter::mesh()->n_vertices();
-}
-
-template <>
-size_t BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>::n_items() const {
-    return BaseIter::mesh()->n_halfedges();
-}
-
-template <>
-size_t BoundaryItemIter<EdgeIter, EdgeHandle>::n_items() const {
-    return BaseIter::mesh()->n_edges();
-}
-
-template <>
-size_t BoundaryItemIter<HalfFaceIter, HalfFaceHandle>::n_items() const {
-    return BaseIter::mesh()->n_halffaces();
-}
-
-template <>
-size_t BoundaryItemIter<FaceIter, FaceHandle>::n_items() const {
-    return BaseIter::mesh()->n_faces();
-}
-
-template <>
-size_t BoundaryItemIter<CellIter, CellHandle>::n_items() const {
-    return BaseIter::mesh()->n_cells();
+template <class Iter, class Handle>
+size_t BoundaryItemIter<Iter, Handle>::n_items() const {
+    return BaseIter::mesh()->template n<typename Handle::EntityTag>();
 }
 
 template <>
@@ -64,6 +39,13 @@ template <>
 bool BoundaryItemIter<CellIter, CellHandle>::has_incidences() const {
     return true;
 }
+
+template class OVM_EXPORT BoundaryItemIter<VertexIter, VertexHandle>;
+template class OVM_EXPORT BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>;
+template class OVM_EXPORT BoundaryItemIter<EdgeIter, EdgeHandle>;
+template class OVM_EXPORT BoundaryItemIter<HalfFaceIter, HalfFaceHandle>;
+template class OVM_EXPORT BoundaryItemIter<FaceIter, FaceHandle>;
+template class OVM_EXPORT BoundaryItemIter<CellIter, CellHandle>;
 
 
 } // namespace OpenVolumeMesh
