@@ -23,7 +23,7 @@
      */
     template<typename T>
     VertexPropertyPtr<T> create_private_vertex_property(std::string _name = {}, const T _def = T()) const
-    { return create_private_vertex_property(std::move(_name), std::move(_def)); }
+    { return create_private_property<T, Entity::Vertex>(std::move(_name), std::move(_def)); }
 
     /** Get existing shared vertex property. If the property does not exist, return no value.
      */
