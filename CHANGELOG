@@ -1,9 +1,10 @@
-Version 3.3.0 (2023-01-31):
+Version 3.3.0 (???):
   - Bugfix: get_*_property() convenience functions were declared but not defined.
   - New: Unstable/ for work-in-progress APIs
   - New: local topology helper classes in Unstable/Topology/:
         - Consistent local entity labeling
         - TetTopology and TriangleTopology
+  - New: std::hash specialization for handle types, so they can be used in std::unordered_map
 
 Version 3.2.2 (2022-10-13):
   - Add various convenience property convenience functions, e.g.

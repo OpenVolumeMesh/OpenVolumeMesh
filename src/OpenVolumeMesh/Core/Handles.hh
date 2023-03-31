@@ -39,6 +39,7 @@
 #include <vector>
 #include <cassert>
 #include <limits>
+#include <functional>
 
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <functional>
@@ -50,33 +51,32 @@ namespace OpenVolumeMesh {
 
 namespace detail {
 
-template <typename Derived>
-class OVM_EXPORT HandleT
+class OVM_EXPORT HandleBase
 {
 public:
-    constexpr HandleT() = default;
-    explicit constexpr HandleT(int _idx) : idx_(_idx) {}
+    constexpr HandleBase() = default;
+    explicit constexpr HandleBase(int _idx) : idx_(_idx) {}
 
-    constexpr HandleT(const HandleT& _idx) = default;
-    constexpr HandleT(HandleT&& _idx) = default;
-    HandleT& operator=(const HandleT& _idx) = default;
-    HandleT& operator=(HandleT&& _idx) = default;
+    constexpr HandleBase(const HandleBase& _idx) = default;
+    constexpr HandleBase(HandleBase&& _idx) = default;
+    HandleBase& operator=(const HandleBase& _idx) = default;
+    HandleBase& operator=(HandleBase&& _idx) = default;
 
     [[deprecated]]
-    HandleT& operator=(int _idx) {
+    HandleBase& operator=(int _idx) {
         idx_ = _idx;
         return *this;
     }
 
     bool is_valid() const { return idx_ >= 0; }
 
-    constexpr bool operator<(const HandleT& _idx) const { return (this->idx_ < _idx.idx_); }
+    constexpr bool operator<(const HandleBase& _idx) const { return (this->idx_ < _idx.idx_); }
 
-    constexpr bool operator>(const HandleT& _idx) const { return (this->idx_ > _idx.idx_); }
+    constexpr bool operator>(const HandleBase& _idx) const { return (this->idx_ > _idx.idx_); }
 
-    constexpr bool operator==(const HandleT& _h) const { return _h.idx_ == this->idx_; }
+    constexpr bool operator==(const HandleBase& _h) const { return _h.idx_ == this->idx_; }
 
-    constexpr bool operator!=(const HandleT& _h) const { return _h.idx_ != this->idx_; }
+    constexpr bool operator!=(const HandleBase& _h) const { return _h.idx_ != this->idx_; }
 
     constexpr const int& idx() const { return idx_; }
     constexpr int& idx_mutable() { return idx_; }
@@ -89,7 +89,15 @@ public:
 
     /// make handle invalid
     void reset() { idx_ = -1; }
+private:
+    int idx_ = -1;
+};
 
+template <typename Derived>
+class OVM_EXPORT HandleT : public HandleBase
+{
+public:
+    using HandleBase::HandleBase;
     static Derived from_unsigned(size_t _idx)
     {
         if (_idx <= static_cast<size_t>(std::numeric_limits<int>::max())) {
@@ -100,9 +108,8 @@ public:
         }
     }
 
-private:
-    int idx_ = -1;
 };
+
 
 template <typename Derived, typename SuperHandle>
 class SubHandleT : public HandleT<Derived>
@@ -342,3 +349,33 @@ private:
 
 } // Namespace OpenVolumeMesh
 
+template<> struct std::hash<OpenVolumeMesh::VH>
+{
+    std::size_t operator()(OpenVolumeMesh::VH const& h) const noexcept
+    { return std::hash<int>{}(h.idx()); }
+};
+template<> struct std::hash<OpenVolumeMesh::EH>
+{
+    std::size_t operator()(OpenVolumeMesh::EH const& h) const noexcept
+    { return std::hash<int>{}(h.idx()); }
+};
+template<> struct std::hash<OpenVolumeMesh::HEH>
+{
+    std::size_t operator()(OpenVolumeMesh::HEH const& h) const noexcept
+    { return std::hash<int>{}(h.idx()); }
+};
+template<> struct std::hash<OpenVolumeMesh::FH>
+{
+    std::size_t operator()(OpenVolumeMesh::FH const& h) const noexcept
+    { return std::hash<int>{}(h.idx()); }
+};
+template<> struct std::hash<OpenVolumeMesh::HFH>
+{
+    std::size_t operator()(OpenVolumeMesh::HFH const& h) const noexcept
+    { return std::hash<int>{}(h.idx()); }
+};
+template<> struct std::hash<OpenVolumeMesh::CH>
+{
+    std::size_t operator()(OpenVolumeMesh::CH const& h) const noexcept
+    { return std::hash<int>{}(h.idx()); }
+};

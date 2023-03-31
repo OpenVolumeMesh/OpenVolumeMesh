@@ -1,10 +1,11 @@
 SET(SOURCE_FILES
+    unittests.cc
     unittests_attribs.cc
     unittests_basics.cc
     unittests_files.cc
     unittests_local_topology.cc
     unittests_common.cc
-    unittests.cc
+    unittests_handles.cc
     unittests_swap_entities.cc
     unittests_iterators.cc
     unittests_mesh_copies.cc
