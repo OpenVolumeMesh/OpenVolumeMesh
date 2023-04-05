@@ -620,6 +620,9 @@ public:
     /// Set the half-faces of a cell
     void set_cell(CellHandle _ch, const std::vector<HalfFaceHandle>& _hfs);
 
+    /// Recompute cyclic ordering of (half)faces incident to an edge (used by iterators)
+    void reorder_incident_halffaces(EdgeHandle _eh);
+
     /*
      * Non-virtual functions
      */
@@ -991,8 +994,6 @@ protected:
     void compute_edge_bottom_up_incidences();
 
     void compute_face_bottom_up_incidences();
-
-    void reorder_incident_halffaces(EdgeHandle _eh);
 
     // Outgoing halfedges per vertex
     VertexVector<std::vector<HalfEdgeHandle> > outgoing_hes_per_vertex_;
