@@ -5,6 +5,8 @@ Version 3.3.0 (???):
         - Consistent local entity labeling
         - TetTopology and TriangleTopology
   - New: std::hash specialization for handle types, so they can be used in std::unordered_map
+  - Improvement: make TopologyKernel::reorder_incident_halffaces public to properly support existing 
+                 public methods that alter internal data
 
 Version 3.2.2 (2022-10-13):
   - Add various convenience property convenience functions, e.g.
