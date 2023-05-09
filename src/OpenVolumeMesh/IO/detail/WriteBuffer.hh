@@ -3,6 +3,7 @@
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <ostream>
 #include <vector>
+#include <cstdint>
 
 namespace OpenVolumeMesh::IO::detail {
 
