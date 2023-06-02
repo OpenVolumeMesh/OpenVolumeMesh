@@ -2188,8 +2188,6 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(HalfEdgeHandle _heh, Ha
 
 std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh) const
 {
-  assert(!halfface(hfh).halfedges().empty());
-
   return get_halfface_vertices(hfh, halfface(hfh).halfedges().front());
 }
 
@@ -2215,8 +2213,10 @@ std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle h
 {
   std::vector<VertexHandle> vertices;
 
+  // TODO PERF: the use of next_halfedge_in_halfface is very wasteful
   // add vertices of halfface
-  for (unsigned int i = 0; i < halfface(hfh).halfedges().size(); ++i)
+  auto n = valence(hfh.face_handle());
+  for (unsigned int i = 0; i < n; ++i)
   {
     vertices.push_back(halfedge(heh).from_vertex());
     heh = next_halfedge_in_halfface(heh, hfh);
