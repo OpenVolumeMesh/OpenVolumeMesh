@@ -82,8 +82,9 @@ HexahedralMeshTopologyKernel::add_cell(std::vector<HalfFaceHandle> _halffaces, b
         return TopologyKernel::InvalidCellHandle;
     }
     for(std::vector<HalfFaceHandle>::const_iterator it = _halffaces.begin();
-            it != _halffaces.end(); ++it) {
-        if(TopologyKernel::halfface(*it).halfedges().size() != 4) {
+            it != _halffaces.end(); ++it)
+    {
+        if (valence(it->face_handle()) != 4) {
 #ifndef NDEBUG
             std::cerr << "Incident face does not have valence four! Aborting." << std::endl;
 #endif
