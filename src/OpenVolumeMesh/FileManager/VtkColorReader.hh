@@ -68,23 +68,23 @@ namespace OpenVolumeMesh {
   namespace Reader {
 
     using namespace OpenVolumeMesh::Geometry;
-    
+
     //=======================================
-    
+
     /**
      * \class VtkColorReader
      * \brief Read mesh data from vtk DataFile Version 2.0
      *
      * \todo Heriting from FileManager class would possibly be better
      * but FileManager class hasn't been design to handle this kind of format
-     * since it appears it has been specialized for OVM format. 
+     * since it appears it has been specialized for OVM format.
      * A recommendation would be to rewrite FileManager class in order to be generic.
      */
 
     class VtkColorReader {
 
     public:
-      
+
       class CellWithColor {
 
       public:
@@ -104,14 +104,14 @@ namespace OpenVolumeMesh {
 
 	std::vector<uint32_t> nodes;
       }; // class CellWithColor
-      
-      
+
+
       VtkColorReader() {
-	
+
       }
-      
+
       ~VtkColorReader() {
-	
+
       }
 
       inline void nextLine(std::istream &_ifs, std::string &_string) const {
@@ -119,8 +119,10 @@ namespace OpenVolumeMesh {
 	  std::getline(_ifs, _string);
 	  if (_string.size() != 0)
 	    break;
-	  if(_ifs.eof())
-	    std::cerr << "End of file reached while searching for input!" << std::endl;
+	  if(_ifs.eof()) {
+        std::cerr << "End of file reached while searching for input!" << std::endl;
+        break;
+      }
 	}
 	// Trim Both leading and trailing spaces
 	size_t start = _string.find_first_not_of(" \t\r\n");
@@ -135,16 +137,16 @@ namespace OpenVolumeMesh {
 
       template < typename MeshT>
       inline int addVertex(MeshT &_mesh, CellWithColor & _cell) {
-	
+
 	if (_cell.nodes.size() != 1)
-	  std::cerr << "Expected at least 1 index to add a vertex but got " << _cell.nodes.size() << std::endl;	
-	
+	  std::cerr << "Expected at least 1 index to add a vertex but got " << _cell.nodes.size() << std::endl;
+
 	return _cell.nodes[0];
       } // int addVertex
 
       template < typename MeshT>
       inline int addEdge(MeshT &_mesh, CellWithColor & _cell) {
-	
+
 	if (_cell.nodes.size() != 2)
 	  std::cerr << "Expected 2 indices to add an edge but got " << _cell.nodes.size() << std::endl;
 
@@ -162,13 +164,13 @@ namespace OpenVolumeMesh {
 	  }
 
 
-	
+
 	return heh.idx();
       } // int addEdge
 
       template < typename MeshT>
       inline int addTriangle(MeshT &_mesh, CellWithColor & _cell) {
-	
+
 	if (_cell.nodes.size() != 3)
 	  std::cerr << "Expected 3 indices to add a triangle but got " << _cell.nodes.size() << std::endl;
 
@@ -189,7 +191,7 @@ namespace OpenVolumeMesh {
 	FaceHandle fh = _mesh.face_handle(hfh);
 	triangle_colors[fh] = _cell.color;
 	_mesh.set_persistent(triangle_colors, true);
-	
+
 	return hfh.idx();
       } // int addTriangle
 
@@ -228,10 +230,10 @@ namespace OpenVolumeMesh {
 	      halffacehandles[i] = _mesh.halfface_handle(fh, 0);
 	    }
 
-	
+
 	return _mesh.add_cell(halffacehandles).idx();
-	
-      } // int addTetra 
+
+      } // int addTetra
 
 
       template <class MeshT>
@@ -240,10 +242,10 @@ namespace OpenVolumeMesh {
 	VertexPropertyT<int> vertex_colors = _mesh.template request_vertex_property<int>("vertex_colors");
 	EdgePropertyT<int> edge_colors = _mesh.template request_edge_property<int>("edge_colors");
 	FacePropertyT<int> face_colors = _mesh.template request_face_property<int>("face_colors");
-	CellPropertyT<int> cell_colors = _mesh.template request_cell_property<int>("cell_colors"); 	
+	CellPropertyT<int> cell_colors = _mesh.template request_cell_property<int>("cell_colors");
 	for (auto & current_cell: _cells) {
 	  switch (current_cell.type) {
-	  case 1: // VERTEX	    
+	  case 1: // VERTEX
 	    vertex_colors[OpenVolumeMesh::VertexHandle(current_cell.index)] = current_cell.color;
 	    break;
 	  case 3:  // EDGE
@@ -264,12 +266,12 @@ namespace OpenVolumeMesh {
 	_mesh.set_persistent(edge_colors, true);
 	_mesh.set_persistent(face_colors, true);
 	_mesh.set_persistent(cell_colors, true);
-	
+
 	return true;
-	
+
       }// bool paintMesh
 
-      
+
       template <class MeshT>
       inline bool cells2mesh(std::vector<CellWithColor> &_cells, MeshT &_mesh) {
 	_mesh.enable_bottom_up_incidences(true);
@@ -292,7 +294,7 @@ namespace OpenVolumeMesh {
 	  }
 	}
 	return true;
-	
+
       }// bool cells2mesh
 
       // QUESTION: is it really usefull to initiliaze the properties?
@@ -321,7 +323,7 @@ namespace OpenVolumeMesh {
 	_mesh.set_persistent(cell_colors, true);
 
       } // void initializecolor
-      
+
       /**
        * \brief Read vtk DataFile Version 2.0 ASCCI from an std::istream
        *
@@ -335,7 +337,7 @@ namespace OpenVolumeMesh {
        *                                    to directly compute the bottom-up incidences
        *                                    for the mesh. (Note: These are needed for
        *                                    some iterators to work, see documentation)
-       */	      
+       */
       template <class MeshT>
       bool readStream(std::istream &_istream, MeshT &_mesh, bool _topologyCheck = true, bool _computeBottomUpIncidences = true)
       {
@@ -343,17 +345,17 @@ namespace OpenVolumeMesh {
 	std::stringstream sstr;
 	std::string current_line;
 	std::string s_tmp;
-	uint64_t c = 0u;	
+	uint64_t c = 0u;
 	typedef typename MeshT::PointT Point;
-	Point pt = Point(0.0, 0.0, 0.0);	
-	std::vector<CellWithColor> cells;	
-	  
+	Point pt = Point(0.0, 0.0, 0.0);
+	std::vector<CellWithColor> cells;
+
 	_mesh.clear(false);
 	// Temporarily disable bottom-up incidences
 	// since it's way faster to first add all the
 	// geometry and compute them in one pass afterwards
 	_mesh.enable_bottom_up_incidences(false);
-    
+
 	/*    H E A D E R   */
 	nextLine(_istream, current_line);
 	if (current_line != "# vtk DataFile Version 2.0") {
@@ -362,7 +364,7 @@ namespace OpenVolumeMesh {
 	}
 
 	/*    A S C I I   */
-	std::getline(_istream, current_line); // info line that is ignored	
+	std::getline(_istream, current_line); // info line that is ignored
 	nextLine(_istream, current_line);
 	if (current_line != "ASCII") {
 	  std::cerr << "Only ASCII files are supported!" << std::endl;
@@ -383,7 +385,7 @@ namespace OpenVolumeMesh {
 	  return false;
 	}
 	sstr.clear();
-	
+
 	/*    P O I N T S    */
 	nextLine(_istream, current_line);
 	sstr.str(current_line);
@@ -402,7 +404,7 @@ namespace OpenVolumeMesh {
 	  _mesh.add_vertex(pt);
 	}
 	sstr.clear();
-	
+
 	/*    C E L L S    */
 	nextLine(_istream, current_line);
 	sstr.str(current_line);
@@ -412,6 +414,7 @@ namespace OpenVolumeMesh {
 	  return false;
 	}
 	sstr >> c; // number of cells
+    cells.reserve(c);
 	for (uint64_t i=0u; i < c; i++) {
 	  sstr.clear();
 	  CellWithColor current_cell;
@@ -427,7 +430,7 @@ namespace OpenVolumeMesh {
 	  cells.push_back(current_cell);
 	}
 	sstr.clear();
-	
+
 	/*    C E L L _ T Y P E S    */
 	nextLine(_istream, current_line);
 	sstr.str(current_line);
@@ -449,55 +452,63 @@ namespace OpenVolumeMesh {
 	nextLine(_istream, current_line);
 	sstr.str(current_line);
 	sstr >> s_tmp;
-	if (s_tmp != "CELL_DATA") {
-	  std::cerr << "Expected _CELL_DATA_ section at this point!" << std::endl;
-	  return false;
-	}
-	sstr >> c; // number of cell_data: it should be equal to the number of cells
-	nextLine(_istream, current_line); // SCALARS subsection
-	nextLine(_istream, current_line); // LOOKUP_TABLE subsection
-	for (auto & current_cell: cells) {
-	  sstr.clear();
-	  nextLine( _istream, current_line);
-	  sstr.str(current_line);
-	  sstr >> current_cell.color;
-	}
+    bool has_color = true;
+        if (s_tmp != "CELL_DATA") {
+          std::cerr << "No _CELL_DATA_ section at this point!" << std::endl;
+          has_color = false;
+        }
+
+        if(has_color) {
+          sstr >> c; // number of cell_data: it should be equal to the number of cells
+          nextLine(_istream, current_line); // SCALARS subsection
+          nextLine(_istream, current_line); // LOOKUP_TABLE subsection
+          for (auto & current_cell: cells) {
+            sstr.clear();
+            nextLine( _istream, current_line);
+            sstr.str(current_line);
+            sstr >> current_cell.color;
+          }
+        }
 
 
-	std::cout << "Data are about to be exported" << std::endl;
-	
-	bool ok = cells2mesh(cells, _mesh);
-	if (!ok) {
-	  std::cerr << "Error while creating the mesh structure!" << std::endl;
-	  return false;
-	}
-	std::cout << "Colors are about to be initialized" << std::endl;
-	
-	initializeColor(_mesh);
+        std::cout << "Data are about to be exported" << std::endl;
 
-	std::cout << "Colors are about to be exported" << std::endl;
-	
-	return paintMesh(cells, _mesh);
+        bool ok = cells2mesh(cells, _mesh);
+        if (!ok) {
+          std::cerr << "Error while creating the mesh structure!" << std::endl;
+          return false;
+        }
+
+        if(has_color) {
+          std::cout << "Colors are about to be initialized" << std::endl;
+
+          initializeColor(_mesh);
+
+          std::cout << "Colors are about to be exported" << std::endl;
+          return paintMesh(cells, _mesh);
+        }
+
+        return true;
 
       } // bool readDataFile
 
-      
+
       template <class MeshT>
       bool readFile(const std::string& _filename, MeshT& _mesh,
 				 bool _topologyCheck=true, bool _computeBottomUpIncidences=true) {
 
 	std::ifstream iff(_filename.c_str(), std::ios::in);
-		
+
 	if(!iff.good()) {
-	  std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;        
+	  std::cerr << "Error: Could not open file " << _filename << " for reading!" << std::endl;
 	  iff.close();
 	  return false;
 	}
 	return readStream(iff, _mesh);
       } // bool readFile
-      
+
     }; // class VtkColorReader
-    
+
   } // namespace Reader
 
 } // namespace OpenVolumemesh
