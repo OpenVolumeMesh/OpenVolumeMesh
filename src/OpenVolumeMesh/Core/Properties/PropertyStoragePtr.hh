@@ -53,7 +53,6 @@ template <typename T, typename Codec>
 class PropertyDecoderT;
 } // namespace IO
 
-/// convenience access to property member functions through a shared_ptr
 template <typename T>
 class PropertyStoragePtr
 {
