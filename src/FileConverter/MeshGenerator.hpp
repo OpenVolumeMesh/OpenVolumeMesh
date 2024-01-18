@@ -6,9 +6,9 @@
 #include <algorithm>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/progress.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
+#include <boost/timer/progress_display.hpp>
 
 #include <OpenVolumeMesh/Mesh/PolyhedralMesh.hh>
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
@@ -77,7 +77,7 @@ public:
     void set_num_cells(unsigned int _n) {
 
         if(progress_.get() == NULL) {
-            progress_.reset(new boost::progress_display(_n));
+            progress_.reset(new boost::timer::progress_display(_n));
         }
     }
 
@@ -206,5 +206,5 @@ private:
 
     PolyhedralMesh& mesh_;
 
-    boost::shared_ptr<boost::progress_display> progress_;
+    boost::shared_ptr<boost::timer::progress_display> progress_;
 };
