@@ -3,7 +3,7 @@ cmake_policy(VERSION 3.12.0)
 
 
 project (OpenVolumeMesh
-    VERSION 3.3.0
+    VERSION 3.3.1
     LANGUAGES CXX
     HOMEPAGE_URL https://openvolumemesh.org/
     )
