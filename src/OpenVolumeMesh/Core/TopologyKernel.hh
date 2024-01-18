@@ -552,7 +552,7 @@ public:
     /// Get number of undeleted faces in mesh
     size_t n_logical_faces()      const { return faces_.size() - n_deleted_faces_; }
     /// Get number of undeleted halffaces in mesh
-    size_t n_logical_halffaces()  const { return n_faces() * 2u; }
+    size_t n_logical_halffaces()  const { return n_logical_faces() * 2u; }
     /// Get number of undeleted cells in mesh
     size_t n_logical_cells()      const { return cells_.size() - n_deleted_cells_; }
 

@@ -7,6 +7,7 @@ SET(SOURCE_FILES
     unittests_common.cc
     unittests_handles.cc
     unittests_swap_entities.cc
+    unittests_garbage_collection.cc
     unittests_iterators.cc
     unittests_mesh_copies.cc
     unittests_smart_tagger.cc

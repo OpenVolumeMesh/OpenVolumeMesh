@@ -1,3 +1,6 @@
+Version 3.3.1 (2024-01-18)
+  - Bugfix: n_logical_halffaces() count was incorrect (included deleted faces)
+
 Version 3.3.0 (2023-12-08)
   - Bugfix: get_*_property() convenience functions were declared but not defined.
   - New: Unstable/ for work-in-progress APIs
