@@ -1,4 +1,8 @@
+master:
+  - Bugfix (behavioural change!): TopologyKernel::genus() would return wrong results if garbage collection is required (it used entity counts that included deleted elements)
+
 Version 3.3.1 (2024-01-18)
+  - Bugfix: n_logical_halffaces() count was incorrect (included deleted faces)
   - Bugfix: n_logical_halffaces() count was incorrect (included deleted faces)
 
 Version 3.3.0 (2023-12-08)

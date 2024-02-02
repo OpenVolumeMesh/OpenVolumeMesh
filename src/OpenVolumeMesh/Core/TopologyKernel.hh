@@ -558,10 +558,10 @@ public:
 
     int genus() const {
 
-        int g = (1 - (int)(n_vertices() -
-                           n_edges() +
-                           n_faces() -
-                           n_cells()));
+        int g = (1 - (int)(n_logical_vertices() -
+                           n_logical_edges() +
+                           n_logical_faces() -
+                           n_logical_cells()));
 
         if(g % 2 == 0) return (g / 2);
 
