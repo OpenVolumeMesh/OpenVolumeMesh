@@ -154,6 +154,7 @@ TODO
 Notable users of OVM include:
 - [OpenFlipper](https://openflipper.org) - Interactive framework and GUI for geometry processing, supports visualisation, generation and processing of volumetric meshes using OVM
 - [libHexEx](https://www.graphics.rwth-aachen.de/software/libHexEx/) - Robust extraction of hexahedral meshes from integer-grid maps
+- [AlgoHex](https://www.algohex.eu/) (Automated hexahedral meshing): [libAlgoHex](https://github.com/cgg-bern/AlgoHex)
 - Volume Parametrization Quantization for Hexahedral Meshing:
     - [TrulySeamless3D](https://github.com/HendrikBrueckler/TrulySeamless3D): Numerical sanitization of volumetric seamless maps
     - [MC3D](https://github.com/HendrikBrueckler/MC3D): Structured Volume Decomposition
