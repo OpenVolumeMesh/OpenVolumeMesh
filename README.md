@@ -34,13 +34,7 @@ Although OpenVolumeMesh has been developed to the best of my knowledge,
 it does not claim to be free from defects nor does it raises the claim to
 have inveterate underlying implemented concepts. So, any ambitious developer
 is invited to participate in the development process to make OpenVolumeMesh
-a well-working, reliable, and useful library. Please feel free to commit
-suggestions, bug reports, or patches to the OpenVolumeMesh project management
-system (gitlab issue tracker), which you find at
-
-<https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh>,
-
-or you can e-mail them directly to <martin.heistermann@unibe.ch> or <moebius@cs.rwth-aachen.de>.
+a well-working, reliable, and useful library.
 
 The initial version of OpenVolumeMesh is described in detail in [
 Kremer, M., Bommes, D., Kobbelt, L. (2013). *OpenVolumeMesh – A Versatile Index-Based Data Structure for 3D Polytopal Complexes*. IMR 2012](https://graphics.rwth-aachen.de/media/papers/MKremer_OVM.pdf)
@@ -143,11 +137,17 @@ TODO
 
 - `.vtk`
 - `.ovm`: ASCII based file format
-- `.ovmb`: efficient binary file format
+- `.ovmb`: efficient binary file format with support for custom property (de)serialization
 
-## Getting Started
+## Contributing
 
-TODO
+The main repository is located at
+[VCI Aachen gitlab](https://www.graphics.rwth-aachen.de:9000/OpenVolumeMesh/OpenVolumeMesh),
+which is read-only for the general public.
+We run an official [github mirror](https://github.com/OpenVolumeMesh/OpenVolumeMesh) where you
+can open issues, start discussions and submit pull requests.
+
+Alternatively you can e-mail us at <martin.heistermann@unibe.ch> and <moebius@cs.rwth-aachen.de>.
 
 ## Related projects
 
