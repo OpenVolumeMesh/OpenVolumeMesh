@@ -165,6 +165,7 @@ Other C++ libraries that aid in handling unstructured volumetric meshes include:
 - [CGoGN](https://cgogn.github.io/) - combinatorial maps
 - [CGAL Combinatorial Maps](https://doc.cgal.org/latest/Combinatorial_map/index.html)
 - [CinoLib](https://github.com/mlivesu/cinolib)
+- [MTet: A Mini Tetrahedral Mesh Data Structure](https://github.com/qnzhou/mtet)
 
 ## License Information
 
