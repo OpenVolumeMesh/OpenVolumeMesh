@@ -57,5 +57,42 @@ TEST_F(TetrahedralMeshBase, SmartTaggerEnum) {
     }
 }
 
+TEST_F(TetrahedralMeshBase, SmartTaggerCurrentBase) {
+
+    generateTetrahedralMesh(mesh_);
+
+    auto tagger = SmartTagger<Entity::Vertex, uint8_t, bool>(mesh_, 2);
+    auto vh_true = VH(0);
+    auto vh_false = VH(1);
+
+    tagger.set(vh_true, true);
+    tagger.set(vh_false, false);
+    EXPECT_EQ(tagger.current_base(), 0);
+    EXPECT_EQ(tagger.get(vh_true), true);
+    EXPECT_EQ(tagger.get(vh_false), false);
+
+    for (uint8_t i = 0; i <= std::numeric_limits<uint8_t>::max() - 2*2; i += 2) {
+        tagger.reset();
+        EXPECT_EQ(tagger.current_base(), i + 2);
+
+        EXPECT_EQ(tagger.get(vh_true), false);
+        EXPECT_EQ(tagger.get(vh_false), false);
+        tagger.set(vh_true, true);
+        tagger.set(vh_false, false);
+        EXPECT_EQ(tagger.get(vh_true), true);
+        EXPECT_EQ(tagger.get(vh_false), false);
+    }
+
+    tagger.reset();
+    EXPECT_EQ(tagger.current_base(), 0);
+
+    EXPECT_EQ(tagger.get(vh_true), false);
+    EXPECT_EQ(tagger.get(vh_false), false);
+    tagger.set(vh_true, true);
+    tagger.set(vh_false, false);
+    EXPECT_EQ(tagger.get(vh_true), true);
+    EXPECT_EQ(tagger.get(vh_false), false);
+}
+
 
 // TODO: test SmartTagger overflow

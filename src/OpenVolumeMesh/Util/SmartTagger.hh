@@ -20,7 +20,7 @@ public:
       assert(_tag_range <= std::numeric_limits<IntT>::max());
     }
     void reset() {
-      if (current_base_ > std::numeric_limits<IntT>::max() - tag_range_ * 2) {
+      if (current_base_ < std::numeric_limits<IntT>::max() - tag_range_ * 2) {
         current_base_ += tag_range_;
       } else {
         current_base_ = 0;
@@ -41,6 +41,10 @@ public:
 
     void set(Handle h, TagT tag) {
       prop_[h] = current_base_ + static_cast<IntT>(tag);
+    }
+
+    IntT current_base() const {
+        return current_base_;
     }
 
 
