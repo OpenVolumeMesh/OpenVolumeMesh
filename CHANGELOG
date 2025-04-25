@@ -1,5 +1,9 @@
 master:
+    -
+
+Version 3.3.2 (2025-04-25)
   - Bugfix (behavioural change!): TopologyKernel::genus() would return wrong results if garbage collection is required (it used entity counts that included deleted elements)
+  - Fix SmartTagger bug that made reset() work in O(n) instead of (mostly) O(1) (thanks to Tobias Kohler)
 
 Version 3.3.1 (2024-01-18)
   - Bugfix: n_logical_halffaces() count was incorrect (included deleted faces)
