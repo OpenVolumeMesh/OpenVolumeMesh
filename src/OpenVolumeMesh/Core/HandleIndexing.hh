@@ -13,9 +13,10 @@ class HandleIndexing : public Parent
 {
     static_assert(is_entity<EntityTag>::value);
 
-    using EntityHandleT = HandleT<EntityTag>;
-
 public:
+
+    using EntityTagT = EntityTag;
+    using EntityHandleT = HandleT<EntityTagT>;
     using Parent::Parent;
 
     using reference = typename Parent::reference;
