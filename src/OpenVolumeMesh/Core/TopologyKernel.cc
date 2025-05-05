@@ -2188,7 +2188,14 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(HalfEdgeHandle _heh, Ha
 
 std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh) const
 {
-  return get_halfface_vertices(hfh, halfface(hfh).halfedges().front());
+    auto hehs = get_halfface_halfedges(hfh);
+    std::vector<VertexHandle> res;
+    const uint n = hehs.size();
+    res.reserve(n);
+    for (uint i = 0; i < n; ++i) res.emplace_back(from_vertex_handle(hehs[i]));
+    return res;
+
+    //return get_halfface_vertices(hfh, halfface(hfh).halfedges().front());
 }
 
 
@@ -2203,6 +2210,23 @@ std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle h
       return get_halfface_vertices(hfh, hf.halfedges()[i]);
 
   return std::vector<VertexHandle>();
+}
+
+std::vector<HalfEdgeHandle> TopologyKernel::get_halfface_halfedges(HalfFaceHandle hfh) const
+{
+    if ((hfh.idx() % 2) == 0)
+    {
+        return halfface(hfh).halfedges();
+    }
+    else
+    {
+        // Reverse the halfedges
+        const auto& hehs = halfface(hfh.opposite_handle()).halfedges();
+        const uint n = hehs.size();
+        std::vector<HalfEdgeHandle> res; res.reserve(n);
+        for (uint i = 0; i < n; ++i) res.emplace_back(hehs[n-1-i].opposite_handle());
+        return res;
+    }
 }
 
 
