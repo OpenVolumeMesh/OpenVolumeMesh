@@ -43,10 +43,11 @@ namespace OpenVolumeMesh {
 class TetrahedralMeshTopologyKernel;
 
 
-/** \brief Iterate over all vertices of a hexahedron in a specific order
+/** \brief Iterate over all vertices of a tetrahedron in a specific order
  *
- * Vertices are addressed in the following order: vertices of one halfface in ccw order, then the remaining vertex
- *
+ * Vertices are addressed in the following order: vertices of the tet's first halfface,
+ * starting with the halfface's first halfedge's from_vertex, then the remaining fourth vertex of the tet.
+ * Wrapper for get_cell_vertices(ch).
  */
 
 class OVM_EXPORT TetVertexIter : public BaseCirculator<CellHandle,
