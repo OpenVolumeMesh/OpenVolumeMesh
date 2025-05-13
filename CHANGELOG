@@ -1,6 +1,8 @@
 master:
+  - HalffaceHalfEdgeIter and HalffaceVertexIter
+        - Improvements: Avoid heap allocation for better performance.
 
-    - TetrahedralMeshTopologyKernel:
+  - TetrahedralMeshTopologyKernel:
 	- Behaviour change: TetVertexIterator now starts with `from` vertex of first halfedge of first cell halfface (previously: `to` vertex of same halffedge) for consistency with get_cell_vertices(). 
 	- Feature: vertex_opposite_halfface(CellHandle, VertexHandle) as inverse of halfface_opposite_vertex
 	- Improvement: Optimized get_cell_vertices()
