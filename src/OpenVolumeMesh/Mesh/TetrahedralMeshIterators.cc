@@ -52,38 +52,13 @@ BaseIter(_mesh, _ref_h, _max_laps) {
     assert(_ref_h.is_valid());
 
     assert(_mesh->valence(_ref_h) == 4);
-    // TODO: refactor, this implementation is terribly inefficient:
 
-    TetrahedralMeshTopologyKernel::Cell cell = _mesh->cell(_ref_h);
+    const auto& cell_vhs = _mesh->get_cell_vertices(_ref_h);
+    vertices_[0] = cell_vhs[0];
+    vertices_[1] = cell_vhs[1];
+    vertices_[2] = cell_vhs[2];
+    vertices_[3] = cell_vhs[3];
 
-    // Get first half-face
-    HalfFaceHandle curHF = cell.halffaces()[0];
-    assert(curHF.is_valid());
-
-    // Get first half-edge
-    assert(_mesh->valence(curHF.face_handle()) == 3);
-    HalfEdgeHandle curHE = *_mesh->halfface(curHF).halfedges().begin();
-    assert(curHE.is_valid());
-
-
-    vertices_[0] = _mesh->halfedge(curHE).to_vertex();
-
-    curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
-
-    vertices_[1] = _mesh->halfedge(curHE).to_vertex();
-
-    curHE = _mesh->next_halfedge_in_halfface(curHE, curHF);
-
-    vertices_[2] = _mesh->halfedge(curHE).to_vertex();
-
-
-    HalfFaceHandle other_hf = cell.halffaces()[1];
-    for (const auto vh: _mesh->halfface_vertices(other_hf)) {
-        if (vh == vertices_[0]) continue;
-        if (vh == vertices_[1]) continue;
-        if (vh == vertices_[2]) continue;
-        vertices_[3] = vh;
-    }
     cur_index_ = 0;
     BaseIter::cur_handle(vertices_[cur_index_]);
 }
