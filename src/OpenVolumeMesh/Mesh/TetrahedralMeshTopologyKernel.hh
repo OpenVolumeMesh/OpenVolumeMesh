@@ -73,12 +73,33 @@ public:
 
     HalfEdgeHandle add_halfedge(VertexHandle _fromVertex, VertexHandle _toVertex);
 
+    /// Get the 4 vertices of the tet ch in a specific order:
+    /// 1.-3. vertices of ch's first halfface, ccw, starting with the
+    /// first from_vertex of the halfface's first halfedge. 4. Then comes the 4th vertex of the tet.
     std::vector<VertexHandle> get_cell_vertices(CellHandle ch) const;
+
+    /// Get the 4 vertices of the tet ch in a specific order:
+    /// 1. vh, 2.-4. vertices of the halfface returned by vertex_opposite_halfface(ch, vh).opposite_handle()
+    /// (to preserve orientation).
     std::vector<VertexHandle> get_cell_vertices(CellHandle ch, VertexHandle vh) const;
+
+    /// Get the 4 vertices of hfh's incident cell in a specific order:
+    /// 1.-3. vertices of hfh, ccw, starting with the
+    /// first from_vertex of the halfface's first halfedge. 4. Then comes the 4th vertex of the tet.
+    /// Returns an empty vector, if the incident cell is invalid (hfh is boundary).
     std::vector<VertexHandle> get_cell_vertices(HalfFaceHandle hfh) const;
+
+    /// Get the 4 vertices of hfh's incident cell in a specific order:
+    /// 1. heh.to_vertex, 2. heh.to_vertex, 3. 3rd vertex of hfh, 4. 4th vertex of the tet.
+    /// heh is expected to be incident to hfh
     std::vector<VertexHandle> get_cell_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const;
 
+    /// Get the vertex of the halfface's incident cell that is not contained in the halfface hfh.
+    /// If the incident cell is invalid (hfh is boundary), returns the invalid vertex handle
     VertexHandle halfface_opposite_vertex(HalfFaceHandle hfh) const;
+
+    /// Get the first halfface of the tet ch that does not contain the vertex vh.
+    HalfFaceHandle vertex_opposite_halfface(CellHandle ch, VertexHandle vh) const;
 
 
     VertexHandle collapse_edge(HalfEdgeHandle _heh);
@@ -95,6 +116,10 @@ public:
 
     typedef class TetVertexIter TetVertexIter;
 
+    /// Returns an iterator to iterate over the four vertices of a tetrahedron in a specific order:
+    /// 1.-3. vertices of the tet's first halfface,
+    /// starting with the halfface's first halfedge's from_vertex, then 4. the remaining fourth vertex of the tet.
+    /// Uses get_cell_vertices(ch).
     TetVertexIter tv_iter(CellHandle _ref_h, int _max_laps = 1) const {
         return TetVertexIter(_ref_h, this, _max_laps);
     }
