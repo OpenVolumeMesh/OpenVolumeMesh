@@ -7,8 +7,8 @@ HalfFaceHalfEdgeIterImpl::HalfFaceHalfEdgeIterImpl(const HalfFaceHandle& _ref_h,
     BaseIter(_mesh, _ref_h, _max_laps),
     cur_index_(0)
 {
-    assert(halfedges_.size() > 0);
-    if (BaseIter::valid()) {
+    BaseIter::valid(f_hehs().size() > 0);
+    if(BaseIter::valid()) {
         BaseIter::cur_handle(cur_heh());
     }
 }
