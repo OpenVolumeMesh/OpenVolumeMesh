@@ -61,8 +61,11 @@ public:
     HalfFaceVertexIter& operator--();
 
 private:
-    std::vector<VertexHandle> vertices_;
     size_t cur_index_;
+
+    const std::vector<HalfEdgeHandle>& f_hehs() const;
+
+    VertexHandle cur_vh() const;
 };
 
 } // namespace OpenVolumeMesh

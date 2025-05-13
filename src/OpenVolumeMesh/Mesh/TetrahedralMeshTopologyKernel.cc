@@ -504,12 +504,14 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(HalfF
     const auto& hfhs = cell(ch).halffaces();
 
     // Start with the 3 vertices of the given halfface
-    std::vector<VertexHandle> cell_vhs = get_halfface_vertices(hfh);
+    std::vector<VertexHandle> cell_vhs;
+    cell_vhs.reserve(4);
+    for (VertexHandle vh : halfface_vertices(hfh))
+        cell_vhs.push_back(vh);
 
     // Look for the 4th vertex in another halfface of the cell
     HalfFaceHandle other_hfh = (hfh!=hfhs[0])? hfhs[0] : hfhs[1];
-    const auto& other_hfh_vhs = get_halfface_vertices(other_hfh);
-    for (VertexHandle other_vh : other_hfh_vhs)
+    for (VertexHandle other_vh : halfface_vertices(other_hfh))
     {
         if (cell_vhs[0] != other_vh && cell_vhs[1] != other_vh && cell_vhs[2] != other_vh)
         {

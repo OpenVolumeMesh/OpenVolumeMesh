@@ -131,6 +131,64 @@ TEST_F(TetrahedralMeshBase, VertexFaceIteratorTest) {
 
 }
 
+TEST_F(TetrahedralMeshBase, HalfFaceHalfEdgeIter)
+{
+    VertexHandle vh0 = mesh_.add_vertex(Vec3d(0.0, 0.0, 0.0));
+    VertexHandle vh1 = mesh_.add_vertex(Vec3d(1.0, 0.0, 0.0));
+    VertexHandle vh2 = mesh_.add_vertex(Vec3d(1.0, 1.0, 0.0));
+    VertexHandle vh3 = mesh_.add_vertex(Vec3d(0.0, 1.0, 0.0));
+
+    HalfFaceHandle hfh012 = mesh_.add_halfface(vh0, vh1, vh2);
+    HalfFaceHandle hfh023 = mesh_.add_halfface(vh0, vh2, vh3);
+    HalfFaceHandle hfh031 = mesh_.add_halfface(vh0, vh3, vh1);
+    HalfFaceHandle hfh132 = mesh_.add_halfface(vh1, vh3, vh2);
+
+    mesh_.add_cell({hfh012, hfh023, hfh031, hfh132});
+
+    auto hfhe_it = mesh_.hfhe_iter(hfh012);
+    ASSERT_EQ(hfhe_it.cur_handle(), mesh_.find_halfedge(vh0, vh1));
+    ++hfhe_it;
+    ASSERT_EQ(hfhe_it.cur_handle(), mesh_.find_halfedge(vh1, vh2));
+    ++hfhe_it;
+    ASSERT_EQ(hfhe_it.cur_handle(), mesh_.find_halfedge(vh2, vh0));
+
+    hfhe_it = mesh_.hfhe_iter(hfh012.opposite_handle());
+    ASSERT_EQ(hfhe_it.cur_handle(), mesh_.find_halfedge(vh0, vh2));
+    ++hfhe_it;
+    ASSERT_EQ(hfhe_it.cur_handle(), mesh_.find_halfedge(vh2, vh1));
+    ++hfhe_it;
+    ASSERT_EQ(hfhe_it.cur_handle(), mesh_.find_halfedge(vh1, vh0));
+}
+
+TEST_F(TetrahedralMeshBase, HalfFaceVertexIter)
+{
+    VertexHandle vh0 = mesh_.add_vertex(Vec3d(0.0, 0.0, 0.0));
+    VertexHandle vh1 = mesh_.add_vertex(Vec3d(1.0, 0.0, 0.0));
+    VertexHandle vh2 = mesh_.add_vertex(Vec3d(1.0, 1.0, 0.0));
+    VertexHandle vh3 = mesh_.add_vertex(Vec3d(0.0, 1.0, 0.0));
+
+    HalfFaceHandle hfh012 = mesh_.add_halfface(vh0, vh1, vh2);
+    HalfFaceHandle hfh023 = mesh_.add_halfface(vh0, vh2, vh3);
+    HalfFaceHandle hfh031 = mesh_.add_halfface(vh0, vh3, vh1);
+    HalfFaceHandle hfh132 = mesh_.add_halfface(vh1, vh3, vh2);
+
+    mesh_.add_cell({hfh012, hfh023, hfh031, hfh132});
+
+    auto hfv_it = mesh_.hfv_iter(hfh012);
+    ASSERT_EQ(hfv_it.cur_handle(), vh0);
+    ++hfv_it;
+    ASSERT_EQ(hfv_it.cur_handle(), vh1);
+    ++hfv_it;
+    ASSERT_EQ(hfv_it.cur_handle(), vh2);
+
+    hfv_it = mesh_.hfv_iter(hfh012.opposite_handle());
+    ASSERT_EQ(hfv_it.cur_handle(), vh0);
+    ++hfv_it;
+    ASSERT_EQ(hfv_it.cur_handle(), vh2);
+    ++hfv_it;
+    ASSERT_EQ(hfv_it.cur_handle(), vh1);
+}
+
 TEST_F(HexahedralMeshBase, RangeForTest) {
     // no EXPECTs here, if it compiles, it'll work.
     generateHexahedralMesh(mesh_);
