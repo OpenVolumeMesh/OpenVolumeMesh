@@ -19,8 +19,9 @@ FaceHalfEdgeIterImpl& FaceHalfEdgeIterImpl::operator++()
     if (cur_index_ >= halfedges_.size()) {
         cur_index_ = 0;
         ++lap_;
-        if (lap_ >= max_laps_)
+        if (lap_ >= max_laps_) {
             BaseIter::valid(false);
+        }
     }
     BaseIter::cur_handle(halfedges_[cur_index_]);
     return *this;

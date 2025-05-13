@@ -22,10 +22,11 @@ public:
     HalfFaceHalfEdgeIterImpl& operator--();
 
 private:
-    // TODO PERF: instead of making a copy, always iterate over the original
-    //            halfedges vector, just backwards + with opposite() for subidx 1
-    std::vector<HalfEdgeHandle> halfedges_;
     size_t cur_index_;
+
+    const std::vector<HalfEdgeHandle>& f_hehs() const;
+
+    HalfEdgeHandle cur_heh() const;
 };
 
 
