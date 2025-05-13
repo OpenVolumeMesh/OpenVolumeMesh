@@ -743,8 +743,6 @@ public:
     std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, VertexHandle vh) const;
     /// Get vertices of a halfface orderd to start from from_vertex_handle(heh)
     std::vector<VertexHandle> get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const;
-    /// Get halfedges of halfface (unlike halfface(hfh).halfedges(), this does not create a copy of the face object)
-    std::vector<HalfEdgeHandle> get_halfface_halfedges(HalfFaceHandle hfh) const;
 
     /// check whether face _fh and edge _eh are incident
     bool is_incident( FaceHandle _fh, EdgeHandle _eh) const;
