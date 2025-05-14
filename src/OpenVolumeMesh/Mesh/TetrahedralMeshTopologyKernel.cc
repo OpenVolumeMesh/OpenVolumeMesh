@@ -490,8 +490,11 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(CellH
 
 std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(CellHandle ch, VertexHandle vh) const
 {
-    auto vhs = get_halfface_vertices(vertex_opposite_halfface(ch, vh).opposite_handle());
-    vhs.insert(vhs.begin(), vh);
+    auto vhs = get_cell_vertices(cell(ch).halffaces()[0]);
+
+    if (vhs[1]==vh) {return {vhs[1], vhs[2], vhs[0], vhs[3]};}
+    if (vhs[2]==vh) {return {vhs[2], vhs[0], vhs[1], vhs[3]};}
+    if (vhs[3]==vh) {return {vhs[3], vhs[1], vhs[0], vhs[2]};}
     return vhs;
 }
 
