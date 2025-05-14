@@ -490,9 +490,61 @@ std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(CellH
 
 std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(CellHandle ch, VertexHandle vh) const
 {
-    auto vhs = get_halfface_vertices(vertex_opposite_halfface(ch, vh).opposite_handle());
-    vhs.insert(vhs.begin(), vh);
-    return vhs;
+    HalfFaceHandle hfh = cell(ch).halffaces()[0];
+
+    std::vector<VertexHandle> vertices;
+    vertices.reserve(4);
+
+    // Look for the vertex in the first halfface
+    auto hfv_it = hfv_iter(hfh, 2);
+    bool in_hfh = false;
+    for (uint i = 0; i < 3; ++i)
+    {
+        if (*hfv_it == vh) {
+            in_hfh = true;
+            break;
+        }
+        ++hfv_it;
+    }
+
+    if (in_hfh)
+    {
+        // If the vertex is in the 1st halfface, add its vertices, starting with vh, and then the 4th vertex
+        for (uint i = 0; i < 3; ++i)
+        {
+            vertices.push_back(*hfv_it);
+            ++hfv_it;
+        }
+
+        // Look for the 4th vertex in the 2nd halfface
+        hfh = cell(ch).halffaces()[1];
+        for (hfv_it = hfv_iter(hfh); hfv_it.is_valid(); ++hfv_it) {
+            if (*hfv_it != vertices[0] && *hfv_it != vertices[1] && *hfv_it != vertices[2]) {
+                vertices.push_back(*hfv_it);
+                break;
+            }
+        }
+
+        assert(vertices.size()==4);
+        return vertices;
+    }
+    else
+    {
+        // If the vertex is not in the 1st halfface, the order is
+        // vh, 1st halfface's 1st halfedge's to vertex, other 2 vhs of halfface
+        // meaning vh, hf_vhs[1], hf_vhs[0], hf_vhs[2] to be orientation consistent
+        vertices.push_back(vh);
+
+        hfv_it = hfv_iter(hfh, 2);
+        hfv_it += 1;
+        vertices.push_back(*hfv_it);
+        hfv_it += 2;
+        vertices.push_back(*hfv_it);
+        hfv_it += 2;
+        vertices.push_back(*hfv_it);
+
+        return vertices;
+    }
 }
 
 std::vector<VertexHandle> TetrahedralMeshTopologyKernel::get_cell_vertices(HalfFaceHandle hfh) const
