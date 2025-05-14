@@ -1,4 +1,7 @@
 master:
+  - TopologyKernel
+        - Improvements: get_halfface_vertices called with halfface uses HalfFaceVertexIter. Avoid using next_hafedge_in_halfface for get_halfface_vertices called with halfface and vertex/halfedge
+
   - HalffaceHalfEdgeIter and HalffaceVertexIter
         - Improvements: Avoid heap allocation for better performance.
 
