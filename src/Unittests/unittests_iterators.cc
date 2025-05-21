@@ -189,6 +189,63 @@ TEST_F(TetrahedralMeshBase, HalfFaceVertexIter)
     ASSERT_EQ(hfv_it.cur_handle(), vh1);
 }
 
+TEST_F(TetrahedralMeshBase, GetHalfFaceVerticesHfh)
+{
+    VertexHandle vh0 = mesh_.add_vertex(Vec3d(0.0, 0.0, 0.0));
+    VertexHandle vh1 = mesh_.add_vertex(Vec3d(1.0, 0.0, 0.0));
+    VertexHandle vh2 = mesh_.add_vertex(Vec3d(1.0, 1.0, 0.0));
+
+    HalfFaceHandle hfh012 = mesh_.add_halfface(vh0, vh1, vh2);
+
+    auto vhs = mesh_.get_halfface_vertices(hfh012);
+    ASSERT_EQ(vhs[0], vh0);
+    ASSERT_EQ(vhs[1], vh1);
+    ASSERT_EQ(vhs[2], vh2);
+
+    vhs = mesh_.get_halfface_vertices(hfh012.opposite_handle());
+    ASSERT_EQ(vhs[0], vh0);
+    ASSERT_EQ(vhs[1], vh2);
+    ASSERT_EQ(vhs[2], vh1);
+}
+
+TEST_F(TetrahedralMeshBase, GetHalfFaceVerticesHfhHeh)
+{
+    VertexHandle vh0 = mesh_.add_vertex(Vec3d(0.0, 0.0, 0.0));
+    VertexHandle vh1 = mesh_.add_vertex(Vec3d(1.0, 0.0, 0.0));
+    VertexHandle vh2 = mesh_.add_vertex(Vec3d(1.0, 1.0, 0.0));
+
+    HalfFaceHandle hfh012 = mesh_.add_halfface(vh0, vh1, vh2);
+
+    auto vhs = mesh_.get_halfface_vertices(hfh012, mesh_.find_halfedge(vh1, vh2));
+    ASSERT_EQ(vhs[0], vh1);
+    ASSERT_EQ(vhs[1], vh2);
+    ASSERT_EQ(vhs[2], vh0);
+
+    vhs = mesh_.get_halfface_vertices(hfh012.opposite_handle(), mesh_.find_halfedge(vh2, vh1));
+    ASSERT_EQ(vhs[0], vh2);
+    ASSERT_EQ(vhs[1], vh1);
+    ASSERT_EQ(vhs[2], vh0);
+}
+
+TEST_F(TetrahedralMeshBase, GetHalfFaceVerticesHfhVh)
+{
+    VertexHandle vh0 = mesh_.add_vertex(Vec3d(0.0, 0.0, 0.0));
+    VertexHandle vh1 = mesh_.add_vertex(Vec3d(1.0, 0.0, 0.0));
+    VertexHandle vh2 = mesh_.add_vertex(Vec3d(1.0, 1.0, 0.0));
+
+    HalfFaceHandle hfh012 = mesh_.add_halfface(vh0, vh1, vh2);
+
+    auto vhs = mesh_.get_halfface_vertices(hfh012, vh2);
+    ASSERT_EQ(vhs[0], vh2);
+    ASSERT_EQ(vhs[1], vh0);
+    ASSERT_EQ(vhs[2], vh1);
+
+    vhs = mesh_.get_halfface_vertices(hfh012.opposite_handle(), vh1);
+    ASSERT_EQ(vhs[0], vh1);
+    ASSERT_EQ(vhs[1], vh0);
+    ASSERT_EQ(vhs[2], vh2);
+}
+
 TEST_F(HexahedralMeshBase, RangeForTest) {
     // no EXPECTs here, if it compiles, it'll work.
     generateHexahedralMesh(mesh_);
