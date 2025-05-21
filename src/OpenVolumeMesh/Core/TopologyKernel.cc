@@ -2188,7 +2188,12 @@ HalfEdgeHandle TopologyKernel::prev_halfedge_in_halfface(HalfEdgeHandle _heh, Ha
 
 std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh) const
 {
-  return get_halfface_vertices(hfh, halfface(hfh).halfedges().front());
+    std::vector<VertexHandle> vhs;
+    vhs.reserve(valence(hfh.face_handle()));
+    for (VertexHandle vh : halfface_vertices(hfh)) {
+        vhs.push_back(vh);
+    }
+    return vhs;
 }
 
 
@@ -2197,12 +2202,26 @@ std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle h
 
 std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, VertexHandle vh) const
 {
-  Face hf = halfface(hfh);
-  for (size_t i = 0; i < hf.halfedges().size(); ++i)
-    if (halfedge(hf.halfedges()[i]).from_vertex() == vh)
-      return get_halfface_vertices(hfh, hf.halfedges()[i]);
+    std::vector<VertexHandle> vertices;
+    const size_t n = valence(hfh.face_handle());
+    vertices.reserve(n);
 
-  return std::vector<VertexHandle>();
+    // Circulate until we're at the vertex of interest
+    auto hfv_it = hfv_iter(hfh, 2);
+    for (size_t i = 0; i < n; ++i)
+    {
+        if (*hfv_it == vh) {break;}
+        ++hfv_it;
+    }
+
+    // Circulate n times to get all the vertices
+    for (size_t i = 0; i < n; ++i)
+    {
+        vertices.push_back(*hfv_it);
+        ++hfv_it;
+    }
+
+    return vertices;
 }
 
 
@@ -2211,18 +2230,7 @@ std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle h
 
 std::vector<VertexHandle> TopologyKernel::get_halfface_vertices(HalfFaceHandle hfh, HalfEdgeHandle heh) const
 {
-  std::vector<VertexHandle> vertices;
-
-  // TODO PERF: the use of next_halfedge_in_halfface is very wasteful
-  // add vertices of halfface
-  auto n = valence(hfh.face_handle());
-  for (unsigned int i = 0; i < n; ++i)
-  {
-    vertices.push_back(halfedge(heh).from_vertex());
-    heh = next_halfedge_in_halfface(heh, hfh);
-  }
-
-  return vertices;
+    return get_halfface_vertices(hfh, from_vertex_handle(heh));
 }
 
 

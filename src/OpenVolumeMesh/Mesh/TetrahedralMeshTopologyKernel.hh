@@ -78,9 +78,7 @@ public:
     /// first from_vertex of the halfface's first halfedge. 4. Then comes the 4th vertex of the tet.
     std::vector<VertexHandle> get_cell_vertices(CellHandle ch) const;
 
-    /// Get the 4 vertices of the tet ch in a specific order:
-    /// 1. vh, 2.-4. vertices of the halfface returned by vertex_opposite_halfface(ch, vh).opposite_handle()
-    /// (to preserve orientation).
+    /// Get the 4 vertices of the tet ch in a specific order, starting with vh.
     std::vector<VertexHandle> get_cell_vertices(CellHandle ch, VertexHandle vh) const;
 
     /// Get the 4 vertices of hfh's incident cell in a specific order:
