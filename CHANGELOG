@@ -1,4 +1,7 @@
 master:
+  -
+
+Version 3.4.0 (2025-07-29):
   - TopologyKernel
         - Improvements: get_halfface_vertices called with halfface uses HalfFaceVertexIter. Avoid using next_hafedge_in_halfface for get_halfface_vertices called with halfface and vertex/halfedge
 
@@ -6,9 +9,9 @@ master:
         - Improvements: Avoid heap allocation for better performance.
 
   - TetrahedralMeshTopologyKernel:
-	- Behaviour change: TetVertexIterator now starts with `from` vertex of first halfedge of first cell halfface (previously: `to` vertex of same halffedge) for consistency with get_cell_vertices(). 
-	- Feature: vertex_opposite_halfface(CellHandle, VertexHandle) as inverse of halfface_opposite_vertex
-	- Improvement: Optimized get_cell_vertices()
+    - Behaviour change: TetVertexIterator now starts with `from` vertex of first halfedge of first cell halfface (previously: `to` vertex of same halfedge) for consistency with get_cell_vertices().
+    - Feature: vertex_opposite_halfface(CellHandle, VertexHandle) as inverse of halfface_opposite_vertex
+    - Improvement: Optimized get_cell_vertices()
   - ovmb_read now takes a std::filesystem::path instead of a const char *
 
 Version 3.3.2 (2025-04-25)
