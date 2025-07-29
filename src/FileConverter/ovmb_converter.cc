@@ -10,17 +10,11 @@
 #include <iomanip>
 #include <string>
 #include <chrono>
+#include <filesystem>
 
 namespace OVM = OpenVolumeMesh;
 
 using MeshT = OVM::GeometryKernel<OVM::Geometry::Vec3d, OVM::TopologyKernel>;
-
-static bool ends_with(std::string &s, std::string needle)
-{
-    if (s.size() < needle.size())
-        return false;
-    return s.substr(s.size()-needle.size()) == needle;
-}
 
 int main(int argc, char**argv) {
     if (argc != 3 && argc != 2) {
@@ -29,10 +23,10 @@ int main(int argc, char**argv) {
                      "If only an infile is given, nothing happens after reading. Useful for read speed benchmarking." << std::endl;
         return 1;
     }
-    std::string fname_in = argv[1];
+    std::filesystem::path fname_in = argv[1];
 
-    bool in_binary = ends_with(fname_in, ".ovmb");
-    if (!in_binary && !ends_with(fname_in, ".ovm"))
+    bool in_binary = fname_in.extension() == ".ovmb";
+    if (!in_binary && fname_in.extension() != ".ovm")
     {
         std::cerr << "Error: Input filename needs to be .ovm or .ovmb." << std::endl;
         return 1;
@@ -78,10 +72,9 @@ int main(int argc, char**argv) {
 
     if (argc == 2)
         return 0;
-    std::string fname_out = argv[2];
-
-    bool out_binary = ends_with(fname_out, ".ovmb");
-    if (!out_binary && !ends_with(fname_out, ".ovm"))
+    std::filesystem::path fname_out = argv[2];
+    bool out_binary = fname_out.extension() == ".ovmb";
+    if (!out_binary && fname_out.extension() != ".ovm")
     {
         std::cerr << "Error: Output filename needs to be .ovm or .ovmb." << std::endl;
         return 1;
