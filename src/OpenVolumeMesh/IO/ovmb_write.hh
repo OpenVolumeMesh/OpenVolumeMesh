@@ -5,6 +5,8 @@
 #include <OpenVolumeMesh/IO/WriteOptions.hh>
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/BinaryFileWriter.hh>
+
+#include <filesystem>
 #include <fstream>
 
 namespace OpenVolumeMesh::IO {
@@ -24,7 +26,7 @@ WriteResult ovmb_write(std::ostream & _ostream,
                        PropertyCodecs const &_prop_codecs = g_default_property_codecs);
 
 template<typename MeshT>
-WriteResult ovmb_write(const char *_filename,
+WriteResult ovmb_write(std::filesystem::path const& _filename,
                               MeshT const& _mesh,
                               WriteOptions _options = WriteOptions(),
                               PropertyCodecs const &_prop_codecs = g_default_property_codecs)
