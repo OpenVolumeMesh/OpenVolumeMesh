@@ -1,6 +1,9 @@
 master:
   -
 
+Version 3.4.1 (2025-07-31):
+  - ovmb_read now takes a std::filesystem::path instead of a const char *
+
 Version 3.4.0 (2025-07-29):
   - TopologyKernel
         - Improvements: get_halfface_vertices called with halfface uses HalfFaceVertexIter. Avoid using next_hafedge_in_halfface for get_halfface_vertices called with halfface and vertex/halfedge
@@ -12,7 +15,7 @@ Version 3.4.0 (2025-07-29):
     - Behaviour change: TetVertexIterator now starts with `from` vertex of first halfedge of first cell halfface (previously: `to` vertex of same halfedge) for consistency with get_cell_vertices().
     - Feature: vertex_opposite_halfface(CellHandle, VertexHandle) as inverse of halfface_opposite_vertex
     - Improvement: Optimized get_cell_vertices()
-  - ovmb_read now takes a std::filesystem::path instead of a const char *
+  - ovmb_write now takes a std::filesystem::path instead of a const char *
 
 Version 3.3.2 (2025-04-25)
   - Bugfix (behavioural change!): TopologyKernel::genus() would return wrong results if garbage collection is required (it used entity counts that included deleted elements)
