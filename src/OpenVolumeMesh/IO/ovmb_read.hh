@@ -6,6 +6,7 @@
 #include <istream>
 #include <fstream>
 #include <memory>
+#include <filesystem>
 
 namespace OpenVolumeMesh::IO {
 
@@ -45,7 +46,7 @@ ReadResult ovmb_read(std::istream &_istream,
 }
 
 template<typename MeshT>
-ReadResult ovmb_read(const char *_filename,
+ReadResult ovmb_read(std::filesystem::path const&_filename,
                  MeshT & _mesh,
                  ReadOptions _options = ReadOptions(),
                  PropertyCodecs const &_prop_codecs = g_default_property_codecs)
