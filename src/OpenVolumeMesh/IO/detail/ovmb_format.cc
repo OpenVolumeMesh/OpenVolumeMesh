@@ -1,6 +1,7 @@
 #include <OpenVolumeMesh/IO/detail/ovmb_format.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <string>
+#include <sstream>
 
 namespace OpenVolumeMesh::IO::detail {
 
@@ -41,6 +42,16 @@ IntEncoding suitable_int_encoding(uint32_t max_value)
    if (max_value <= std::numeric_limits<uint8_t>::max())  return IntEncoding::U8;
    if (max_value <= std::numeric_limits<uint16_t>::max())  return IntEncoding::U16;
    return IntEncoding::U32;
+}
+
+std::ostream& operator<<(std::ostream& os, ArraySpan const&span) {
+    return os << "ArraySpan(first = " << std::to_string(span.first)
+        << ", count = " << std::to_string(span.count) << ")";
+}
+std::string to_string(ArraySpan const&span) {
+    std::stringstream ss;
+    ss << span;
+    return ss.str();
 }
 
 } //namespace OpenVolumeMesh::IO::detail

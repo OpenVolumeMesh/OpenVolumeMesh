@@ -258,8 +258,11 @@ OVM_EXPORT constexpr inline uint8_t elem_size(VertexEncoding enc) {
 struct ArraySpan {
     uint64_t first;  // index of first element in this chunk
     uint32_t count; // number of elements in chunk
+    bool empty() const {return count == 0;}
 };
 template<> inline size_t ovmb_size<ArraySpan> = sizeof(ArraySpan::first) + sizeof(ArraySpan::count);
+std::ostream& operator<<(std::ostream&, ArraySpan const&span);
+std::string to_string(ArraySpan const&span);
 
 struct PropChunkHeader {
     ArraySpan span;
