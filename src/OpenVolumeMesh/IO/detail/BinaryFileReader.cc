@@ -320,6 +320,7 @@ void BinaryFileReader::read_prop_chunk(Decoder &reader)
         case PropertyEntity::HalfFace: n = 2 * n_faces_read_; break;
         case PropertyEntity::Mesh:     n = 1; break;
     }
+    if (header.span.empty()) return;
     if (header.span.first >= n || n - header.span.first < header.span.count) {
         error_msg_ = std::string("Property chunk ") + std::to_string(header.idx)
             + " has invalid span " + to_string(header.span)
