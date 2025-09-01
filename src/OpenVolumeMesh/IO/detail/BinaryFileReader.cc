@@ -6,7 +6,6 @@
 #include <OpenVolumeMesh/IO/detail/exceptions.hh>
 #include <OpenVolumeMesh/Core/Handles.hh>
 
-#include <istream>
 #include <cassert>
 #include <numeric>
 #include <iostream>
@@ -186,6 +185,9 @@ void BinaryFileReader::read_edges(Decoder &reader, const TopoChunkHeader &header
             uint64_t src = read_one(reader) + header.span.first;
             uint64_t dst = read_one(reader) + header.span.first;
             if (src >= n_verts_read_ || dst >= n_verts_read_) {
+                error_msg_ = std::string("Edge ") + std::to_string(header.span.first + i)
+                    + " (src " + std::to_string(src) + ", dst = " + std::to_string(dst)
+                    + ") contains vertex handle for not-yet-read vertex";
                 state_ = ReadState::ErrorHandleRange;
                 return;
             } else {
@@ -319,6 +321,9 @@ void BinaryFileReader::read_prop_chunk(Decoder &reader)
         case PropertyEntity::Mesh:     n = 1; break;
     }
     if (header.span.first >= n || n - header.span.first < header.span.count) {
+        error_msg_ = std::string("Property chunk ") + std::to_string(header.idx)
+            + " has invalid span " + to_string(header.span)
+            + ", element count is only " + std::to_string(n);
         state_ = ReadState::ErrorHandleRange;
         return;
     }
@@ -399,14 +404,19 @@ ReadResult BinaryFileReader::internal_read_file(TopologyKernel &out)
     while (stream_.remaining_bytes() > 0) {
         read_chunk();
         if (state_ != ReadState::ReadingChunks) {
+            if (error_msg_.empty()) {
+                error_msg_ = std::string("State not ReadingChunks as expected, but ") + to_string(state_);
+            }
             return ReadResult::InvalidFile;
         }
     }
     if (stream_.remaining_bytes() != 0) {
         state_ = ReadState::ErrorEndNotReached;
+        error_msg_ = "EOF not reached after last chunk";
         return ReadResult::InvalidFile;
     }
     if (!reached_eof_chunk) {
+        error_msg_ = "No EOF chunk found, file truncated?";
         state_ = ReadState::ErrorEndNotReached;
     }
     if (file_header_.n_verts != out.n_vertices()
@@ -415,6 +425,7 @@ ReadResult BinaryFileReader::internal_read_file(TopologyKernel &out)
             || file_header_.n_cells != out.n_cells())
     {
         state_ = ReadState::ErrorMissingData;
+        error_msg_ = "V/E/F/C count is incorrect";
         return ReadResult::InvalidFile;
     }
     state_ = ReadState::Ok;
