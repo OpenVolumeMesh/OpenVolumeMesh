@@ -39,7 +39,7 @@ struct EigenDenseFixedMatrix
 
 namespace OpenVolumeMesh::IO {
 
-void register_eigen_codecs(PropertyCodecs &_codecs)
+inline void register_eigen_codecs(PropertyCodecs &_codecs)
 {
     using namespace Codecs;
     _codecs.register_codec<SimplePropCodec<EigenDenseFixedMatrix<double, 2, 1>>>("2d");
