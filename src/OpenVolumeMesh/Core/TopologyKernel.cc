@@ -1117,15 +1117,9 @@ EdgeIter TopologyKernel::delete_edge_core(EdgeHandle _h) {
                     hes.erase(std::remove(hes.begin(), hes.end(), halfedge_handle(h, 0)), hes.end());
                     hes.erase(std::remove(hes.begin(), hes.end(), halfedge_handle(h, 1)), hes.end());
 
-    #if defined(__clang_major__) && (__clang_major__ >= 5)
-                    for(std::vector<HalfEdgeHandle>::iterator it = hes.begin(), end = hes.end();
-                        it != end; ++it) {
-                        cor.correctValue(*it);
+                    for (auto &it: hes) {
+                        cor.correctValue(it);
                     }
-    #else
-                    std::for_each(hes.begin(), hes.end(),
-                                  std::bind(&HEHandleCorrection::correctValue, &cor, std::placeholders::_1));
-    #endif
                     face(*f_it).set_halfedges(hes);
                 }
             } else {
@@ -1143,15 +1137,9 @@ EdgeIter TopologyKernel::delete_edge_core(EdgeHandle _h) {
 
                     // Decrease all half-edge handles greater than _h in face
                     HEHandleCorrection cor(halfedge_handle(h, 1));
-    #if defined(__clang_major__) && (__clang_major__ >= 5)
-                    for(std::vector<HalfEdgeHandle>::iterator it = hes.begin(), end = hes.end();
-                        it != end; ++it) {
-                        cor.correctValue(*it);
+                    for (auto &it: hes) {
+                        cor.correctValue(it);
                     }
-    #else
-                    std::for_each(hes.begin(), hes.end(),
-                                  std::bind(&HEHandleCorrection::correctValue, &cor, std::placeholders::_1));
-    #endif
                     face(*f_it).set_halfedges(hes);
                 }
             }
@@ -1171,16 +1159,9 @@ EdgeIter TopologyKernel::delete_edge_core(EdgeHandle _h) {
             // 4)
             if(has_vertex_bottom_up_incidences()) {
                 HEHandleCorrection cor(halfedge_handle(h, 1));
-    #if defined(__clang_major__) && (__clang_major__ >= 5)
-                for(std::vector<std::vector<HalfEdgeHandle> >::iterator it = outgoing_hes_per_vertex_.begin(),
-                    end = outgoing_hes_per_vertex_.end(); it != end; ++it) {
-                    cor.correctVecValue(*it);
+                for (auto &it: outgoing_hes_per_vertex_) {
+                    cor.correctVecValue(it);
                 }
-    #else
-                std::for_each(outgoing_hes_per_vertex_.begin(),
-                              outgoing_hes_per_vertex_.end(),
-                              std::bind(&HEHandleCorrection::correctVecValue, &cor, std::placeholders::_1));
-    #endif
             }
         }
 
@@ -1297,15 +1278,9 @@ FaceIter TopologyKernel::delete_face_core(FaceHandle _h) {
                     hfs.erase(std::remove(hfs.begin(), hfs.end(), halfface_handle(h, 1)), hfs.end());
 
                     HFHandleCorrection cor(halfface_handle(h, 1));
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-                    for(std::vector<HalfFaceHandle>::iterator it = hfs.begin(),
-                        end = hfs.end(); it != end; ++it) {
-                        cor.correctValue(*it);
+                    for (auto &it: hfs) {
+                        cor.correctValue(it);
                     }
-#else
-                    std::for_each(hfs.begin(), hfs.end(),
-                                  std::bind(&HFHandleCorrection::correctValue, &cor, std::placeholders::_1));
-#endif
                     cell(*c_it).set_halffaces(hfs);
                 }
 
@@ -1321,15 +1296,9 @@ FaceIter TopologyKernel::delete_face_core(FaceHandle _h) {
                     hfs.erase(std::remove(hfs.begin(), hfs.end(), halfface_handle(h, 1)), hfs.end());
 
                     HFHandleCorrection cor(halfface_handle(h, 1));
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-                    for(std::vector<HalfFaceHandle>::iterator it = hfs.begin(),
-                        end = hfs.end(); it != end; ++it) {
-                        cor.correctValue(*it);
+                    for (auto &it: hfs) {
+                        cor.correctValue(it);
                     }
-#else
-                    std::for_each(hfs.begin(), hfs.end(),
-                                  std::bind(&HFHandleCorrection::correctValue, &cor, std::placeholders::_1));
-#endif
                     cell(*c_it).set_halffaces(hfs);
                 }
             }
@@ -1350,15 +1319,9 @@ FaceIter TopologyKernel::delete_face_core(FaceHandle _h) {
             // 4)
             if(has_edge_bottom_up_incidences()) {
                 HFHandleCorrection cor(halfface_handle(h, 1));
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-                for(std::vector<std::vector<HalfFaceHandle> >::iterator it = incident_hfs_per_he_.begin(), end = incident_hfs_per_he_.end(); it != end; ++it) {
-                    cor.correctVecValue(*it);
+                for (auto &it: incident_hfs_per_he_) {
+                    cor.correctVecValue(it);
                 }
-#else
-                std::for_each(incident_hfs_per_he_.begin(),
-                              incident_hfs_per_he_.end(),
-                              std::bind(&HFHandleCorrection::correctVecValue, &cor, std::placeholders::_1));
-#endif
             }
         }
 
@@ -1446,16 +1409,9 @@ CellIter TopologyKernel::delete_cell_core(CellHandle _h) {
         {
             if(has_face_bottom_up_incidences()) {
                 CHandleCorrection cor(h);
-#if defined(__clang_major__) && (__clang_major__ >= 5)
-                for(std::vector<CellHandle>::iterator it = incident_cell_per_hf_.begin(),
-                    end = incident_cell_per_hf_.end(); it != end; ++it) {
-                    cor.correctValue(*it);
+                for (auto &it: incident_cell_per_hf_) {
+                    cor.correctValue(it);
                 }
-#else
-                std::for_each(incident_cell_per_hf_.begin(),
-                              incident_cell_per_hf_.end(),
-                              std::bind(&CHandleCorrection::correctValue, &cor, std::placeholders::_1));
-#endif
             }
         }
 
