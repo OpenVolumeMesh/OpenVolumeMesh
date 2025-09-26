@@ -36,6 +36,7 @@ cppcheck \
     --enable=warning,performance,portability,information,missingInclude \
     --suppress=unmatchedSuppression \
     --suppress=missingIncludeSystem \
+    --check-level=exhaustive \
     --inline-suppr \
     -U_MSC_VER -DOVM_STATIC_DEFINE=1 -D__PIC__=1 \
     --quiet \
