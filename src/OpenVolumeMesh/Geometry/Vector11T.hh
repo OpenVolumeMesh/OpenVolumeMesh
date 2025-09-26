@@ -149,10 +149,12 @@ class VectorT {
             static_assert(std::is_same<S, Scalar>::value, "S and Scalar need "
                     "to be the same type. (Never override the default template "
                     "arguments.)");
+            // cppcheck-suppress containerOutOfBounds
+            const auto &w = values_[3];
             return VectorT(
-                    values_[0]/values_[3],
-                    values_[1]/values_[3],
-                    values_[2]/values_[3],
+                    values_[0]/w,
+                    values_[1]/w,
+                    values_[2]/w,
                     1);
         }
 
@@ -169,6 +171,7 @@ class VectorT {
         template<typename otherScalarType,
             typename = typename std::enable_if<
                 std::is_convertible<otherScalarType, Scalar>::value>>
+        // cppcheck-suppress uninitMemberVar
         explicit VectorT(const VectorT<otherScalarType, DIM>& _rhs) {
             operator=(_rhs);
         }
@@ -179,7 +182,7 @@ class VectorT {
         template<typename OtherScalar,
             typename = typename std::enable_if<
                 std::is_convertible<OtherScalar, Scalar>::value>>
-        // cppcheck-suppress operatorEqRetRefThis ; false positive
+        // cppcheck-suppress uninitMemberVar
         vector_type& operator=(const VectorT<OtherScalar, DIM>& _rhs)
         {
             std::transform(_rhs.data(), _rhs.data() + DIM,

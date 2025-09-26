@@ -302,7 +302,9 @@ void BinaryFileReader::read_prop_chunk(Decoder &reader)
     PropChunkHeader header;
     read(reader, header);
     if (header.idx >= props_.size()) {
-        state_ = ReadState::Error; // TODO more specific error
+        error_msg_ = std::string("File invalid: Property chunk index ")
+            + std::to_string(header.idx) + " >= number of props (" + std::to_string(props_.size()) + ")";
+        state_ = ReadState::ErrorInvalidFile;
         return;
     }
     auto &prop = props_[header.idx];
@@ -515,7 +517,8 @@ read_propdir_chunk(Decoder &reader)
 {
     if (props_.size() != 0) {
         // we can only have one property directory!
-        state_ = ReadState::Error; // TODO more specific error
+        error_msg_ = "File invalid: contains multiple property directories (DIRP chunk).";
+        state_ = ReadState::ErrorInvalidFile; // TODO more specific error
         return;
     }
     while (reader.remaining_bytes() > 0)

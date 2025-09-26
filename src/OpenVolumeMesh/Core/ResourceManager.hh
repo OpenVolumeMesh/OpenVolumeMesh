@@ -88,7 +88,7 @@ private:
     std::optional<PropertyPtr<T, EntityTag>> internal_find_property(const std::string& _name) const;
 
     template<typename T, typename EntityTag>
-    PropertyPtr<T, EntityTag> internal_create_property(std::string _name, const T _def, bool shared) const;
+    PropertyPtr<T, EntityTag> internal_create_property(std::string _name, const T &_def, bool shared) const;
 
 
     void clone_persistent_properties_from(ResourceManager const&);
@@ -168,28 +168,28 @@ public:
      *  If it has an empty name, it will be a private property, otherwise shared.
      */
     template<typename T, typename EntityTag>
-    PropertyPtr<T, EntityTag> request_property(const std::string& _name = std::string(), const T _def = T());
+    PropertyPtr<T, EntityTag> request_property(const std::string& _name = std::string(), const T &_def = T());
 
     /** Create new property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
     [[deprecated("Use create_{shared,persistent}_property instead")]]
-    std::optional<PropertyPtr<T, EntityTag>> create_property(std::string _name = std::string(), const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_property(std::string _name = std::string(), const T &_def = T());
 
     /** Create new shared property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
-    std::optional<PropertyPtr<T, EntityTag>> create_shared_property(std::string _name, const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_shared_property(std::string _name, const T &_def = T());
 
     /** Create new shared + persistent property: if the property already exists, return no value.
      */
     template<typename T, typename EntityTag>
-    std::optional<PropertyPtr<T, EntityTag>> create_persistent_property(std::string _name, const T _def = T());
+    std::optional<PropertyPtr<T, EntityTag>> create_persistent_property(std::string _name, const T &_def = T());
 
     /** Create private property - useful for const meshes
      */
     template<typename T, typename EntityTag>
-    PropertyPtr<T, EntityTag> create_private_property(std::string _name = {}, const T _def = T()) const;
+    PropertyPtr<T, EntityTag> create_private_property(std::string _name = {}, const T &_def = T()) const;
 
     /** Get existing shared property. If the property does not exist, return no value.
      */
@@ -236,13 +236,13 @@ public:
     inline void clear_mesh_props()     { clear_props<Entity::Mesh>();}
 
     // TODO: should we deprecate request_*_property, replace with get_or_create_*_property for more clarity?
-    template<class T> VertexPropertyT<T>   request_vertex_property  (const std::string& _name = std::string(), const T _def = T());
-    template<class T> EdgePropertyT<T>     request_edge_property    (const std::string& _name = std::string(), const T _def = T());
-    template<class T> HalfEdgePropertyT<T> request_halfedge_property(const std::string& _name = std::string(), const T _def = T());
-    template<class T> FacePropertyT<T>     request_face_property    (const std::string& _name = std::string(), const T _def = T());
-    template<class T> HalfFacePropertyT<T> request_halfface_property(const std::string& _name = std::string(), const T _def = T());
-    template<class T> CellPropertyT<T>     request_cell_property    (const std::string& _name = std::string(), const T _def = T());
-    template<class T> MeshPropertyT<T>     request_mesh_property    (const std::string& _name = std::string(), const T _def = T());
+    template<class T> VertexPropertyT<T>   request_vertex_property  (const std::string& _name = std::string(), const T &_def = T());
+    template<class T> EdgePropertyT<T>     request_edge_property    (const std::string& _name = std::string(), const T &_def = T());
+    template<class T> HalfEdgePropertyT<T> request_halfedge_property(const std::string& _name = std::string(), const T &_def = T());
+    template<class T> FacePropertyT<T>     request_face_property    (const std::string& _name = std::string(), const T &_def = T());
+    template<class T> HalfFacePropertyT<T> request_halfface_property(const std::string& _name = std::string(), const T &_def = T());
+    template<class T> CellPropertyT<T>     request_cell_property    (const std::string& _name = std::string(), const T &_def = T());
+    template<class T> MeshPropertyT<T>     request_mesh_property    (const std::string& _name = std::string(), const T &_def = T());
 
 
     ////

@@ -84,42 +84,42 @@ void ResourceManager::copy_property_elements(Handle _idx_a, Handle _idx_b)
 }
 
 template<class T>
-VertexPropertyT<T> ResourceManager::request_vertex_property(const std::string& _name, const T _def) {
+VertexPropertyT<T> ResourceManager::request_vertex_property(const std::string& _name, const T &_def) {
 
     return request_property<T, Entity::Vertex>(_name, _def);
 }
 
 template<class T>
-EdgePropertyT<T> ResourceManager::request_edge_property(const std::string& _name, const T _def) {
+EdgePropertyT<T> ResourceManager::request_edge_property(const std::string& _name, const T &_def) {
 
     return request_property<T, Entity::Edge>(_name, _def);
 }
 
 template<class T>
-HalfEdgePropertyT<T> ResourceManager::request_halfedge_property(const std::string& _name, const T _def) {
+HalfEdgePropertyT<T> ResourceManager::request_halfedge_property(const std::string& _name, const T &_def) {
 
     return request_property<T, Entity::HalfEdge>(_name, _def);
 }
 
 template<class T>
-FacePropertyT<T> ResourceManager::request_face_property(const std::string& _name, const T _def) {
+FacePropertyT<T> ResourceManager::request_face_property(const std::string& _name, const T &_def) {
 
     return request_property<T, Entity::Face>(_name, _def);
 }
 
 template<class T>
-HalfFacePropertyT<T> ResourceManager::request_halfface_property(const std::string& _name, const T _def) {
+HalfFacePropertyT<T> ResourceManager::request_halfface_property(const std::string& _name, const T &_def) {
     return request_property<T, Entity::HalfFace>(_name, _def);
 }
 
 template<class T>
-CellPropertyT<T> ResourceManager::request_cell_property(const std::string& _name, const T _def) {
+CellPropertyT<T> ResourceManager::request_cell_property(const std::string& _name, const T &_def) {
 
     return request_property<T, Entity::Cell>(_name, _def);
 }
 
 template<class T>
-MeshPropertyT<T> ResourceManager::request_mesh_property(const std::string& _name, const T _def) {
+MeshPropertyT<T> ResourceManager::request_mesh_property(const std::string& _name, const T &_def) {
 
     return request_property<T, Entity::Mesh>(_name, _def);
 }
@@ -148,20 +148,20 @@ ResourceManager::internal_find_property(const std::string& _name) const
 
 template<class T, class EntityTag>
 PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(
-        std::string _name, const T _def, bool _shared) const
+        std::string _name, const T &_def, bool _shared) const
 {
     auto storage = std::make_shared<PropertyStorageT<T>>(
                                      &storage_tracker<EntityTag>(),
                                      std::move(_name),
                                      EntityTag::type(),
-                                     std::move(_def),
+                                     _def,
                                      _shared);
     storage->resize(n<EntityTag>());
     return PropertyPtr<T, EntityTag>(std::move(storage));
 }
 
 template<typename T, typename EntityTag>
-PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _name, const T _def)
+PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _name, const T &_def)
 {
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
@@ -172,7 +172,7 @@ PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _
 
 template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
-ResourceManager::create_persistent_property(std::string _name, const T _def)
+ResourceManager::create_persistent_property(std::string _name, const T &_def)
 {
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
@@ -184,7 +184,7 @@ ResourceManager::create_persistent_property(std::string _name, const T _def)
 
 template<typename T, typename EntityTag>
 std::optional<PropertyPtr<T, EntityTag>>
-ResourceManager::create_shared_property(std::string _name, const T _def)
+ResourceManager::create_shared_property(std::string _name, const T &_def)
 {
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
@@ -193,7 +193,7 @@ ResourceManager::create_shared_property(std::string _name, const T _def)
 }
 template<typename T, typename EntityTag>
 PropertyPtr<T, EntityTag>
-ResourceManager::create_private_property(std::string _name, const T _def) const
+ResourceManager::create_private_property(std::string _name, const T &_def) const
 {
     return internal_create_property<T, EntityTag>(std::move(_name), _def, false);
 }

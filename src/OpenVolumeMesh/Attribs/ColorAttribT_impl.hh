@@ -41,7 +41,7 @@
 namespace OpenVolumeMesh {
 
 template <class ColT>
-ColorAttrib<ColT>::ColorAttrib(TopologyKernel& _kernel, const ColT _def) :
+ColorAttrib<ColT>::ColorAttrib(TopologyKernel& _kernel, ColT const &_def) :
         vcolor_prop_(_kernel.request_vertex_property<ColT>("vertex_color", _def)),
         ecolor_prop_(_kernel.request_edge_property<ColT>("edge_color", _def)),
         hecolor_prop_(_kernel.request_halfedge_property<ColT>("halfedge_color", _def)),

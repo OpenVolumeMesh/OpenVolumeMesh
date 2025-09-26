@@ -11,27 +11,31 @@ public:
                       const TopologyKernel* _mesh, int _max_laps = 1) :
         CirculatorImpl(_ref_h, _mesh, _max_laps) {}
 
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator& operator++() {
         CirculatorImpl::operator++();
         return *this;
     }
 
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator& operator--() {
         CirculatorImpl::operator--();
         return *this;
     }
 
-    // Post increment/decrement operator
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator operator++(int) {
         GenericCirculator cpy = *this;
         ++(*this);
         return cpy;
     }
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator operator--(int) {
         GenericCirculator cpy = *this;
         --(*this);
         return cpy;
     }
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator operator+(int _n) {
         GenericCirculator cpy = *this;
         for(int i = 0; i < _n; ++i) {
@@ -39,6 +43,7 @@ public:
         }
         return cpy;
     }
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator operator-(int _n) {
         GenericCirculator cpy = *this;
         for(int i = 0; i < _n; ++i) {
@@ -46,12 +51,14 @@ public:
         }
         return cpy;
     }
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator& operator+=(int _n) {
         for(int i = 0; i < _n; ++i) {
             ++(*this);
         }
         return *this;
     }
+    // cppcheck-suppress duplInheritedMember
     GenericCirculator& operator-=(int _n) {
         for(int i = 0; i < _n; ++i) {
             --(*this);

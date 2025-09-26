@@ -84,6 +84,7 @@ private:
 
 
     struct Property {
+        // cppcheck-suppress uninitMemberVar
         Property() = default;
         Property(PropertyEntity _entity,
                  std::shared_ptr<PropertyStorageBase> _prop,
