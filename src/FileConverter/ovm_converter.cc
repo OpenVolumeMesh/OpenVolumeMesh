@@ -34,7 +34,7 @@ int main(int _argc, char* _argv[]) {
     std::ifstream iff(_argv[2], std::ios::in);
 
     if(!iff.good()) {
-        std::cerr << "Could not open file " << _argv[1] << " for reading!" << std::endl;
+        std::cerr << "Could not open file " << _argv[2] << " for reading!" << std::endl;
         return -1;
     }
 
