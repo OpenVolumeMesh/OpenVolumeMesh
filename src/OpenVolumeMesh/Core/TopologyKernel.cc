@@ -37,8 +37,6 @@
 #include <iostream>
 #endif
 
-#include <queue>
-
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
 #include <OpenVolumeMesh/Core/detail/swap_bool.hh>
 
