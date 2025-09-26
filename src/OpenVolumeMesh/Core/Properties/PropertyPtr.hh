@@ -39,7 +39,6 @@
 #include <memory>
 
 #include <OpenVolumeMesh/Core/Handles.hh>
-#include <OpenVolumeMesh/System/Deprecation.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyStorageT.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 #include <OpenVolumeMesh/Core/HandleIndexing.hh>

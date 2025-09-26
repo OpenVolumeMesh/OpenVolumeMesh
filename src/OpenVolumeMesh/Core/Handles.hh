@@ -43,7 +43,6 @@
 
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <functional>
-#include <OpenVolumeMesh/System/Deprecation.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
