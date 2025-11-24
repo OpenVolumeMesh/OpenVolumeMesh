@@ -739,6 +739,13 @@ noexcept(noexcept(_v1.swap(_v2))) {
     _v1.swap(_v2);
 }
 
+/// Vector Dimension
+template<typename T>
+struct vector_dim {};
+template<typename Scalar, int DIM>
+struct vector_dim<Geometry::VectorT<Scalar, DIM>>
+{ constexpr static int  dim = DIM;};
+
 //== TYPEDEFS =================================================================
 
 /** 1-byte signed vector */

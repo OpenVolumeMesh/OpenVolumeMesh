@@ -9,7 +9,7 @@ namespace OpenVolumeMesh::IO::detail {
 template<typename VecT>
 size_t GeometryReaderT<VecT>::dim() const
 {
-   return VecT::dim();
+   return vector_dim<VecT>::dim;
 }
 
 template<typename VecT>

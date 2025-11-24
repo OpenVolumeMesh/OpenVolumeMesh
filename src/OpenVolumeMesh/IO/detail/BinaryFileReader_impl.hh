@@ -67,7 +67,7 @@ ReadCompatibility BinaryFileReader::compatibility()
 #endif
     }
     // TODO: allow converting vertex dimension?
-    if (file_header_.vertex_dim != MeshT::Point::dim()) {
+    if (file_header_.vertex_dim != vector_dim<typename MeshT::Point>::dim) {
         return ReadCompatibility::MeshVertexDimensionIncompatible;
     }
     if (std::is_base_of<TetrahedralMeshTopologyKernel, MeshT>::value) {
