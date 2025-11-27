@@ -346,6 +346,7 @@ void BinaryFileWriter::write_all_props()
         PropChunkHeader chunk_header;
         chunk_header.span.first = 0;
         chunk_header.span.count = prop.prop->size();
+	if (chunk_header.span.empty()) {continue;}
         chunk_header.idx = idx++;
         write(encoder, chunk_header);
 
