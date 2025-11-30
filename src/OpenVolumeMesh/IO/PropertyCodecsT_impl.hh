@@ -35,7 +35,6 @@ void PropertyEncoderT<T, Codec>::serialize(
         size_t idx_end) const
 {
     const PropertyStorageT<T> *prop = prop_base->cast_to_StorageT<T>();
-    assert (idx_begin < prop->size());
     assert (idx_begin <= idx_end && idx_end <= prop->size());
     Encoder encoder(_buffer);
     Codec::encode_n(encoder, prop->data_vector(), idx_begin, idx_end);
@@ -105,14 +104,14 @@ struct SimplePropCodec {
         Codec::decode(dec, val);
     }
     static void decode_n(Decoder &decoder, std::vector<T> &vec, size_t idx_begin, size_t idx_end) {
-        assert(idx_begin < idx_end);
+        assert(idx_begin <= idx_end);
         assert(idx_end <= vec.size());
         for (size_t i = idx_begin; i < idx_end; ++i) {
             Codec::decode(decoder, vec[i]);
         }
     }
     static void encode_n(Encoder &enc, std::vector<T> const&vec, size_t idx_begin, size_t idx_end) {
-        assert(idx_begin < idx_end);
+        assert(idx_begin <= idx_end);
         assert(idx_end <= vec.size());
         for (size_t i = idx_begin; i < idx_end; ++i) {
             Codec::encode(enc, vec[i]);
