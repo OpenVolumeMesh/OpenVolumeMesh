@@ -16,7 +16,7 @@ public:
 };
 
 template<typename VecT>
-class OVM_EXPORT GeometryReaderT : public GeometryReaderBase
+class GeometryReaderT : public GeometryReaderBase
 {
 public:
     GeometryReaderT(GeometryKernelT<VecT> & _geometry_kernel)
