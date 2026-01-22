@@ -58,7 +58,8 @@ configure_file (
 include(VCICommon OPTIONAL RESULT_VARIABLE IN_VCI_BUILD)
 if(IN_VCI_BUILD)
     message("OVM is being built as part of an VCI project, using vci_add_library!")
-    vci_add_library(OpenVolumeMesh ${SOURCE_FILES})
+    # Note: only with SHARED is the library copied to the right place inside OpenFlipper
+    vci_add_library(OpenVolumeMesh SHARED ${SOURCE_FILES})
 else(IN_VCI_BUILD)
     add_library(OpenVolumeMesh ${SOURCE_FILES})
 endif(IN_VCI_BUILD)
