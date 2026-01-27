@@ -69,27 +69,5 @@
 #include <OpenVolumeMesh/Core/Iterators/detail/VertexIHalfEdgeIterImpl.cc>
 
 namespace OpenVolumeMesh {
-template class OVM_EXPORT GenericCirculator<detail::VertexIHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::VertexEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::VertexHalfFaceIterImpl>;
-
-template class OVM_EXPORT GenericCirculator<detail::HalfEdgeFaceIterImpl>;
-
-template class OVM_EXPORT GenericCirculator<detail::EdgeHalfFaceIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::EdgeFaceIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::EdgeCellIterImpl>;
-
-template class OVM_EXPORT GenericCirculator<detail::HalfFaceHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::HalfFaceEdgeIterImpl>;
-
-template class OVM_EXPORT GenericCirculator<detail::FaceVertexIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::FaceHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::FaceEdgeIterImpl>;
-
-template class OVM_EXPORT GenericCirculator<detail::CellHalfEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::CellEdgeIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::CellHalfFaceIterImpl>;
-template class OVM_EXPORT GenericCirculator<detail::CellFaceIterImpl>;
-
 
 } // namespace OpenVolumeMesh

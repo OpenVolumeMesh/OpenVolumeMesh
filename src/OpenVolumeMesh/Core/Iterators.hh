@@ -89,33 +89,6 @@
 
 namespace OpenVolumeMesh {
 
-
-extern template class OVM_EXPORT GenericCirculator<detail::VertexIHalfEdgeIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::VertexEdgeIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::VertexHalfFaceIterImpl>;
-
-extern template class OVM_EXPORT GenericCirculator<detail::HalfEdgeFaceIterImpl>;
-
-extern template class OVM_EXPORT GenericCirculator<detail::EdgeHalfFaceIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::EdgeFaceIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::EdgeCellIterImpl>;
-
-extern template class OVM_EXPORT GenericCirculator<detail::HalfFaceHalfEdgeIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::HalfFaceEdgeIterImpl>;
-
-extern template class OVM_EXPORT GenericCirculator<detail::FaceVertexIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::FaceHalfEdgeIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::FaceEdgeIterImpl>;
-
-extern template class OVM_EXPORT GenericCirculator<detail::CellHalfEdgeIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::CellEdgeIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::CellHalfFaceIterImpl>;
-extern template class OVM_EXPORT GenericCirculator<detail::CellFaceIterImpl>;
-
-
-
-
-
 typedef GenericCirculator<detail::VertexIHalfEdgeIterImpl> VertexIHalfEdgeIter;
 typedef GenericCirculator<detail::VertexEdgeIterImpl> VertexEdgeIter;
 typedef GenericCirculator<detail::VertexHalfFaceIterImpl> VertexHalfFaceIter;

@@ -93,7 +93,7 @@ private:
 };
 
 template <typename Derived>
-class OVM_EXPORT HandleT : public HandleBase
+class HandleT : public HandleBase
 {
 public:
     using HandleBase::HandleBase;
