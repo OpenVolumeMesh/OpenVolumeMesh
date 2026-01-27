@@ -10,9 +10,6 @@
 #include <OpenVolumeMesh/Core/Iterators/HalfFaceIter.hh>
 #include <OpenVolumeMesh/Core/Iterators/CellIter.hh>
 
-
-#include <iterator>
-
 #ifndef NDEBUG
 #include <iostream>
 #endif
@@ -123,6 +120,7 @@ private:
 };
 
 //===========================================================================
+
 typedef BoundaryItemIter<VertexIter, VertexHandle> BoundaryVertexIter;
 typedef BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle> BoundaryHalfEdgeIter;
 typedef BoundaryItemIter<EdgeIter, EdgeHandle> BoundaryEdgeIter;
@@ -130,22 +128,14 @@ typedef BoundaryItemIter<HalfFaceIter, HalfFaceHandle> BoundaryHalfFaceIter;
 typedef BoundaryItemIter<FaceIter, FaceHandle> BoundaryFaceIter;
 typedef BoundaryItemIter<CellIter, CellHandle> BoundaryCellIter;
 
-// declare specializations so we can declare explicit instantiations:
-//
-template<> bool BoundaryItemIter<VertexIter, VertexHandle>::has_incidences() const;
-template<> bool BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>::has_incidences() const;
-template<> bool BoundaryItemIter<EdgeIter, EdgeHandle>::has_incidences() const;
-template<> bool BoundaryItemIter<HalfFaceIter, HalfFaceHandle>::has_incidences() const;
-template<> bool BoundaryItemIter<FaceIter, FaceHandle>::has_incidences() const;
-template<> bool BoundaryItemIter<CellIter, CellHandle>::has_incidences() const;
+// declare specializations:
 
-// explicit instantiations:
-extern template class OVM_EXPORT BoundaryItemIter<VertexIter, VertexHandle>;
-extern template class OVM_EXPORT BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>;
-extern template class OVM_EXPORT BoundaryItemIter<EdgeIter, EdgeHandle>;
-extern template class OVM_EXPORT BoundaryItemIter<HalfFaceIter, HalfFaceHandle>;
-extern template class OVM_EXPORT BoundaryItemIter<FaceIter, FaceHandle>;
-extern template class OVM_EXPORT BoundaryItemIter<CellIter, CellHandle>;
+template<> bool OVM_EXPORT BoundaryItemIter<VertexIter, VertexHandle>::has_incidences() const;
+template<> bool OVM_EXPORT BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>::has_incidences() const;
+template<> bool OVM_EXPORT BoundaryItemIter<EdgeIter, EdgeHandle>::has_incidences() const;
+template<> bool OVM_EXPORT BoundaryItemIter<HalfFaceIter, HalfFaceHandle>::has_incidences() const;
+template<> bool OVM_EXPORT BoundaryItemIter<FaceIter, FaceHandle>::has_incidences() const;
+template<> bool OVM_EXPORT BoundaryItemIter<CellIter, CellHandle>::has_incidences() const;
 
 
 } // namespace OpenVolumeMesh
