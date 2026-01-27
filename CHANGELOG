@@ -1,5 +1,9 @@
 master:
-  -
+  - Property handling has been simplified, Properties now do not have a pointer
+    to the ResourceManager anymore. In the process, the meaning of PropertyPtrT
+    `operator bool()` has changed to signify being attached to a PropertyStorage,
+    as opposed to being an "alive" property of a ResourceManager.
+
 
 Version 3.4.1 (2025-07-31):
   - ovmb_read now takes a std::filesystem::path instead of a const char *

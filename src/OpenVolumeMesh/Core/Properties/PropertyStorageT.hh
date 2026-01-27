@@ -38,7 +38,6 @@
 #include <cassert>
 #include <istream>
 #include <ostream>
-#include <numeric>
 #include <string>
 #include <vector>
 #include <memory>
@@ -76,12 +75,11 @@ public:
 public:
 
     explicit PropertyStorageT(
-            detail::Tracker<PropertyStorageBase> *tracker,
             std::string _name,
             EntityType _entity_type,
             const T _def,
             bool _shared)
-        : PropertyStorageBase(tracker, std::move(_name), detail::internal_type_name<T>(), _entity_type, _shared),
+        : PropertyStorageBase(std::move(_name), detail::internal_type_name<T>(), _entity_type, _shared),
           def_(std::move(_def))
     {}
 
@@ -179,7 +177,6 @@ public:
 
     std::shared_ptr<PropertyStorageBase> clone() const final {
         auto res = std::make_shared<PropertyStorageT<T>>(*this);
-        res->set_tracker(nullptr);
         return res;
     }
 

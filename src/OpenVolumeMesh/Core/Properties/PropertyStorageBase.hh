@@ -36,12 +36,10 @@
 #include <iosfwd>
 #include <string>
 #include <memory>
-#include <vector>
 
 #include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
-#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 namespace OpenVolumeMesh {
 
@@ -59,17 +57,14 @@ class PropertyStorageT;
 
 class OVM_EXPORT PropertyStorageBase
         : public std::enable_shared_from_this<PropertyStorageBase>
-        , public detail::Tracked<PropertyStorageBase>
 {
 public:
     PropertyStorageBase(
-            detail::Tracker<PropertyStorageBase> *tracker,
             std::string _name,
             std::string _internal_type_name,
             EntityType _entity_type,
             bool _shared)
-        : detail::Tracked<PropertyStorageBase>(tracker)
-        , name_(std::move(_name))
+        : name_(std::move(_name))
         , internal_type_name_(std::move(_internal_type_name))
         , entity_type_(_entity_type)
         , persistent_(false)
@@ -170,19 +165,12 @@ public:
     /// Move data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void move_values_from(PropertyStorageBase *other) = 0;
 
-    /// Attach to a mesh. Does not resize property!
-    void attach_to(const ResourceManager *resman);
-
-    /// Is this property storage attached to a mesh?
-    operator bool() const {return Tracked::has_tracker();}
-
 private:
-	std::string name_;
+    std::string name_;
     // while we could compute this on the fly,
     // it does not take much storage and is useful in debugging
     std::string internal_type_name_;
     EntityType entity_type_;
-
 
     // TODO: an enum might be nicer for this:
     bool persistent_;

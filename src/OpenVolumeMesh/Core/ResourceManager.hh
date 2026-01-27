@@ -43,15 +43,28 @@
 #include <set>
 #include <type_traits>
 #include <optional>
+#include <utility>
 
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/Entities.hh>
 #include <OpenVolumeMesh/Core/EntityUtils.hh>
 #include <OpenVolumeMesh/Core/ForwardDeclarations.hh>
-#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyIterator.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyStorageBase.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
+
+#if defined(__has_include)
+#  if __has_include(<version>)
+#    include <version>
+#  endif
+#endif
+#include <iterator>
+#ifdef __cpp_lib_ranges
+# include <ranges>
+#endif
+#ifdef __cpp_lib_concepts
+# include <concepts>
+#endif
 
 
 namespace OpenVolumeMesh {
@@ -71,9 +84,91 @@ public:
 
 private:
     using PersistentProperties = std::set<std::shared_ptr<PropertyStorageBase>>;
+    using PropertyStorageWeakPtr = std::weak_ptr<PropertyStorageBase>;
+    using PropertyStorageWeakPtrVec = std::vector<PropertyStorageWeakPtr>;
+    using PropertyStorageWeakPtrIter = PropertyStorageWeakPtrVec::const_iterator;
+
+    /// Used for iterating over all non-expired properties
+    class LockedPropertyIterator {
+    public:
+        using difference_type = std::ptrdiff_t;
+        using value_type = std::shared_ptr<PropertyStorageBase>;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using iterator_category = std::input_iterator_tag;
+
+        LockedPropertyIterator() = default; // needed for sentinel_for concept
+        LockedPropertyIterator(PropertyStorageWeakPtrIter it,
+                               PropertyStorageWeakPtrIter end)
+            : it_(it), end_(end)
+        {
+            advance_to_valid();
+        }
+
+        std::shared_ptr<PropertyStorageBase> operator*() const {
+            return current_;
+        }
+
+        LockedPropertyIterator& operator++() {
+            ++it_;
+            advance_to_valid();
+            return *this;
+        }
+        LockedPropertyIterator operator++(int) {
+            auto old = *this;
+            ++(*this);
+            return old;
+        }
+        bool operator==(LockedPropertyIterator const &other) const {
+            return it_ == other.it_;
+        }
+        bool operator!=(LockedPropertyIterator const &other) const {
+            return it_ != other.it_;
+        }
+
+    private:
+        void advance_to_valid() {
+            current_.reset();
+            while (it_ != end_) {
+                current_ = it_->lock();
+                if (current_) {
+                    return;
+                }
+                ++it_;
+            }
+        }
+
+        PropertyStorageWeakPtrIter it_;
+        PropertyStorageWeakPtrIter end_;
+        std::shared_ptr<PropertyStorageBase> current_;
+    };
+
+    class LockedPropertyRange {
+    public:
+        explicit LockedPropertyRange(PropertyStorageWeakPtrVec const &props)
+            : begin_(props.cbegin(), props.cend()),
+              end_(props.cend(), props.cend())
+        {}
+
+        LockedPropertyIterator begin() const { return begin_; }
+        LockedPropertyIterator end() const { return end_; }
+        size_t size() const {return std::distance(begin_, end_);}
+
+    private:
+        LockedPropertyIterator begin_;
+        LockedPropertyIterator end_;
+    };
+#if defined __cpp_lib_ranges && defined __cpp_lib_concepts
+    static_assert(std::input_iterator<LockedPropertyIterator>);
+    static_assert(std::sentinel_for<LockedPropertyIterator, LockedPropertyIterator>);
+    static_assert(std::ranges::range<LockedPropertyRange>);
+#endif
 
     template <class T, typename EntityTag>
-    static PropertyPtr<T, EntityTag> prop_ptr_from_storage(PropertyStorageBase *_prop);
+    static PropertyPtr<T, EntityTag> prop_ptr_from_storage(std::shared_ptr<PropertyStorageBase> const &_prop);
+
+    /// remove all expired property weak_ptr's
+    void prune_properties(EntityType type) const;
 
     template<class EntityTag>
     void resize_props(size_t _n);
@@ -99,10 +194,10 @@ protected:
     friend class PropertyStorageBase;
 
     template<typename EntityTag>
-    detail::Tracker<PropertyStorageBase> & storage_tracker() const;
-    detail::Tracker<PropertyStorageBase> & storage_tracker(EntityType type) const;
+    LockedPropertyRange properties() const;
+    LockedPropertyRange properties(EntityType type) const;
 
-    mutable PerEntity<detail::Tracker<PropertyStorageBase>> storage_trackers_;
+    mutable PerEntity<PropertyStorageWeakPtrVec> properties_;
 
 protected:
 
@@ -532,4 +627,3 @@ public:
 }
 
 #include <OpenVolumeMesh/Core/ResourceManagerT_impl.hh>
-

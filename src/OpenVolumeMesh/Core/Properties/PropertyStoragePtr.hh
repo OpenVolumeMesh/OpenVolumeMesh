@@ -74,7 +74,7 @@ public:
     iterator end()   { return storage()->end(); }
     size_t size() const { return storage()->size(); }
 
-    operator bool() const {return *storage();}
+    operator bool() const {return storage().get();}
 
     reference operator[](size_t idx) { return (*storage())[idx];};
     const_reference operator[](size_t idx) const { return (*storage())[idx];};
