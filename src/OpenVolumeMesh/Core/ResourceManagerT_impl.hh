@@ -151,17 +151,16 @@ ResourceManager::internal_find_property(const std::string& _name) const
 }
 
 template<class T, class EntityTag>
-PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(
-        std::string _name, const T &_def, bool _shared) const
+PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(std::string _name, const T &_def) const
 {
     auto storage = std::make_shared<PropertyStorageT<T>>(
                                      std::move(_name),
                                      EntityTag::type(),
-                                     _def,
-                                     _shared);
+                                     _def);
     properties_.get<EntityTag>().push_back(storage);
     storage->resize(n<EntityTag>());
-    return PropertyPtr<T, EntityTag>(std::move(storage));
+    auto ptr = PropertyPtr<T, EntityTag>(std::move(storage));
+    return ptr;
 }
 
 template<typename T, typename EntityTag>
@@ -170,8 +169,11 @@ PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return *prop;
-    bool shared = !_name.empty();
-    return internal_create_property<T, EntityTag>(_name, _def, shared);
+    auto ptr = internal_create_property<T, EntityTag>(_name, _def);
+    if(!_name.empty()) {
+        set_shared(ptr);
+    }
+    return ptr;
 }
 
 template<typename T, typename EntityTag>
@@ -181,7 +183,8 @@ ResourceManager::create_persistent_property(std::string _name, const T &_def)
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    auto ptr =  internal_create_property<T, EntityTag>(std::move(_name), _def, true);
+    auto ptr = internal_create_property<T, EntityTag>(std::move(_name), _def);
+    set_shared(ptr);
     set_persistent(ptr);
     return ptr;
 }
@@ -193,13 +196,15 @@ ResourceManager::create_shared_property(std::string _name, const T &_def)
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    return internal_create_property<T, EntityTag>(std::move(_name), _def, true);
+    auto ptr = internal_create_property<T, EntityTag>(std::move(_name), _def);
+    set_shared(ptr);
+    return ptr;
 }
 template<typename T, typename EntityTag>
 PropertyPtr<T, EntityTag>
 ResourceManager::create_private_property(std::string _name, const T &_def) const
 {
-    return internal_create_property<T, EntityTag>(std::move(_name), _def, false);
+    return internal_create_property<T, EntityTag>(std::move(_name), _def);
 }
 
 template<typename T, typename EntityTag>

@@ -62,13 +62,10 @@ public:
     PropertyStorageBase(
             std::string _name,
             std::string _internal_type_name,
-            EntityType _entity_type,
-            bool _shared)
+            EntityType _entity_type)
         : name_(std::move(_name))
         , internal_type_name_(std::move(_internal_type_name))
         , entity_type_(_entity_type)
-        , persistent_(false)
-        , shared_(_shared)
     {}
 
     virtual ~PropertyStorageBase() = default;
@@ -131,9 +128,6 @@ public:
     virtual void deserialize(std::istream& /*_istr*/) {}
 	// I/O support
 
-	void set_persistent(bool _persistent) { persistent_ = _persistent; }
-    void set_shared(bool _shared) { shared_ = _shared; }
-
 	bool persistent() const { return persistent_; }
     bool shared() const { return shared_; }
 
@@ -172,9 +166,13 @@ private:
     std::string internal_type_name_;
     EntityType entity_type_;
 
+    friend class ResourceManager;
+    void set_persistent(bool _persistent) { persistent_ = _persistent; }
+    void set_shared(bool _shared) { shared_ = _shared; }
+
     // TODO: an enum might be nicer for this:
-    bool persistent_;
-    bool shared_;
+    bool persistent_ = false;
+    bool shared_ = false;
 };
 
 } // Namespace OpenVolumeMesh

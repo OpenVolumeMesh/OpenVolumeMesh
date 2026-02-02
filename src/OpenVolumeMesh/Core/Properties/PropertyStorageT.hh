@@ -77,9 +77,8 @@ public:
     explicit PropertyStorageT(
             std::string _name,
             EntityType _entity_type,
-            const T _def,
-            bool _shared)
-        : PropertyStorageBase(std::move(_name), detail::internal_type_name<T>(), _entity_type, _shared),
+            const T _def)
+        : PropertyStorageBase(std::move(_name), detail::internal_type_name<T>(), _entity_type),
           def_(std::move(_def))
     {}
 
