@@ -13,19 +13,6 @@ add_executable(read_vtk vtk_datafile_2/read_vtk.cc)
 target_link_libraries(simple_mesh OpenVolumeMesh::OpenVolumeMesh)
 target_link_libraries(read_vtk OpenVolumeMesh::OpenVolumeMesh)
 
-set_target_properties (simple_mesh PROPERTIES
-    CXX_STANDARD ${OVM_CXX_STANDARD}
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
-
-
-set_target_properties (read_vtk PROPERTIES
-    CXX_STANDARD ${OVM_CXX_STANDARD}
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-)
-
 #[[=
 if(WIN32)
   # copy exe file to "Build" directory

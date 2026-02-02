@@ -1,7 +1,6 @@
 #!/bin/bash
 
 COMPILER=$1
-LANGUAGE=$2
 
 # Exit script on any error
 set -e 
@@ -17,16 +16,10 @@ elif [ "$COMPILER" == "clang" ]; then
   OPTIONS="$OPTIONS -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang"
   echo "Building with CLANG";
   BUILDPATH="clang"  
-fi  
-
-if [ "$LANGUAGE" == "C++17" ]; then
-  echo "Building with C++17";
-  BUILDPATH="$BUILDPATH-cpp17"  
-elif [ "$LANGUAGE" == "C++20" ]; then
-  echo "Building with C++20";
-  OPTIONS="$OPTIONS -DOVM_CXX_STANDARD=20"
-  BUILDPATH="$BUILDPATH-cpp20"  
 fi
+
+echo "Building with C++${CMAKE_CXX_STANDARD}";
+BUILDPATH="$BUILDPATH-cpp${CMAKE_CXX_STANDARD}"
 
 #########################################
 
@@ -82,5 +75,4 @@ cd Unittests
 
 # Run the unittests
 ../Build/bin/unittests --gtest_color=yes --gtest_output=xml
-
 
