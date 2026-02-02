@@ -111,8 +111,12 @@ TEST_F(MeshCopyTest, CopyConstructor)
   EXPECT_EQ(assigned.vertex(v1), pos1);
 
 
-  auto copy_prop = *copy.get_property<int, Entity::Vertex>(propname);
-  auto assigned_prop = *copy.get_property<int, Entity::Vertex>(propname);
+  auto maybe_copy_prop = copy.get_property<int, Entity::Vertex>(propname);
+  ASSERT_TRUE(maybe_copy_prop.has_value());
+  auto copy_prop = *maybe_copy_prop;
+  auto maybe_assigned_prop = copy.get_property<int, Entity::Vertex>(propname);
+  ASSERT_TRUE(maybe_assigned_prop.has_value());
+  auto assigned_prop = *maybe_assigned_prop;
   EXPECT_EQ(mesh_prop.size(), mesh.n_vertices());
   EXPECT_EQ(copy_prop.size(), copy.n_vertices());
   EXPECT_EQ(assigned_prop.size(), copy.n_vertices());
