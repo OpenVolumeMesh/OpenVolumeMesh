@@ -1,0 +1,66 @@
+variables:
+  GIT_SUBMODULE_FORCE_HTTPS: "true" # rewrite git:// submodule urls to https
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_UPDATE_FLAGS: --jobs 16
+  GIT_STRATEGY: fetch
+
+include:
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+    inputs:
+      job_name: "debian-reldeb-C++17"
+      stage: build
+      CMAKE_BUILD_TYPE: RelWithDebInfo
+      cmake_options: "-DCMAKE_CXX_STANDARD=17"
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+    inputs:
+      job_name: "debian-reldeb-C++20"
+      stage: build
+      CMAKE_BUILD_TYPE: RelWithDebInfo
+      cmake_options: "-DCMAKE_CXX_STANDARD=20"
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+    inputs:
+      job_name: "debian-reldeb-C++23"
+      stage: build
+      CMAKE_BUILD_TYPE: RelWithDebInfo
+      cmake_options: "-DCMAKE_CXX_STANDARD=23"
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+    inputs:
+      job_name: "debian-debug"
+      stage: build
+      CMAKE_BUILD_TYPE: Debug
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/windows/vs22-cmake@v0.1.0
+    inputs:
+      job_name: "win-ninja-debug"
+      enable_ctest: true
+      CMAKE_BUILD_TYPE: Debug
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/windows/vs22-cmake@v0.1.0
+    inputs:
+      job_name: "win-ninja-release"
+      enable_ctest: true
+      CMAKE_BUILD_TYPE: Release
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/macos/sonoma@v0.0.3
+    inputs:
+      job_name: "macos-sonoma-C++17"
+      enable_ctest: true
+      CMAKE_BUILD_TYPE: Debug
+      cmake_options: "-DCMAKE_CXX_STANDARD=17"
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/macos/sonoma@v0.0.3
+    inputs:
+      job_name: "macos-sonoma-C++20"
+      enable_ctest: true
+      CMAKE_BUILD_TYPE: Debug
+      cmake_options: "-DCMAKE_CXX_STANDARD=20"
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/macos/sonoma@v0.0.3
+    inputs:
+      job_name: "macos-sonoma-C++23"
+      enable_ctest: true
+      CMAKE_BUILD_TYPE: Debug
+      cmake_options: "-DCMAKE_CXX_STANDARD=23"
