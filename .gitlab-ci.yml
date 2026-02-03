@@ -1,15 +1,35 @@
 gcc-c++17:
-  script: "CI/ci-linux.sh gcc C++17"
+  variables:
+    CMAKE_CXX_STANDARD: "17"
+  script: "CI/ci-linux.sh gcc"
+  tags:
+    - Linux
+
+gcc-c++20:
+  variables:
+    CMAKE_CXX_STANDARD: "20"
+  script: "CI/ci-linux.sh gcc"
   tags:
     - Linux
 
 clang-c++17:
-  script: "CI/ci-linux.sh clang C++17"
+  variables:
+    CMAKE_CXX_STANDARD: "17"
+  script: "CI/ci-linux.sh clang"
+  tags:
+    - Linux
+
+clang-c++20:
+  variables:
+    CMAKE_CXX_STANDARD: "20"
+  script: "CI/ci-linux.sh clang"
   tags:
     - Linux
 
 macos-M1-c++17:
-  script: "CI/ci-mac.sh C++17"
+  variables:
+    CMAKE_CXX_STANDARD: "17"
+  script: "CI/ci-mac.sh"
   tags:
     - AppleM1
 
@@ -45,4 +65,3 @@ doc:
   artifacts:
       paths:
         - build-release/Build/share/OpenVolumeMesh/Doc/html
-

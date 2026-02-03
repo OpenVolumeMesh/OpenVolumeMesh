@@ -3,20 +3,13 @@
 #Exit on any error
 set -e
 
-LANGUAGE=$1
-
 PATH=$PATH:/opt/local/bin
 export PATH
 
 OPTIONS=""
 
-if [ "$LANGUAGE" == "C++17" ]; then
-  echo "Building with C++17";
-elif [ "$LANGUAGE" == "C++20" ]; then
-  echo "Building with C++20";
-  OPTIONS="$OPTIONS -DOVM_CXX_STANDARD=20"
-fi
-
+echo "Building with C++${CMAKE_CXX_STANDARD}";
+BUILDPATH="$BUILDPATH-cpp${CMAKE_CXX_STANDARD}"
 
 #########################################
 # Build release version

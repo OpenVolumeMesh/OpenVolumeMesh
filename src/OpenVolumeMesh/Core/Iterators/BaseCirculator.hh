@@ -17,14 +17,22 @@ public:
         lap_(0),
         max_laps_(_max_laps),
         ref_handle_(_ih)
-    {}
+    {
+        if (max_laps_ <= 0) {
+            BaseIter::valid(false);
+        }
+    }
 
     BaseCirculator(const TopologyKernel* _mesh, const IH& _ih, int _max_laps = 1) :
         BaseIter(_mesh, OH()),
         lap_(0),
         max_laps_(_max_laps),
         ref_handle_(_ih)
-    {}
+    {
+        if (max_laps_ <= 0) {
+            BaseIter::valid(false);
+        }
+    }
 
     // STL compliance (needs to have default constructor)
     BaseCirculator() :
