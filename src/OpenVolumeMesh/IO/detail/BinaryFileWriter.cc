@@ -309,9 +309,9 @@ void BinaryFileWriter::write_propdir()
             PropertyStorageBase *prop_base  = *prop_it;
             auto prop_enc = prop_codecs_.get_encoder(prop_base->internal_type_name());
             if (!prop_enc) {
-                std::cerr << "Could not find encoder for property '" << prop_base->name()
+                std::cerr << "OVMB writer: Could not find encoder for persistent property '" << prop_base->name()
                           << "' of type '" << prop_base->internal_type_name()
-                          << "', ignoring."
+                          << "', ignoring. Register an encoder if you want to store this property."
                           << std::endl;
                 continue;
             }
