@@ -57,7 +57,7 @@ target_link_libraries(${TARGET_NAME}
     )
 
 gtest_discover_tests(${TARGET_NAME}
-    EXTRA_ARGS "--gtest_color=yes;--gtest_output=xml"
+    EXTRA_ARGS "--gtest_color=yes" "--gtest_output=xml"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/Unittests"
     )
 
