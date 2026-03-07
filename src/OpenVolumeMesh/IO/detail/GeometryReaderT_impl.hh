@@ -23,7 +23,7 @@ const
     {
         for (size_t i = first; i < first+count; ++i) {
             auto vh = VH::from_unsigned(i);
-            VecT &point = geometry_kernel_[vh];
+            VecT &point = vertex_pos_[vh];
             for (size_t d = 0; d < dim(); ++d) {
                 point[d] = read_one(_decoder);
             }

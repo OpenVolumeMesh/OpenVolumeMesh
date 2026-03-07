@@ -32,13 +32,13 @@ void GeometryWriterT<VecT>::write(WriteBuffer & _writebuf,
 
     Encoder encoder(_writebuf);
     auto end = _span.first + _span.count;
-    assert(end <= geometry_kernel_.size());
+    assert(end <= vertex_pos_.size());
 
     auto write_all = [&](auto write_one)
     {
         for (uint32_t i = _span.first; i < end; ++i) {
             auto vh = VertexHandle::from_unsigned(i);
-            const auto &pos = geometry_kernel_[vh];
+            const auto &pos = vertex_pos_[vh];
             for (size_t dim = 0; dim < this->dim(); ++dim) {
                 write_one(encoder, pos[dim]);
             }

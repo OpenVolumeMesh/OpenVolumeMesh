@@ -19,14 +19,15 @@ template<typename VecT>
 class GeometryReaderT : public GeometryReaderBase
 {
 public:
-    GeometryReaderT(GeometryKernelT<VecT> & _geometry_kernel)
-        : geometry_kernel_(_geometry_kernel)
+    using VPositionProp = typename GeometryKernel<VecT>::VPositionProp;
+    GeometryReaderT(VPositionProp & _vertex_pos)
+        : vertex_pos_(_vertex_pos)
     {}
     size_t dim() const override;
     void read(Decoder & _decoder, VertexEncoding encoding, uint32_t first, uint32_t count) const override;
 
 private:
-    GeometryKernelT<VecT> & geometry_kernel_;
+    VPositionProp & vertex_pos_;
 };
 
 extern template class OVM_EXPORT GeometryReaderT<Vec3f>;
