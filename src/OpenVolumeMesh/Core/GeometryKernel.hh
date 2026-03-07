@@ -111,17 +111,27 @@ public:
         return vh;
     }
 
-    /// Set the coordinates of point _vh
-    //[[deprecated("Use VecT& vertex(VH) instead.")]]
+    /// Set the coordinates of point _vh - traditional OVM API
     void set_vertex(VertexHandle _vh, const VecT& _p) {
-
         assert(_vh.idx() < (int)position_.size());
 
         position_[_vh] = _p;
     }
 
-    /// Get point _vh's coordinates
+    /// Get point _vh's coordinates - traditional OVM API
     const VecT& vertex(VertexHandle _vh) const {
+        return position_[_vh];
+    }
+
+    /// Set the coordinates of point _vh -- compatibility with OpenMesh API
+    void set_point(VertexHandle _vh, const VecT& _p) {
+        assert(_vh.idx() < (int)position_.size());
+
+        position_[_vh] = _p;
+    }
+
+    /// Get point _vh's coordinates -- compatibility with OpenMesh API
+    const VecT& point(VertexHandle _vh) const {
         return position_[_vh];
     }
 
