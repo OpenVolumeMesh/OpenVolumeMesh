@@ -35,20 +35,17 @@
 
 #include <cassert>
 #include <iostream>
-#include <type_traits>
+#include <cassert>
 
 #include <OpenVolumeMesh/Geometry/VectorT.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
 
-// TODO: rename this and put in detail namespace:
-template <class VecT>
-using GeometryKernelT = PropertyPtr<VecT, Entity::Vertex>;
-
 template <class VecT, class TopologyKernelT = TopologyKernel>
 class GeometryKernel : public TopologyKernelT {
 public:
+    using VPositionProp = PropertyPtr<VecT, Entity::Vertex>;
 
     using PointT = VecT; // OVM legacy
     using Point = VecT;  // OpenMesh compatiblity
@@ -114,17 +111,27 @@ public:
         return vh;
     }
 
-    /// Set the coordinates of point _vh
-    //[[deprecated("Use VecT& vertex(VH) instead.")]]
+    /// Set the coordinates of point _vh - traditional OVM API
     void set_vertex(VertexHandle _vh, const VecT& _p) {
-
         assert(_vh.idx() < (int)position_.size());
 
         position_[_vh] = _p;
     }
 
-    /// Get point _vh's coordinates
+    /// Get point _vh's coordinates - traditional OVM API
     const VecT& vertex(VertexHandle _vh) const {
+        return position_[_vh];
+    }
+
+    /// Set the coordinates of point _vh -- compatibility with OpenMesh API
+    void set_point(VertexHandle _vh, const VecT& _p) {
+        assert(_vh.idx() < (int)position_.size());
+
+        position_[_vh] = _p;
+    }
+
+    /// Get point _vh's coordinates -- compatibility with OpenMesh API
+    const VecT& point(VertexHandle _vh) const {
         return position_[_vh];
     }
 
@@ -204,25 +211,28 @@ public:
         return n.normalized();
     }
 
-    GeometryKernelT<VecT> const& vertex_positions() const & {return position_;}
-    GeometryKernelT<VecT> & vertex_positions() & {return position_;}
+    VPositionProp const& vertex_positions() const & {return position_;}
+    VPositionProp & vertex_positions() & {return position_;}
 
 private:
-    GeometryKernelT<VecT> get_prop() {
+    VPositionProp get_prop() {
         auto prop = this->template get_property<VecT, Entity::Vertex>("ovm:position");
         assert(prop.has_value());
         return *prop;
     }
-    GeometryKernelT<VecT> make_prop() {
+    VPositionProp make_prop() {
         auto prop = this->template create_shared_property<VecT, Entity::Vertex>("ovm:position", VecT(0));
         assert(prop.has_value());
         return *prop;
     }
 
 private:
-    GeometryKernelT<VecT> position_;
+    VPositionProp position_;
 
 };
+
+template <class VecT>
+using GeometryKernelT [[deprecated("this type alias will be removed")]] = typename GeometryKernel<VecT>::VPositionProp;
 
 } // Namespace OpenVolumeMesh
 

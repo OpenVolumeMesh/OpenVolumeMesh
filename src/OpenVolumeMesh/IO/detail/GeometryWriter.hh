@@ -21,8 +21,9 @@ template<typename VecT>
 class GeometryWriterT : public GeometryWriterBase
 {
 public:
-    GeometryWriterT(GeometryKernelT<VecT> const& _geometry_kernel)
-        : geometry_kernel_(_geometry_kernel)
+    using VPositionProp = typename GeometryKernel<VecT>::VPositionProp;
+    GeometryWriterT(VPositionProp const& _vertex_pos)
+        : vertex_pos_(_vertex_pos)
     {}
     VertexEncoding vertex_encoding() const override;
     size_t dim() const override;
@@ -30,7 +31,7 @@ public:
     void write(WriteBuffer & _writebuf, ArraySpan const& _span) const override;
 
 private:
-    GeometryKernelT<VecT> const& geometry_kernel_;
+    VPositionProp const& vertex_pos_;
 };
 
 extern template class OVM_EXPORT GeometryWriterT<Vec3f>;
