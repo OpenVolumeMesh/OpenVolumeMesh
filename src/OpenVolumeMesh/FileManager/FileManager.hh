@@ -39,6 +39,7 @@
 #include <istream>
 #include <ostream>
 #include <OpenVolumeMesh/Config/Export.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults.hh>
 
 namespace OpenVolumeMesh {
 
@@ -154,7 +155,7 @@ private:
 
   template <class PropT, class MeshT>
   void generateGenericProperty(const std::string& _entity_t, const std::string& _name,
-                               std::istream& _iff, MeshT& _mesh) const;
+                               std::istream& _iff, MeshT& _mesh,PropT const& _def = default_prop_v<PropT>) const;
 
   template<typename EntityTag, class MeshT>
   void writeProps(std::ostream &_ostream, const MeshT& _mesh) const;

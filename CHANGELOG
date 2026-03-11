@@ -1,4 +1,8 @@
 master:
+  - When creating new properties, the user now either has to supply an explicit default,
+    or ensure that a matching specialisation of OpenVolumeMesh::default_prop exists.
+    See src/OpenVolumeMesh/Core/Properties/Defaults.hh for details.
+
   - PropertyPtrT has lost its public set_shared() and set_persistent() member functions.
     Those were not purposefully exposed and could cause invalid states. Use the corresponding
     member functions on the Mesh class (ResourceKernel) to set shared/persistent status.

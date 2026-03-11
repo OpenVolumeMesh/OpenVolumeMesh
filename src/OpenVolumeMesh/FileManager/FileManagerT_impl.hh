@@ -395,11 +395,11 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
     else if(prop_t == typeName<float>()) generateGenericProperty<float, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<double>()) generateGenericProperty<double, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<std::string>()) generateGenericProperty<std::string, MeshT>(entity_t, name, _iff, _mesh);
-    else if(prop_t == typeName<std::map<HalfEdgeHandle, int> >()) generateGenericProperty<std::map<HalfEdgeHandle, int>, MeshT>(entity_t, name, _iff, _mesh);
-    else if(prop_t == typeName<std::vector<double> >()) generateGenericProperty<std::vector<double> , MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::map<HalfEdgeHandle, int> >()) generateGenericProperty<std::map<HalfEdgeHandle, int>, MeshT>(entity_t, name, _iff, _mesh, {});
+    else if(prop_t == typeName<std::vector<double> >()) generateGenericProperty<std::vector<double> , MeshT>(entity_t, name, _iff, _mesh, {});
     else if(prop_t == typeName<std::vector<VertexHandle> >()) generateGenericProperty<std::vector<VertexHandle> , MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<std::vector<HalfFaceHandle> >()) generateGenericProperty<std::vector<HalfFaceHandle> , MeshT>(entity_t, name, _iff, _mesh);
-    else if(prop_t == typeName<std::vector<std::vector<HalfFaceHandle> > >()) generateGenericProperty<std::vector<std::vector<HalfFaceHandle> > , MeshT>(entity_t, name, _iff, _mesh);
+    else if(prop_t == typeName<std::vector<std::vector<HalfFaceHandle> > >()) generateGenericProperty<std::vector<std::vector<HalfFaceHandle> > , MeshT>(entity_t, name, _iff, _mesh, {});
 
     else if(prop_t == typeName<Vec2f>()) generateGenericProperty<Vec2f, MeshT>(entity_t, name, _iff, _mesh);
     else if(prop_t == typeName<Vec2d>()) generateGenericProperty<Vec2d, MeshT>(entity_t, name, _iff, _mesh);
@@ -424,34 +424,35 @@ void FileManager::readProperty(std::istream& _iff, MeshT& _mesh) const {
 
 template <class PropT, class MeshT>
 void FileManager::generateGenericProperty(const std::string& _entity_t, const std::string& _name,
-                                          std::istream& _iff, MeshT& _mesh) const {
+                                          std::istream& _iff, MeshT& _mesh, const PropT &_def) const
+{
 
     if(_entity_t == "vprop") {
-        VertexPropertyT<PropT> prop = _mesh.template request_vertex_property<PropT>(_name);
+        VertexPropertyT<PropT> prop = _mesh.template request_vertex_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     } else if(_entity_t == "eprop") {
-        EdgePropertyT<PropT> prop = _mesh.template request_edge_property<PropT>(_name);
+        EdgePropertyT<PropT> prop = _mesh.template request_edge_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     } else if(_entity_t == "heprop") {
-        HalfEdgePropertyT<PropT> prop = _mesh.template request_halfedge_property<PropT>(_name);
+        HalfEdgePropertyT<PropT> prop = _mesh.template request_halfedge_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     } else if(_entity_t == "fprop") {
-        FacePropertyT<PropT> prop = _mesh.template request_face_property<PropT>(_name);
+        FacePropertyT<PropT> prop = _mesh.template request_face_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     } else if(_entity_t == "hfprop") {
-        HalfFacePropertyT<PropT> prop = _mesh.template request_halfface_property<PropT>(_name);
+        HalfFacePropertyT<PropT> prop = _mesh.template request_halfface_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     } else if(_entity_t == "cprop") {
-        CellPropertyT<PropT> prop = _mesh.template request_cell_property<PropT>(_name);
+        CellPropertyT<PropT> prop = _mesh.template request_cell_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     } else if(_entity_t == "mprop") {
-        MeshPropertyT<PropT> prop = _mesh.template request_mesh_property<PropT>(_name);
+        MeshPropertyT<PropT> prop = _mesh.template request_mesh_property<PropT>(_name, _def);
         prop.deserialize(_iff);
         _mesh.set_persistent(prop);
     }
