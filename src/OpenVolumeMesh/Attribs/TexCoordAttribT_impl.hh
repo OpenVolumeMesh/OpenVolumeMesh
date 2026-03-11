@@ -39,7 +39,7 @@
 namespace OpenVolumeMesh {
 
 template <class TexCoordT>
-TexCoordAttrib<TexCoordT>::TexCoordAttrib(TopologyKernel& _kernel, const TexCoordT _def) :
+TexCoordAttrib<TexCoordT>::TexCoordAttrib(TopologyKernel& _kernel, const TexCoordT &_def) :
         vtexcoord_prop_(_kernel.request_vertex_property<TexCoordT>("vertex_texcoord", _def)),
         vertex_texcoords_available_(false),
         default_texcoord_(_def)
