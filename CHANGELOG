@@ -1,5 +1,17 @@
 master:
-  -
+  - When creating new properties, the user now either has to supply an explicit default,
+    or ensure that a matching specialisation of OpenVolumeMesh::default_prop exists.
+    See src/OpenVolumeMesh/Core/Properties/Defaults.hh for details.
+
+  - PropertyPtrT has lost its public set_shared() and set_persistent() member functions.
+    Those were not purposefully exposed and could cause invalid states. Use the corresponding
+    member functions on the Mesh class (ResourceKernel) to set shared/persistent status.
+
+  - Property handling has been simplified, Properties now do not have a pointer
+    to the ResourceManager anymore. In the process, the meaning of PropertyPtrT
+    `operator bool()` has changed to signify being attached to a PropertyStorage,
+    as opposed to being an "alive" property of a ResourceManager.
+
 
 Version 3.4.1 (2025-07-31):
   - ovmb_read now takes a std::filesystem::path instead of a const char *

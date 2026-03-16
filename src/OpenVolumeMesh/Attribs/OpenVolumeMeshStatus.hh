@@ -34,6 +34,7 @@
 \*===========================================================================*/
 
 #include <iosfwd>
+#include <OpenVolumeMesh/Core/Properties/Defaults.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 
 namespace OpenVolumeMesh {
@@ -46,7 +47,7 @@ namespace OpenVolumeMesh {
 class OVM_EXPORT OpenVolumeMeshStatus {
 public:
 
-    OpenVolumeMeshStatus() = default;
+    constexpr OpenVolumeMeshStatus() = default;
 
     bool selected() const { return selected_; }
 
@@ -73,6 +74,11 @@ private:
     bool deleted_ = false;
 
     bool hidden_ = false;
+};
+
+template<>
+struct default_prop<OpenVolumeMeshStatus> {
+    static inline constexpr const OpenVolumeMeshStatus value = {};
 };
 
 std::ostream& operator<<(std::ostream& _ostr, const OpenVolumeMeshStatus& _status);

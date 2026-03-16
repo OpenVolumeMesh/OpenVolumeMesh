@@ -97,6 +97,7 @@ class HandleT : public HandleBase
 {
 public:
     using HandleBase::HandleBase;
+    static constexpr Derived invalid() { return Derived(-1);}
     static Derived from_unsigned(size_t _idx)
     {
         if (_idx <= static_cast<size_t>(std::numeric_limits<int>::max())) {

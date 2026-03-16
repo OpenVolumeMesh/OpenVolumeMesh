@@ -36,12 +36,10 @@
 #include <iosfwd>
 #include <string>
 #include <memory>
-#include <vector>
 
 #include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Config/Export.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
-#include <OpenVolumeMesh/Core/detail/Tracking.hh>
 
 namespace OpenVolumeMesh {
 
@@ -59,21 +57,15 @@ class PropertyStorageT;
 
 class OVM_EXPORT PropertyStorageBase
         : public std::enable_shared_from_this<PropertyStorageBase>
-        , public detail::Tracked<PropertyStorageBase>
 {
 public:
     PropertyStorageBase(
-            detail::Tracker<PropertyStorageBase> *tracker,
             std::string _name,
             std::string _internal_type_name,
-            EntityType _entity_type,
-            bool _shared)
-        : detail::Tracked<PropertyStorageBase>(tracker)
-        , name_(std::move(_name))
+            EntityType _entity_type)
+        : name_(std::move(_name))
         , internal_type_name_(std::move(_internal_type_name))
         , entity_type_(_entity_type)
-        , persistent_(false)
-        , shared_(_shared)
     {}
 
     virtual ~PropertyStorageBase() = default;
@@ -136,9 +128,6 @@ public:
     virtual void deserialize(std::istream& /*_istr*/) {}
 	// I/O support
 
-	void set_persistent(bool _persistent) { persistent_ = _persistent; }
-    void set_shared(bool _shared) { shared_ = _shared; }
-
 	bool persistent() const { return persistent_; }
     bool shared() const { return shared_; }
 
@@ -170,23 +159,20 @@ public:
     /// Move data from other property. `other` must point to an object with the same derived type as `this`!
     virtual void move_values_from(PropertyStorageBase *other) = 0;
 
-    /// Attach to a mesh. Does not resize property!
-    void attach_to(const ResourceManager *resman);
-
-    /// Is this property storage attached to a mesh?
-    operator bool() const {return Tracked::has_tracker();}
-
 private:
-	std::string name_;
+    std::string name_;
     // while we could compute this on the fly,
     // it does not take much storage and is useful in debugging
     std::string internal_type_name_;
     EntityType entity_type_;
 
+    friend class ResourceManager;
+    void set_persistent(bool _persistent) { persistent_ = _persistent; }
+    void set_shared(bool _shared) { shared_ = _shared; }
 
     // TODO: an enum might be nicer for this:
-    bool persistent_;
-    bool shared_;
+    bool persistent_ = false;
+    bool shared_ = false;
 };
 
 } // Namespace OpenVolumeMesh

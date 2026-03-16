@@ -136,6 +136,17 @@ class VectorT {
         VectorT &operator=(const VectorT &rhs) = default;
         VectorT &operator=(VectorT &&rhs) = default;
 
+
+        /*** Create an all-zero vector. */
+        static constexpr VectorT zero() {
+            return zero_impl(std::make_index_sequence<DIM>{});
+        }
+    private:
+        template <std::size_t... Is>
+        static constexpr VectorT zero_impl(std::index_sequence<Is...>) {
+            return VectorT{ (static_cast<void>(Is), Scalar{0})... };
+        }
+    public:
         /**
          * Only for 4-component vectors with division operator on their
          * Scalar: Dehomogenization.

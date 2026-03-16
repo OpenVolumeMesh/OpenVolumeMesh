@@ -33,6 +33,8 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <algorithm>
+
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
 #include <OpenVolumeMesh/Core/detail/internal_type_name.hh>
@@ -41,17 +43,18 @@ namespace OpenVolumeMesh {
 
 
 template<typename EntityTag>
-detail::Tracker<PropertyStorageBase> &
-ResourceManager::storage_tracker() const
+ResourceManager::LockedPropertyRange
+ResourceManager::properties() const
 {
-    return storage_trackers_.get<EntityTag>();
+    prune_properties(EntityTag::type());
+    const auto &props = properties_.get<EntityTag>();
+    return LockedPropertyRange(props);
 }
-
 
 // Change all properties to be private, such that they are
 // not visible anymore from the mesh API.
 // Crucially, this does not delete props that are in use,
-// i.e., they are kept in storage_tracker for index updates.
+// i.e., they are kept in properties_ for index updates.
 template<typename EntityTag>
 void ResourceManager::clear_props()
 {
@@ -60,16 +63,17 @@ void ResourceManager::clear_props()
     }
     persistent_props_.get<EntityTag>().clear();
 
-    for (auto prop: storage_tracker<EntityTag>()) {
+    for (auto prop: properties<EntityTag>()) {
         prop->set_shared(false);
     }
+    prune_properties(EntityTag::type());
 }
 
 template <typename Handle>
 void ResourceManager::swap_property_elements(Handle _idx_a, Handle _idx_b)
 {
     static_assert(is_handle_v<Handle>);
-    for (auto &prop: storage_tracker<typename Handle::EntityTag>()) {
+    for (auto prop: properties<typename Handle::EntityTag>()) {
         prop->swap(_idx_a.uidx(), _idx_b.uidx());
     }
 }
@@ -78,7 +82,7 @@ template <typename Handle>
 void ResourceManager::copy_property_elements(Handle _idx_a, Handle _idx_b)
 {
     static_assert(is_handle_v<Handle>);
-    for (auto &prop: storage_tracker<typename Handle::EntityTag>()) {
+    for (auto prop: properties<typename Handle::EntityTag>()) {
         prop->copy(_idx_a.uidx(), _idx_b.uidx());
     }
 }
@@ -134,7 +138,7 @@ ResourceManager::internal_find_property(const std::string& _name) const
 
     auto type_name = detail::internal_type_name<T>();
 
-    for(auto &prop: storage_tracker<EntityTag>())
+    for(auto prop: properties<EntityTag>())
     {
         if(prop->shared()
                 && prop->name() == _name
@@ -147,17 +151,16 @@ ResourceManager::internal_find_property(const std::string& _name) const
 }
 
 template<class T, class EntityTag>
-PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(
-        std::string _name, const T &_def, bool _shared) const
+PropertyPtr<T, EntityTag> ResourceManager::internal_create_property(std::string _name, const T &_def) const
 {
     auto storage = std::make_shared<PropertyStorageT<T>>(
-                                     &storage_tracker<EntityTag>(),
                                      std::move(_name),
                                      EntityTag::type(),
-                                     _def,
-                                     _shared);
+                                     _def);
+    properties_.get<EntityTag>().push_back(storage);
     storage->resize(n<EntityTag>());
-    return PropertyPtr<T, EntityTag>(std::move(storage));
+    auto ptr = PropertyPtr<T, EntityTag>(std::move(storage));
+    return ptr;
 }
 
 template<typename T, typename EntityTag>
@@ -166,8 +169,11 @@ PropertyPtr<T, EntityTag> ResourceManager::request_property(const std::string& _
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return *prop;
-    bool shared = !_name.empty();
-    return internal_create_property<T, EntityTag>(_name, _def, shared);
+    auto ptr = internal_create_property<T, EntityTag>(_name, _def);
+    if(!_name.empty()) {
+        set_shared(ptr);
+    }
+    return ptr;
 }
 
 template<typename T, typename EntityTag>
@@ -177,7 +183,8 @@ ResourceManager::create_persistent_property(std::string _name, const T &_def)
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    auto ptr =  internal_create_property<T, EntityTag>(std::move(_name), _def, true);
+    auto ptr = internal_create_property<T, EntityTag>(std::move(_name), _def);
+    set_shared(ptr);
     set_persistent(ptr);
     return ptr;
 }
@@ -189,13 +196,15 @@ ResourceManager::create_shared_property(std::string _name, const T &_def)
     auto prop = internal_find_property<T, EntityTag>(_name);
     if (prop)
         return {};
-    return internal_create_property<T, EntityTag>(std::move(_name), _def, true);
+    auto ptr = internal_create_property<T, EntityTag>(std::move(_name), _def);
+    set_shared(ptr);
+    return ptr;
 }
 template<typename T, typename EntityTag>
 PropertyPtr<T, EntityTag>
 ResourceManager::create_private_property(std::string _name, const T &_def) const
 {
-    return internal_create_property<T, EntityTag>(std::move(_name), _def, false);
+    return internal_create_property<T, EntityTag>(std::move(_name), _def);
 }
 
 template<typename T, typename EntityTag>
@@ -255,7 +264,7 @@ template<class EntityTag>
 void ResourceManager::resize_props(size_t _n)
 {
     static_assert(is_entity_v<EntityTag>);
-    for (auto &prop: storage_tracker<EntityTag>()) {
+    for (auto prop: properties<EntityTag>()) {
         prop->resize(_n);
     }
 }
@@ -264,7 +273,7 @@ template<class EntityTag>
 void ResourceManager::reserve_props(size_t _n)
 {
     static_assert(is_entity_v<EntityTag>);
-    for (auto &prop: storage_tracker<EntityTag>()) {
+    for (auto prop: properties<EntityTag>()) {
         prop->reserve(_n);
     }
 }
@@ -274,7 +283,7 @@ template<typename  Handle>
 void ResourceManager::entity_deleted(Handle _h)
 {
     static_assert(is_handle_v<Handle>);
-    for (auto &prop: storage_tracker<typename Handle::EntityTag>()) {
+    for (auto prop: properties<typename Handle::EntityTag>()) {
         prop->delete_element(_h.uidx());
     }
 }
@@ -282,7 +291,7 @@ void ResourceManager::entity_deleted(Handle _h)
 
 template<typename EntityTag>
 size_t ResourceManager::n_props() const {
-    return storage_tracker<EntityTag>().size();
+    return properties<EntityTag>().size();
 }
 
 template<typename EntityTag>
@@ -357,7 +366,7 @@ PropertyPtr<T, Entity>::PropertyPtr(ResourceManager *mesh, std::string _name, T 
 
 template <class T, typename EntityTag>
 PropertyPtr<T, EntityTag> ResourceManager::
-prop_ptr_from_storage(PropertyStorageBase *_prop)
+prop_ptr_from_storage(std::shared_ptr<PropertyStorageBase> const &_prop)
 {
     auto ps = std::static_pointer_cast<PropertyStorageT<T>>(
             _prop->shared_from_this());

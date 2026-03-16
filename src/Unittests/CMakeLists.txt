@@ -1,19 +1,3 @@
-SET(SOURCE_FILES
-    unittests.cc
-    unittests_attribs.cc
-    unittests_basics.cc
-    unittests_files.cc
-    unittests_local_topology.cc
-    unittests_common.cc
-    unittests_handles.cc
-    unittests_swap_entities.cc
-    unittests_garbage_collection.cc
-    unittests_iterators.cc
-    unittests_mesh_copies.cc
-    unittests_smart_tagger.cc
-    unittests_properties.cc
-    unittests_tet_mesh_navigation.cc
-)
 
 if (NOT TARGET OpenVolumeMesh::OpenVolumeMesh)
     find_package(OpenVolumeMesh REQUIRED)
@@ -50,11 +34,34 @@ set_target_properties(gtest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_
 enable_testing()
 
 set(TARGET_NAME "${OVM_TARGET_PREFIX}unittests")
-add_executable(${TARGET_NAME} ${SOURCE_FILES})
-target_link_libraries(${TARGET_NAME}
+add_executable(${TARGET_NAME}
+    unittests.cc
+    unittests_attribs.cc
+    unittests_basics.cc
+    unittests_files.cc
+    unittests_local_topology.cc
+    unittests_common.cc
+    unittests_handles.cc
+    unittests_swap_entities.cc
+    unittests_garbage_collection.cc
+    unittests_iterators.cc
+    unittests_mesh_copies.cc
+    unittests_smart_tagger.cc
+    unittests_properties.cc
+    unittests_tet_mesh_navigation.cc
+)
+
+target_link_libraries(${TARGET_NAME} PRIVATE
     OpenVolumeMesh::OpenVolumeMesh
     GTest::gtest GTest::gtest_main
     )
+
+find_package(Eigen3 QUIET)
+if (TARGET Eigen3::Eigen)
+    target_sources(${TARGET_NAME} PRIVATE unittests_eigen.cc)
+    target_link_libraries(${TARGET_NAME} PRIVATE Eigen3::Eigen)
+endif()
+
 
 gtest_discover_tests(${TARGET_NAME}
     EXTRA_ARGS "--gtest_color=yes" "--gtest_output=xml"

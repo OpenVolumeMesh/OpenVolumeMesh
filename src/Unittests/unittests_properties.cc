@@ -230,5 +230,14 @@ TEST_F(PolyhedralMeshBase, EntitySwapBool)
     EXPECT_EQ(prop[v1], false);
 }
 
-
-
+TEST_F(PolyhedralMeshBase, HandlesInProp)
+{
+    generatePolyhedralMesh(mesh_);
+    auto prop = mesh_.create_private_property<VH, Entity::Vertex>();
+    auto v0 = VertexHandle(0);
+    auto v1 = VertexHandle(1);
+    prop[v0] = v1;
+    prop[v1] = v0;
+    EXPECT_EQ(prop[v0], v1);
+    EXPECT_EQ(prop[v1], v0);
+}

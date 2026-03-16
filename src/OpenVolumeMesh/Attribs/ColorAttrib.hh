@@ -39,6 +39,7 @@
 #include <OpenVolumeMesh/Core/Handles.hh>
 #include <OpenVolumeMesh/Attribs/OpenVolumeMeshStatus.hh>
 #include <OpenVolumeMesh/Core/Properties/PropertyPtr.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults.hh>
 #include <OpenVolumeMesh/Core/TopologyKernel.hh>
 
 namespace OpenVolumeMesh {
@@ -49,7 +50,7 @@ template <class ColT>
 class ColorAttrib {
 public:
 
-    ColorAttrib(TopologyKernel& _kernel, ColT const &_def = ColT());
+    ColorAttrib(TopologyKernel& _kernel, ColT const &_def = default_prop_v<ColT>);
 
     virtual ~ColorAttrib();
 

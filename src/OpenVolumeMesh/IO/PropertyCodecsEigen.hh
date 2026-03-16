@@ -4,9 +4,9 @@
 #include <OpenVolumeMesh/IO/PropertyCodecsT_impl.hh>
 #include <OpenVolumeMesh/IO/detail/Encoder.hh>
 #include <OpenVolumeMesh/IO/detail/Decoder.hh>
+#include <OpenVolumeMesh/Geometry/EigenTraits.hh>
 
 #include <Eigen/Core>
-
 
 namespace OpenVolumeMesh::IO::Codecs {
 

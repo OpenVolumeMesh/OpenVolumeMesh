@@ -32,6 +32,8 @@
  *                                                                           *
 \*===========================================================================*/
 
+#include <algorithm>
+
 #include <OpenVolumeMesh/Core/ResourceManager.hh>
 
 namespace OpenVolumeMesh {
@@ -75,19 +77,31 @@ void ResourceManager::clone_persistent_properties_from(ResourceManager const& ot
       using ET = decltype(entity_tag);
       const auto &other_props = other.persistent_props_.get<ET>();
       auto &our_props = persistent_props_.get<ET>();
+      auto &our_all_props = properties_.get<ET>();
       for(const auto &p: other_props) {
         auto copy = p->clone();
-        copy->set_tracker(&storage_tracker<ET>());
-        our_props.insert(copy->shared_from_this());
+        auto sptr = copy->shared_from_this();
+        our_props.insert(sptr);
+        our_all_props.push_back(sptr);
       }
     });
 }
 
-
-detail::Tracker<PropertyStorageBase> &
-ResourceManager::storage_tracker(EntityType type) const
+void ResourceManager::prune_properties(EntityType type) const
 {
-    return storage_trackers_.get(type);
+    auto &props = properties_.get(type);
+    props.erase(std::remove_if(props.begin(), props.end(),
+                               [](const auto &weak_prop) { return weak_prop.expired(); }),
+                props.end());
+}
+
+
+ResourceManager::LockedPropertyRange
+ResourceManager::properties(EntityType type) const
+{
+    prune_properties(type);
+    const auto &props = properties_.get(type);
+    return LockedPropertyRange(props);
 }
 
 void ResourceManager::resize_vprops(size_t _nv) {

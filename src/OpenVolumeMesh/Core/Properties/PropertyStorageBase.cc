@@ -40,9 +40,4 @@
 
 namespace OpenVolumeMesh {
 
-void PropertyStorageBase::attach_to(const ResourceManager *resman)
-{
-    set_tracker(&resman->storage_tracker(entity_type()));
-}
-
 } // Namespace OpenVolumeMesh
