@@ -167,10 +167,11 @@ public:
     }
 
     PointT barycenter(FaceHandle _fh) const {
-        PointT p(typename PointT::value_type(0));
-        typename PointT::value_type valence = 0;
+        typename PointT::value_type valence = 1;
         HalfFaceVertexIter hfv_it =
-                TopologyKernelT::hfv_iter(TopologyKernelT::halfface_handle(_fh, 0));
+            TopologyKernelT::hfv_iter(TopologyKernelT::halfface_handle(_fh, 0));
+        PointT p = point(*hfv_it);
+        ++hfv_it;
         for(; hfv_it.valid(); ++hfv_it, valence += 1) {
             p += vertex(*hfv_it);
         }
@@ -179,9 +180,10 @@ public:
     }
 
     PointT barycenter(CellHandle _ch) const {
-        PointT p(typename PointT::value_type(0));
-        typename PointT::value_type valence = 0;
+        typename PointT::value_type valence = 1;
         CellVertexIter cv_it = TopologyKernelT::cv_iter(_ch);
+        PointT p = point(*cv_it);
+        ++cv_it;
         for(; cv_it.valid(); ++cv_it, valence += 1) {
             p += vertex(*cv_it);
         }

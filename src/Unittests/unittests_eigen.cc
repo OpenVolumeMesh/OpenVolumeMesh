@@ -54,3 +54,24 @@ TEST_F(EigenTest, LoadSaveProps)
   ASSERT_EQ(loaded.vertex(vh2), (Eigen::Vector3d{23, 42, 67}));
 }
 
+TEST_F(EigenTest, Barycenter)
+{
+    using Mesh = GeometryKernel<Eigen::Vector3d, TetrahedralMeshTopologyKernel>;
+    Mesh mesh;
+    VH vh0 = mesh.add_vertex(Eigen::Vector3d{0, 0, 0});
+    VH vh1 = mesh.add_vertex(Eigen::Vector3d{0, 0, 1});
+    VH vh2 = mesh.add_vertex(Eigen::Vector3d{1, 0, 0});
+    VH vh3 = mesh.add_vertex(Eigen::Vector3d{0, 4, 0});
+    FH fh012 = mesh.add_face({vh0, vh1, vh2});
+    FH fh023 = mesh.add_face({vh0, vh2, vh3});
+    FH fh103 = mesh.add_face({vh1, vh0, vh3});
+    FH fh132 = mesh.add_face({vh1, vh3, vh2});
+    CH ch = mesh.add_cell({vh0, vh1, vh2, vh3});
+
+    EXPECT_LE((mesh.barycenter(fh012) - Eigen::Vector3d{1./3., 0., 1./3.}).squaredNorm(), 1e-12);
+    EXPECT_LE((mesh.barycenter(fh023) - Eigen::Vector3d{1./3., 4./3., 0.}).squaredNorm(), 1e-12);
+    EXPECT_LE((mesh.barycenter(fh103) - Eigen::Vector3d{0., 4./3., 1./3.}).squaredNorm(), 1e-12);
+    EXPECT_LE((mesh.barycenter(fh132) - Eigen::Vector3d{1./3., 4./3., 1./3.}).squaredNorm(), 1e-12);
+    EXPECT_LE((mesh.barycenter(ch) - Eigen::Vector3d{.25, 1., .25}).squaredNorm(), 1e-12);
+}
+
