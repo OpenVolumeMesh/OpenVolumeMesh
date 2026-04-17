@@ -40,10 +40,7 @@ struct default_prop {
 // does not initialize the members. This is very narrow, but better to err
 // on the side of caution:
 template<typename T>
-struct default_prop<T, std::enable_if_t<
-           std::is_trivially_default_constructible_v<T>
-        || std::is_arithmetic_v<T>
->> {
+struct default_prop<T, std::enable_if_t<std::is_arithmetic_v<T>>> {
     static inline constexpr const T value = {};
 };
 
