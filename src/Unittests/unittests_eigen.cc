@@ -4,6 +4,7 @@
 #include <OpenVolumeMesh/IO/PropertyCodecsEigen.hh>
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
 #include <OpenVolumeMesh/Geometry/EigenTraits.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults/Eigen.hh>
 #include <OpenVolumeMesh/IO/ovmb_read.hh>
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
 

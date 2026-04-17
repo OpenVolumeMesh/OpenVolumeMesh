@@ -21,7 +21,11 @@ namespace OpenVolumeMesh {
  * Alternatively, users may always supply a default on every call to request_property/create_property.
  *
  * We provide default_prop specializations for common types here:
-*   #include <OpenVolumeMesh/Geometry/EigenTraits.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/Eigen.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/map.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/pair.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/tuple.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/unordered_map.hh>
  */
 
 template<typename T, typename=void>
@@ -39,8 +43,8 @@ struct default_prop
             "struct OpenVolumeMesh::default_prop<YourType> {\n"
             "    inline static const YourType value = 0; // set appropriate value\n"
             "};\n"
-            "Note that OpenVolumeMesh provide default_prop specializations for some common types here:\n"
-            "  #include <OpenVolumeMesh/Geometry/EigenTraits.hh>\n"
+            "Note that OpenVolumeMesh provide default_prop specializations for some common types in\n"
+            "  #include <OpenVolumeMesh/Core/Properties/Defaults/*.hh>\n"
             "\nSorry for the inconvenience, we're trying to avoid undefined behavior.\n"
             );
 };
@@ -77,13 +81,6 @@ struct default_prop<HandleT, std::enable_if_t<is_handle_v<HandleT>>>
 {
     inline static constexpr HandleT value = HandleT::invalid();
 };
-
-#if 0
-template<typename K, typename V>
-struct default_prop<std::map<K, V>> {
-    static inline const std::map<K, V> value = {};
-};
-#endif
 
 template<typename T>
 inline T const& default_prop_v = default_prop<T>::value;
