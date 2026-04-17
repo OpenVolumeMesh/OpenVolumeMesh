@@ -19,10 +19,17 @@ namespace OpenVolumeMesh {
  * and allow users to specify default values for other types they want to store in properties.
  *
  * Alternatively, users may always supply a default on every call to request_property/create_property.
+ *
+ * We provide default_prop specializations for common types here:
+*   #include <OpenVolumeMesh/Geometry/EigenTraits.hh>
  */
 
-template<typename T, typename _enable=void>
-struct default_prop {
+template<typename T, typename=void>
+struct default_prop;
+#ifndef _MSC_VER // cl.exe does not print which specialization is missing with this approach 
+template<typename T, typename>
+struct default_prop
+{
         // false value, but depending on T(!), to avoid static_assert(false) always failing:
         static_assert(!std::is_same_v<T, T>,
             "Please provide a default value for this property either in your {request,create}_property() call,\n"
@@ -32,8 +39,12 @@ struct default_prop {
             "struct OpenVolumeMesh::default_prop<YourType> {\n"
             "    inline static const YourType value = 0; // set appropriate value\n"
             "};\n"
-            "\nSorry for the inconvenience, we're trying to avoid undefined behavior.\n");
+            "Note that OpenVolumeMesh provide default_prop specializations for some common types here:\n"
+            "  #include <OpenVolumeMesh/Geometry/EigenTraits.hh>\n"
+            "\nSorry for the inconvenience, we're trying to avoid undefined behavior.\n"
+            );
 };
+#endif
 
 
 // We don't want this to match user-defined types whose constructor
