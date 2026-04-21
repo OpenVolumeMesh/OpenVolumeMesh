@@ -1,9 +1,10 @@
-
-#include <iostream>
-
 #include "unittests_common.hh"
 
 #include <OpenVolumeMesh/Attribs/StatusAttrib.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults/pair.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults/tuple.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults/map.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults/unordered_map.hh>
 
 using namespace OpenVolumeMesh;
 using namespace Geometry;
@@ -240,4 +241,22 @@ TEST_F(PolyhedralMeshBase, HandlesInProp)
     prop[v1] = v0;
     EXPECT_EQ(prop[v0], v1);
     EXPECT_EQ(prop[v1], v0);
+}
+
+TEST_F(PolyhedralMeshBase, ProptypeDefaults)
+{
+    mesh_.create_private_property<std::pair<VH, double>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::tuple<VH, double, std::pair<int, FH>>, Entity::Vertex>();
+    mesh_.create_private_property<std::tuple<int, float>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::map<VH, double>, Entity::Vertex>();
+    mesh_.create_private_property<std::unordered_map<VH, double>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::array<std::vector<double>, 10>, Entity::Vertex>();
+    mesh_.create_private_property<std::vector<std::array<double, 10>>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::array<std::tuple<double,int,float>, 10>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::vector<std::tuple<std::string,std::array<std::tuple<double,int,float>, 10>>>, Entity::Vertex>();
 }

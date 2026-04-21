@@ -19,10 +19,21 @@ namespace OpenVolumeMesh {
  * and allow users to specify default values for other types they want to store in properties.
  *
  * Alternatively, users may always supply a default on every call to request_property/create_property.
+ *
+ * We provide default_prop specializations for common types here:
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/Eigen.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/map.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/pair.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/tuple.hh>
+*   #include <OpenVolumeMesh/Core/Properties/Defaults/unordered_map.hh>
  */
 
-template<typename T, typename _enable=void>
-struct default_prop {
+template<typename T, typename=void>
+struct default_prop;
+#ifndef _MSC_VER // cl.exe does not print which specialization is missing with this approach 
+template<typename T, typename>
+struct default_prop
+{
         // false value, but depending on T(!), to avoid static_assert(false) always failing:
         static_assert(!std::is_same_v<T, T>,
             "Please provide a default value for this property either in your {request,create}_property() call,\n"
@@ -32,18 +43,19 @@ struct default_prop {
             "struct OpenVolumeMesh::default_prop<YourType> {\n"
             "    inline static const YourType value = 0; // set appropriate value\n"
             "};\n"
-            "\nSorry for the inconvenience, we're trying to avoid undefined behavior.\n");
+            "Note that OpenVolumeMesh provide default_prop specializations for some common types in\n"
+            "  #include <OpenVolumeMesh/Core/Properties/Defaults/*.hh>\n"
+            "\nSorry for the inconvenience, we're trying to avoid undefined behavior.\n"
+            );
 };
+#endif
 
 
 // We don't want this to match user-defined types whose constructor
 // does not initialize the members. This is very narrow, but better to err
 // on the side of caution:
 template<typename T>
-struct default_prop<T, std::enable_if_t<
-           std::is_trivially_default_constructible_v<T>
-        || std::is_arithmetic_v<T>
->> {
+struct default_prop<T, std::enable_if_t<std::is_arithmetic_v<T>>> {
     static inline constexpr const T value = {};
 };
 
@@ -70,12 +82,16 @@ struct default_prop<HandleT, std::enable_if_t<is_handle_v<HandleT>>>
     inline static constexpr HandleT value = HandleT::invalid();
 };
 
-#if 0
-template<typename K, typename V>
-struct default_prop<std::map<K, V>> {
-    static inline const std::map<K, V> value = {};
+template<typename T, size_t SIZE>
+struct default_prop<std::array<T, SIZE>> {
+    static inline const std::array<T, SIZE> value{[]() constexpr{
+        std::array<T, SIZE> arr{};
+        for (int i = 0; i < SIZE; ++i) {
+            arr[i] = default_prop<T>::value;
+        }
+        return arr;
+    }()};
 };
-#endif
 
 template<typename T>
 inline T const& default_prop_v = default_prop<T>::value;

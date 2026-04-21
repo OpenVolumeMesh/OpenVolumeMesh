@@ -13,7 +13,6 @@ SET(SOURCE_FILES
     OpenVolumeMesh/Core/TopologyKernel.cc
     OpenVolumeMesh/Core/Iterators.cc
     OpenVolumeMesh/Core/detail/internal_type_name.cc
-    OpenVolumeMesh/Core/Properties/PropertyStorageBase.cc
     OpenVolumeMesh/IO/enums.cc
     OpenVolumeMesh/IO/PropertyCodecs.cc
     OpenVolumeMesh/IO/detail/BinaryIStream.cc
