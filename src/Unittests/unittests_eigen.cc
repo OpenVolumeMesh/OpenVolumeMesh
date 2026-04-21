@@ -5,6 +5,7 @@
 #include <OpenVolumeMesh/Mesh/TetrahedralMesh.hh>
 #include <OpenVolumeMesh/Geometry/EigenTraits.hh>
 #include <OpenVolumeMesh/Core/Properties/Defaults/Eigen.hh>
+#include <OpenVolumeMesh/Core/Properties/Defaults/EigenSparse.hh>
 #include <OpenVolumeMesh/IO/ovmb_read.hh>
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
 
@@ -76,3 +77,17 @@ TEST_F(EigenTest, Barycenter)
     EXPECT_LE((mesh.barycenter(ch) - Eigen::Vector3d{.25, 1., .25}).squaredNorm(), 1e-12);
 }
 
+TEST_F(EigenTest, EigenPropsDefaults)
+{
+    using Mesh = GeometryKernel<Eigen::Vector3d, TetrahedralMeshTopologyKernel>;
+    Mesh mesh;
+    auto vh0 = mesh.add_vertex(Eigen::Vector3d{1, 2, 3});
+
+    {
+        auto p = mesh.create_private_vertex_property<Eigen::Vector3d>();
+        Eigen::Vector3d v = default_prop_v<Eigen::Vector3d>;
+        EXPECT_EQ(p[vh0], v);
+    }
+
+    mesh.create_private_vertex_property<Eigen::SparseMatrix<double>>();
+}
