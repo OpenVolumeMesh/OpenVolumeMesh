@@ -82,6 +82,17 @@ struct default_prop<HandleT, std::enable_if_t<is_handle_v<HandleT>>>
     inline static constexpr HandleT value = HandleT::invalid();
 };
 
+template<typename T, size_t SIZE>
+struct default_prop<std::array<T, SIZE>> {
+    static inline const std::array<T, SIZE> value{[]() constexpr{
+        std::array<T, SIZE> arr{};
+        for (int i = 0; i < SIZE; ++i) {
+            arr[i] = default_prop<T>::value;
+        }
+        return arr;
+    }()};
+};
+
 template<typename T>
 inline T const& default_prop_v = default_prop<T>::value;
 

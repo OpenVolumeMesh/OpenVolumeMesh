@@ -243,21 +243,20 @@ TEST_F(PolyhedralMeshBase, HandlesInProp)
     EXPECT_EQ(prop[v1], v0);
 }
 
-TEST_F(PolyhedralMeshBase, ProptypePair)
+TEST_F(PolyhedralMeshBase, ProptypeDefaults)
 {
-    auto prop = mesh_.create_private_property<std::pair<VH, double>, Entity::Vertex>();
-}
-TEST_F(PolyhedralMeshBase, ProptypeTuple)
-{
-    auto p1 = mesh_.create_private_property<std::tuple<VH, double, std::pair<int, FH>>, Entity::Vertex>();
-    auto p2 = mesh_.create_private_property<std::tuple<int, float>, Entity::Vertex>();
-}
+    mesh_.create_private_property<std::pair<VH, double>, Entity::Vertex>();
 
-TEST_F(PolyhedralMeshBase, ProptypeMap)
-{
-    auto prop = mesh_.create_private_property<std::map<VH, double>, Entity::Vertex>();
-}
-TEST_F(PolyhedralMeshBase, ProptypeUnorderedMap)
-{
-    auto prop = mesh_.create_private_property<std::unordered_map<VH, double>, Entity::Vertex>();
+    mesh_.create_private_property<std::tuple<VH, double, std::pair<int, FH>>, Entity::Vertex>();
+    mesh_.create_private_property<std::tuple<int, float>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::map<VH, double>, Entity::Vertex>();
+    mesh_.create_private_property<std::unordered_map<VH, double>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::array<std::vector<double>, 10>, Entity::Vertex>();
+    mesh_.create_private_property<std::vector<std::array<double, 10>>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::array<std::tuple<double,int,float>, 10>, Entity::Vertex>();
+
+    mesh_.create_private_property<std::vector<std::tuple<std::string,std::array<std::tuple<double,int,float>, 10>>>, Entity::Vertex>();
 }
