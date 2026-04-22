@@ -259,4 +259,9 @@ TEST_F(PolyhedralMeshBase, ProptypeDefaults)
     mesh_.create_private_property<std::array<std::tuple<double,int,float>, 10>, Entity::Vertex>();
 
     mesh_.create_private_property<std::vector<std::tuple<std::string,std::array<std::tuple<double,int,float>, 10>>>, Entity::Vertex>();
+
+    enum class Enum { A = 3, B = 7 };
+    mesh_.create_private_property<Enum, Entity::Vertex>();
+
+    mesh_.create_private_property<double*, Entity::Vertex>();
 }
