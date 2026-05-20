@@ -166,6 +166,8 @@ public:
     using EntityTag = Entity::Edge;
 
     constexpr HEH halfedge_handle(int subidx) const;
+    constexpr HEH h0() const;
+    constexpr HEH h1() const;
 
 };
 
@@ -186,7 +188,8 @@ public:
     using EntityTag = Entity::Face;
 
     constexpr HFH halfface_handle(int subidx) const;
-
+    constexpr HFH h0() const;
+    constexpr HFH h1() const;
 };
 
 class OVM_EXPORT HFH : public detail::SubHandleT<HFH, FH> {
@@ -222,10 +225,14 @@ using MeshHandle = MH;
 constexpr inline HFH FH::halfface_handle(int subidx) const {
     return half(subidx);
 }
+constexpr inline HFH FH::h0() const {return half(0);}
+constexpr inline HFH FH::h1() const {return half(1);}
 
 constexpr inline HEH EH::halfedge_handle(int subidx) const {
     return half(subidx);
 }
+constexpr inline HEH EH::h0() const { return half(0); }
+constexpr inline HEH EH::h1() const { return half(1); }
 
 constexpr inline HEH HEH::opposite_handle() const {
     return opp();
