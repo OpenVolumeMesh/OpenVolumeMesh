@@ -104,7 +104,7 @@ public:
             return Derived{static_cast<int>(_idx)};
         } else {
             assert(false);
-            return Derived{};
+            return invalid();
         }
     }
 
