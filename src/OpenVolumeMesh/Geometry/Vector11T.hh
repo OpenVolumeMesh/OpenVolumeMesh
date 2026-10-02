@@ -636,7 +636,7 @@ class VectorT {
         template<typename Functor>
         inline vector_type apply(const Functor& _func) const {
             vector_type result;
-            std::transform(result.values_.begin(), result.values_.end(),
+            std::transform(values_.begin(), values_.end(),
                     result.values_.begin(), _func);
             return result;
         }
