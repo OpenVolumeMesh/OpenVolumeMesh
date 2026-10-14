@@ -435,6 +435,11 @@ class VectorT {
                     [](const RESULT &l, const Scalar &r) { return l + r * r; });
         }
 
+        /// squared Euclidean norm, Eigen API compatible
+        Scalar squaredNorm() const {
+            return sqrnorm();
+        }
+
         /// compute euclidean norm
         template<typename S = Scalar>
         auto norm() const ->
