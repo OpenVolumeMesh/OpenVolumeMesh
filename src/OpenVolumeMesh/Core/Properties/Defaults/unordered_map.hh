@@ -1,4 +1,4 @@
-
+#pragma once
 #include <OpenVolumeMesh/Core/Properties/Defaults.hh>
 #include <unordered_map>
 

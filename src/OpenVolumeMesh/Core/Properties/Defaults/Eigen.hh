@@ -1,3 +1,4 @@
+#pragma once
 #include <OpenVolumeMesh/Core/Properties/Defaults.hh>
 #include <OpenVolumeMesh/Geometry/Vector11T.hh>
 #include <Eigen/Core>
