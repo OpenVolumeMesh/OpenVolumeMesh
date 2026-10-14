@@ -2036,6 +2036,18 @@ TEST_F(PolyhedralMeshBase, HandleDefaultConstructors) {
     ASSERT_FALSE(ch.is_valid());
 }
 
+/// This test should be on GeometryKernel and combined with EigenTest::Length
+TEST_F(PolyhedralMeshBase, Length)
+{
+    VH vh0 = mesh_.add_vertex({0, 0, 0});
+    VH vh1 = mesh_.add_vertex({0, 0, 2});
+    EH e = mesh_.add_edge(vh0, vh1);
+    EXPECT_EQ(mesh_.length(e), 2);
+    EXPECT_EQ(mesh_.norm(e), 2);
+    EXPECT_EQ(mesh_.squaredNorm(e), 4);
+}
+
+
 #if 0
 TEST_F(PolyhedralMeshBase, AssignmentAndCopyConstruction) {
 

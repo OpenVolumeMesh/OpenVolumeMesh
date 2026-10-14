@@ -142,11 +142,18 @@ public:
 public:
 
     typename PointT::value_type length(HalfEdgeHandle _heh) const {
-        return vector(_heh).length();
+        return vector(_heh).norm();
     }
 
     typename PointT::value_type length(EdgeHandle _eh) const {
-        return vector(_eh).length();
+        return vector(_eh).norm();
+    }
+
+    typename PointT::value_type squaredNorm(EdgeHandle _eh) const {
+        return vector(_eh).squaredNorm();
+    }
+    typename PointT::value_type norm(EdgeHandle _eh) const {
+        return vector(_eh).norm();
     }
 
     PointT vector(HalfEdgeHandle _heh) const {
