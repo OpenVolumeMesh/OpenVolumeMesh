@@ -1,3 +1,4 @@
+#pragma once
 #include <OpenVolumeMesh/IO/ovmb_write.hh>
 #include <OpenVolumeMesh/IO/PropertyCodecs.hh>
 #include <OpenVolumeMesh/IO/detail/GeometryWriter.hh>
