@@ -77,6 +77,19 @@ TEST_F(EigenTest, Barycenter)
     EXPECT_LE((mesh.barycenter(ch) - Eigen::Vector3d{.25, 1., .25}).squaredNorm(), 1e-12);
 }
 
+TEST_F(EigenTest, Length)
+{
+    using Mesh = GeometryKernel<Eigen::Vector3d, TetrahedralMeshTopologyKernel>;
+    Mesh mesh;
+    VH vh0 = mesh.add_vertex({0, 0, 0});
+    VH vh1 = mesh.add_vertex({0, 0, 2});
+    EH e = mesh.add_edge(vh0, vh1);
+    EXPECT_EQ(mesh.length(e), 2);
+    EXPECT_EQ(mesh.norm(e), 2);
+    EXPECT_EQ(mesh.squaredNorm(e), 4);
+}
+
+
 TEST_F(EigenTest, EigenPropsDefaults)
 {
     using Mesh = GeometryKernel<Eigen::Vector3d, TetrahedralMeshTopologyKernel>;

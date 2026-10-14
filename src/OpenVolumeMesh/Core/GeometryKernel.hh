@@ -149,6 +149,13 @@ public:
         return vector(_eh).norm();
     }
 
+    typename PointT::value_type squaredNorm(EdgeHandle _eh) const {
+        return vector(_eh).squaredNorm();
+    }
+    typename PointT::value_type norm(EdgeHandle _eh) const {
+        return vector(_eh).norm();
+    }
+
     PointT vector(HalfEdgeHandle _heh) const {
 
         const typename TopologyKernelT::Edge& e = TopologyKernelT::halfedge(_heh);
