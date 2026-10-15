@@ -149,11 +149,8 @@ public:
         return vector(_eh).norm();
     }
 
-    typename PointT::value_type squaredNorm(EdgeHandle _eh) const {
+    typename PointT::value_type squaredLength(EdgeHandle _eh) const {
         return vector(_eh).squaredNorm();
-    }
-    typename PointT::value_type norm(EdgeHandle _eh) const {
-        return vector(_eh).norm();
     }
 
     PointT vector(HalfEdgeHandle _heh) const {

@@ -2043,8 +2043,7 @@ TEST_F(PolyhedralMeshBase, Length)
     VH vh1 = mesh_.add_vertex({0, 0, 2});
     EH e = mesh_.add_edge(vh0, vh1);
     EXPECT_EQ(mesh_.length(e), 2);
-    EXPECT_EQ(mesh_.norm(e), 2);
-    EXPECT_EQ(mesh_.squaredNorm(e), 4);
+    EXPECT_EQ(mesh_.squaredLength(e), 4);
 }
 
 
