@@ -85,8 +85,7 @@ TEST_F(EigenTest, Length)
     VH vh1 = mesh.add_vertex({0, 0, 2});
     EH e = mesh.add_edge(vh0, vh1);
     EXPECT_EQ(mesh.length(e), 2);
-    EXPECT_EQ(mesh.norm(e), 2);
-    EXPECT_EQ(mesh.squaredNorm(e), 4);
+    EXPECT_EQ(mesh.squaredLength(e), 4);
 }
 
 
