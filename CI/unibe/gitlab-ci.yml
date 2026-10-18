@@ -1,66 +1,91 @@
+stages: [build]
+
 variables:
-  GIT_SUBMODULE_FORCE_HTTPS: "true" # rewrite git:// submodule urls to https
-  GIT_SUBMODULE_STRATEGY: recursive
-  GIT_SUBMODULE_UPDATE_FLAGS: --jobs 16
   GIT_STRATEGY: fetch
 
 include:
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/debian@v0.1.0
     inputs:
-      job_name: "debian-reldeb-C++17"
+      job_name: debian-trixie-gcc-cxx17
       stage: build
       CMAKE_BUILD_TYPE: RelWithDebInfo
       cmake_options: "-DCMAKE_CXX_STANDARD=17"
+      enable_ctest: true
+      enable_asan: true
+      enable_ubsan: true
+      enable_coverage: true
+      # Only the library itself counts; the tests produce the coverage but must
+      # not dilute it, and FetchContent's googletest lives in the build dir.
+      coverage_filters:
+        - src
+      coverage_exclude_filters:
+        - src/Unittests
+        - src/FileConverter
 
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/debian@v0.1.0
     inputs:
-      job_name: "debian-reldeb-C++20"
+      job_name: debian-trixie-gcc-cxx20
       stage: build
       CMAKE_BUILD_TYPE: RelWithDebInfo
       cmake_options: "-DCMAKE_CXX_STANDARD=20"
+      enable_ctest: true
 
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/debian@v0.1.0
     inputs:
-      job_name: "debian-reldeb-C++23"
+      job_name: debian-trixie-gcc-cxx23
       stage: build
       CMAKE_BUILD_TYPE: RelWithDebInfo
       cmake_options: "-DCMAKE_CXX_STANDARD=23"
+      enable_ctest: true
 
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/debian-linux/debian@v0.0.12
+  # Debug build with the libstdc++/libc++ debug modes, as CI/ci-linux.sh used to
+  # do. Linux only: the macro combination is unsupported by Apple's libc++.
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/debian@v0.1.0
     inputs:
-      job_name: "debian-debug"
+      job_name: debian-trixie-gcc-debug
       stage: build
       CMAKE_BUILD_TYPE: Debug
-
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/windows/vs22-cmake@v0.1.0
-    inputs:
-      job_name: "win-ninja-debug"
+      cmake_options: "-DSTL_DEBUG=ON"
       enable_ctest: true
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/debian@v0.1.0
+    inputs:
+      job_name: debian-trixie-clang-cxx20
+      stage: build
+      C_COMPILER: clang
+      CXX_COMPILER: clang++
+      CMAKE_BUILD_TYPE: RelWithDebInfo
+      cmake_options: "-DCMAKE_CXX_STANDARD=20"
+      enable_ctest: true
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/macos@v0.1.0
+    inputs:
+      job_name: macos-golden-gate-cxx17
+      stage: build
       CMAKE_BUILD_TYPE: Debug
-
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/windows/vs22-cmake@v0.1.0
-    inputs:
-      job_name: "win-ninja-release"
+      cmake_options: "-DCMAKE_CXX_STANDARD=17"
       enable_ctest: true
+      enable_asan: false
+      enable_ubsan: false
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/macos@v0.1.0
+    inputs:
+      job_name: macos-golden-gate-cxx23
+      stage: build
+      CMAKE_BUILD_TYPE: Debug
+      cmake_options: "-DCMAKE_CXX_STANDARD=23"
+      enable_ctest: true
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/windows@v0.1.0
+    inputs:
+      job_name: windows-vs2026-debug
+      stage: build
+      CMAKE_BUILD_TYPE: Debug
+      enable_ctest: true
+
+  - component: $CI_SERVER_FQDN/CGG-public/ci-components/cmake-cxx/windows@v0.1.0
+    inputs:
+      job_name: windows-vs2026-release
+      stage: build
       CMAKE_BUILD_TYPE: Release
-
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/macos/sonoma@v0.0.3
-    inputs:
-      job_name: "macos-sonoma-C++17"
       enable_ctest: true
-      CMAKE_BUILD_TYPE: Debug
-      cmake_options: "-DCMAKE_CXX_STANDARD=17"
-
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/macos/sonoma@v0.0.3
-    inputs:
-      job_name: "macos-sonoma-C++20"
-      enable_ctest: true
-      CMAKE_BUILD_TYPE: Debug
-      cmake_options: "-DCMAKE_CXX_STANDARD=20"
-
-  - component: $CI_SERVER_FQDN/CGG-public/ci-components/macos/sonoma@v0.0.3
-    inputs:
-      job_name: "macos-sonoma-C++23"
-      enable_ctest: true
-      CMAKE_BUILD_TYPE: Debug
-      cmake_options: "-DCMAKE_CXX_STANDARD=23"
