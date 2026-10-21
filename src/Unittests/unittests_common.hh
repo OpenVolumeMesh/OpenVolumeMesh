@@ -92,6 +92,10 @@ protected:
   // Generate a basic hexahedral mesh
   void generateHexahedralMesh(HexahedralMesh& _mesh);
 
+  // Generate a solid _n x _n x _n grid of hexahedra (_n >= 1).
+  // Unlike generateHexahedralMesh, this mesh has interior vertices, edges and faces.
+  void generateHexahedralGrid(HexahedralMesh& _mesh, int _n = 2);
+
   // This member will be accessible in all tests
   HexahedralMesh mesh_;
 };

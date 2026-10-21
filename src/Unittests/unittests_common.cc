@@ -211,6 +211,36 @@ void HexahedralMeshBase::generateHexahedralMesh(HexahedralMesh& _mesh) {
     _mesh.add_cell(halffaces);
 }
 
+void HexahedralMeshBase::generateHexahedralGrid(HexahedralMesh& _mesh, int _n) {
+
+    auto vid = [_n](int _i, int _j, int _k) {
+        return _i + (_n + 1) * (_j + (_n + 1) * _k);
+    };
+
+    for (int k = 0; k <= _n; ++k)
+        for (int j = 0; j <= _n; ++j)
+            for (int i = 0; i <= _n; ++i)
+                _mesh.add_vertex(Vec3d(double(i), double(j), double(k)));
+
+    std::vector<VertexHandle> cell_verts;
+    for (int k = 0; k < _n; ++k)
+        for (int j = 0; j < _n; ++j)
+            for (int i = 0; i < _n; ++i) {
+                cell_verts.clear();
+                // Vertex order as documented in HexahedralMeshTopologyKernel::add_cell:
+                // bottom quad 0-3 counter-clockwise, top quads 4-7 (4 above 0, 5 above 3, ...)
+                cell_verts.push_back(VertexHandle(vid(i, j, k)));
+                cell_verts.push_back(VertexHandle(vid(i + 1, j, k)));
+                cell_verts.push_back(VertexHandle(vid(i + 1, j + 1, k)));
+                cell_verts.push_back(VertexHandle(vid(i, j + 1, k)));
+                cell_verts.push_back(VertexHandle(vid(i, j, k + 1)));
+                cell_verts.push_back(VertexHandle(vid(i, j + 1, k + 1)));
+                cell_verts.push_back(VertexHandle(vid(i + 1, j + 1, k + 1)));
+                cell_verts.push_back(VertexHandle(vid(i + 1, j, k + 1)));
+                _mesh.add_cell(cell_verts);
+            }
+}
+
 void TetrahedralMeshBase::generateTetrahedralMesh(TetrahedralMesh& _mesh) {
 
     Vec3d p1(0.0, 0.0, 0.0);
