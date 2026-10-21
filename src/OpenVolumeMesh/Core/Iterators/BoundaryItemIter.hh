@@ -17,7 +17,7 @@
 namespace OpenVolumeMesh {
 
 template <class Iter, class Handle>
-class BoundaryItemIter : public BaseIterator<Handle> {
+class OVM_EXPORT BoundaryItemIter : public BaseIterator<Handle> {
 public:
     typedef BaseIterator<Handle> BaseIter;
 
@@ -137,5 +137,11 @@ template<> bool OVM_EXPORT BoundaryItemIter<HalfFaceIter, HalfFaceHandle>::has_i
 template<> bool OVM_EXPORT BoundaryItemIter<FaceIter, FaceHandle>::has_incidences() const;
 template<> bool OVM_EXPORT BoundaryItemIter<CellIter, CellHandle>::has_incidences() const;
 
+extern template class BoundaryItemIter<VertexIter, VertexHandle>;
+extern template class BoundaryItemIter<HalfEdgeIter, HalfEdgeHandle>;
+extern template class BoundaryItemIter<EdgeIter, EdgeHandle>;
+extern template class BoundaryItemIter<HalfFaceIter, HalfFaceHandle>;
+extern template class BoundaryItemIter<FaceIter, FaceHandle>;
+extern template class BoundaryItemIter<CellIter, CellHandle>;
 
 } // namespace OpenVolumeMesh
