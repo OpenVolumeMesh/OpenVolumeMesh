@@ -86,7 +86,7 @@ template<typename T, size_t SIZE>
 struct default_prop<std::array<T, SIZE>> {
     static inline const std::array<T, SIZE> value{[]() {
         std::array<T, SIZE> arr{};
-        for (int i = 0; i < SIZE; ++i) {
+        for (size_t i = 0; i < SIZE; ++i) {
             arr[i] = default_prop<T>::value;
         }
         return arr;
