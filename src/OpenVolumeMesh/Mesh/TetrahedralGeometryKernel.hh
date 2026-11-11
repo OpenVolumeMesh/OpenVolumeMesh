@@ -85,6 +85,18 @@ public:
         return splitVertex;
     }
 
+    VecT::value_type signed_volume(CellHandle ch) {
+
+        auto vertices = this->get_cell_vertices(ch);
+
+        PointT e1 = this->vertex(vertices[1]) - this->vertex(vertices[0]);
+        PointT e2 = this->vertex(vertices[2]) - this->vertex(vertices[0]);
+        PointT e3 = this->vertex(vertices[3]) - this->vertex(vertices[0]);
+
+        // volume using scalar triple product
+        return e1.dot(e2.cross(e3)) / 6.;
+    }
+
 protected:
 
 };
