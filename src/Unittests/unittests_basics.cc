@@ -4,8 +4,6 @@
 #include <OpenVolumeMesh/Attribs/NormalAttrib.hh>
 #include <OpenVolumeMesh/Attribs/ColorAttrib.hh>
 
-#include "../../../../cmake-build-relwithdebinfo/_deps/googletest-src/googletest/include/gtest/gtest.h"
-
 using namespace OpenVolumeMesh;
 using namespace Geometry;
 
