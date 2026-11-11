@@ -85,7 +85,7 @@ public:
         return splitVertex;
     }
 
-    VecT::value_type signed_volume(CellHandle ch) {
+    typename VecT::value_type signed_volume(CellHandle ch) {
 
         auto vertices = this->get_cell_vertices(ch);
 
