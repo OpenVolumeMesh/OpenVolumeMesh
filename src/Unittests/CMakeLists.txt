@@ -49,6 +49,7 @@ add_executable(${TARGET_NAME}
     unittests_smart_tagger.cc
     unittests_properties.cc
     unittests_tet_mesh_navigation.cc
+    unittests_tetrahedral_geometry.cc
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE
